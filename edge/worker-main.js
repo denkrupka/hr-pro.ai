@@ -4,6 +4,7 @@
 import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
 import { notifyCandidate } from './notify-edge.js';
+import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit } from './workflow-edge.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -215,6 +216,7 @@ async function api(req, env, url) {
 
   const saveUser = async (u) => S.upsert('users', { id: u.id, data: u });
   const BASE = env.PORTAL_BASE_URL || url.origin;
+  const lang = ['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru';
   async function participantView(x) {
     const tr = await S.select('tests', `participant_id=eq.${x.id}&select=data`);
     const tests = tr.map(r => r.data).map(t => ({ id: t.id, type: t.type, title: testTitleOf(t.type), status: t.status,
@@ -265,8 +267,43 @@ async function api(req, env, url) {
     if (!me) return needAuth();
     const v = await S.one('vacancies', mVF[1]);
     if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
-    return j({ vacancy: { ...v, knowledge: v.knowledge || { questions: [], passScore: 60 },
-      knowledgeTests: v.knowledgeTests || [], process: v.process || {}, motivationQuestions: v.motivationQuestions || [] } });
+    return j({ vacancy: vacFull(v) });
+  }
+  let mVProc = p.match(/^\/api\/vacancies\/([\w-]+)\/process$/);
+  if (mVProc && m === 'PUT') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVProc[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const proc = processOf(v);
+    if (typeof body.auto === 'boolean') proc.auto = body.auto;
+    if (body.linkDays !== undefined) proc.linkDays = Math.max(1, Math.min(365, parseInt(body.linkDays, 10) || 3));
+    if (Array.isArray(body.order)) {
+      const def = ['result', 'tools', 'logic', 'sales', 'knowledge'];
+      const clean = body.order.filter(k => def.includes(k));
+      if (clean.length === def.length && new Set(clean).size === def.length) proc.order = clean;
+    }
+    ['stages', 'optional', 'aiCalls', 'critical'].forEach(g => {
+      if (body[g] && typeof body[g] === 'object') Object.keys(proc[g]).forEach(k => { if (typeof body[g][k] === 'boolean') proc[g][k] = body[g][k]; });
+    });
+    if (proc.stages.result === false) proc.aiCalls.afterResult = false;
+    if (proc.stages.tools === false) proc.aiCalls.afterTools = false;
+    if (proc.stages.motivation === false) proc.aiCalls.motivation = false;
+    v.process = proc;
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ process: proc });
+  }
+  let mVBoard = p.match(/^\/api\/vacancies\/([\w-]+)\/board$/);
+  if (mVBoard && m === 'GET') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVBoard[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const [pr, tr] = await Promise.all([
+      S.select('participants', `user_id=eq.${me.id}&select=data`),
+      S.select('tests', `user_id=eq.${me.id}&select=data`),
+    ]);
+    const parts = pr.map(r => r.data).filter(x => x.vacancyId === v.id);
+    const tests = tr.map(r => r.data);
+    return j(buildBoard(v, parts, tests, lang));
   }
 
   // ── PARTICIPANTS ──
@@ -287,6 +324,97 @@ async function api(req, env, url) {
     if (m === 'PUT') { ['name', 'surname', 'email', 'sex', 'age', 'tel', 'city', 'stage', 'comment', 'color', 'vacancyId', 'starred'].forEach(f => { if (body[f] !== undefined) cur[f] = body[f]; });
       await S.upsert('participants', { id: cur.id, data: cur }); return j({ participant: await participantView(cur) }); }
     if (m === 'DELETE') { await S.del('tests', `participant_id=eq.${cur.id}`); await S.del('participants', `id=eq.${cur.id}`); return j({ ok: true }); }
+  }
+
+  // ── WORKFLOW кандидата ──
+  let mWf = p.match(/^\/api\/participants\/([\w-]+)\/workflow$/);
+  if (mWf && m === 'GET') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mWf[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    const tests = (await S.select('tests', `participant_id=eq.${part.id}&select=data`)).map(r => r.data);
+    const wf = buildWorkflow(part, lang, vac, tests);
+    return j({ participant: await participantView(part), stages: wf.stages, decision: wf.decision,
+      autoDecision: wf.autoDecision, column: wf.column, columnTitle: kanbanColTitle(wf.column, lang), optional: wf.optional,
+      interviews: (part.workflow && part.workflow.interviews) || [] });
+  }
+  let mCol = p.match(/^\/api\/participants\/([\w-]+)\/column$/);
+  if (mCol && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mCol[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    part.workflow = part.workflow || {};
+    const col = body.column;
+    const validCol = c => KANBAN_COLS.includes(c) || /^opt:(logic|sales)$/.test(c) || /^knowledge:[\w-]+$/.test(c);
+    if (col === null || col === 'auto') { delete part.workflow.column; }
+    else if (typeof col === 'string' && validCol(col)) {
+      part.workflow.column = col;
+      if (col === 'hired') part.workflow.decision = 'hired';
+      else if (col === 'rejected') part.workflow.decision = 'rejected';
+      else if (part.workflow.decision) part.workflow.decision = null;
+    } else return j({ error: 'Неверная колонка' }, 400);
+    await S.upsert('participants', { id: part.id, data: part });
+    return j({ ok: true });
+  }
+  let mGate = p.match(/^\/api\/participants\/([\w-]+)\/gate$/);
+  if (mGate && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mGate[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    part.workflow = part.workflow || {}; part.workflow.gates = part.workflow.gates || {}; part.workflow.skipped = part.workflow.skipped || {};
+    const { stage, passed, skip, decision } = body;
+    if (stage && (recruit.STAGE_KEYS.includes(stage) || /^opt:(logic|sales)$/.test(stage))) {
+      if (skip === true) { part.workflow.skipped[stage] = true; delete part.workflow.gates[stage]; }
+      else if (skip === false) delete part.workflow.skipped[stage];
+      else if (recruit.STAGE_KEYS.includes(stage)) {
+        if (passed === null) { delete part.workflow.gates[stage]; delete part.workflow.skipped[stage]; }
+        else part.workflow.gates[stage] = !!passed;
+      }
+    }
+    if (decision !== undefined) part.workflow.decision = ['hired', 'rejected'].includes(decision) ? decision : null;
+    await S.upsert('participants', { id: part.id, data: part });
+    return j({ ok: true, workflow: part.workflow });
+  }
+  let mMot = p.match(/^\/api\/participants\/([\w-]+)\/motivation$/);
+  if (mMot && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mMot[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    part.workflow = part.workflow || {};
+    const level = body.level;
+    if (recruit.MOTIVATION_LEVELS.some(x => x.key === level)) {
+      part.workflow.motivation = { level, at: new Date().toISOString() };
+      await S.upsert('participants', { id: part.id, data: part });
+      return j({ ok: true, analysis: recruit.MOTIVATION_LEVELS.find(x => x.key === level) });
+    }
+    return j({ error: 'Неверный уровень мотивации' }, 400);
+  }
+  let mRef = p.match(/^\/api\/participants\/([\w-]+)\/references$/);
+  if (mRef && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mRef[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    part.workflow = part.workflow || {}; part.workflow.references = part.workflow.references || {};
+    if (body.index != null && body.answers) {
+      part.workflow.references.multi = part.workflow.references.multi || {};
+      part.workflow.references.multi[body.index] = { answers: body.answers, at: new Date().toISOString() };
+    } else if (body.answers) {
+      part.workflow.references.answers = body.answers;
+    }
+    await S.upsert('participants', { id: part.id, data: part });
+    return j({ ok: true });
+  }
+  let mInt = p.match(/^\/api\/participants\/([\w-]+)\/interviews$/);
+  if (mInt && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mInt[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    part.workflow = part.workflow || {}; part.workflow.interviews = part.workflow.interviews || [];
+    const iv = { id: uid(8), at: body.at || '', note: String(body.note || ''), createdAt: new Date().toISOString() };
+    part.workflow.interviews.push(iv);
+    await S.upsert('participants', { id: part.id, data: part });
+    return j({ ok: true, interview: iv, interviews: part.workflow.interviews });
   }
 
   // ── CANDIDATES (глобальный список) ──
@@ -462,7 +590,6 @@ async function api(req, env, url) {
   }
 
   // ── ОТЧЁТ / СКОРИНГ ──
-  const lang = ['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru';
   let mRes = p.match(/^\/api\/tests\/([\w-]+)\/result$/);
   if (mRes && m === 'GET') {
     if (!me) return needAuth();

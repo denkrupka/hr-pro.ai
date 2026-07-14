@@ -54,7 +54,7 @@ function demoFor(p) {
   return teen ? 'girls' : 'women';
 }
 
-function gradeKnowledge(test) {
+export function gradeKnowledge(test) {
   const qs = (test.knowledge && test.knowledge.questions) || [];
   let correct = 0;
   const details = qs.map(q => {
