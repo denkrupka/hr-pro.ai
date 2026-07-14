@@ -737,7 +737,6 @@ body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
     </div>
     <div class="lpop-foot">
       <div class="lpop-logo"><svg viewBox="0 0 64 64" fill="none" style="width:26px;height:26px"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="3" stroke-linejoin="round" opacity=".85"/><circle cx="33" cy="31" r="5" fill="#FF7A5C"/></svg><span>HR&nbsp;PRO&nbsp;AI</span></div>
-      <span class="lang-switch" id="pop-lang"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></span>
     </div>
   </div>
 </div>
@@ -822,7 +821,7 @@ const I18N={
     foot_col_product:'Продукт',foot_col_method:'Методика',foot_col_account:'Аккаунт',foot_method_link:'Виннер / Дуэр / Вейтер',
     sticky_cta:'Начать бесплатно — тесты в подарок →',
     pop_eyebrow:'Бесплатный гайд',pop_h:'Как нанимать по данным, а не по интуиции',
-    pop_lead:'PDF-гайд на 24 страницы: 4 теста, чтение спектр-профиля и 12 ошибок найма, которые стоят вам зарплат.',
+    pop_lead:'Практический гайд по найму: 4 теста, чтение спектр-профиля и 12 ошибок, которые стоят вам зарплат. Пришлём ссылку на ваш email.',
     pop_bullets:['Чек-лист оценки кандидата за 10 минут','Как отличить «удобные» ответы от настоящих','Шаблоны эталонных ролей для 6 позиций'],
     pop_ph:'Рабочий email',pop_btn:'Получить гайд →',pop_privacy:'Без спама. Отписка в один клик.',
     pop_done_h:'Гайд уже летит к вам',pop_done_p:'Проверьте почту — письмо со ссылкой придёт в течение минуты. Загляните в «Промоакции», если не видите его.',pop_done_btn:'Понятно',
@@ -913,7 +912,7 @@ const I18N={
     foot_col_product:'Produkt',foot_col_method:'Metodyka',foot_col_account:'Konto',foot_method_link:'Winner / Doer / Waiter',
     sticky_cta:'Zacznij za darmo — testy w prezencie →',
     pop_eyebrow:'Darmowy przewodnik',pop_h:'Jak rekrutować na danych, nie na intuicji',
-    pop_lead:'Przewodnik PDF, 24 strony: 4 testy, czytanie profilu-spektrum i 12 błędów rekrutacji, które kosztują pensje.',
+    pop_lead:'Praktyczny przewodnik po rekrutacji: 4 testy, czytanie profilu-spektrum i 12 błędów, które kosztują pensje. Wyślemy link na Twój e-mail.',
     pop_bullets:['Checklista oceny kandydata w 10 minut','Jak odróżnić „wygodne” odpowiedzi od prawdziwych','Szablony ról wzorcowych dla 6 stanowisk'],
     pop_ph:'Email służbowy',pop_btn:'Pobierz przewodnik →',pop_privacy:'Bez spamu. Rezygnacja jednym kliknięciem.',
     pop_done_h:'Przewodnik już leci',pop_done_p:'Sprawdź skrzynkę — link przyjdzie w ciągu minuty. Zajrzyj do „Oferty”, jeśli go nie widzisz.',pop_done_btn:'Rozumiem',
@@ -1005,7 +1004,7 @@ const I18N={
     foot_col_product:'Product',foot_col_method:'Method',foot_col_account:'Account',foot_method_link:'Winner / Doer / Waiter',
     sticky_cta:'Start free — tests on us →',
     pop_eyebrow:'Free guide',pop_h:'How to hire on data, not gut feeling',
-    pop_lead:'A 24-page PDF guide: the 4 tests, reading a spectrum profile, and 12 hiring mistakes that cost you salaries.',
+    pop_lead:'A practical hiring guide: the 4 tests, reading a spectrum profile, and 12 mistakes that cost you salaries. We’ll send the link to your email.',
     pop_bullets:['A 10-minute candidate assessment checklist','How to tell rehearsed answers from real ones','Reference-role templates for 6 positions'],
     pop_ph:'Work email',pop_btn:'Get the guide →',pop_privacy:'No spam. Unsubscribe in one click.',
     pop_done_h:'Your guide is on the way',pop_done_p:'Check your inbox — the link arrives within a minute. Look in “Promotions” if you don’t see it.',pop_done_btn:'Got it',
@@ -1149,12 +1148,14 @@ document.getElementById('pop').addEventListener('click',e=>{if(e.target.id==='po
 document.addEventListener('mouseout',e=>{if(e.clientY<=0&&!e.relatedTarget)openPop();});
 let popScrollFired=false;
 window.addEventListener('scroll',()=>{if(popScrollFired)return;const p=(scrollY+innerHeight)/document.body.scrollHeight;if(p>0.55){popScrollFired=true;openPop();}},{passive:true});
-document.querySelectorAll('#pop-lang button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
-document.getElementById('pop-form-el').addEventListener('submit',e=>{
+document.getElementById('pop-form-el').addEventListener('submit',async e=>{
   e.preventDefault();
   const em=document.getElementById('pop-email').value.trim();
   if(!/.+@.+\..+/.test(em)){document.getElementById('pop-email').focus();return;}
   try{localStorage.setItem('hp_lead_email',em);}catch(e){}
+  const btn=document.getElementById('pop-submit');const o=btn.textContent;btn.disabled=true;btn.textContent='…';
+  try{await fetch('/api/lead',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:em,lang:LANG})});}catch(e){}
+  btn.disabled=false;btn.textContent=o;
   document.getElementById('pop-form').classList.add('hidden');
   document.getElementById('pop-done').classList.remove('hidden');
 });

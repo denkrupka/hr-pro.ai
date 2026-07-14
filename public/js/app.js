@@ -1878,67 +1878,42 @@ function openSendModal(vacs, vacOptions) {
 // Анимация «нейросети» в баннере: гексагональные узлы + спутники, магнитная реакция на курсор
 function portalNet(id) {
   const cv = document.getElementById(id); if (!cv) return;
-  const ctx = cv.getContext('2d'); let raf, tk = 0, W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1);
-  const nodes = [], links = []; const mouse = { x: -999, y: -999, on: false }; const orb = { x: 0, y: 0 };
-  function build() {
-    const r = cv.getBoundingClientRect(); W = r.width; H = r.height; if (!W || !H) return;
-    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    nodes.length = 0; links.length = 0;
-    const n = Math.max(14, Math.round(W / 46));
-    for (let i = 0; i < n; i++) {
-      const bx = W * (0.05 + 0.92 * Math.random()), by = H * (0.08 + 0.84 * Math.random());
-      nodes.push({ bx, by, x: bx, y: by, ph: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.004,
-        hex: Math.random() < 0.42, sz: 6 + Math.random() * 15, dot: 1.1 + Math.random() * 1.7, accent: Math.random() < 0.16 });
-    }
-    // соединяем каждый узел с 2-3 ближайшими соседями (органичная сеть)
-    for (let i = 0; i < nodes.length; i++) {
-      const near = nodes.map((b, j) => [j, Math.hypot(nodes[i].bx - b.bx, nodes[i].by - b.by)])
-        .filter(([j]) => j !== i).sort((a, b) => a[1] - b[1]).slice(0, 3);
-      near.forEach(([j, d]) => { if (d < W * 0.32 && !links.some(l => (l[0] === j && l[1] === i) || (l[0] === i && l[1] === j))) links.push([i, j]); });
-    }
-    orb.x = W * 0.5; orb.y = H * 0.52;
+  const host = cv.closest('.dash-banner') || cv.parentElement || cv; if (!host) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const rgb = [110, 120, 220], acc = [150, 140, 255];
+  let gen = 0, M = { x: 0, y: 0, on: false };
+  host.addEventListener('mousemove', e => { const r = cv.getBoundingClientRect(); if (!r.width) return; M.x = (e.clientX - r.left) * (cv.__W / r.width); M.y = (e.clientY - r.top) * (cv.__H / r.height); M.on = true; });
+  host.addEventListener('mouseleave', () => { M.on = false; });
+  function start() {
+    if (!document.getElementById(id)) return;
+    gen++; const g = gen; const ctx = cv.getContext('2d'); const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = cv.offsetWidth || 520, H = cv.offsetHeight || 190; cv.__W = W; cv.__H = H; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const C = a => 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + a + ')', A = a => 'rgba(' + acc[0] + ',' + acc[1] + ',' + acc[2] + ',' + a + ')', rnd = (a, b) => a + Math.random() * (b - a);
+    const hubs = Math.max(6, Math.round(W / 70)), MR = 180; const G = [];
+    for (let i = 0; i < hubs; i++) { const sc = 3 + Math.floor(Math.random() * 2), sats = []; for (let k = 0; k < sc; k++) sats.push({ ang: rnd(0, 6.28), rad: rnd(18, 30), spd: rnd(-.006, .006) });
+      G.push({ x: rnd(34, W - 34), y: rnd(28, H - 28), vx: rnd(-.16, .16), vy: rnd(-.16, .16), rot: rnd(0, 6.28), sats }); }
+    const hex = (cx, cy, r, rot) => { ctx.beginPath(); for (let s = 0; s < 6; s++) { const a = rot + s * Math.PI / 3, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.closePath(); };
+    (function loop() { if (g !== gen || !document.getElementById(id)) return;
+      ctx.clearRect(0, 0, W, H);
+      if (M.on) { const rg = ctx.createRadialGradient(M.x, M.y, 0, M.x, M.y, 220); rg.addColorStop(0, A(.06)); rg.addColorStop(1, A(0)); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H); }
+      for (const h of G) { if (M.on) { const dx = M.x - h.x, dy = M.y - h.y, d = Math.hypot(dx, dy); if (d < 210 && d > 1) { h.vx += dx / d * .05; h.vy += dy / d * .05; } }
+        h.vx *= .99; h.vy *= .99; h.x += h.vx; h.y += h.vy; if (h.x < 26 || h.x > W - 26) h.vx *= -1; if (h.y < 24 || h.y > H - 24) h.vy *= -1;
+        h.x = Math.max(26, Math.min(W - 26, h.x)); h.y = Math.max(24, Math.min(H - 24, h.y)); h.rot += .0016; }
+      for (let i = 0; i < G.length; i++) for (let j = i + 1; j < G.length; j++) { const a = G[i], b = G[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 250) { ctx.strokeStyle = C((1 - d / 250) * .16); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); } }
+      for (const h of G) { const hover = M.on && Math.hypot(h.x - M.x, h.y - M.y) < MR, em = hover ? 1 : 0;
+        ctx.strokeStyle = C(.1 + em * .22); ctx.lineWidth = 1.2; hex(h.x, h.y, 22, h.rot); ctx.stroke();
+        for (const st of h.sats) { st.ang += st.spd; const sx = h.x + Math.cos(st.ang) * st.rad, sy = h.y + Math.sin(st.ang) * st.rad;
+          ctx.strokeStyle = C(.3 + em * .4); ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(sx, sy); ctx.stroke();
+          ctx.fillStyle = C(.68 + em * .3); ctx.beginPath(); ctx.arc(sx, sy, 1.7, 0, 7); ctx.fill(); }
+        if (M.on) { const d = Math.hypot(h.x - M.x, h.y - M.y); if (d < MR) { ctx.strokeStyle = A((1 - d / MR) * .7); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(M.x, M.y); ctx.stroke(); } }
+        ctx.fillStyle = A(.9); ctx.beginPath(); ctx.arc(h.x, h.y, hover ? 3.4 : 2.7, 0, 7); ctx.fill();
+        if (hover) { const rr = 14; const gg = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, rr); gg.addColorStop(0, A(.5)); gg.addColorStop(1, A(0)); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(h.x, h.y, rr, 0, 7); ctx.fill(); } }
+      if (M.on) { const rr = 22; const gg = ctx.createRadialGradient(M.x, M.y, 0, M.x, M.y, rr); gg.addColorStop(0, A(.85)); gg.addColorStop(1, A(0)); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(M.x, M.y, rr, 0, 7); ctx.fill(); }
+      requestAnimationFrame(loop);
+    })();
   }
-  function hexPath(x, y, s, rot) { ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = rot + Math.PI / 6 + k * Math.PI / 3, px = x + Math.cos(a) * s, py = y + Math.sin(a) * s; k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); }
-  function draw() {
-    tk += 1; if (!W) { build(); if (!W) { raf = requestAnimationFrame(draw); return; } }
-    ctx.clearRect(0, 0, W, H);
-    // магнитное дыхание узлов + реакция на курсор
-    nodes.forEach(nd => {
-      const fx = nd.bx + Math.sin(tk * 0.008 + nd.ph) * 7, fy = nd.by + Math.cos(tk * 0.01 + nd.ph) * 7;
-      let tx = fx, ty = fy;
-      if (mouse.on) { const dx = mouse.x - fx, dy = mouse.y - fy, d = Math.hypot(dx, dy);
-        if (d < 150) { const pull = (1 - d / 150) * 30; tx = fx + dx / (d || 1) * pull; ty = fy + dy / (d || 1) * pull; } }
-      nd.x += (tx - nd.x) * 0.07; nd.y += (ty - nd.y) * 0.07;
-    });
-    // светящееся ядро
-    const orbP = 0.55 + 0.45 * Math.sin(tk * 0.02);
-    const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, 64);
-    g.addColorStop(0, `rgba(170,150,255,${0.44 * orbP})`); g.addColorStop(0.4, `rgba(139,108,255,${0.16 * orbP})`); g.addColorStop(1, 'rgba(139,108,255,0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(orb.x, orb.y, 64, 0, 6.28); ctx.fill();
-    // связи
-    links.forEach(([i, j]) => { const a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-      ctx.strokeStyle = `rgba(139,108,255,${Math.max(0, 0.24 * (1 - d / (W * 0.34)))})`; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); });
-    // узлы: гексагоны с вершинными точками + центральные точки (акцент — оранжевый)
-    nodes.forEach(nd => { const p = 0.65 + 0.35 * Math.sin(tk * 0.025 + nd.ph); const rot = tk * nd.spin + nd.ph;
-      if (nd.hex) {
-        ctx.strokeStyle = `rgba(179,164,255,${0.5 * p})`; ctx.lineWidth = 1.2; hexPath(nd.x, nd.y, nd.sz, rot); ctx.stroke();
-        ctx.fillStyle = `rgba(150,140,255,${0.5 * p})`;
-        for (let k = 0; k < 6; k++) { const a = rot + Math.PI / 6 + k * Math.PI / 3; ctx.beginPath(); ctx.arc(nd.x + Math.cos(a) * nd.sz, nd.y + Math.sin(a) * nd.sz, 1.1, 0, 6.28); ctx.fill(); }
-      }
-      if (nd.accent) { ctx.fillStyle = `rgba(255,138,106,${0.9 * p})`; ctx.shadowColor = 'rgba(255,138,106,.7)'; ctx.shadowBlur = 6; ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.dot + 0.7, 0, 6.28); ctx.fill(); ctx.shadowBlur = 0; }
-      else { ctx.fillStyle = `rgba(150,170,255,${0.72 * p})`; ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.dot, 0, 6.28); ctx.fill(); }
-    });
-    raf = requestAnimationFrame(draw);
-  }
-  const onMove = e => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.on = true; };
-  const onLeave = () => { mouse.on = false; };
-  const host = cv.parentElement || cv;
-  host.addEventListener('mousemove', onMove); host.addEventListener('mouseleave', onLeave);
-  build(); draw();
-  const ro = new ResizeObserver(build); ro.observe(cv);
-  const stop = () => { if (!document.getElementById(id)) { cancelAnimationFrame(raf); ro.disconnect(); host.removeEventListener('mousemove', onMove); host.removeEventListener('mouseleave', onLeave); } else requestAnimationFrame(stop); };
-  requestAnimationFrame(stop);
+  start(); let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(start, 220); });
 }
 
 // Выбор языка отправляемого теста; по умолчанию подставляется язык вакансии из заявки

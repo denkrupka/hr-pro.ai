@@ -3,7 +3,7 @@
 // чистые модули портала (scoring/ai/recruitment) по мере портирования.
 import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
-import { notifyCandidate } from './notify-edge.js';
+import { notifyCandidate, wrapEmailEdge, unsubToken } from './notify-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
@@ -110,6 +110,37 @@ async function api(req, env, url) {
   if (p === '/api/guide-check' && m === 'POST') {
     try { return j(await guideCheck(env, body)); }
     catch (e) { return j({ error: 'server' }, 500); }
+  }
+
+  // Лид-магнит с лендинга: письмо со ссылкой на гайд (без авторизации)
+  if (p === '/api/lead' && m === 'POST') {
+    const email = String(body.email || '').trim().toLowerCase();
+    const lang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : 'ru';
+    if (!/.+@.+\..+/.test(email)) return j({ error: 'bad_email' }, 400);
+    const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+    const guideUrl = base + '/storage/guide/hiring-by-data';
+    try { await S.upsert('leads', { id: uid(12), data: { email, lang, source: 'landing_popup', createdAt: new Date().toISOString() } }); } catch (e) {}
+    const LEAD = {
+      ru: { subj: 'Ваш гайд по найму — HR PRO AI', eyebrow: 'Бесплатный гайд', head: 'Как нанимать по данным, а не по интуиции',
+        body: 'Спасибо за интерес! Ваш практический гайд готов: 4 теста, чтение спектр-профиля и 12 ошибок найма, которые стоят компаниям зарплат. Откройте по кнопке ниже.', cta: 'Открыть гайд' },
+      pl: { subj: 'Twój przewodnik rekrutacyjny — HR PRO AI', eyebrow: 'Bezpłatny przewodnik', head: 'Jak zatrudniać na danych, a nie na przeczuciu',
+        body: 'Dziękujemy za zainteresowanie! Twój praktyczny przewodnik jest gotowy: 4 testy, czytanie profilu-spektrum i 12 błędów rekrutacji. Otwórz go poniżej.', cta: 'Otwórz przewodnik' },
+      en: { subj: 'Your hiring guide — HR PRO AI', eyebrow: 'Free guide', head: 'How to hire on data, not gut feeling',
+        body: 'Thanks for your interest! Your practical guide is ready: the 4 tests, reading a spectrum profile, and 12 hiring mistakes that cost companies salaries. Open it below.', cta: 'Open the guide' },
+    }[lang];
+    const resendKey = env.RESEND_API_KEY;
+    if (resendKey) {
+      try {
+        const tok = await unsubToken(env.SECRET, email);
+        const unsubUrl = `${base}/unsubscribe?e=${btoa(email)}&t=${tok}&lang=${lang}`;
+        const html = wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject: LEAD.subj, eyebrow: LEAD.eyebrow,
+          headline: LEAD.head, bodyHtml: LEAD.body, ctaUrl: guideUrl, ctaLabel: LEAD.cta });
+        await fetch('https://api.resend.com/emails', { method: 'POST',
+          headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: LEAD.subj, html }) });
+      } catch (e) {}
+    }
+    return j({ ok: true });
   }
 
   // ── Google OAuth (Authorization Code, server-side) ──
@@ -1248,6 +1279,7 @@ const HTML_MAP = [
   [/^\/$/, '/landing'],
   [/^\/login$/, '/login'],
   [/^\/guide(\/|$)/, '/guide'],
+  [/^\/storage\/guide(\/|$)/, '/guide'],
   [/^\/privacy$/, '/privacy'],
   [/^\/terms$/, '/terms'],
   [/^\/admin$/, '/admin'],
