@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="page_title">HR PRO AI — узнайте кандидата до найма</title>
+<meta name="description" content="Психометрическая платформа для найма: 4 теста раскрывают личность, продуктивность, интеллект и навыки продаж на одном графике.">
+<meta name="theme-color" content="#3d6cd1">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+.lang-switch{display:inline-flex;gap:3px;align-items:center}
+.lang-switch button{background:transparent;border:1px solid var(--line);color:var(--muted);font:700 11px/1 Inter,sans-serif;padding:5px 7px;border-radius:6px;cursor:pointer}
+.lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233d6cd1'/%3E%3Cpath d='M32 12 50 22 50 42 32 52 14 42 14 22Z' stroke='white' stroke-width='2.4' fill='none'/%3E%3Ccircle cx='32' cy='31' r='4' fill='%23ff7a5c'/%3E%3C/svg%3E">
+</head><body class="lp">
+
+<nav class="lp-nav">
+  <a href="/" class="lp-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><span style="display:flex;flex-direction:column;line-height:1.05"><b>HR PRO AI</b><span style="font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.02em" data-i18n="brand_tagline">чувствует людей</span></span></a>
+  <div class="lp-links">
+    <a href="#how" data-i18n="nav_how">Как это работает</a>
+    <a href="#tests" data-i18n="nav_tests">Тесты</a>
+    <a href="#pricing" data-i18n="nav_pricing">Цены</a>
+    <span class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></span>
+    <a href="/login" class="btn ghost sm" data-i18n="nav_login">Войти</a>
+    <a href="/login?mode=register" class="btn sm" data-i18n="nav_start">Начать бесплатно</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-copy reveal">
+    <div class="eyebrow" data-i18n="eyebrow">Психометрика найма</div>
+    <h1 style="margin-top:18px" data-i18n="hero_h1">Узнайте, <span class="hl">кто перед вами</span>, до того как нанять</h1>
+    <p class="lead" data-i18n="hero_lead">Резюме говорит, кем человек хочет казаться. Наши четыре теста показывают, кто он на самом деле — личность, продуктивность, интеллект и навыки продаж. Один график вместо сотни собеседований.</p>
+    <div class="hero-cta">
+      <a href="/login?mode=register" class="btn lg" data-i18n="hero_cta_try">Попробовать бесплатно →</a>
+      <a href="#how" class="btn ghost lg" data-i18n="hero_cta_how">Как это работает</a>
+    </div>
+    <div class="hero-trust">
+      <div class="t"><div class="n">4</div><div class="l" data-i18n="trust_tests">валидных теста</div></div>
+      <div class="t"><div class="n">10&nbsp;мин</div><div class="l" data-i18n="trust_time">на оценку</div></div>
+      <div class="t"><div class="n">200</div><div class="l" data-i18n="trust_gift">тестов в подарок</div></div>
+    </div>
+  </div>
+  <div class="hero-visual reveal d2">
+    <div class="hv-head">
+      <div><div style="font-weight:800;font-size:17px" data-i18n="hero_name">Анна Ковальская</div><div class="muted" style="font-size:13px" data-i18n="hero_role">Менеджер по продажам · «Тулс»</div></div>
+      <span class="hv-badge" data-i18n="hero_badge">● Виннер</span>
+    </div>
+    <div id="hero-bars"></div>
+    <div class="spectrum" style="margin-top:16px"></div>
+    <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:7px;font-weight:600">
+      <span data-i18n="scale_low">Очень низкий</span><span data-i18n="scale_mid">Средний</span><span data-i18n="scale_high">Очень высокий</span></div>
+  </div>
+</header>
+
+<section class="lp-section" id="tests">
+  <div class="eyebrow" data-i18n="tests_eyebrow">Четыре измерения</div>
+  <h2 style="margin-top:14px" data-i18n="tests_h2">Каждый тест отвечает на свой вопрос найма</h2>
+  <p class="sub" data-i18n="tests_sub">Вместе они складываются в объёмный портрет кандидата — без догадок и интуиции.</p>
+  <div class="feat-grid">
+    <div class="feat reveal"><div class="fic fic-tools" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.2"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.2"/></svg></div><h3 data-i18n="feat_tools_h">Тулс — личность</h3><p data-i18n="feat_tools_p">Оксфордский анализ: 200 вопросов, 10 черт характера от внимательности до общительности. График с зонами и синдромами.</p></div>
+    <div class="feat reveal d1"><div class="fic fic-result" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div><h3 data-i18n="feat_result_h">Резалт — продуктивность</h3><p data-i18n="feat_result_p">Оценка результатов на прошлой работе. Кто перед вами — Виннер, Дуэр или Вейтер. Главный фактор найма.</p></div>
+    <div class="feat reveal d2"><div class="fic fic-logic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.7 10.7c.6.5.9 1 .9 1.8v.5h5.6v-.5c0-.8.3-1.3.9-1.8A6 6 0 0 0 12 3Z"/></svg></div><h3 data-i18n="feat_logic_h">Логис — интеллект</h3><p data-i18n="feat_logic_p">Тест на IQ: скорость мышления и способность принимать решения. Балл и уровень с интерпретацией.</p></div>
+    <div class="feat reveal d3"><div class="fic fic-sales" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/></svg></div><h3 data-i18n="feat_sales_h">Сэйлс — продажи</h3><p data-i18n="feat_sales_p">12 показателей продавца: настойчивость, экспертность, привлечение и удержание клиентов на одном графике.</p></div>
+  </div>
+</section>
+
+<section class="lp-section" id="how" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
+  <div class="eyebrow" data-i18n="how_eyebrow">Три шага</div>
+  <h2 style="margin-top:14px" data-i18n="how_h2">От ссылки до решения о найме</h2>
+  <div class="steps">
+    <div class="step reveal"><div class="line"></div><h3 data-i18n="step1_h">Отправьте тест</h3><p data-i18n="step1_p">Введите email кандидата и выберите тест. Ссылка уходит за секунду — платите только за пройденные тесты.</p></div>
+    <div class="step reveal d1"><div class="line"></div><h3 data-i18n="step2_h">Кандидат проходит</h3><p data-i18n="step2_p">Он открывает ссылку и отвечает — на телефоне или компьютере, за 10–35 минут. Результат приходит в кабинет.</p></div>
+    <div class="step reveal d2"><div class="line"></div><h3 data-i18n="step3_h">Читаете график</h3><p data-i18n="step3_p">Готовый профиль с интерпретацией, ИИ-подсказкой и рекомендацией. Собеседование, резерв или отказ — в один клик.</p></div>
+  </div>
+</section>
+
+<section class="lp-section" id="pricing">
+  <div class="eyebrow" style="justify-content:center;display:flex" data-i18n="pricing_eyebrow">Прозрачные цены</div>
+  <h2 style="text-align:center;margin-top:14px" data-i18n="pricing_h2">Платите за тесты, а не за подписку</h2>
+  <p class="sub" style="margin:14px auto 0;text-align:center" data-i18n="pricing_sub">Один тест = один кандидат. Пакеты дешевле, остаток не сгорает.</p>
+  <div class="plan-grid" id="plan-grid" style="margin-top:40px"></div>
+</section>
+
+<div class="lp-cta">
+  <div class="inner reveal">
+    <div class="eyebrow" style="justify-content:center;display:flex;color:#fff" data-i18n="cta_eyebrow">Начните сегодня</div>
+    <h2 style="margin-top:14px" data-i18n="cta_h2">Первые 200 тестов — бесплатно</h2>
+    <p data-i18n="cta_p">Зарегистрируйтесь и отправьте первому кандидату тест уже через минуту. Без карты, без обязательств.</p>
+    <a href="/login?mode=register" class="btn lg" style="background:#fff;color:var(--brand)" data-i18n="cta_btn">Создать аккаунт →</a>
+  </div>
+</div>
+
+<footer class="lp-foot">
+  <div data-i18n="foot_copy">© HR PRO AI — психометрическая платформа найма</div>
+  <div data-i18n="foot_tagline">HR PRO AI · технология, которая чувствует людей</div>
+</footer>
+
+<script>
+if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
+
+const I18N={
+  ru:{
+    page_title:'HR PRO AI — узнайте кандидата до найма',
+    brand_tagline:'чувствует людей',
+    nav_how:'Как это работает',
+    nav_tests:'Тесты',
+    nav_pricing:'Цены',
+    nav_login:'Войти',
+    nav_start:'Начать бесплатно',
+    eyebrow:'Психометрика найма',
+    hero_h1:'Узнайте, <span class="hl">кто перед вами</span>, до того как нанять',
+    hero_lead:'Резюме говорит, кем человек хочет казаться. Наши четыре теста показывают, кто он на самом деле — личность, продуктивность, интеллект и навыки продаж. Один график вместо сотни собеседований.',
+    hero_cta_try:'Попробовать бесплатно →',
+    hero_cta_how:'Как это работает',
+    trust_tests:'валидных теста',
+    trust_time:'на оценку',
+    trust_gift:'тестов в подарок',
+    hero_name:'Анна Ковальская',
+    hero_role:'Менеджер по продажам · «Тулс»',
+    hero_badge:'● Виннер',
+    scale_low:'Очень низкий',
+    scale_mid:'Средний',
+    scale_high:'Очень высокий',
+    tests_eyebrow:'Четыре измерения',
+    tests_h2:'Каждый тест отвечает на свой вопрос найма',
+    tests_sub:'Вместе они складываются в объёмный портрет кандидата — без догадок и интуиции.',
+    feat_tools_h:'Тулс — личность',
+    feat_tools_p:'Оксфордский анализ: 200 вопросов, 10 черт характера от внимательности до общительности. График с зонами и синдромами.',
+    feat_result_h:'Резалт — продуктивность',
+    feat_result_p:'Оценка результатов на прошлой работе. Кто перед вами — Виннер, Дуэр или Вейтер. Главный фактор найма.',
+    feat_logic_h:'Логис — интеллект',
+    feat_logic_p:'Тест на IQ: скорость мышления и способность принимать решения. Балл и уровень с интерпретацией.',
+    feat_sales_h:'Сэйлс — продажи',
+    feat_sales_p:'12 показателей продавца: настойчивость, экспертность, привлечение и удержание клиентов на одном графике.',
+    how_eyebrow:'Три шага',
+    how_h2:'От ссылки до решения о найме',
+    step1_h:'Отправьте тест',
+    step1_p:'Введите email кандидата и выберите тест. Ссылка уходит за секунду — платите только за пройденные тесты.',
+    step2_h:'Кандидат проходит',
+    step2_p:'Он открывает ссылку и отвечает — на телефоне или компьютере, за 10–35 минут. Результат приходит в кабинет.',
+    step3_h:'Читаете график',
+    step3_p:'Готовый профиль с интерпретацией, ИИ-подсказкой и рекомендацией. Собеседование, резерв или отказ — в один клик.',
+    pricing_eyebrow:'Прозрачные цены',
+    pricing_h2:'Платите за тесты, а не за подписку',
+    pricing_sub:'Один тест = один кандидат. Пакеты дешевле, остаток не сгорает.',
+    cta_eyebrow:'Начните сегодня',
+    cta_h2:'Первые 200 тестов — бесплатно',
+    cta_p:'Зарегистрируйтесь и отправьте первому кандидату тест уже через минуту. Без карты, без обязательств.',
+    cta_btn:'Создать аккаунт →',
+    foot_copy:'© HR PRO AI — психометрическая платформа найма',
+    foot_tagline:'HR PRO AI · технология, которая чувствует людей',
+    trait_attention:'Внимательность',
+    trait_positivity:'Позитивность',
+    trait_composure:'Самообладание',
+    trait_activity:'Активность',
+    trait_persistence:'Настойчивость',
+    trait_empathy:'Чуткость',
+    plan_tests:'тестов',
+    plan_hit:'Хит',
+    plan_save:'Выгода',
+    plan_per:'за тест',
+    plan_buy:'Купить',
+    plan_currency:'€',
+    plan_locale:'ru'
+  },
+  pl:{
+    page_title:'HR PRO AI — poznaj kandydata przed zatrudnieniem',
+    brand_tagline:'czuje ludzi',
+    nav_how:'Jak to działa',
+    nav_tests:'Testy',
+    nav_pricing:'Cennik',
+    nav_login:'Zaloguj się',
+    nav_start:'Zacznij za darmo',
+    eyebrow:'Psychometria rekrutacji',
+    hero_h1:'Poznaj, <span class="hl">kto jest przed tobą</span>, zanim go zatrudnisz',
+    hero_lead:'CV mówi, kim człowiek chce się wydawać. Nasze cztery testy pokazują, kim jest naprawdę — osobowość, produktywność, inteligencja i umiejętności sprzedażowe. Jeden wykres zamiast setek rozmów.',
+    hero_cta_try:'Wypróbuj za darmo →',
+    hero_cta_how:'Jak to działa',
+    trust_tests:'rzetelne testy',
+    trust_time:'na ocenę',
+    trust_gift:'testów w prezencie',
+    hero_name:'Anna Kowalska',
+    hero_role:'Menedżer sprzedaży · „Tools”',
+    hero_badge:'● Winner',
+    scale_low:'Bardzo niski',
+    scale_mid:'Średni',
+    scale_high:'Bardzo wysoki',
+    tests_eyebrow:'Cztery wymiary',
+    tests_h2:'Każdy test odpowiada na inne pytanie rekrutacyjne',
+    tests_sub:'Razem tworzą pełny portret kandydata — bez domysłów i intuicji.',
+    feat_tools_h:'Tools — osobowość',
+    feat_tools_p:'Analiza oksfordzka: 200 pytań, 10 cech charakteru od uważności po towarzyskość. Wykres ze strefami i syndromami.',
+    feat_result_h:'Result — produktywność',
+    feat_result_p:'Ocena wyników w poprzedniej pracy. Kto jest przed tobą — Winner, Doer czy Waiter. Kluczowy czynnik rekrutacji.',
+    feat_logic_h:'Logic — inteligencja',
+    feat_logic_p:'Test IQ: szybkość myślenia i zdolność podejmowania decyzji. Wynik i poziom z interpretacją.',
+    feat_sales_h:'Sales — sprzedaż',
+    feat_sales_p:'12 wskaźników sprzedawcy: wytrwałość, ekspertyza, pozyskiwanie i utrzymanie klientów na jednym wykresie.',
+    how_eyebrow:'Trzy kroki',
+    how_h2:'Od linku do decyzji o zatrudnieniu',
+    step1_h:'Wyślij test',
+    step1_p:'Wpisz e-mail kandydata i wybierz test. Link wychodzi w sekundę — płacisz tylko za ukończone testy.',
+    step2_h:'Kandydat rozwiązuje',
+    step2_p:'Otwiera link i odpowiada — na telefonie lub komputerze, w 10–35 minut. Wynik trafia do panelu.',
+    step3_h:'Czytasz wykres',
+    step3_p:'Gotowy profil z interpretacją, podpowiedzią AI i rekomendacją. Rozmowa, rezerwa lub odmowa — jednym kliknięciem.',
+    pricing_eyebrow:'Przejrzyste ceny',
+    pricing_h2:'Płać za testy, a nie za abonament',
+    pricing_sub:'Jeden test = jeden kandydat. Pakiety są tańsze, a niewykorzystane testy nie przepadają.',
+    cta_eyebrow:'Zacznij już dziś',
+    cta_h2:'Pierwsze 200 testów — za darmo',
+    cta_p:'Zarejestruj się i wyślij pierwszemu kandydatowi test już w minutę. Bez karty, bez zobowiązań.',
+    cta_btn:'Załóż konto →',
+    foot_copy:'© HR PRO AI — psychometryczna platforma rekrutacyjna',
+    foot_tagline:'HR PRO AI · technologia, która czuje ludzi',
+    trait_attention:'Uważność',
+    trait_positivity:'Pozytywność',
+    trait_composure:'Opanowanie',
+    trait_activity:'Aktywność',
+    trait_persistence:'Wytrwałość',
+    trait_empathy:'Empatia',
+    plan_tests:'testów',
+    plan_hit:'Hit',
+    plan_save:'Oszczędność',
+    plan_per:'za test',
+    plan_buy:'Kup',
+    plan_currency:'€',
+    plan_locale:'pl'
+  },
+  en:{
+    page_title:'HR PRO AI — know the candidate before you hire',
+    brand_tagline:'senses people',
+    nav_how:'How it works',
+    nav_tests:'Tests',
+    nav_pricing:'Pricing',
+    nav_login:'Sign in',
+    nav_start:'Start free',
+    eyebrow:'Hiring psychometrics',
+    hero_h1:'See <span class="hl">who is in front of you</span>, before you hire',
+    hero_lead:'A résumé tells you who someone wants to seem. Our four tests show who they really are — personality, productivity, intelligence and sales skills. One chart instead of a hundred interviews.',
+    hero_cta_try:'Try it free →',
+    hero_cta_how:'How it works',
+    trust_tests:'validated tests',
+    trust_time:'to assess',
+    trust_gift:'tests free',
+    hero_name:'Anna Kowalska',
+    hero_role:'Sales Manager · “Tools”',
+    hero_badge:'● Winner',
+    scale_low:'Very low',
+    scale_mid:'Average',
+    scale_high:'Very high',
+    tests_eyebrow:'Four dimensions',
+    tests_h2:'Each test answers its own hiring question',
+    tests_sub:'Together they form a full portrait of the candidate — no guesswork, no intuition.',
+    feat_tools_h:'Tools — personality',
+    feat_tools_p:'Oxford analysis: 200 questions, 10 character traits from attention to sociability. A chart with zones and syndromes.',
+    feat_result_h:'Result — productivity',
+    feat_result_p:'An assessment of past job results. Who is in front of you — a Winner, Doer or Waiter. The key hiring factor.',
+    feat_logic_h:'Logic — intelligence',
+    feat_logic_p:'An IQ test: thinking speed and decision-making ability. A score and level with interpretation.',
+    feat_sales_h:'Sales — selling',
+    feat_sales_p:'12 salesperson metrics: persistence, expertise, winning and retaining clients on a single chart.',
+    how_eyebrow:'Three steps',
+    how_h2:'From a link to a hiring decision',
+    step1_h:'Send the test',
+    step1_p:'Enter the candidate’s email and pick a test. The link goes out in a second — you pay only for completed tests.',
+    step2_h:'The candidate takes it',
+    step2_p:'They open the link and answer — on phone or computer, in 10–35 minutes. The result lands in your dashboard.',
+    step3_h:'Read the chart',
+    step3_p:'A ready profile with interpretation, an AI hint and a recommendation. Interview, shortlist or reject — in one click.',
+    pricing_eyebrow:'Transparent pricing',
+    pricing_h2:'Pay for tests, not a subscription',
+    pricing_sub:'One test = one candidate. Bundles are cheaper and unused tests never expire.',
+    cta_eyebrow:'Start today',
+    cta_h2:'Your first 200 tests — free',
+    cta_p:'Sign up and send your first candidate a test within a minute. No card, no commitment.',
+    cta_btn:'Create an account →',
+    foot_copy:'© HR PRO AI — psychometric hiring platform',
+    foot_tagline:'HR PRO AI · technology that senses people',
+    trait_attention:'Attention',
+    trait_positivity:'Positivity',
+    trait_composure:'Composure',
+    trait_activity:'Activity',
+    trait_persistence:'Persistence',
+    trait_empathy:'Empathy',
+    plan_tests:'tests',
+    plan_hit:'Top pick',
+    plan_save:'Save',
+    plan_per:'per test',
+    plan_buy:'Buy',
+    plan_currency:'€',
+    plan_locale:'en'
+  }
+};
+function pickLang(){const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
+let LANG=pickLang();
+const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
+let lastPlans=null;
+
+// hero bars
+const zc=(v,comp)=>comp?'#ff7a5c':'#4e79da';
+function renderHeroBars(){
+  const hb=[['A. '+t('trait_attention'),50,0],['B. '+t('trait_positivity'),-18,0],['C. '+t('trait_composure'),48,0],['E. '+t('trait_activity'),94,1],['F. '+t('trait_persistence'),32,0],['I. '+t('trait_empathy'),-56,0]];
+  document.getElementById('hero-bars').innerHTML=hb.map(b=>{const pct=(b[1]+100)/2;return `<div class="hv-row">
+    <div class="hn">${b[0]}</div>
+    <div class="hbar"><span data-w="${pct}" style="background:${zc(b[1],b[2])}"></span></div>
+    <div class="hv">${b[1]}</div></div>`;}).join('');
+  setTimeout(()=>document.querySelectorAll('#hero-bars .hbar>span').forEach(s=>s.style.width=s.dataset.w+'%'),350);
+}
+function renderPlans(){
+  if(!lastPlans)return;
+  document.getElementById('plan-grid').innerHTML=(lastPlans||[]).map(p=>`
+    <div class="plan ${p.popular?'pop':''} reveal">
+      ${p.popular?`<div class="ribbon">${t('plan_hit')}</div>`:''}
+      <div class="qty">${p.qty}</div>
+      <div class="muted" style="font-weight:600;margin-bottom:14px">${t('plan_tests')}</div>
+      ${p.save?`<span class="save">${t('plan_save')} ${p.save}%</span>`:''}
+      <div class="price">${p.price.toLocaleString(t('plan_locale'))} ${t('plan_currency')}</div>
+      <div class="per">${(p.price/p.qty).toFixed(0)} ${t('plan_currency')} ${t('plan_per')}</div>
+      <a href="/login?mode=register" class="btn ${p.popular?'':'ghost'}" style="width:100%">${t('plan_buy')}</a>
+    </div>`).join('');
+  document.querySelectorAll('#plan-grid .reveal').forEach(el=>{const top=el.getBoundingClientRect().top;if(top>window.innerHeight){el.style.animationPlayState='paused';io.observe(el);}});
+}
+function applyLang(){
+  LANG=pickLang();
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(v==null)return;if(/<[a-z][\s\S]*>/i.test(v))el.innerHTML=v;else el.textContent=v;});
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});
+  document.title=t('page_title');
+  renderHeroBars();
+  renderPlans();
+  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+}
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+
+// reveal below-the-fold on scroll; above-the-fold plays immediately
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running';io.unobserve(e.target);}}));
+document.querySelectorAll('.reveal').forEach(el=>{
+  const top=el.getBoundingClientRect().top;
+  if(top>window.innerHeight){el.style.animationPlayState='paused';io.observe(el);}
+});
+applyLang();
+// pricing
+fetch('/api/plans').then(r=>r.json()).then(d=>{
+  lastPlans=d.plans||[];
+  renderPlans();
+});
+</script>
+</body></html>

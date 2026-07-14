@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR PRO AI — Zasady czytania testu „Rezalt”</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --ink:#16203A; --ink2:#3A4663; --muted:#6B768E;
+  --blue:#3D6CD1; --blue-d:#2A4FA0; --indigo:#23306A;
+  --sky:#EAF0FB; --paper:#F4F7FC; --card:#FFFFFF;
+  --coral:#E8553B; --coral-s:#FFF0EC;
+  --green:#1F9D6B; --green-s:#E9F7F0;
+  --red:#D24B4B;  --red-s:#FBEDED;
+  --amber:#C98A1E; --amber-s:#FBF3E2;
+  --line:#E4EAF4; --line2:#D7E0EF;
+  --shadow:0 1px 2px rgba(20,30,60,.04),0 8px 28px rgba(20,30,60,.06);
+  --r:16px; --r-s:11px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:14.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;background:#fff;
+  box-shadow:0 0 0 1px var(--line),0 30px 80px rgba(20,30,60,.08)}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;color:#fff;padding:46px 52px 42px;overflow:hidden;
+  background:linear-gradient(135deg,#2A4FA0,#3D6CD1 55%,#4E79DA)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.14;
+  background-image:
+    linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(120% 120% at 100% 0%,#000 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(120% 120% at 100% 0%,#000 30%,transparent 75%)}
+.hero>*{position:relative}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+.brand-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:19px;letter-spacing:.06em}
+.brand-tag{font-size:12px;opacity:.82;margin-top:1px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.85;margin-bottom:12px}
+.hero h1{font-family:'Manrope',sans-serif;font-weight:800;font-size:38px;line-height:1.14;letter-spacing:-.015em;margin:0 0 14px;max-width:640px}
+.hero .sub{font-size:15.5px;line-height:1.6;opacity:.92;max-width:620px;margin:0 0 26px}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.32);
+  background:rgba(255,255,255,.10);border-radius:999px;padding:6px 14px;font-size:12.5px}
+.chip b{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:#FF7A5C}
+
+/* ---------- CONTENT ---------- */
+.content{padding:38px 52px 14px}
+.sec{margin-bottom:38px}
+.sec-head{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}
+.sec-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#fff;
+  background:linear-gradient(135deg,var(--blue-d),var(--blue));
+  border-radius:9px;min-width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0 8px}
+.sec-head h2{font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;margin:0;letter-spacing:-.01em}
+h3{font-family:'Manrope',sans-serif;font-weight:700;font-size:15.5px;margin:22px 0 8px}
+p{margin:0 0 13px;color:var(--ink2)}
+p strong{color:var(--ink)}
+ul.q4{margin:6px 0 14px;padding-left:0;list-style:none}
+ul.q4 li{position:relative;padding:5px 0 5px 26px;color:var(--ink2)}
+ul.q4 li::before{content:"";position:absolute;left:2px;top:13px;width:12px;height:2.5px;border-radius:2px;background:var(--blue)}
+
+/* callouts */
+.callout{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:var(--r-s);
+  padding:14px 18px;margin:18px 0;background:#FBFCFE;break-inside:avoid}
+.callout .ct{font-family:'Manrope',sans-serif;font-weight:700;font-size:13.5px;margin-bottom:5px;color:var(--ink)}
+.callout p{margin:0;font-size:13.5px}
+.callout.ok{border-left-color:var(--green);background:var(--green-s)}
+.callout.warn{border-left-color:var(--amber);background:var(--amber-s)}
+.callout.risk{border-left-color:var(--red);background:var(--red-s)}
+.callout.hot{border-left-color:var(--coral);background:var(--coral-s)}
+
+/* type cards (виннер/дуэр/вэйтер) */
+.type-tag{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:999px;padding:4px 12px;margin-bottom:10px}
+.type-tag.win{background:var(--green-s);color:var(--green)}
+.type-tag.doer{background:var(--sky);color:var(--blue-d)}
+.type-tag.wait{background:var(--red-s);color:var(--red)}
+
+/* tables */
+.tw{overflow-x:auto;margin:18px 0;border-radius:var(--r-s);border:1px solid var(--line2);break-inside:avoid}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:linear-gradient(135deg,var(--indigo),var(--blue-d));color:#fff;text-align:left;padding:10px 13px;
+  font-family:'Manrope',sans-serif;font-weight:700;font-size:12.5px}
+tbody td{padding:10px 13px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+tbody tr:nth-child(even) td{background:#F8FAFE}
+tbody td b{color:var(--ink)}
+td .mono{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+
+/* dialog block */
+.dialog{border:1px solid var(--line);border-radius:var(--r-s);background:#FBFCFE;padding:14px 18px;margin:14px 0;break-inside:avoid}
+.dialog p{margin:0 0 6px;font-size:13.5px}
+.dialog p:last-child{margin:0}
+.dialog .who{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+
+/* question cards */
+.qcard{border:1px solid var(--line);border-radius:var(--r);padding:18px 20px 14px;box-shadow:var(--shadow);
+  position:relative;margin:0 0 18px;background:#fff;break-inside:avoid}
+.qcard::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--blue)}
+.qcard.key{border-color:#F4C9BE;background:linear-gradient(180deg,#FFFBFA,#fff)}
+.qcard.key::before{background:var(--coral)}
+.q-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+.q-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--blue-d);
+  background:var(--sky);border-radius:8px;padding:4px 9px;white-space:nowrap;margin-top:2px}
+.qcard.key .q-num{color:var(--coral);background:var(--coral-s)}
+.q-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:14.5px;line-height:1.45;color:var(--ink)}
+.q-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--coral);border:1px solid #F4C9BE;border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;margin-top:4px}
+.q-opts{font-size:13px;color:var(--muted);border:1px dashed var(--line2);border-radius:9px;padding:9px 13px;margin:8px 0 12px;background:#FBFCFE}
+.q-opts b{color:var(--ink2);font-weight:600}
+.q-int-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--blue-d);margin-bottom:5px}
+.qcard p{font-size:13.5px}
+.qcard p:last-child{margin-bottom:4px}
+
+/* do / don't chips */
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.dd .col{border:1px solid var(--line);border-radius:var(--r-s);padding:14px 16px;break-inside:avoid}
+.dd .col h4{font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;margin:0 0 10px;letter-spacing:.02em}
+.dd .col.good h4{color:var(--green)} .dd .col.bad h4{color:var(--red)}
+.pill{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.pill::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;margin-top:6px}
+.col.good .pill::before{background:var(--green)} .col.bad .pill::before{background:var(--red)}
+
+/* summary banner */
+.verdict{border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin:22px 0;box-shadow:var(--shadow);break-inside:avoid}
+.verdict-head{background:linear-gradient(135deg,var(--indigo),var(--blue-d));color:#fff;padding:13px 20px;
+  display:flex;align-items:center;gap:12px}
+.verdict-head .vb{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 11px}
+.verdict-head b{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px}
+.verdict-body{padding:16px 20px}
+.verdict-body p{font-size:13.5px}
+
+.footnote{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding:16px 0 26px;margin-top:8px}
+
+/* footer */
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 52px;background:var(--indigo);color:#fff}
+.foot .f-brand{display:flex;align-items:center;gap:12px}
+.foot .f-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em}
+.foot .f-slogan{font-size:12.5px;opacity:.85;text-align:right}
+
+/* print */
+@media print{
+  @page{ size:A4; margin:13mm; }
+  body{ background:#fff; }
+  .wrap{ max-width:none; box-shadow:none; }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .sec,.qcard,.callout,.verdict,.tw,.dd .col,.dialog{ break-inside:avoid; }
+  .hero{padding:34px 40px 30px}
+  .content{padding:26px 40px 8px}
+  .foot{padding:18px 40px}
+}
+
+/* responsive */
+@media (max-width:680px){
+  .hero{padding:32px 22px 28px}
+  .hero h1{font-size:28px}
+  .content{padding:26px 22px 8px}
+  .foot{padding:18px 22px;flex-direction:column;align-items:flex-start}
+  .foot .f-slogan{text-align:left}
+  .dd{grid-template-columns:1fr}
+  .q-badge{display:none}
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+
+<main class="content">
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Trzy koszyki efektywności</h2></div>
+  <p>W życiu często spotykamy ludzi, którzy — jak się wydaje — w ogóle nie potrafią wykonać żadnej pracy znakomicie. Są też tacy, którzy niby potrafią coś zrobić, ale robią to wyłącznie pod nadzorem albo po porządnym „kopniaku”. W opozycji do nich są ludzie, którzy działają maksymalnie efektywnie, samodzielnie radzą sobie z trudnościami i są naprawdę wartościowymi pracownikami.</p>
+  <p>Wieloletnia praktyka obserwacji kandydatów pokazała, że <strong>efektywność przenika całe życie człowieka</strong>. Jeśli spotykamy pracownika nastawionego na rezultaty, to w większości przypadków ma on sukcesy także w innych obszarach poza pracą — na przykład w sporcie, nauce, różnych projektach. Jeszcze jedna ciekawa obserwacja: ludzie efektywni potrafią mówić o swoich wynikach, odnotowują je i często są z nich dumni.</p>
+  <p>Wszystkich kandydatów — według ich zdolności do doprowadzania spraw do końca i dostarczania produktu stanowiska, jakiego się od nich oczekuje — możemy rozłożyć do trzech dużych koszyków z napisami: <strong>winnerzy, doerzy i waiterzy</strong>. Przyjrzyjmy się, dlaczego kandydat trafia do tego czy innego koszyka i skąd takie nazwy.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Typ</th><th>Jednym zdaniem</th><th>Udział w społeczeństwie</th></tr></thead>
+    <tbody>
+      <tr><td><b>Winner</b> [zwycięzca]</td><td>Widzi, co trzeba zrobić — i robi to sam</td><td><span class="mono">≈ 20%</span></td></tr>
+      <tr><td><b>Doer</b> [wykonawca]</td><td>Widzi i robi — gdy mu się pokaże jak</td><td><span class="mono">≈ 40%</span></td></tr>
+      <tr><td><b>Waiter</b> [czekający]</td><td>Nie widzi i nie spieszy się z działaniem</td><td><span class="mono">≈ 40%</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Winner [zwycięzca]</h2></div>
+  <span class="type-tag win">win → zwycięstwo</span>
+  <p>Nazwa pochodzi od angielskiego słowa „win”, czyli „zwycięstwo”. Winnerzy to kategoria pracowników, którzy dokładnie rozumieją, czego się od nich oczekuje, i solidnie wytwarzają swój produkt. To produktywni pracownicy posiadający cztery znakomite cechy:</p>
+  <ul class="q4">
+    <li>widzi problem lub to, co można ulepszyć;</li>
+    <li>potrafi samodzielnie znaleźć rozwiązanie;</li>
+    <li>wciela to rozwiązanie w życie;</li>
+    <li>robi to samodzielnie, bez presji z zewnątrz.</li>
+  </ul>
+  <p>Większość odnoszących sukcesy przedsiębiorców to winnerzy, ponieważ bez tych czterech cech praktycznie niemożliwe jest osiągnięcie jakichkolwiek wymiernych rezultatów.</p>
+  <p>Człowiek może być winnerem w konkretnej dziedzinie — na przykład znakomitym sprzedawcą. Jest skuteczny w sprzedaży i ma świetne wyniki. Takiego człowieka możemy nazwać <strong>winnerem-specjalistą</strong>. Jeśli jednak tego świetnego handlowca postawimy na stanowisku szefa działu sprzedaży, najprawdopodobniej stracimy dobrego sprzedawcę i zyskamy przeciętnego menedżera.</p>
+
+  <div class="callout warn">
+    <div class="ct">Zasada „Michaela Jordana”</div>
+    <p>W rekrutacji istnieje zasada nazwana imieniem Michaela Jordana. Sformułowano ją po historii słynnej drużyny Chicago Bulls. Zespół stracił trenera, a na jego miejsce wyznaczono Michaela Jordana. Oczywiście jest on genialnym koszykarzem, prawdziwym winnerem. Ale gra jest dla niego procesem tak naturalnym, że być może po prostu nie potrafi trenować innych zawodników — będąc de facto specjalistą-graczem. I jak drużyna ma wygrywać, jeśli Michael Jordan będzie siedział na ławce, zamiast biegać po parkiecie?</p>
+  </div>
+
+  <h3>Winnerzy-uniwersaliści</h3>
+  <p>Istnieje kategoria pracowników — <strong>winnerzy-uniwersaliści</strong>. To ludzie, którzy gwarantowanie ulepszają każdą dziedzinę, do której wchodzą, nie będąc w niej wcześniej ekspertami: szybko się orientują, uczą się, poznają kluczowe niuanse pracy, rozumieją, czego potrzeba, i zaczynają to solidnie wytwarzać.</p>
+  <p>Niejednokrotnie spotykaliśmy takich ludzi wśród przedsiębiorców: dokądkolwiek taki człowiek trafiał, na jakimkolwiek stanowisku pracował, zawsze widział, co należy poprawić, rozumiał rozwiązanie i potrzebne narzędzia, wcielał swoje decyzje w życie i — co najważniejsze — robił to sam, bez presji.</p>
+  <p>Tę kategorię ludzi spotkamy nie tylko wśród przedsiębiorców, lecz także wśród menedżerów, a nawet w personelu liniowym. Zazwyczaj tacy pracownicy szybko pną się po szczeblach kariery. Winnerzy-uniwersaliści są często skuteczni nie tylko w pracy, ale i w sporcie, szachach oraz innych dziedzinach ludzkiej aktywności, gdzie trzeba się połapać i zrobić.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Doer [wykonawca]</h2></div>
+  <span class="type-tag doer">do → robić</span>
+  <p>Doer to drugi typ pracownika, którego nazwa pochodzi od angielskiego słowa „do” — „robić”. Zaliczamy tu pracowników, którzy kochają swoją pracę i dziedzinę, którą się zajmują. Doerzy z zaangażowaniem i przyjemnością radzą sobie z obowiązkami służbowymi. Potrafią zrozumieć, czego się od nich wymaga, i to wytwarzać — z drobnymi wyjątkami. Posiadają <strong>trzy z czterech cech</strong>, które odkryliśmy u winnerów.</p>
+  <p>Na przykład doer może widzieć problem lub to, co należy poprawić, ale nie znaleźć sposobu, jak to zrobić. Jeśli ktoś podpowie mu rozwiązanie, zrobi to, co konieczne. Bywają też sytuacje, gdy rozumie zadanie i metodę jego rozwiązania, ale nie działa samodzielnie, prosząc przełożonego o pozwolenie lub akceptację.</p>
+  <p>W środowisku biznesowym doerów często nazywa się wykonawcami. Istnieje też popularna klasyfikacja: ludzie procesu i ludzie rezultatu. W tym ujęciu doerów zaliczymy do pierwszej grupy, a winnerów — rzecz jasna — do drugiej.</p>
+  <p>Jeśli winner i doer stoją na starcie biegu, to nastawiony na rezultat winner myśli o linii mety: jak przybiec pierwszy, jak mądrze rozłożyć siły — a czasem nawet analizuje mocne i słabe strony rywali, by wybrać właściwą strategię zwycięstwa. Doer zaś rozumie, że skoro stoi na starcie, to trzeba będzie biec.</p>
+  <div class="callout ok">
+    <div class="ct">Doerzy to ręce winnerów</div>
+    <p>Mogą osiągać dobrą produktywność i są rekomendowani do zatrudnienia wtedy, gdy nad nimi stoi menedżer-winner. Ten sojusz może dawać solidne rezultaty. Menedżer sam będzie widział rozwiązania i metody ich realizacji, wydając wykonawcom konkretne polecenia, korygując i stymulując ich pracę.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Waiter [czekający]</h2></div>
+  <span class="type-tag wait">wait → czekać</span>
+  <p>Trzecia kategoria pracowników to waiterzy, od angielskiego słowa „wait” — „czekać”. Waiterem w naszej klasyfikacji jest pracownik, który niespecjalnie garnie się do swojej pracy, nie spieszy się i wymaga stałej kontroli. Podstawowa różnica między waiterami a doerami to <strong>brak chęci</strong>. Waiterzy nie mają chęci pomagać, nie mają chęci wykonywać pracy.</p>
+  <p>W pewnym sensie waiter to słaby wykonawca, który niby umie i potrafi coś zrobić, ale gdy tylko pojawi się jakakolwiek przeszkoda w pracy, natychmiast wykorzysta okazję i przerwie jej wykonywanie.</p>
+  <p>Zazwyczaj gdy takich pracowników prosi się o choćby niewielkie wyjście poza strefę własnej odpowiedzialności — na przykład o pomoc w przesunięciu biurka albo o wspólne, pilne rozładowanie niespodziewanie przybyłej ciężarówki, bo magazynier nie przyszedł — usłyszymy niezadowolone pomruki i próby wymigania się od tej pracy przy każdej okazji i pod byle pretekstem.</p>
+  <p>Doer, nawiasem mówiąc, w tej samej sytuacji chętnie się włączy, pomoże, a nawet ucieszy się z możliwości przełączenia się na chwilę z jednej pracy na drugą.</p>
+  <p>Jeśli poprosisz o zostanie dłużej w pracy, przyjście w weekend albo czasem wcześniejsze pojawienie się w biurze, waiterzy niezawodnie zaczną opowiadać historie i dzielić się „nieodwoływalnymi” planami — byle tylko nie wziąć na siebie dodatkowej odpowiedzialności i zbędnych obowiązków.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Przykład: raport roczny i trzy księgowe</h2></div>
+  <p>Aby lepiej zrozumieć zachowanie wszystkich trzech kategorii pracowników w realnym życiu, przytoczmy przykład składania raportu rocznego przez trzy księgowe — jedna z nich to winner, druga doer, trzecia waiter.</p>
+  <p>Załóżmy, że ich produktem jest raport złożony w terminie i bez błędów, a na drodze do tego celu niespodziewanie pojawiła się przeszkoda — <strong>w biurze skończył się papier</strong>.</p>
+
+  <h3>Księgowa-winner</h3>
+  <p>Pracownica-winner widzi, że brak papieru może przeszkodzić jej w wykonaniu zadania, i błyskawicznie rozwiązuje problem. Może poprosić kogoś z zespołu, żeby skoczył do najbliższego sklepu papierniczego, a nawet da mu pieniądze z własnego portfela, uznając, że drobna kwota to nic w porównaniu z niedotrzymaniem terminu raportu. Może też po prostu pożyczyć ryzę papieru z sąsiedniego biura. Najważniejsze — dowolnym sposobem szybko uporać się z przeszkodą i wykonać zadanie.</p>
+
+  <h3>Księgowa-doer</h3>
+  <p>Księgowa-doer, będąc dobrą wykonawczynią, także aktywizuje się na widok przeszkody. Tyle że najpewniej podejdzie do przełożonego i powie:</p>
+  <div class="dialog">
+    <p><span class="who">Doer</span>— Skończył nam się papier w biurze, a ja wieczorem muszę złożyć raport. Co robić?</p>
+    <p><span class="who">Szef</span>— No to idźcie i kupcie.</p>
+  </div>
+  <p>Po uzyskaniu akceptacji księgowa-doer najczęściej zada kolejne pytania: wziąć pieniądze z kasy czy zapłacić przelewem, zamówić papier w firmie, w której zawsze kupujemy — choć przelew i dostawa mogą potrwać parę dni — czy kupić na rynku, gdzie może być odrobinę drożej. Ostatecznie przełożony, zwłaszcza jeśli sam jest winnerem, wyda jej jasne wytyczne, a najpewniej po prostu wręczy gotówkę i powie w stylu: „Kupcie już wreszcie ten papier i, co najważniejsze, złóżcie raport na czas”.</p>
+
+  <h3>Księgowa-waiter</h3>
+  <p>W przypadku księgowej-waitera, gdy skończy się papier, najprawdopodobniej po prostu wstrzyma ona składanie raportu, może otworzyć na komputerze pasjansa, a gdy przybiegnie przełożony, odbędzie się mniej więcej taki dialog:</p>
+  <div class="dialog">
+    <p><span class="who">Szef</span>— No i jak, wszystko gotowe, składamy raport?</p>
+    <p><span class="who">Waiter</span>— Nie, skończył nam się papier.</p>
+    <p><span class="who">Szef</span>— To dlaczego milczysz, nikomu o tym nie powiedziałaś?</p>
+    <p><span class="who">Waiter</span>— Bo nikt nie pytał.</p>
+    <p><span class="who">Szef</span>— To trzeba pilnie iść do sklepu i kupić.</p>
+    <p><span class="who">Waiter</span>— Przecież mamy office managera, niech on idzie. Nie po to się tu zatrudniałam, żeby latać po papier.</p>
+  </div>
+
+  <p>Sądzimy, że w trakcie lektury tego rozdziału odnaleźliście w swoim zespole i otoczeniu wszystkie trzy typy ludzi o różnym stosunku do rezultatów i pracy w ogóle. Możecie uchronić firmę przed nieefektywnymi postaciami, jeśli nauczycie się na etapie selekcji rozpoznawać waiterów — ludzi, którzy nie lubią pracy i przy każdej dogodnej okazji unikają odpowiedzialności. Przestaniecie łamać sobie głowę, dlaczego nowy menedżer wciąż pyta was o akceptację i nie potrafi samodzielnie podejmować decyzji — rozumiejąc, że to doer. I podniesiecie efektywność firmy, dokonując mądrych roszad kadrowych i stawiając na stanowiskach kierowniczych ludzi myślących kategoriami rezultatu — prawdziwych, produktywnych winnerów.</p>
+
+  <div class="callout hot">
+    <div class="ct">Proporcja 20 / 40 / 40</div>
+    <p>W społeczeństwie te trzy typy pracowników rozkładają się mniej więcej tak: winnerzy — 20 procent, doerzy — 40 procent i waiterzy — również 40 procent. Przy czym te 20 procent winnerów wytwarza <strong>80 procent wszystkich oczekiwanych rezultatów</strong> w każdej firmie i w społeczeństwie jako całości.</p>
+  </div>
+  <p>Aby móc sprawnie ustalić, do której z trzech kategorii należy kandydat, który odpowiedział na waszą ofertę pracy, stworzono krótki, lecz kluczowy dla określenia produktywności test „Rezalt”.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Opis testu „Rezalt”</h2></div>
+  <p>W arsenale HR-menedżera czy szefa istnieje mnóstwo kwestionariuszy i testów do oceny efektywności i pomiaru produktywności pracowników. Ale zdecydowanie nie wszystkie są wygodne dla kandydatów, a — co najważniejsze — uzyskanych wyników nie zawsze da się jednoznacznie zinterpretować.</p>
+  <p>W tym podręczniku dzielimy się techniką oceny produktywności człowieka, która pozwala podzielić ludzi na trzy typy i ustalić, czy nasz kandydat jest winnerem, doerem czy waiterem. Jeśli opisać te typy jednym zdaniem: <strong>winnerzy</strong> to ci, którzy widzą i robią sami; <strong>doerzy</strong> — ci, którzy widzą i robią, gdy im się pokaże; a <strong>waiterzy</strong>, najmniej pożądani w firmie, to ci, którzy nie widzą i nie spieszą się z działaniem.</p>
+  <p>Mowa więc o typowaniu kandydatów przy użyciu krótkiego testu „Rezalt”, składającego się z około 20 pytań. Wypełnienie zajmuje kandydatowi od 10 do 25 minut, co czyni test prostym w użyciu — i w HR PRO AI stosujemy go jako podstawowe narzędzie oceny produktywności i efektywności człowieka. Słowo „około” w odniesieniu do liczby pytań nie jest przypadkowe: test nie jest liniowy, lecz scenariuszowy — po każdej odpowiedzi uruchamia się ta czy inna ścieżka, w zależności od charakteru odpowiedzi.</p>
+  <p>Na przykład jest pytanie o to, czy kandydatowi stawiano plany w poprzedniej firmie. Jeśli odpowiada „tak”, otrzymuje pytanie, czy realizował postawione przed nim plany i dlaczego. Jeśli zaś mówi, że planów nie stawiano, pytanie o ich realizację nie ma sensu.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Struktura testowania</h2></div>
+  <p>W teście „Rezalt” są cztery pytania, których odpowiedzi uruchamiają różne scenariusze, przez co łączna liczba pytań w wynikach może się wahać <strong>od 17 do 26</strong>. To bardzo utrudnia stosowanie testu w wersji papierowej — choć w razie potrzeby można przenieść pytania na papier, w optymalnym wydaniu działają one na platformie HR PRO AI, z której korzystamy we wszystkich naszych działach rekrutacji; szczerze polecamy to narzędzie każdemu, kto zatrudnia ludzi.</p>
+  <p>Naszym zadaniem w procesie rekrutacji jest ustalić, który z kandydatów najlepiej poradzi sobie z proponowaną pracą i przyniesie maksymalne rezultaty — czyli w istocie <strong>przewidzieć przyszłość</strong>. Do budowy prognozy rozsądnie jest opierać się na czymś twardym, co można zweryfikować — dlatego przedmiotem badania są poprzednie miejsca pracy człowieka, a także całe jego życie.</p>
+  <p>Właśnie na ten obszar nakierowane są pytania testu, ponieważ — jak pokazuje praktyka — produktywność ludzi nie zmienia się wraz ze zmianą miejsca pracy. I jeśli jeden kandydat kiedykolwiek miał twarde rezultaty, które mierzył i o których potrafi pewnie opowiadać, a drugi ma tylko mgliste sformułowania i opowieści o tym, że tam byli nie ci szefowie, nie ta firma, nie ten produkt — „ale u was to już na pewno dam super wyniki” — to pierwszeństwo należy dać nie temu, kto pięknie opowiada, lecz temu, kto efektywnie wytwarza.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Efekt dodatkowy</h2></div>
+  <p>Zanim przejdziemy do omówienia pytań i interpretacji wyników, odnotujmy jeszcze kilka pozytywnych aspektów testu „Rezalt”.</p>
+  <p>Samo wysłanie testu już odcina pierwszą warstwę minimalnie zainteresowanych pracą kandydatów — takich, którzy najpewniej odpowiedzieli na ogłoszenie przypadkiem i nie kiwną palcem, żeby dostać tę pracę. Oni po prostu odmówią wypełnienia testu.</p>
+  <div class="callout ok">
+    <div class="ct">„Produktywni kandydaci odmówią testu” — to mit</div>
+    <p>Każdy nastawiony na rezultaty, naprawdę efektywny kandydat z przyjemnością pomoże wam wykonać waszą pracę i opowie o swoich wynikach, o swoim stosunku do pracy i powodach do dumy. Tą metodą testowania zamknięto już setki rekrutacji — i we wszystkich przypadkach kandydaci, którzy od razu szybko przechodzili ten krótki test, poświęcając 10–15 minut, w rzeczywistości okazywali się najbardziej zainteresowani, zmotywowani i — co najważniejsze — produktywni, w porównaniu z tymi, którzy wszelkimi sposobami próbowali wymigać się od testu, nalegając na rozmowę lub powołując się na CV.</p>
+  </div>
+  <p>Nawiasem mówiąc, test „Rezalt” pozwala nam de facto na nowo złożyć CV kandydata — tyle że w potrzebnym nam kontekście produktywności, z czytelnymi wskaźnikami do porównywania dużej liczby kandydatów w celu wyłonienia najsilniejszych — i oszczędza czas na szczegółowym studiowaniu życiorysów. Jednym kliknięciem na platformie HR PRO AI wysyłamy kandydatowi link natychmiast po tym, jak odpowiedział na naszą ofertę, i w 30 sekund rozumiemy, na ile ta osoba jest adekwatna i czy warto z nią dalej rozmawiać, czy można śmiało wysłać odmowę.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Pytania i interpretacja odpowiedzi</h2></div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-01</span>
+      <div class="q-title">Każdy człowiek w toku swojej pracy w firmie tworzy dla organizacji określoną wartość. Końcowy rezultat pracy pracownika nazwijmy „produktem stanowiska”. Na przykład dozorca zamiata i sprząta teren — produktem jego stanowiska jest czyste podwórze. Sekretarka obsługuje telefony przychodzące — jej „produktem” jest jak najszybciej przekierowany do właściwego pracownika telefon klienta. Właśnie za wytwarzanie takiego „produktu” firma wypłaca pracownikowi pensję i go utrzymuje. Czy zgadzasz się, że każde stanowisko w organizacji ma swój „produkt”?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „Tak, w pełni się zgadzam” · „Tak, ale nie zawsze” · „Nie, nie zgadzam się”</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Preferowaną, oczekiwaną i obiektywnie prawidłową odpowiedzią jest wariant <strong>„Tak, w pełni się zgadzam”</strong>. Nie trzeba długo tłumaczyć dlaczego: to pytanie budzi sprzeciw tylko u wiecznych polemistów, którzy w każdej sytuacji starają się forsować przeciwny punkt widzenia — nawet gdy samo sformułowanie pytania w oczywisty sposób zakłada zgodę.</p>
+    <p>Około 5–7% kandydatów wybiera odpowiedź „nie, nie zgadzam się” i, szczerze mówiąc, od razu budzą oni nasz niepokój: w 99% przypadków wszystkie ich dalsze odpowiedzi są przesiąknięte duchem niezgody i oporu. Pomyślcie o przyszłej pracy z człowiekiem, który nie zgadza się z tak oczywistym i obiektywnie prawidłowym sformułowaniem. Jest też grupa kandydatów wybierających „Tak, ale nie zawsze”, którzy potem w przeważającej większości zaczynają tłumaczyć, że pracownik ma po prostu wykonywać swoje obowiązki i że istnieje praca, której rezultatów nie da się zmierzyć i nie ma sensu tego robić.</p>
+    <p>Przypomnijmy: naszym głównym zadaniem jest wybrać spośród wielu kandydatów tych, którzy z największym prawdopodobieństwem szybko wdrożą się w pracę i z najmniejszym tarciem zaczną dostarczać produkt stanowiska, jakiego od nich oczekujemy. Dlatego praktycznie zawsze preferujemy kandydatów, którzy zrozumieli myśl i odpowiedzieli „Tak, w pełni się zgadzam”. W pracy i w życiu okazują się oni najbardziej adekwatni i nastawieni na rezultaty.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-02</span>
+      <div class="q-title">Proszę uzasadnić swoją poprzednią odpowiedź.</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — osoba dzieli się przemyśleniami, dlaczego wcześniej wybrała ten czy inny wariant.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Z zainteresowaniem — choć zwykle tylko pobieżnie — przeglądamy, jak kandydat uzasadnia wcześniej wybrany wariant. Najczęściej znajdujemy w odpowiedzi logiczne, zrozumiałe myśli tłumaczące wybór. Ktoś odpowiada krótko i na temat, ktoś inny pisze pół strony i rozpływa się w wyjaśnieniach. Można pewnie wyciągnąć wnioski co do formy podawania informacji przez kandydata, ale nie to pytanie jest w teście kluczowe — więc po prostu spójrzcie i jeśli odpowiedź mieści się w kategorii adekwatnych, idźcie dalej. Czasem jednak traficie na odpowiedź, która przykuje wzrok i może wywołać napięcie oraz wątpliwości co do sprawności umysłowej kandydata. Proponujemy nie wyciągać jeszcze pochopnych wniosków — ale wziąć to na notatkę.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-03</span>
+      <div class="q-title">Jakie stanowisko zajmowałeś/aś w ostatnim miejscu pracy?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — kandydat wskazuje, kim pracował ostatnio i o jakim stanowisku będzie mowa w teście.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Wiedza o tym, kim pracował kandydat, będzie nam potrzebna do analizy produktu stanowiska, który wskaże on w kolejnych pytaniach. Otrzymawszy tę odpowiedź, powinniśmy zadać sobie pytanie: gdyby w naszej firmie pracował człowiek na tym stanowisku, jakich rezultatów byśmy od niego oczekiwali i co powinien on, jako pracownik, wytwarzać, abyśmy mogli z przekonaniem powiedzieć, że dobrze radzi sobie ze swoją pracą.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-04</span>
+      <div class="q-title">Jak długo pracowałeś/aś na tym stanowisku?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — kandydat podaje, jak długo pracował w miejscu, o którym mowa.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>To pytanie informacyjne, które po prostu pokazuje staż naszego kandydata na stanowisku, o którym będzie opowiadał.</p>
+  </div>
+
+  <div class="qcard key">
+    <div class="q-top"><span class="q-num">P-05</span>
+      <div class="q-title">Jak opisałbyś/opisałabyś swój produkt w swoim miejscu pracy?</div>
+      <span class="q-badge">pytanie kluczowe</span>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „mój produkt to…” · „trudno mi opisać swój produkt, dokładniej mogę opisać swoje obowiązki” · „w tej pracy praktycznie nie da się powiedzieć, jaki tu jest produkt”. Przy każdym wariancie jest pole na komentarz (przy pierwszym — na opis produktu).</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>To jedno z najważniejszych, kluczowych pytań testu — poświęcamy mu szczególną uwagę. Preferowani do dalszej analizy są ci, którzy wybrali wariant <strong>„mój produkt to”</strong> i wskazali rzeczywiście realny produkt stanowiska — taki, który wy, będąc ich przełożonymi, z przyjemnością wynagrodzilibyście dobrą pensją. Ludzi, którzy wybrali ten wariant i jasno, poprawnie nazwali swój produkt stanowiska, możemy na tym etapie warunkowo zaliczyć do winnerów.</p>
+    <p>Tych, którzy wybrali drugi wariant i którym trudno mówić o produkcie, ale z przyjemnością opowiadają o obowiązkach, klasyfikujemy jako doerów. A tych, którzy wybierają trzeci wariant i z trudem rozumieją, o co chodzi, nie mogąc nawet pojąć, czego się od nich w tej pracy chce, z całym przekonaniem zaliczamy do waiterów. Tych ostatnich nie polecamy zapraszać na rozmowę — wszystkim kandydatom, którzy wybrali ten wariant, wysyłamy odmowę. Ich poziom świadomości i rozumienia tego, co się dzieje, nie pozwala powierzyć im jakiejkolwiek pracy, więc proponujemy im poszukać zatrudnienia w innej firmie.</p>
+    <p>Zdarza się wariant, gdy osoba wybrała pierwszą odpowiedź, chcąc wskazać swój produkt, ale zamiast niego opisała swoje obowiązki lub procesy, wydając je za rezultaty. Takich ludzi zaliczamy do doerów i w praktyce będziemy szukać w całej puli kandydatów tych, którzy maksymalnie rozumieją, czego dokładnie oczekuje od nich pracodawca. Na tym pytaniu dobrze odsiewa się część kandydatów — pod warunkiem, że wiemy, kogo szukamy do tej pracy: wyłącznie winnerów, czy w zasadzie dobrzy wykonawcy-doerzy też się nadadzą, bo na pewno będzie nad nimi stał silny menedżer.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-06</span>
+      <div class="q-title">Czy ty — lub ktoś inny — mierzysz ilość wytworzonego przez ciebie „produktu”?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „tak” · „nie”. Pytanie pojawia się, jeśli w poprzednim pytaniu wybrano wariant „mój produkt to”. Jeśli osoba wybrała trzeci wariant i stwierdziła, że trudno jej rozprawiać o produkcie, tego pytania nie zobaczy. Jeśli wcześniej wybrała drugi wariant (potrafi mówić o obowiązkach), to zamiast tego pytania zostanie poproszona po prostu o wypisanie podstawowych funkcji, które pełni w swojej pracy.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Preferowaną odpowiedzią jest <strong>„tak”</strong>, ponieważ nastawieni na rezultaty kandydaci zawsze w tej czy innej mierze mierzą swoją produkcję i potrafią mówić o wynikach.</p>
+    <p>Jeśli kandydat wybiera „nie”, po prostu przegrywa z bardziej produktywnymi kandydatami, którzy w kolejnych pytaniach opowiedzą nam o rezultatach — i praktycznie zawsze otrzymuje odmowę, chyba że szukamy właśnie doera, któremu trudno mówić o tym, ile wytwarza. Choć praktyka pokazuje, że efektywni doerzy i tak mierzą liczbę działań, telefonów i pism, które wykonują.</p>
+    <p>Skoro naszym głównym zadaniem jest wybrać na podstawie wyników testu najbardziej efektywnych spośród wielu kandydatów, dajemy pierwszeństwo tym, którzy mierzą, a odmawiamy tym, którzy nie potrafią lub celowo nie chcą mówić o swoich rezultatach.</p>
+  </div>
+
+  <div class="qcard key">
+    <div class="q-top"><span class="q-num">P-07</span>
+      <div class="q-title">Opisz poniżej rezultaty swojej działalności na tym stanowisku — czyli ile produktu wytwarzałeś/aś w określonym czasie.</div>
+      <span class="q-badge">pytanie kluczowe</span>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „moje dokładne rezultaty…” · „trudno mi je opisać dokładnie, mogę tylko w przybliżeniu” · „w tej pracy praktycznie nie da się zmierzyć rezultatów i oto dlaczego”. Wybierając pierwszy wariant, kandydaci opisują dokładne rezultaty w polu swobodnej odpowiedzi; analogiczne pola na komentarz są przy drugim i trzecim wariancie.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Jedno z kluczowych pytań testu, w którym efektywni kandydaci pokazują swoje wskaźniki produktywności. Preferowaną odpowiedzią jest pierwsza — „moje dokładne rezultaty…”. Najbardziej efektywni kandydaci dzielą się liczbami, osiągnięciami, zmianami, ilościami — i często odpowiedź na to pytanie dobrze buduje realny obraz możliwości i skali kandydata. Właśnie na tym pytaniu wyłaniają się faworyci, którzy bez zbędnego lania wody, jasno i precyzyjnie opisują swoje wskaźniki produktywności, demonstrując maksymalną adekwatność i wysoką „rozdzielczość” w swojej dziedzinie. <strong>Winnerzy wyraźnie pokazują się w tym pytaniu, wybierając pierwszą odpowiedź i opisując rezultaty.</strong></p>
+    <p>Bywają kandydaci, którzy wybierają pierwszy wariant, ale w samej odpowiedzi, zamiast dokładnych danych, sypią rozwlekłymi frazesami bez liczb i wskaźników. Dosłownie czuć, że ktoś próbuje zamydlić oczy i wydać brak rezultatu za rezultat. Wybieramy tych, którzy są maksymalnie precyzyjni i adekwatni.</p>
+    <p>Ci, którzy wybierają drugi wariant i nie potrafią dokładnie opisać swoich rezultatów, ale podają pewne przybliżone punkty odniesienia do analizy, są dla nas mniej preferowani — mogą jednak być niezłymi wykonawcami, więc jeśli szukacie doerów, nie skreślajcie ich.</p>
+    <p>Ostatni wariant odpowiedzi jest ewidentnie dla tych, którzy słabo orientują się w tym, czym się zajmują — i widać brak chęci, by to ogarnąć, liczyć i mierzyć swoją produktywność. Wyraźny znak waiterów. Takim proponujemy bez wahania wysłać odmowę — z pewnością macie godniejszych kandydatów wśród tych, którzy wybrali pierwszy wariant.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-08</span>
+      <div class="q-title">Czy możesz jakoś porównać rezultaty osiągane przez ciebie w pracy z rezultatami innych osób zajmujących analogiczne stanowisko w twojej organizacji lub poza nią?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi (6):</b> „moje rezultaty są znacząco wyższe niż osób na analogicznych stanowiskach” · „moje rezultaty są wyższe niż osób na analogicznych stanowiskach” · „moje rezultaty są nieco wyższe niż osób na analogicznych stanowiskach” · „moje rezultaty są mniej więcej takie same jak innych” · „moje rezultaty są niższe niż innych” · „trudno mi porównywać rezultaty”. Na końcu kandydat jest proszony o skomentowanie odpowiedzi.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Preferowane są pierwsze trzy warianty, w których kandydat porównuje swoje rezultaty z innymi i ocenia je — znacząco lub nieznacznie — wyżej niż u osób na analogicznych stanowiskach. Ważny jest dla nas sam fakt, że człowiek ocenia swoją produktywność, porównuje ją z innymi i dostrzega swoją przewagę. To pytanie wskaźnikowe, które po prostu pokazuje, na ile człowiek wygląda poza obręb własnej pracy i ocenia swoją pozycję wśród innych ludzi. Zazwyczaj pracownicy nastawieni na rezultaty odpowiadają pierwszymi trzema wariantami; waiterzy zaś albo w ogóle nie porównują się z innymi, bo nie mają na to ochoty, albo wykonują swoją pracę na niezbędnym minimum — i operują trzema ostatnimi odpowiedziami.</p>
+    <p>Tak czy inaczej, odpowiedź na to pytanie pozwala uzupełnić obraz oceny i zwiększyć trafność wyłaniania najsilniejszych z całego strumienia kandydatów.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-09</span>
+      <div class="q-title">Jak zmieniał się z czasem zakres twojej odpowiedzialności — od momentu przyjścia do firmy do chwili obecnej?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „rósł” · „pozostawał bez zmian” · „malał”. Po wyborze wariantu kandydat jest proszony o komentarz w specjalnym polu.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Podobnie jak w poprzednich pytaniach preferowaną odpowiedzią jest pierwsza — „rósł” — którą wybierają ludzie niebojący się brać odpowiedzialności za nowe obszary. Jeśli natomiast zakres odpowiedzialności pracownika po przyjściu do firmy maleje, najpewniej oznacza to, że przełożony niezbyt ufał naszemu kandydatowi — albo że on sam niespecjalnie chce brać na siebie odpowiedzialność, co jest wskaźnikiem waiterów, czyli tych, których wolimy nie zatrudniać w naszych firmach.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-10</span>
+      <div class="q-title">Jak zmieniała się z czasem ilość wykonywanej przez ciebie pracy — od momentu przyjścia do firmy do chwili obecnej?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „rosła” · „pozostawała bez zmian” · „malała”. Po wyborze wariantu kandydat jest proszony o komentarz w specjalnym polu.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Preferowaną odpowiedzią jest pierwsza — „rosła” — ponieważ z obiektywnych przyczyn efektywny i chcący się rozwijać pracownik z czasem zaczyna wykonywać więcej pracy i radzić sobie z większą liczbą obowiązków niż na samym początku swojego życia w firmie. Jeśli zaś od momentu przyjścia do firmy zakres zadań pracownika się nie zmienia, a nawet maleje, najpewniej oznacza to, że albo nie powierza mu się nowych zadań, albo on sam nie ma ochoty ich brać. Produktywni pracownicy wybierają pierwszy wariant — mogą to być zarówno winnerzy, jak i dobrzy wykonawcy, których nazywamy doerami; ci zaś, którym nie chce się pracować — nazywamy ich waiterami — wybierają wariant drugi i trzeci.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-11</span>
+      <div class="q-title">Czy w swojej pracy działasz na podstawie postawionych przed tobą planów?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „tak” · „nie”.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Wprowadzające pytanie doprecyzowujące w krótkim scenariuszu — dla ustalenia, czy pracownikowi stawiano plany.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-12</span>
+      <div class="q-title">Czy rezultaty twojej działalności w tej pracy są powyżej planu?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „powyżej” · „poniżej”. Po wyborze odpowiedzi kandydat ma obowiązek skomentować ją w specjalnym polu. Pytanie wyświetla się, jeśli w poprzednim pytaniu kandydat wybrał wariant „tak”.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Na to pytanie nie ma preferowanego wariantu odpowiedzi, ponieważ możliwe są zarówno sytuacje, gdy firmy rzeczywiście stawiają nieuzasadnienie wysokie plany, które naprawdę bardzo trudno wykonać, jak i takie, gdy plany są bardzo niskie i bez problemu realizują je wszyscy pracownicy. To pytanie tworzy dla nas pole do dialogu na rozmowie kwalifikacyjnej i pokazuje obiektywizm oraz stosunek kandydata do stawianych mu planów.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-13</span>
+      <div class="q-title">Komu bezpośrednio podlegałeś/aś w tym miejscu pracy? Podaj imię, nazwisko i stanowisko tej osoby.</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — pracownik wpisuje swojego bezpośredniego przełożonego.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Obecność w odpowiedzi imienia i nazwiska bezpośredniego przełożonego świadczy o tym, że pracownik nie ukrywa kontaktów i jest potencjalnie gotowy na to, że dane podane w teście zostaną zweryfikowane. W niektórych przypadkach zobaczycie odpowiedzi, że przełożonego nie można wskazać, że to informacja poufna albo że miał kilku przełożonych. Dla nas to sygnał, by uważniej podejść do weryfikacji informacji, które pracownik podał w bloku z rezultatami pracy.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-14</span>
+      <div class="q-title">Co jest dla ciebie motywacją do wykonywania pracy?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — kandydat wskazuje swoje motywy.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>To pytanie nie ma jednoznacznej wykładni, ponieważ wszystkie odpowiedzi są prawidłowe. Możemy zauważyć, że część osób wpisuje tu odpowiedź „pieniądze” — i jeśli macie kilku produktywnych kandydatów, to ci, którzy oprócz pieniędzy wskazali także inne motywy pracy, na przykład chęć rozwoju czy czerpanie satysfakcji z tego, co zrobili, okazują się w naszej praktyce ludźmi stabilniejszymi w pracy niż ci, którzy robią coś wyłącznie dla pieniędzy. Wybierając spośród równych, dawajcie pierwszeństwo tym, którzy piszą nie tylko o pieniądzach.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-15</span>
+      <div class="q-title">Jaki czynnik jest dla ciebie najważniejszy, by czuć się szczęśliwym w pracy?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — kandydat dzieli się przemyśleniami.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>W tym pytaniu również nie ma odpowiedzi dobrych ani złych. Otrzymana odpowiedź zawiera czynniki, które kandydat uważa za ważne, by czuć się szczęśliwym w pracy — i możecie wykorzystać tę informację jako motywator w sytuacjach, gdy efektywny kandydat się waha albo ma oferty od innych firm. Są ludzie, dla których i tu liczą się tylko pieniądze: to nie jest złe, ale zwróćcie na to uwagę.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-16</span>
+      <div class="q-title">Jaką korzyść przynosisz pracodawcy, a jaką korzyść pracodawca przynosi tobie?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — kandydat dzieli się przemyśleniami.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>To pytanie o wymianę: nasz kandydat pisze, co jego zdaniem wnosi do firmy, a co firma powinna dać mu w zamian. Tu także nie ma preferowanych odpowiedzi, ale na pewno pojawią się takie, które współgrają z wartościami waszej firmy i waszymi wartościami życiowymi — oraz odpowiedzi w duchu „ja przynoszę pieniądze, mnie dają pieniądze”. To i dwa poprzednie pytania pomagają nam zbudować szerszy obraz wartości, motywów i poglądów naszego kandydata.</p>
+  </div>
+
+  <div class="qcard key">
+    <div class="q-top"><span class="q-num">P-17</span>
+      <div class="q-title">Podaj przykłady czegoś zrobionego lub stworzonego przez ciebie, z czego jesteś dumny/a i zadowolony/a. Mogą to być uzyskane rezultaty i osiągnięcia, stworzone projekty lub rzeczy. Pytanie dotyczy nie tylko pracy, ale i życia, sportu, nauki, rodziny.</div>
+      <span class="q-badge">pytanie kluczowe</span>
+    </div>
+    <div class="q-opts"><b>Format:</b> pole otwarte — kandydat dzieli się swoimi osiągnięciami i powodami do dumy.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>To ostatnie merytoryczne pytanie testu — i zawsze poświęcamy mu szczególną uwagę, bo część kandydatów odsłania się tu z nieoczywistej strony: czym wasz przyszły pracownik pasjonuje się w życiu, czy ma sukcesy w sporcie, nauce i co jest jego powodem do dumy. Skoro — jak pamiętamy — efektywność przenika całe życie człowieka, w odpowiedzi na to pytanie możemy rozpoznać produktywnych kandydatów oraz tych, którzy przez całe życie „wyremontowali kuchnię” albo „posadzili fikusa w doniczce”. Znakomite pytanie do zrozumienia wielowymiarowości i skali człowieka, którego planujecie zatrudnić.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">P-18</span>
+      <div class="q-title">Czy jest jeszcze jakieś miejsce pracy, o którym chcesz opowiedzieć w trakcie tego testu?</div>
+    </div>
+    <div class="q-opts"><b>Warianty odpowiedzi:</b> „tak” · „nie”.</div>
+    <div class="q-int-label">Interpretacja odpowiedzi</div>
+    <p>Jeśli kandydat wybiera „tak”, otrzymuje możliwość podzielenia się rezultatami, produktem i planami z jeszcze jednego miejsca pracy, o którym uważa za ważne nam opowiedzieć — być może z tego, gdzie był najbardziej produktywny. W takim przypadku do testu dochodzi jeszcze 7–8 pytań dotyczących tego stanowiska. Jeśli badany wybiera „nie”, system po prostu przechodzi do następnego kroku.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Podsumowanie</h2></div>
+  <p>Ostatecznym celem interpretacji wyników testu „Rezalt” jest wyrobienie sobie stosunku do kandydata pod kątem jego skuteczności na tle innych osób ubiegających się o to stanowisko. Po przejrzeniu testu z dużym prawdopodobieństwem zrozumiecie, czy dalszy dialog z człowiekiem, który udzielił takich odpowiedzi, jest dla was interesujący, czy będzie to strata czasu. Możecie też na podstawie charakteru odpowiedzi określić, do którego z trzech typów pracowników należy nasz kandydat: czy jest winnerem, doerem czy waiterem.</p>
+
+  <div class="callout hot">
+    <div class="ct">Pytania kontrolne testu</div>
+    <p>Ważnymi pytaniami kontrolnymi są <strong>nr 5</strong> — o sformułowanie produktu, <strong>nr 7</strong> — o dokładne rezultaty, i <strong>nr 17</strong> — o powody do dumy. Zwróćcie na nie szczególną uwagę. Wszystkie pozostałe pytania są nie mniej ważne dla zrozumienia modelu zachowania człowieka w poprzednim miejscu pracy i jego wartości. Przecież naszym zadaniem jest de facto przewidzieć przyszłość — czyli zbudować prognozę na podstawie danych, które otrzymaliście od kandydata.</p>
+  </div>
+
+  <p>Uzupełniając swój system rekrutacji tak prostym narzędziem jak test „Rezalt”, będziecie mogli podejmować decyzje znacznie trafniej niż, na przykład, opierając się na zwykłym CV kandydata. Zyskujecie mnóstwo danych i wskaźników do porównywania kandydatów — a to najważniejsze, by w strumieniu zgłoszeń wyłowić najlepszych i zatrudnić właśnie ich.</p>
+  <p>Można oczywiście dzwonić do kandydata i proponować mu odpowiedzi na te pytania przez telefon, ale znacznie rozsądniej i efektywniej pod względem czasu jest skorzystać z gotowego rozwiązania na platformie <strong>HR PRO AI</strong>. Test „Rezalt” możecie stosować także do oceny tych, którzy już pracują w waszej firmie. Zdziwicie się, gdy dowiecie się, co jest ważne dla waszych pracowników, by czuli się szczęśliwi w pracy, i jaki produkt uważają za końcowy rezultat swojej pracy. W wielu przypadkach będzie to zupełnie nie ten produkt, którego od nich oczekujecie — a w rezultacie zyskujecie cenną informację do korekty stylu pracy obecnych członków zespołu albo do decyzji zarządczych o tym, z kim trzeba się rozstać.</p>
+
+  <h3>Czy test da się oszukać?</h3>
+  <p>Istnieje pogląd, że każdy system i każde testowanie da się oszukać. I rzeczywiście — inteligentny pracownik może udzielać odpowiedzi społecznie pożądanych i oczekiwanych. Ważne są tu dwie rzeczy. Po pierwsze: jeśli ktoś to zrobi, to jest co najmniej myślącą, adekwatną osobą — zrozumiał ideę i dał wam to, czego chcecie, w odróżnieniu od strumienia innych kandydatów.</p>
+  <p>Taka bystrość sama w sobie bywa w pracy dość istotna. Po drugie: ten test dotyczy między innymi twardych rezultatów, które zawsze możemy zweryfikować kilkoma telefonami do poprzednich miejsc pracy albo drążącymi pytaniami o to, jak powstawały wskaźniki — jak je osiągał, z czego się składały. Jeśli człowiek gdzieś minął się z prawdą, łatwo to wychwycić.</p>
+  <p>Pytanie o produkt stanowiska jest też, między innymi, testem logiki: człowiek musi przeprowadzić analogię z podanymi przykładami i sformułować odpowiedź w podobnym formacie — co dla wielu kandydatów jest już zadaniem nie do przejścia; piszą byle co, od razu ustępując pola bardziej adekwatnym, myślącym ludziom — a to właśnie takich zazwyczaj chcemy widzieć w swojej firmie.</p>
+
+  <div class="verdict">
+    <div class="verdict-head"><span class="vb">Wniosek</span><b>„Rezalt” to filtr na wejściu do waszej firmy</b></div>
+    <div class="verdict-body">
+      <p>Mając klucze, które omówiliśmy w tym podręczniku, będziecie mogli otworzyć drzwi najbardziej produktywnym profesjonalistom na rynku.</p>
+      <div class="dd" style="margin-bottom:4px">
+        <div class="col good">
+          <h4>✓ Robić</h4>
+          <div class="pill">Wysyłać test od razu po aplikacji — jednym kliknięciem na platformie HR PRO AI</div>
+          <div class="pill">Szczególnie uważnie czytać pytania nr 5, nr 7 i nr 17</div>
+          <div class="pill">Preferować tych, którzy mierzą i podają dokładne liczby</div>
+          <div class="pill">Weryfikować twarde rezultaty telefonami i pytaniami doprecyzowującymi</div>
+        </div>
+        <div class="col bad">
+          <h4>× Nie robić</h4>
+          <div class="pill">Nie zapraszać na rozmowę tych, którzy „nie widzą, jaki tu jest produkt”</div>
+          <div class="pill">Nie wierzyć pięknym opowieściom bez liczb i wskaźników</div>
+          <div class="pill">Nie awansować winnera-specjalisty na stanowisko kierownicze „z automatu”</div>
+          <div class="pill">Nie tracić czasu na tych, którzy wymigują się od testu</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">Dokument przygotowany według metodyki HR&nbsp;PRO&nbsp;AI. Wyniki testu „Rezalt” stanowią podstawę analizy i decyzji rekrutera, a nie automatyczny werdykt. Metodykę stosuje się łącznie z rozmowami kwalifikacyjnymi i weryfikacją referencji.</div>
+</section>
+
+</main>
+
+
+
+</div>
+</body>
+</html>

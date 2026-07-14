@@ -1,0 +1,802 @@
+[
+  {
+    "id": 1,
+    "text": "Czy wypowiadasz nieprzemyślane uwagi lub oskarżenia, których później żałujesz?"
+  },
+  {
+    "id": 2,
+    "text": "Czy zachowujesz spokój wtedy, gdy inni zaczynają tracić cierpliwość?"
+  },
+  {
+    "id": 3,
+    "text": "Czy przeglądasz rozkłady jazdy pociągów, książki telefoniczne lub słowniki dla przyjemności?"
+  },
+  {
+    "id": 4,
+    "text": "Jeśli poproszono by Cię o podjęcie jakiejś decyzji, czy Twoja sympatia lub antypatia wobec osoby, której ona dotyczy, mogłaby na Ciebie wpłynąć?"
+  },
+  {
+    "id": 5,
+    "text": "Czy zamierzasz mieć dwoje dzieci (lub mniej), nawet jeśli Twój stan zdrowia i poziom dochodów pozwalają na posiadanie większej liczby dzieci?"
+  },
+  {
+    "id": 6,
+    "text": "Czy od czasu do czasu masz skurcze mięśni, nawet gdy nie ma na to żadnego logicznego wyjaśnienia?"
+  },
+  {
+    "id": 7,
+    "text": "Czy wolisz znajdować się w sytuacji, w której nie musisz odpowiadać za podejmowanie decyzji?"
+  },
+  {
+    "id": 8,
+    "text": "Czy inni ludzie uważają Twoje zachowanie za nieprzewidywalne?"
+  },
+  {
+    "id": 9,
+    "text": "Czy uważasz, że na opiekę społeczną powinno się przeznaczać więcej pieniędzy?"
+  },
+  {
+    "id": 10,
+    "text": "Czy inni ludzie bardzo Cię interesują?"
+  },
+  {
+    "id": 11,
+    "text": "Czy Twój głos jest raczej monotonny niż zróżnicowany?"
+  },
+  {
+    "id": 12,
+    "text": "Czy zazwyczaj czekasz, aż druga osoba rozpocznie rozmowę?"
+  },
+  {
+    "id": 13,
+    "text": "Czy chętnie włączasz się do rozmów innych ludzi?"
+  },
+  {
+    "id": 14,
+    "text": "Czy myśl o zadaniu bólu zwierzynie (ptakom), małym zwierzętom lub rybom przeszkodziłaby Ci w polowaniu lub łowieniu ryb?"
+  },
+  {
+    "id": 15,
+    "text": "Czy często zachowujesz się impulsywnie?"
+  },
+  {
+    "id": 16,
+    "text": "Czy mówisz powoli?"
+  },
+  {
+    "id": 17,
+    "text": "Czy niepokoi Cię konieczność dbania o zdrowie?"
+  },
+  {
+    "id": 18,
+    "text": "Czy jakieś nieoczekiwane zdarzenie powoduje u Ciebie napięcie mięśni?"
+  },
+  {
+    "id": 19,
+    "text": "Czy zazwyczaj jesteś taktowny w swoich wymaganiach wobec podwładnych, krewnych czy uczniów?"
+  },
+  {
+    "id": 20,
+    "text": "Czy uważasz, że potrafisz wydać wartościowy „osąd na poczekaniu”?"
+  },
+  {
+    "id": 21,
+    "text": "Czy dawne niepowodzenia wciąż Cię niepokoją?"
+  },
+  {
+    "id": 22,
+    "text": "Czy zdarzają Ci się okresy wzmożonej aktywności trwające kilka dni z rzędu?"
+  },
+  {
+    "id": 23,
+    "text": "Czy oburzają Cię próby innych ludzi, by mówić Ci, co masz robić?"
+  },
+  {
+    "id": 24,
+    "text": "Czy zazwyczaj trudno Ci się szczerze do czegoś przyznać i wziąć winę na siebie?"
+  },
+  {
+    "id": 25,
+    "text": "Czy masz raczej niewielkie grono bliskich przyjaciół niż dużą liczbę znajomych, z którymi możesz po prostu pogawędzić?"
+  },
+  {
+    "id": 26,
+    "text": "Czy Twoje życie to nieustanna walka o przetrwanie?"
+  },
+  {
+    "id": 27,
+    "text": "Czy często nucisz lub pogwizdujesz?"
+  },
+  {
+    "id": 28,
+    "text": "Czy Twoi przyjaciele uważają Cię za osobę serdeczną i wrażliwą?"
+  },
+  {
+    "id": 29,
+    "text": "Czy wolisz wydawać polecenia, niż je wykonywać?"
+  },
+  {
+    "id": 30,
+    "text": "Czy sprawia Ci przyjemność opowiadanie najświeższych plotek o swoich znajomych?"
+  },
+  {
+    "id": 31,
+    "text": "Czy zgodziłbyś się na „surową dyscyplinę”?"
+  },
+  {
+    "id": 32,
+    "text": "Czy myśl o rozpoczęciu jakiegoś nowego przedsięwzięcia mocno Cię niepokoi?"
+  },
+  {
+    "id": 33,
+    "text": "Czy starasz się rozśmieszać innych ludzi i wywoływać u nich uśmiech?"
+  },
+  {
+    "id": 34,
+    "text": "Czy łatwo Ci wyrażać swoje emocje?"
+  },
+  {
+    "id": 35,
+    "text": "Czy powstrzymujesz się od wyrażania niezadowolenia, gdy ktoś spóźni się na spotkanie?"
+  },
+  {
+    "id": 36,
+    "text": "Czy czasami uważa się Cię za osobę, która psuje innym nastrój?"
+  },
+  {
+    "id": 37,
+    "text": "Czy uważasz, że są ludzie wyraźnie nieprzyjaźnie do Ciebie nastawieni, którzy „kopią pod Tobą dołki”?"
+  },
+  {
+    "id": 38,
+    "text": "Czy potrafisz przyznać się do błędu tylko po to, by „zachować spokój”?"
+  },
+  {
+    "id": 39,
+    "text": "Czy to prawda, że jest tylko kilka osób, które naprawdę kochasz?"
+  },
+  {
+    "id": 40,
+    "text": "Czy to prawda, że rzadko bywasz szczęśliwy, jeśli nie ma ku temu szczególnego powodu?"
+  },
+  {
+    "id": 41,
+    "text": "Czy będąc w towarzystwie, aktywnie rozmawiasz z przyjaciółmi?"
+  },
+  {
+    "id": 42,
+    "text": "Czy podejmujesz rozsądne środki ostrożności, aby uniknąć wypadków?"
+  },
+  {
+    "id": 43,
+    "text": "Czy denerwujesz się na myśl o wystąpieniu przed publicznością?"
+  },
+  {
+    "id": 44,
+    "text": "Gdybyś zobaczył w sklepie towar, na którym wyraźnie przez pomyłkę podano niższą cenę, czy próbowałbyś kupić go w tej cenie?"
+  },
+  {
+    "id": 45,
+    "text": "Czy często masz wrażenie, że ludzie patrzą na Ciebie lub mówią o Tobie za Twoimi plecami?"
+  },
+  {
+    "id": 46,
+    "text": "Czy to prawda, że ciągle pakujesz się w kłopoty?"
+  },
+  {
+    "id": 47,
+    "text": "Czy jest coś, czego szczególnie się boisz lub nie lubisz?"
+  },
+  {
+    "id": 48,
+    "text": "Czy to prawda, że wolisz być widzem niż uczestnikiem zawodów?"
+  },
+  {
+    "id": 49,
+    "text": "Czy łatwo Ci podejść bez uprzedzeń do tego, co się wydarzyło?"
+  },
+  {
+    "id": 50,
+    "text": "Czy masz jasne, ustalone zasady uprzejmego zachowania wobec członków swojej rodziny?"
+  },
+  {
+    "id": 51,
+    "text": "Czy potrafisz być „duszą towarzystwa” na przyjęciach?"
+  },
+  {
+    "id": 52,
+    "text": "Czy „kupowałbyś rzeczy na kredyt” z nadzieją, że uda Ci się znaleźć środki na jego spłatę?"
+  },
+  {
+    "id": 53,
+    "text": "Czy reagujesz dopiero po tym, jak wydarzy się coś nieoczekiwanego, na przykład wypadek lub inne nieprzyjemne zdarzenie?"
+  },
+  {
+    "id": 54,
+    "text": "Czy to prawda, że bardziej liczysz się z interesami grupy niż z własnymi interesami?"
+  },
+  {
+    "id": 55,
+    "text": "Gdy słuchasz prelegenta, czy czasem masz wrażenie, że zwraca się on wyłącznie do Ciebie?"
+  },
+  {
+    "id": 56,
+    "text": "Czy postronne hałasy rzadko przeszkadzają Ci się skupić?"
+  },
+  {
+    "id": 57,
+    "text": "Czy zawsze jesteś „na bieżąco” z tym, co dzieje się każdego dnia?"
+  },
+  {
+    "id": 58,
+    "text": "Czy potrafisz pewnie zaplanować coś i pracować nad realizacją tego z sześciomiesięcznym wyprzedzeniem?"
+  },
+  {
+    "id": 59,
+    "text": "Czy uważasz, że współczesny system „więzienia bez krat” jest skazany na porażkę?"
+  },
+  {
+    "id": 60,
+    "text": "Czy masz skłonność do bycia beztroskim i niemartwienia się o nic?"
+  },
+  {
+    "id": 61,
+    "text": "Czy zdarza Ci się mieć wrażenie, że wszystko Ci się śni, gdy wszystko w życiu wydaje się nierealne?"
+  },
+  {
+    "id": 62,
+    "text": "Czy szybko dochodzisz do siebie po złych wiadomościach?"
+  },
+  {
+    "id": 63,
+    "text": "Gdy kogoś krytykujesz, czy jednocześnie starasz się go podnieść na duchu?"
+  },
+  {
+    "id": 64,
+    "text": "Czy zazwyczaj uważa się Cię za osobę chłodną?"
+  },
+  {
+    "id": 65,
+    "text": "Czy uważasz, że Twoje opinie nie są na tyle ważne, by przekazywać je innym ludziom?"
+  },
+  {
+    "id": 66,
+    "text": "Czy jesteś tak pewny siebie, że czasem irytuje to innych?"
+  },
+  {
+    "id": 67,
+    "text": "Czy „masz na oku” rzeczy, które pożyczyłeś swoim przyjaciołom?"
+  },
+  {
+    "id": 68,
+    "text": "Czy sprawia Ci przyjemność zajęcie wybrane samodzielnie?"
+  },
+  {
+    "id": 69,
+    "text": "Czy poruszająca muzyka silnie na Ciebie oddziałuje?"
+  },
+  {
+    "id": 70,
+    "text": "Czy to prawda, że całkowicie potępiasz człowieka tylko dlatego, że jest Twoim rywalem lub oponentem w jakiejś kwestii dotyczącej Waszych relacji?"
+  },
+  {
+    "id": 71,
+    "text": "Czy często „siedzisz i rozmyślasz” o śmierci, chorobie, bólu i smutku?"
+  },
+  {
+    "id": 72,
+    "text": "Czy niepokoi Cię myśl o utracie poczucia własnej godności?"
+  },
+  {
+    "id": 73,
+    "text": "Czy to prawda, że nieustannie zbierasz rzeczy, które „mogłyby się później przydać”?"
+  },
+  {
+    "id": 74,
+    "text": "Czy krytykowałbyś wady i wytykał człowiekowi złe cechy jego charakteru lub źle wykonaną przez niego pracę?"
+  },
+  {
+    "id": 75,
+    "text": "Czy otwarcie wyrażasz swój zachwyt pięknymi rzeczami?"
+  },
+  {
+    "id": 76,
+    "text": "Czy zdarza Ci się rozdawać rzeczy, które ściśle rzecz biorąc, nie należą do Ciebie?"
+  },
+  {
+    "id": 77,
+    "text": "Czy witasz ludzi w sposób pełen emocji?"
+  },
+  {
+    "id": 78,
+    "text": "Czy często rozmyślasz o dawnych niepowodzeniach?"
+  },
+  {
+    "id": 79,
+    "text": "Czy w swoich działaniach i poglądach uważa się Cię czasem za osobę władczą?"
+  },
+  {
+    "id": 80,
+    "text": "Czy przyjmujesz krytykę łatwo i bez urazy?"
+  },
+  {
+    "id": 81,
+    "text": "Czy zazwyczaj nie przeszkadza Ci „całkowita cisza”, gdy chcesz odpocząć?"
+  },
+  {
+    "id": 82,
+    "text": "Czy masz skłonność do zazdrości?"
+  },
+  {
+    "id": 83,
+    "text": "Czy to prawda, że masz skłonność do odkładania czegoś na później, a potem okazuje się, że jest już za późno?"
+  },
+  {
+    "id": 84,
+    "text": "Czy to prawda, że wolisz postępować zgodnie z życzeniami innych, niż dążyć do robienia wszystkiego po swojemu?"
+  },
+  {
+    "id": 85,
+    "text": "Czy łatwo Ci zabrać się za wykonanie jakiegoś zadania?"
+  },
+  {
+    "id": 86,
+    "text": "Czy masz zwyczaj obgryzania paznokci lub końcówki ołówka?"
+  },
+  {
+    "id": 87,
+    "text": "Czy zdarza Ci się, że dla wywołania jakiegoś efektu wyolbrzymiasz okazywanie swoich emocji?"
+  },
+  {
+    "id": 88,
+    "text": "Gdyby Twój kraj napadł na inny kraj, czy współczułbyś tym jego obywatelom, którzy odmówili służby wojskowej z powodów politycznych lub religijnych?"
+  },
+  {
+    "id": 89,
+    "text": "Czy masz czułe punkty, których poruszenie wywołuje u Ciebie bolesną reakcję?"
+  },
+  {
+    "id": 90,
+    "text": "Czy to prawda, że masz niewielki krąg zainteresowań i rodzajów aktywności, którym poświęcasz się z własnego wyboru?"
+  },
+  {
+    "id": 91,
+    "text": "Czy zdarza Ci się, że jakaś myśl zawładnie Twoją świadomością na kilka dni?"
+  },
+  {
+    "id": 92,
+    "text": "Czy jesz powoli?"
+  },
+  {
+    "id": 93,
+    "text": "Czy potrafisz działać uspokajająco, gdy inni zaczynają panikować?"
+  },
+  {
+    "id": 94,
+    "text": "Czy zatrzymasz się i spróbujesz się dowiedzieć, czy ktoś potrzebuje pomocy, nawet jeśli o nią wprost nie poprosił?"
+  },
+  {
+    "id": 95,
+    "text": "Czy masz skłonność do myślenia, że Twoja szkoła, uczelnia, klub, zespół itp. są lepsze od innych?"
+  },
+  {
+    "id": 96,
+    "text": "Czy spłacasz swoje długi i dotrzymujesz obietnic, jeśli to możliwe?"
+  },
+  {
+    "id": 97,
+    "text": "Czy dobrze śpisz?"
+  },
+  {
+    "id": 98,
+    "text": "Czy zastosowałbyś karę cielesną wobec dziesięcioletniego dziecka, gdyby odmówiło Ci posłuszeństwa?"
+  },
+  {
+    "id": 99,
+    "text": "Czy wolisz odgrywać bierną rolę w każdej grupie lub organizacji, do której należysz?"
+  },
+  {
+    "id": 100,
+    "text": "Czy w Twoim sposobie myślenia obecna jest logika i naukowe podejście?"
+  },
+  {
+    "id": 101,
+    "text": "Czy to prawda, że współczesna młodzież ma więcej możliwości niż młodzież poprzedniego pokolenia?"
+  },
+  {
+    "id": 102,
+    "text": "Czy zdarza Ci się wyrzucać swoje rzeczy, a później odkrywać, że są potrzebne?"
+  },
+  {
+    "id": 103,
+    "text": "Czy łatwo zrezygnowałbyś z obranego kierunku działania, gdyby przysporzył Ci on choćby niewielu trudności?"
+  },
+  {
+    "id": 104,
+    "text": "Czy to prawda, że mocno poruszają Cię tylko niektóre określone tematy?"
+  },
+  {
+    "id": 105,
+    "text": "Czy to prawda, że rzadko poddajesz w wątpliwość postępowanie innych ludzi?"
+  },
+  {
+    "id": 106,
+    "text": "Czy to prawda, że czasem zadajesz sobie pytanie, czy ktoś naprawdę się o Ciebie troszczy?"
+  },
+  {
+    "id": 107,
+    "text": "Czy rezygnujesz z odpowiedzialności za coś z powodu wątpliwości, że możesz sobie z tym nie poradzić?"
+  },
+  {
+    "id": 108,
+    "text": "Czy czujesz, że czasem musisz kilkakrotnie powtarzać jakąś ciekawą nowinę lub plotkę?"
+  },
+  {
+    "id": 109,
+    "text": "Czy masz skłonność do wyolbrzymiania uzasadnionej urazy?"
+  },
+  {
+    "id": 110,
+    "text": "Czy to prawda, że wyraz Twojej twarzy jest raczej zmienny niż niezmienny?"
+  },
+  {
+    "id": 111,
+    "text": "Czy zazwyczaj potrzebujesz potwierdzenia lub zaprzeczenia raz wypowiedzianej przez Ciebie opinii?"
+  },
+  {
+    "id": 112,
+    "text": "Czy otwarcie i szczerze zachwycasz się urodą innych ludzi?"
+  },
+  {
+    "id": 113,
+    "text": "Czy trudno Ci rozważać temat samobójstwa?"
+  },
+  {
+    "id": 114,
+    "text": "Czy uważasz siebie za osobę energiczną w swoim podejściu do życia?"
+  },
+  {
+    "id": 115,
+    "text": "Czy różnica zdań może wpłynąć na Twoje ogólne relacje z drugą osobą?"
+  },
+  {
+    "id": 116,
+    "text": "Czy to prawda, że Twoje drobne niepowodzenia rzadko Cię niepokoją?"
+  },
+  {
+    "id": 117,
+    "text": "Czy czasem czujesz, że mówisz zbyt dużo?"
+  },
+  {
+    "id": 118,
+    "text": "Czy często się uśmiechasz?"
+  },
+  {
+    "id": 119,
+    "text": "Czy jesteś osobą, której łatwo sprawić przyjemność?"
+  },
+  {
+    "id": 120,
+    "text": "Gdy napotykasz otwarty opór, czy mimo wszystko próbujesz zrobić coś po swojemu?"
+  },
+  {
+    "id": 121,
+    "text": "Jeśli odległość nie jest zbyt duża, czy wolisz jechać środkiem transportu niż iść pieszo?"
+  },
+  {
+    "id": 122,
+    "text": "Czy niepokoi Cię kiedykolwiek szum wiatru lub „osiadającego domu”?"
+  },
+  {
+    "id": 123,
+    "text": "Czy na kształtowanie Twojej opinii ma wpływ patrzenie na rzeczy z perspektywy Twojego doświadczenia życiowego, zawodu czy wykształcenia?"
+  },
+  {
+    "id": 124,
+    "text": "Czy często popełniasz nietaktowne błędy?"
+  },
+  {
+    "id": 125,
+    "text": "Czy odnosisz się z podejrzliwością do ludzi, którzy proszą Cię o pożyczenie pieniędzy?"
+  },
+  {
+    "id": 126,
+    "text": "Czy Twoje osobiste interesy wpływają na Twoje decyzje?"
+  },
+  {
+    "id": 127,
+    "text": "Czy potrafisz zachwycić się jakimś „drobiazgiem”?"
+  },
+  {
+    "id": 128,
+    "text": "Czy często podejmujesz działania mimo tego, że Twój własny zdrowy rozsądek podpowiada coś przeciwnego?"
+  },
+  {
+    "id": 129,
+    "text": "Czy jesteś zwolennikiem dzielenia ludzi według koloru skóry i przynależności klasowej?"
+  },
+  {
+    "id": 130,
+    "text": "Czy masz nawyki takie jak gładzenie włosów, nosa, uszu itp.?"
+  },
+  {
+    "id": 131,
+    "text": "Czy potrafisz szybko przystosować się do nowych warunków i sytuacji oraz je wykorzystać, nawet jeśli mogą okazać się trudne?"
+  },
+  {
+    "id": 132,
+    "text": "Czy niektóre dźwięki mogą wywoływać u Ciebie skrajnie nieprzyjemne odczucia, takie jak „ciarki na zębach”?"
+  },
+  {
+    "id": 133,
+    "text": "Czy potrafisz zrozumieć punkt widzenia drugiej osoby, jeśli tego zechcesz?"
+  },
+  {
+    "id": 134,
+    "text": "Czy kładziesz się spać raczej wtedy, gdy masz na to ochotę, niż według zegara?"
+  },
+  {
+    "id": 135,
+    "text": "Czy tracisz cierpliwość z powodu „drobnych wad” innych ludzi?"
+  },
+  {
+    "id": 136,
+    "text": "Czy dzieci Cię irytują?"
+  },
+  {
+    "id": 137,
+    "text": "Czy jesteś mniej rozmowny niż Twoi znajomi?"
+  },
+  {
+    "id": 138,
+    "text": "Czy zazwyczaj wykonujesz powierzone zadania szybko i systematycznie?"
+  },
+  {
+    "id": 139,
+    "text": "Czy udzieliłbyś pomocy współpasażerowi, zamiast pozostawić to osobom urzędowym?"
+  },
+  {
+    "id": 140,
+    "text": "Gdy głosujesz, czy głosujesz na tę samą partię, zamiast zapoznać się z kandydatami i ich programami wyborczymi?"
+  },
+  {
+    "id": 141,
+    "text": "Czy często rozmyślasz o swoich przebytych chorobach i bolesnych przeżyciach?"
+  },
+  {
+    "id": 142,
+    "text": "Czy czujesz się zupełnie nieswojo, gdy wokół panuje bałagan?"
+  },
+  {
+    "id": 143,
+    "text": "Czy zazwyczaj krytykujesz film lub spektakl, który oglądasz, albo książkę, którą czytasz?"
+  },
+  {
+    "id": 144,
+    "text": "Opowiadając jakieś zabawne zdarzenie, czy potrafisz z łatwością naśladować sposób bycia lub mowę jego uczestników?"
+  },
+  {
+    "id": 145,
+    "text": "Czy w dziedzinach, w których nie jesteś specjalistą, Twoja opinia jest na tyle ważna, by wyrażać ją innym ludziom?"
+  },
+  {
+    "id": 146,
+    "text": "Czy masz skłonność do sprzątania w cudzym domu, jeśli panuje tam bałagan?"
+  },
+  {
+    "id": 147,
+    "text": "Czy łatwo Ci pogodzić się z porażką, nie odczuwając przy tym rozgoryczenia?"
+  },
+  {
+    "id": 148,
+    "text": "Czy często czujesz się przygnębiony?"
+  },
+  {
+    "id": 149,
+    "text": "Czy czujesz się skrępowany w towarzystwie dzieci?"
+  },
+  {
+    "id": 150,
+    "text": "Czy denerwujesz się, gdy nie możesz czegoś zrobić, zamiast znaleźć zamiennik dla tej czynności?"
+  },
+  {
+    "id": 151,
+    "text": "Czy zdarza Ci się nie być w stanie w pełni pojąć istoty rzeczy?"
+  },
+  {
+    "id": 152,
+    "text": "Czy rzadko wyrażasz swoje niezadowolenie?"
+  },
+  {
+    "id": 153,
+    "text": "Czy pracujesz „zrywami”, będąc stosunkowo biernym, a następnie nadmiernie aktywnym przez jeden–dwa dni?"
+  },
+  {
+    "id": 154,
+    "text": "Czy niepokoi Cię pewna liczba niedokończonych bieżących spraw?"
+  },
+  {
+    "id": 155,
+    "text": "Czy ludzie lubią przebywać w Twoim towarzystwie?"
+  },
+  {
+    "id": 156,
+    "text": "Czy potrafisz się nie wtrącać, gdy ktoś inny kończy rozwiązywać krzyżówkę?"
+  },
+  {
+    "id": 157,
+    "text": "Czy dostrzegasz lepsze strony większości ludzi i tylko rzadko wyrażasz się o nich lekceważąco?"
+  },
+  {
+    "id": 158,
+    "text": "Czy chętnie się śmiejesz lub uśmiechasz?"
+  },
+  {
+    "id": 159,
+    "text": "Czy Twój głos i sposób bycia są zdecydowane i wyraziste?"
+  },
+  {
+    "id": 160,
+    "text": "Czy okazujesz swoją porywczość jedynie wobec bliskich przyjaciół, o ile w ogóle ją okazujesz?"
+  },
+  {
+    "id": 161,
+    "text": "Czy Twoje zainteresowania i dziedziny wiedzy są dla Ciebie tak ważne, że pozostawiają Ci mało czasu na cokolwiek innego?"
+  },
+  {
+    "id": 162,
+    "text": "Czy chciałbyś rozpocząć „nowe przedsięwzięcie” w pobliżu miejsca, w którym mieszkasz?"
+  },
+  {
+    "id": 163,
+    "text": "Czy podjąłbyś niezbędne działania, aby zabić zwierzę w celu uwolnienia go od bólu?"
+  },
+  {
+    "id": 164,
+    "text": "Czy łatwo Ci się zrelaksować?"
+  },
+  {
+    "id": 165,
+    "text": "Czy mało żałujesz dawnych trudności i niepowodzeń?"
+  },
+  {
+    "id": 166,
+    "text": "Czy złe przeczucia lub myśl o strachu wywołują u Ciebie reakcję fizyczną?"
+  },
+  {
+    "id": 167,
+    "text": "Czy w emocjonalnej sytuacji, w której się znalazłeś, potrafisz zdać się na to, co podpowiada Ci zdrowy rozsądek?"
+  },
+  {
+    "id": 168,
+    "text": "Czy ktoś inny mógłby uznać Cię za osobę naprawdę aktywną?"
+  },
+  {
+    "id": 169,
+    "text": "Czy trudno Ci przystąpić do zadania, które trzeba wykonać?"
+  },
+  {
+    "id": 170,
+    "text": "Czy jesteś przeciwnikiem „systemu okresów próbnych” w stosunku do przestępców?"
+  },
+  {
+    "id": 171,
+    "text": "Czy poświęcasz dużo czasu na zamartwianie się drobiazgami?"
+  },
+  {
+    "id": 172,
+    "text": "Czy podczas sporu trudno Ci zrozumieć, dlaczego druga osoba nie może przyjąć Twojego punktu widzenia i tym samym się z Tobą zgodzić?"
+  },
+  {
+    "id": 173,
+    "text": "Czy wystarczająco dobrze radzisz sobie z problemami życia codziennego?"
+  },
+  {
+    "id": 174,
+    "text": "Czy zazwyczaj jesteś prawdomówny wobec otoczenia?"
+  },
+  {
+    "id": 175,
+    "text": "Czy wolisz czekać na rozwój wydarzeń, zamiast sam zacząć działać?"
+  },
+  {
+    "id": 176,
+    "text": "Czy wydajesz pieniądze równie łatwo, jak je zarabiasz?"
+  },
+  {
+    "id": 177,
+    "text": "Czy potrafisz podjąć „uzasadnione ryzyko” bez szczególnego niepokoju?"
+  },
+  {
+    "id": 178,
+    "text": "Gdybyś spowodował niewielką stłuczkę samochodową, czy zadbałbyś o to, aby wyrządzona przez Ciebie szkoda została naprawiona?"
+  },
+  {
+    "id": 179,
+    "text": "Czy inni ludzie Tobą pomiatają?"
+  },
+  {
+    "id": 180,
+    "text": "Czy okazujesz pobłażliwość swoim przyjaciołom w sytuacjach, w których wobec innych byłbyś bardziej surowy?"
+  },
+  {
+    "id": 181,
+    "text": "Czy często rozmyślasz o swojej niższości?"
+  },
+  {
+    "id": 182,
+    "text": "Czy zdarza się, że ludzie krytykują Cię w rozmowach z innymi ludźmi?"
+  },
+  {
+    "id": 183,
+    "text": "Czy krępują Cię przejawy serdeczności przy powitaniu, takie jak pocałunek, mocny uścisk czy poklepywanie po plecach, jeśli dzieje się to przy ludziach?"
+  },
+  {
+    "id": 184,
+    "text": "Czy często musisz rezygnować z tego, co chciałbyś zrobić, licząc się z życzeniami innych ludzi?"
+  },
+  {
+    "id": 185,
+    "text": "Czy często jesteś przekonany o słuszności swojego zdania na jakiś temat, nawet jeśli nie jesteś specjalistą w danej kwestii?"
+  },
+  {
+    "id": 186,
+    "text": "Czy często znajdujesz się w sytuacjach, w których musisz „zajmować się wszystkim” jednocześnie („pracować na kilku frontach”)?"
+  },
+  {
+    "id": 187,
+    "text": "Czy masz wrażenie, że Twoi znajomi mają wyższe mniemanie o Twoich zdolnościach niż Ty sam?"
+  },
+  {
+    "id": 188,
+    "text": "Czy myśl o śmierci lub choćby wzmianka o niej przeraża Cię?"
+  },
+  {
+    "id": 189,
+    "text": "Po rozstrzygnięciu spornej kwestii czy przez pewien czas nadal odczuwasz niezadowolenie?"
+  },
+  {
+    "id": 190,
+    "text": "Czy w Twoim głosie, nastawieniu i wyrazie twarzy jest życzliwość?"
+  },
+  {
+    "id": 191,
+    "text": "Czy życie wydaje Ci się nierealne i dość niejasne?"
+  },
+  {
+    "id": 192,
+    "text": "Czy często martwisz się losem ofiar wojny i uchodźców politycznych?"
+  },
+  {
+    "id": 193,
+    "text": "Czy „zwykli znajomi” zwracają się do Ciebie o pomoc lub radę w swoich osobistych problemach?"
+  },
+  {
+    "id": 194,
+    "text": "Gdy zgubisz jakąś rzecz, czy przychodzi Ci do głowy myśl, że „ktoś musiał ją ukraść albo położyć nie na miejscu”?"
+  },
+  {
+    "id": 195,
+    "text": "Gdybyś pomyślał, że ktoś odnosi się do Ciebie i Twoich działań z podejrzliwością, czy wyjaśniłbyś z nim tę sprawę, zamiast pozostawić mu samodzielne dojście do prawdy?"
+  },
+  {
+    "id": 196,
+    "text": "Czy masz poczucie, że Twój wiek działa na Twoją niekorzyść (że jesteś zbyt młody lub zbyt stary)?"
+  },
+  {
+    "id": 197,
+    "text": "Czy miewasz napady smutku i przygnębienia bez żadnego powodu?"
+  },
+  {
+    "id": 198,
+    "text": "Czy często narzekasz na warunki życia, z którymi musisz się mierzyć?"
+  },
+  {
+    "id": 199,
+    "text": "Czy masz skłonność do ukrywania swoich uczuć?"
+  },
+  {
+    "id": 200,
+    "text": "Czy uważasz, że masz wielu serdecznych przyjaciół?"
+  }
+]

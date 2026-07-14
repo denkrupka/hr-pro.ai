@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR PRO AI — Заявка на подбор</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head><body>
+<div class="take-shell" id="shell">
+  <div class="take-top">
+    <span class="brand-mark" id="brand" style="width:40px;height:40px;border-radius:12px"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
+    <div><div style="font-weight:800" id="r-company">HR PRO AI</div><div class="muted" style="font-size:12.5px" id="r-sub">Заявка на подбор персонала</div></div>
+  </div>
+  <div class="take-body" id="root"><p class="muted">Загрузка…</p></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="/js/req-schema.js"></script>
+<script src="/js/position-ref.js"></script>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);};
+if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
+const T={
+  ru:{sub:'Заявка на подбор персонала',intro:'Заполните форму подбора — на её основе HR создаст вакансию и объявление.',lang:'Язык вакансии',submit:'Отправить заявку в HR',sent:'Заявка отправлена в HR. Спасибо!',err:'Ошибка отправки',notfound:'Заявка не найдена',check:'Проверьте ссылку.',max:'Можно выбрать не более ',level:'Уровень должности',staff:'Рядовой сотрудник',lead:'Руководитель',recog:'Распознана должность',rec_for:'Для должности',rec_lead:'Для руководителя направления',rec_advise:'методика рекомендует обратить внимание на качества',apply:'Отметить в списке',locked:'Заявка утверждена',locked_hint:'Изменения в утверждённую заявку вносит HR-менеджер.'},
+  pl:{sub:'Wniosek o dobór personelu',intro:'Wypełnij formularz doboru — na jego podstawie HR utworzy wakat i ogłoszenie.',lang:'Język wakatu',submit:'Wyślij wniosek do HR',sent:'Wniosek wysłany do HR. Dziękujemy!',err:'Błąd wysyłania',notfound:'Nie znaleziono wniosku',check:'Sprawdź link.',max:'Można wybrać maksymalnie ',level:'Poziom stanowiska',staff:'Szeregowy pracownik',lead:'Kierownik',recog:'Rozpoznane stanowisko',rec_for:'Dla stanowiska',rec_lead:'Dla kierownika działu',rec_advise:'metodyka zaleca zwrócić uwagę na cechy',apply:'Zaznacz na liście',locked:'Wniosek zatwierdzony',locked_hint:'Zmiany w zatwierdzonym wniosku wprowadza menedżer HR.'},
+  en:{sub:'Personnel selection requisition',intro:'Fill in the selection form — HR will create the vacancy and job ad based on it.',lang:'Vacancy language',submit:'Send requisition to HR',sent:'Requisition sent to HR. Thank you!',err:'Sending error',notfound:'Requisition not found',check:'Check the link.',max:'You can select at most ',level:'Position level',staff:'Regular employee',lead:'Manager',recog:'Recognized position',rec_for:'For the position',rec_lead:'For a department head',rec_advise:'the methodology recommends focusing on the qualities',apply:'Select in the list',locked:'Requisition approved',locked_hint:'Changes to an approved requisition are made by the HR manager.'},
+};
+let LG='ru'; const tl=k=>(T[LG]&&T[LG][k]!=null?T[LG][k]:T.ru[k]);
+const parts=location.pathname.split('/').filter(Boolean);
+const isNew=parts[0]==='new-req';           // универсальная ссылка компании
+const code=parts[parts.length-1];
+let R={form:{},lang:'ru'};
+async function load(){
+  let meta;
+  if(isNew){
+    const r=await fetch('/api/company/'+encodeURIComponent(code)+'/meta');
+    if(!r.ok)return notFound();
+    meta=await r.json();
+    R={form:{},lang:localStorage.getItem('hp_lang')||'ru'};
+  }else{
+    const r=await fetch('/api/req/'+encodeURIComponent(code));
+    if(!r.ok)return notFound();
+    R=await r.json().then(d=>d.requisition);
+    meta={company:R.company,logo:R.logo};
+  }
+  LG=['ru','pl','en'].includes(R.lang)?R.lang:'ru';document.documentElement.lang=LG;
+  $('#r-sub').textContent=tl('sub');
+  if(meta.company)$('#r-company').textContent=meta.company;
+  if(meta.logo)$('#brand').innerHTML='<img src="'+esc(meta.logo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">';
+  render();
+}
+function notFound(){$('#root').innerHTML='<div class="card"><h2>'+tl('notfound')+'</h2><p class="muted">'+tl('check')+'</p></div>';}
+function fieldHtml(f,val){
+  const lab=reqLabel(f.label,LG);
+  const desc=(f.desc||f.hint)?'<span class="req-hint">'+esc(reqLabel(f.desc||f.hint,LG))+'</span>':'';
+  const id='rq-'+f.key;
+  if(f.type==='textarea')return '<div class="full"><label class="lbl">'+esc(lab)+(f.req?' *':'')+'</label>'+desc+'<textarea class="field" id="'+id+'" rows="2">'+esc(val||'')+'</textarea></div>';
+  if(f.type==='number')return '<div><label class="lbl">'+esc(lab)+'</label>'+desc+'<input class="field" id="'+id+'" type="number" value="'+esc(val||'')+'"></div>';
+  if(f.type==='select'){const opts=f.options.map(o=>'<option value="'+o.value+'" '+(val===o.value?'selected':'')+'>'+esc(reqLabel(o.label,LG))+'</option>').join('');
+    return '<div><label class="lbl">'+esc(lab)+'</label>'+desc+'<select class="field" id="'+id+'"><option value="">—</option>'+opts+'</select></div>';}
+  if(f.type==='traits'){const cur=Array.isArray(val)?val:(typeof val==='string'&&val?val.split(','):[]);
+    const rows=REQ_SCHEMA.traits.map(tr=>'<tr class="trait-row '+(cur.includes(tr.key)?'on':'')+'"><td class="trait-check"><input type="checkbox" value="'+tr.key+'" '+(cur.includes(tr.key)?'checked':'')+' data-trait></td><td class="trait-name">'+esc(reqLabel(tr.l,LG))+'</td><td class="trait-desc">'+esc(reqLabel(tr.d,LG))+'</td></tr>').join('');
+    return '<div class="full"><label class="lbl">'+esc(lab)+'</label>'+desc+'<div class="traits-rec" id="traits-rec"></div><table class="trait-table" id="'+id+'" data-max="'+(f.max||3)+'"><tbody>'+rows+'</tbody></table></div>';}
+  if(f.key==='position')
+    return '<div class="full"><label class="lbl">'+esc(lab)+(f.req?' *':'')+'</label>'+desc+'<input class="field" id="'+id+'" value="'+esc(val||'')+'"><div class="pos-hint" id="pos-hint"></div></div>';
+  return '<div class="full"><label class="lbl">'+esc(lab)+(f.req?' *':'')+'</label>'+desc+'<input class="field" id="'+id+'" value="'+esc(val||'')+'"></div>';
+}
+const AIIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" style="width:14px;height:14px;vertical-align:-2px"><path d="M12 3l1.8 4.9L18.7 9.7 13.8 11.5 12 16.4l-1.8-4.9L5.3 9.7l4.9-1.8L12 3Z"/></svg>';
+function analyzePos(){
+  const posEl=$('#rq-position');if(!posEl)return;
+  const hint=$('#pos-hint'),rec=$('#traits-rec'),seg=$('#rq-level');
+  const level=seg?seg.dataset.level:'staff';
+  const pos=matchPosition(posEl.value);
+  if(hint)hint.innerHTML=pos?AIIC+' '+tl('recog')+': <b>«'+esc(reqLabel(pos.name,LG))+'»</b>':'';
+  if(!rec)return;
+  if(level!=='lead'&&!pos){rec.innerHTML='';return;}
+  const quals=recommendedQualities(pos,level,LG);
+  if(!quals.length){rec.innerHTML='';return;}
+  const keys=[...new Set(quals.map(q=>q.trait).filter(Boolean))];
+  const forWhom=level==='lead'?'<b>'+esc(tl('rec_lead'))+'</b>':tl('rec_for')+' <b>«'+esc(reqLabel(pos.name,LG))+'»</b>';
+  const points=level==='lead'?POSITION_REF[0].points:(pos?pos.points:'');
+  rec.innerHTML='<div class="tr-rec"><div class="tr-rec-txt">'+AIIC+' '+forWhom+' '+tl('rec_advise')+': <b>'+quals.map(q=>esc(q.label)).join(', ')+'</b>'+(points?' <span class="muted">('+points+')</span>':'')+'</div>'+(keys.length?'<button type="button" class="btn ghost xs" id="traits-apply">'+tl('apply')+'</button>':'')+'</div>';
+  const ap=$('#traits-apply');if(ap)ap.onclick=()=>{const tw=$('#rq-traits');if(!tw)return;const pick=keys.slice(0,+tw.dataset.max||3);$$('[data-trait]',tw).forEach(c=>{c.checked=pick.includes(c.value);});$$('.trait-row',tw).forEach(r=>r.classList.toggle('on',r.querySelector('input').checked));};
+}
+function render(){
+  // Утверждённая заявка закрыта для руководителя — менять может только HR в портале
+  if(R.status==='approved'){
+    $('#root').innerHTML='<div class="card" style="text-align:center;max-width:520px;margin:0 auto">'
+      +'<div class="done-mark" style="color:var(--good);margin:0 auto 8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg></div>'
+      +'<h1 style="margin:6px 0">'+tl('locked')+'</h1><p class="muted">'+tl('locked_hint')+'</p></div>';
+    return;
+  }
+  const form=R.form||{};
+  const secs=REQ_SCHEMA.sections.map(sec=>{
+    const fs=REQ_SCHEMA.fields.filter(f=>f.section===sec.key);
+    return '<div class="req-sec"><div class="req-sec-h">'+esc(reqLabel(sec.title,LG))+'</div><div class="form-grid">'+fs.map(f=>fieldHtml(f,form[f.key])).join('')+'</div></div>';
+  }).join('');
+  const lv=(R.form&&R.form.level==='lead')?'lead':'staff';
+  const langCell=isNew?'<div><label class="lbl">'+tl('lang')+'</label><select class="field" id="rq-lang" style="max-width:240px"><option value="ru" '+(LG==='ru'?'selected':'')+'>Русский</option><option value="pl" '+(LG==='pl'?'selected':'')+'>Polski</option><option value="en" '+(LG==='en'?'selected':'')+'>English</option></select></div>':'';
+  const topSec='<div class="req-sec"><div class="form-grid">'+langCell
+    +'<div><label class="lbl">'+tl('level')+'</label><div class="seg-toggle" id="rq-level" data-level="'+lv+'">'
+    +'<button type="button" class="seg-opt '+(lv!=='lead'?'on':'')+'" data-lvl="staff">'+tl('staff')+'</button>'
+    +'<button type="button" class="seg-opt '+(lv==='lead'?'on':'')+'" data-lvl="lead">'+tl('lead')+'</button></div></div>'
+    +'</div></div>';
+  $('#root').innerHTML='<div class="card" style="max-width:760px;margin:0 auto">'
+    +'<h1 style="font-size:24px;margin-bottom:6px">'+tl('sub')+'</h1>'
+    +'<p class="muted" style="margin-bottom:16px">'+tl('intro')+'</p>'
+    +topSec+secs
+    +'<button class="btn lg" id="submit" style="width:100%;margin-top:12px">'+tl('submit')+'</button></div>';
+  const tw=$('#rq-traits');
+  if(tw)tw.addEventListener('change',e=>{const max=+tw.dataset.max||3;const checked=$$('[data-trait]:checked',tw);
+    if(checked.length>max){e.target.checked=false;toast(tl('max')+max);}
+    $$('.trait-row',tw).forEach(r=>r.classList.toggle('on',r.querySelector('input').checked));});
+  const ls=$('#rq-lang');if(ls)ls.onchange=()=>{LG=ls.value;R.lang=ls.value;document.documentElement.lang=LG;$('#r-sub').textContent=tl('sub');render();};
+  const posEl=$('#rq-position');if(posEl){let td;posEl.addEventListener('input',()=>{clearTimeout(td);td=setTimeout(analyzePos,350);});}
+  const seg=$('#rq-level');if(seg)$$('[data-lvl]',seg).forEach(b=>b.onclick=()=>{seg.dataset.level=b.dataset.lvl;$$('[data-lvl]',seg).forEach(x=>x.classList.toggle('on',x===b));analyzePos();});
+  analyzePos();
+  $('#submit').onclick=submit;
+}
+function collect(){
+  const form={};
+  REQ_SCHEMA.fields.forEach(f=>{
+    if(f.type==='traits'){const w=$('#rq-'+f.key);form[f.key]=w?$$('[data-trait]:checked',w).map(c=>c.value):[];}
+    else{const el=$('#rq-'+f.key);form[f.key]=el?el.value:'';}
+  });
+  const seg=$('#rq-level');form.level=seg?seg.dataset.level:'staff';
+  return form;
+}
+async function submit(){
+  const b=$('#submit');b.disabled=true;
+  try{
+    const url=isNew?'/api/company/'+encodeURIComponent(code)+'/requisition':'/api/req/'+encodeURIComponent(code);
+    const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({form:collect(),lang:R.lang||LG})});
+    if(!resp.ok)throw new Error('send');
+    $('#root').innerHTML='<div class="card" style="text-align:center;max-width:520px;margin:0 auto">'
+      +'<div class="done-mark pop" style="color:var(--good);margin:0 auto 8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg></div>'
+      +'<h1 style="margin:6px 0">'+tl('sent')+'</h1></div>';
+  }catch(e){toast(tl('err'));b.disabled=false;}
+}
+load();
+</script>
+</body></html>

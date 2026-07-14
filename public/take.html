@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR PRO AI</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head><body>
+<div class="take-shell" id="shell">
+  <div class="take-top">
+    <span class="brand-mark" style="width:40px;height:40px;border-radius:12px"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
+    <div><div style="font-weight:800" id="t-title">HR PRO AI</div><div class="muted" style="font-size:12.5px" id="t-sub">Тестирование</div></div>
+    <div class="timer-pill hidden" id="timer">--:--</div>
+  </div>
+  <div class="take-body" id="root"><p class="muted">Загрузка…</p></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);};
+if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
+const CHECK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>';
+// локализация страницы прохождения — по языку теста (язык вакансии)
+const TL={
+  ru:{testing:'Тестирование',not_found:'Тест не найден',check_link:'Проверьте ссылку.',test_word:'Тест',already_done:'Тест уже пройден',thanks_recv:'Спасибо! Ваши ответы получены.',before:'Перед началом',short_form:'Короткая анкета',intro_default:'Заполните данные и пройдите тест. Правильных или неправильных ответов нет.',name:'Имя',surname:'Фамилия',sex:'Пол',male:'Мужской',female:'Женский',age:'Возраст',phone:'Телефон',city:'Город',start:'Начать тест →',yes:'Да',maybe:'Может быть',no:'Нет',explain_ph:'Поясните ваш ответ…',answer_ph:'Ваш ответ…',question:'Вопрос',of:'из',back:'← Назад',finish:'Завершить',next:'Далее →',sending:'Отправка ответов…',done:'Готово!',thanks_test:'Спасибо за прохождение теста',sent_recruiter:'Ваши ответы отправлены рекрутёру. Окно можно закрыть.',multi_hint:'Можно выбрать несколько вариантов',cv:'Резюме (CV)',cv_hint:'PDF, DOC, DOCX или картинка — до 12 МБ (необязательно)',cv_big:'Файл слишком большой (макс. 12 МБ)',email:'E-mail',cv_drop:'Прикрепите резюме — нажмите или перетащите файл',req_fields:'Заполните обязательные поля',bad_age:'Укажите реальный возраст (две цифры, 16–79)',bad_phone:'Укажите корректный номер телефона',bad_email:'Укажите корректный e-mail',consent:'Я даю согласие на обработку моих персональных данных',need_consent:'Подтвердите согласие на обработку персональных данных',need_explain:'Поясните, пожалуйста, ваш ответ',instr_h:'При ответах обратите, пожалуйста, внимание на следующее:',instr1:'Не существует верных или неверных ответов — каждый человек имеет свою точку зрения, жизненный опыт и поведение.',instr2:'Не думайте очень долго над каждым ответом — отмечайте тот, который приходит в голову первым.',instr3:'Некоторые вопросы могут не соответствовать вашей ситуации — выберите ответ, который характеризует вас в большей степени.',completed_pct:'выполнено',position_l:'Должность',ref_add:'Добавить ещё контакт',ref_need:'Укажите хотя бы одного руководителя: имя и телефон'},
+  pl:{testing:'Test',not_found:'Nie znaleziono testu',check_link:'Sprawdź link.',test_word:'Test',already_done:'Test już wykonany',thanks_recv:'Dziękujemy! Twoje odpowiedzi zostały odebrane.',before:'Przed rozpoczęciem',short_form:'Krótka ankieta',intro_default:'Wypełnij dane i wykonaj test. Nie ma dobrych ani złych odpowiedzi.',name:'Imię',surname:'Nazwisko',sex:'Płeć',male:'Mężczyzna',female:'Kobieta',age:'Wiek',phone:'Telefon',city:'Miasto',start:'Rozpocznij test →',yes:'Tak',maybe:'Może',no:'Nie',explain_ph:'Wyjaśnij swoją odpowiedź…',answer_ph:'Twoja odpowiedź…',question:'Pytanie',of:'z',back:'← Wstecz',finish:'Zakończ',next:'Dalej →',sending:'Wysyłanie odpowiedzi…',done:'Gotowe!',thanks_test:'Dziękujemy za wykonanie testu',sent_recruiter:'Twoje odpowiedzi zostały wysłane do rekrutera. Możesz zamknąć okno.',multi_hint:'Można wybrać kilka opcji',cv:'CV',cv_hint:'PDF, DOC, DOCX lub obraz — do 12 MB (opcjonalnie)',cv_big:'Plik jest za duży (maks. 12 MB)',email:'E-mail',cv_drop:'Załącz CV — kliknij lub przeciągnij plik',req_fields:'Wypełnij wymagane pola',bad_age:'Podaj realny wiek (dwie cyfry, 16–79)',bad_phone:'Podaj poprawny numer telefonu',bad_email:'Podaj poprawny e-mail',consent:'Wyrażam zgodę na przetwarzanie moich danych osobowych',need_consent:'Potwierdź zgodę na przetwarzanie danych osobowych',need_explain:'Proszę wyjaśnić swoją odpowiedź',instr_h:'Odpowiadając, zwróć uwagę na następujące kwestie:',instr1:'Nie ma odpowiedzi dobrych ani złych — każdy człowiek ma własny punkt widzenia, doświadczenie i zachowanie.',instr2:'Nie zastanawiaj się zbyt długo — zaznaczaj odpowiedź, która pierwsza przychodzi do głowy.',instr3:'Niektóre pytania mogą nie pasować do Twojej sytuacji — wybierz odpowiedź, która najbardziej Cię charakteryzuje.',completed_pct:'ukończono',position_l:'Stanowisko',ref_add:'Dodaj kolejny kontakt',ref_need:'Podaj co najmniej jednego przełożonego: imię i telefon'},
+  en:{testing:'Assessment',not_found:'Test not found',check_link:'Check the link.',test_word:'Test',already_done:'Test already completed',thanks_recv:'Thank you! Your answers have been received.',before:'Before you start',short_form:'Quick form',intro_default:'Fill in your details and take the test. There are no right or wrong answers.',name:'First name',surname:'Last name',sex:'Sex',male:'Male',female:'Female',age:'Age',phone:'Phone',city:'City',start:'Start the test →',yes:'Yes',maybe:'Maybe',no:'No',explain_ph:'Explain your answer…',answer_ph:'Your answer…',question:'Question',of:'of',back:'← Back',finish:'Finish',next:'Next →',sending:'Sending answers…',done:'Done!',thanks_test:'Thank you for taking the test',sent_recruiter:'Your answers have been sent to the recruiter. You can close this window.',multi_hint:'You can select several options',cv:'Resume (CV)',cv_hint:'PDF, DOC, DOCX or an image — up to 12 MB (optional)',cv_big:'File is too large (max 12 MB)',email:'Email',cv_drop:'Attach your CV — click or drop a file',req_fields:'Fill in the required fields',bad_age:'Enter a real age (two digits, 16–79)',bad_phone:'Enter a valid phone number',bad_email:'Enter a valid email',consent:'I consent to the processing of my personal data',need_consent:'Please confirm consent to personal data processing',need_explain:'Please explain your answer',instr_h:'When answering, please note the following:',instr1:'There are no right or wrong answers — every person has their own viewpoint, experience and behaviour.',instr2:'Don’t think too long about each answer — pick the one that comes to mind first.',instr3:'Some questions may not fit your situation — choose the answer that describes you best.',completed_pct:'completed',position_l:'Position',ref_add:'Add another contact',ref_need:'Provide at least one supervisor: name and phone'},
+};
+let LG='ru';
+const tl=k=>(TL[LG]&&TL[LG][k]!=null?TL[LG][k]:TL.ru[k]);
+const code=location.pathname.split('/').pop();
+let T=null,answers={},times={},idx=0,startTs=Date.now(),qStart=Date.now(),timerInt=null,qTickInt=null;
+
+async function load(){
+  const r=await fetch('/api/take/'+code);
+  if(!r.ok){$('#root').innerHTML='<div class="card"><h2>'+tl('not_found')+'</h2><p class="muted">'+tl('check_link')+'</p></div>';return;}
+  T=await r.json();
+  LG=['ru','pl','en'].includes(T.lang)?T.lang:'ru';document.documentElement.lang=LG;
+  // Брендинг компании-отправителя: её логотип и название вместо HR PRO AI
+  if(T.brand&&T.brand.company){$('#t-title').textContent=T.brand.company;$('#t-sub').textContent=tl('test_word')+' «'+T.title+'»';}
+  else{$('#t-sub').textContent=tl('testing');$('#t-title').textContent=tl('test_word')+' «'+T.title+'»';}
+  if(T.brand&&T.brand.logo){const bm=document.querySelector('.brand-mark');if(bm){bm.innerHTML='<img src="'+esc(T.brand.logo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">';bm.style.background='transparent';}}
+  if(T.status==='done'){$('#root').innerHTML='<div class="card" style="text-align:center"><div class="done-mark">'+CHECK_SVG+'</div><h2>'+tl('already_done')+'</h2><p class="muted">'+tl('thanks_recv')+'</p></div>';return;}
+  renderIntro();
+}
+function renderIntro(){
+  const p=T.participant||{};
+  // Инструкция методики — перед Result / Tools / Sales
+  const instr=['result','tools','sales'].includes(T.type)?`<div class="take-instr"><b>${tl('instr_h')}</b><ol><li>${tl('instr1')}</li><li>${tl('instr2')}</li><li>${tl('instr3')}</li></ol></div>`:'';
+  const lockE=!!T.lockEmail,lockT=!!T.lockTel;
+  $('#root').innerHTML=`<div class="reveal">
+    <div class="eyebrow">${tl('before')}</div>
+    <h1 style="font-size:30px;margin:14px 0 12px">${tl('short_form')}</h1>
+    <p class="muted" style="max-width:560px;line-height:1.6">${esc(T.intro||tl('intro_default'))}</p>
+    ${instr}
+    <div class="card" style="margin-top:22px">
+      <div class="form-grid">
+        <div><label class="lbl">${tl('name')} *</label><input class="field" id="p-name" value="${esc(p.name||'')}"></div>
+        <div><label class="lbl">${tl('surname')} *</label><input class="field" id="p-surname" value="${esc(p.surname||'')}"></div>
+        <div><label class="lbl">${tl('sex')} *</label><select class="field" id="p-sex"><option value="">—</option><option value="Мужской" ${p.sex==='Мужской'?'selected':''}>${tl('male')}</option><option value="Женский" ${p.sex==='Женский'?'selected':''}>${tl('female')}</option></select></div>
+        <div><label class="lbl">${tl('age')} *</label><input class="field" id="p-age" inputmode="numeric" maxlength="2" value="${esc(p.age||'')}"></div>
+        <div><label class="lbl">${tl('phone')} *</label><input class="field" id="p-tel" inputmode="tel" value="${esc(p.tel||'')}" ${lockT?'readonly style="background:var(--surface-2);cursor:not-allowed"':''}></div>
+        <div><label class="lbl">${tl('city')} *</label><input class="field" id="p-city" value="${esc(p.city||'')}"></div>
+        <div style="grid-column:1/-1"><label class="lbl">${tl('email')} *</label><input class="field" id="p-email" type="email" value="${esc(p.email||'')}" ${lockE?'readonly style="background:var(--surface-2);cursor:not-allowed"':''}></div>
+        ${T.type==='result'?`<div style="grid-column:1/-1"><label class="lbl">${tl('cv')}</label>
+          <label class="cv-drop" id="cv-drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0-4 4m4-4 4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke-linecap="round"/></svg>
+          <span id="cv-drop-txt">${tl('cv_drop')}</span><input id="p-cv" type="file" hidden accept=".pdf,.doc,.docx,.rtf,.txt,.png,.jpg,.jpeg"></label>
+          <div class="muted" style="font-size:12px;margin-top:4px">${tl('cv_hint')}</div></div>`:''}
+      </div>
+      <label class="consent-row"><input type="checkbox" id="p-consent"><span>${tl('consent')}</span></label>
+      <button class="btn lg" style="margin-top:16px" id="start">${tl('start')}</button>
+    </div></div>`;
+  // маска телефона: только + в начале, цифры, пробелы и дефисы
+  const telI=$('#p-tel');if(telI&&!lockT)telI.addEventListener('input',()=>{telI.value=telI.value.replace(/[^\d+\s()-]/g,'').replace(/(?!^)\+/g,'');});
+  const ageI=$('#p-age');if(ageI)ageI.addEventListener('input',()=>{ageI.value=ageI.value.replace(/\D/g,'').slice(0,2);});
+  const cvI=$('#p-cv');if(cvI)cvI.onchange=()=>{const f=cvI.files[0];$('#cv-drop-txt').textContent=f?f.name:tl('cv_drop');};
+  const drop=$('#cv-drop');if(drop){['dragover','dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.toggle('over',ev==='dragover');if(ev==='drop'&&e.dataTransfer.files[0]){cvI.files=e.dataTransfer.files;cvI.onchange();}}));}
+  $('#start').onclick=start;
+}
+function readCv(){
+  return new Promise(resolve=>{
+    const inp=$('#p-cv');const f=inp&&inp.files&&inp.files[0];
+    if(!f)return resolve(null);
+    if(f.size>12*1024*1024){toast(tl('cv_big'));return resolve(null);}
+    const r=new FileReader();r.onload=()=>resolve({cvData:r.result,cvName:f.name});r.onerror=()=>resolve(null);r.readAsDataURL(f);
+  });
+}
+async function start(){
+  const val=s=>{const el=$(s);return el?el.value.trim():'';};
+  const name=val('#p-name'),surname=val('#p-surname'),sex=val('#p-sex'),age=val('#p-age'),tel=val('#p-tel'),city=val('#p-city'),email=val('#p-email');
+  // обязательные поля + проверки телефона/возраста/почты
+  if(!name||!surname||!sex||!age||!tel||!city||!email)return toast(tl('req_fields'));
+  if(!/^\d{2}$/.test(age)||+age<16||+age>79)return toast(tl('bad_age'));
+  const digits=tel.replace(/\D/g,'');
+  if(digits.length<9||digits.length>15)return toast(tl('bad_phone'));
+  if(!/.+@.+\..+/.test(email))return toast(tl('bad_email'));
+  if(!$('#p-consent').checked)return toast(tl('need_consent'));
+  const body={name,surname,sex,age,tel,city,email};
+  const cv=await readCv();if(cv)Object.assign(body,cv);
+  await fetch('/api/take/'+code+'/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  startTs=Date.now();idx=0;qStart=Date.now();
+  if(T.timeLimitSec)startTimer();
+  renderQuestion();
+}
+function startTimer(){
+  $('#timer').classList.remove('hidden');const end=Date.now()+T.timeLimitSec*1000;
+  timerInt=setInterval(()=>{const left=Math.max(0,Math.round((end-Date.now())/1000));const el=$('#timer');if(el){const m=Math.floor(left/60),s=left%60;el.textContent=`${m}:${String(s).padStart(2,'0')}`;}if(left<=0){clearInterval(timerInt);submit();}},500);
+}
+function renderQuestion(){
+  const qs=T.questions,q=qs[idx],pct=Math.round(idx/qs.length*100);qStart=Date.now();
+  let body='';
+  if(T.type==='tools'){const cur=answers[q.id];
+    body=`<div class="scale-3"><button class="opt ${cur==='+'?'sel':''}" data-v="+">${tl('yes')}</button><button class="opt ${cur==='M'?'sel':''}" data-v="M">${tl('maybe')}</button><button class="opt ${cur==='-'?'sel':''}" data-v="-">${tl('no')}</button></div>`;
+  }else if(T.type==='logic'){
+    const qImg=q.image?`<div style="text-align:center;margin:0 0 18px"><img src="${esc(q.image)}" style="max-height:280px;max-width:100%"></div>`:'';
+    if(q.optionImages&&q.optionImages.length){body=qImg+`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">`+q.optionImages.map((im,i)=>`<button class="opt ${answers[q.id]==i?'sel':''}" data-v="${i}" style="display:flex;align-items:center;justify-content:center;min-height:120px"><img src="${esc(im)}" style="max-height:100px;max-width:100%"></button>`).join('')+`</div>`;}
+    else{body=qImg+q.options.map((o,i)=>`<button class="opt ${answers[q.id]==i?'sel':''}" data-v="${i}">${esc(o)}</button>`).join('');}
+  }else if(T.type==='sales'){const so=T.scaleOptions||[tl('yes'),tl('maybe'),tl('no')];
+    body=`<div class="scale-3">`+so.map((o,i)=>`<button class="opt ${answers[q.id]==i?'sel':''}" data-v="${i}">${esc(o)}</button>`).join('')+`</div>`;
+  }else if(T.type==='knowledge'){
+    const media=(q.image?`<div style="text-align:center;margin:0 0 14px"><img src="${esc(q.image)}" style="max-height:260px;max-width:100%;border-radius:12px"></div>`:'')+(q.video?`<div style="margin:0 0 14px"><video src="${esc(q.video)}" controls style="max-width:100%;border-radius:12px"></video></div>`:'');
+    const sel=answers[q.id];const isSel=i=>q.type==='multi'?(Array.isArray(sel)&&sel.includes(i)):(sel==i);
+    body=media+q.options.map((o,i)=>`<button class="opt ${isSel(i)?'sel':''}" data-v="${i}">${esc(o)}</button>`).join('')+(q.type==='multi'?`<p class="muted" style="font-size:12.5px;margin-top:8px">${tl('multi_hint')}</p>`:'');
+  }else{
+    if(q.type==='contacts'){
+      // Контакты руководителей: три блока по умолчанию + «добавить ещё»
+      const cur=Array.isArray(answers[q.id])&&answers[q.id].length?answers[q.id]:[{},{},{}];
+      body=cur.map((c,i)=>`<div class="rc-block"><b class="muted" style="font-size:12.5px">${i+1}</b>
+        <div class="form-grid" style="margin-top:4px">
+        <div><label class="lbl">${tl('name')}</label><input class="field" data-rc="${i}-name" value="${esc(c.name||'')}"></div>
+        <div><label class="lbl">${tl('surname')}</label><input class="field" data-rc="${i}-surname" value="${esc(c.surname||'')}"></div>
+        <div><label class="lbl">${tl('position_l')}</label><input class="field" data-rc="${i}-position" value="${esc(c.position||'')}"></div>
+        <div><label class="lbl">${tl('phone')}</label><input class="field" data-rc="${i}-phone" inputmode="tel" value="${esc(c.phone||'')}"></div>
+        </div></div>`).join('')+`<button type="button" class="btn ghost" id="rc-add" style="margin-top:4px">+ ${tl('ref_add')}</button>`;
+    }
+    else if(q.type==='choice'||q.type==='choice_explain'){body=q.options.map(o=>`<button class="opt ${answers[q.id]===o?'sel':''}" data-v="${esc(o)}">${esc(o)}</button>`).join('');if(q.type==='choice_explain')body+=`<textarea class="field" id="explain" placeholder="${tl('explain_ph')} *" style="margin-top:12px">${esc(answers['e'+q.id]||'')}</textarea>`;}
+    else{body=`<textarea class="field" id="text-ans" placeholder="${tl('answer_ph')}" style="min-height:140px">${esc(answers[q.id]||'')}</textarea>`;}
+  }
+  const isLast=idx===qs.length-1;
+  // Карточка вопроса: слева номер, таймер вопроса и прогресс; справа — текст и ответы
+  $('#root').innerHTML=`<div class="reveal q-shell">
+    <div class="q-side">
+      <span class="q-time" id="q-time">0:00</span>
+      <div class="q-num">${tl('question')} ${idx+1}</div>
+      <div class="take-progress" style="margin:0 0 6px"><div style="width:${pct}%"></div></div>
+      <div class="muted" style="font-size:12.5px">${pct}% ${tl('completed_pct')} · ${idx+1} ${tl('of')} ${qs.length}</div>
+    </div>
+    <div class="q-maincol">
+      <div class="q-title" style="margin-top:0">${esc(q.text)}</div>${body}
+      <div class="row" style="justify-content:space-between;margin-top:22px">
+        <button class="btn ghost" id="prev" ${idx===0?'disabled':''}>${tl('back')}</button>
+        <button class="btn" id="next">${isLast?tl('finish'):tl('next')}</button></div>
+    </div></div>`;
+  // тикающее время на текущем вопросе (с учётом прошлых заходов)
+  clearInterval(qTickInt);
+  const tickBase=Date.now()-(times[q.id]||0)*1000;
+  const tick=()=>{const el=$('#q-time');if(!el){clearInterval(qTickInt);return;}const s=Math.max(0,Math.round((Date.now()-tickBase)/1000));el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+  tick();qTickInt=setInterval(tick,500);
+  $$('.opt').forEach(b=>b.onclick=()=>{
+    if(T.type==='knowledge'&&q.type==='multi'){let arr=Array.isArray(answers[q.id])?answers[q.id]:[];const iv=parseInt(b.dataset.v,10);if(arr.includes(iv))arr=arr.filter(x=>x!==iv);else arr=arr.concat(iv);answers[q.id]=arr;b.classList.toggle('sel');return;}
+    if(T.type==='tools')answers[q.id]=b.dataset.v;else if(T.type==='logic'||T.type==='sales'||T.type==='knowledge')answers[q.id]=parseInt(b.dataset.v,10);else answers[q.id]=b.dataset.v;
+    $$('.opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    if(T.type==='tools'||T.type==='sales'){recordTime(q);setTimeout(nextQ,160);}
+  });
+  const rcAdd=$('#rc-add');if(rcAdd)rcAdd.onclick=()=>{answers[q.id]=collectContacts().concat([{}]);recordTime(q);renderQuestion();};
+  $('#prev').onclick=()=>{if(q.type==='contacts')answers[q.id]=collectContacts();recordTime(q);if(idx>0){idx--;renderQuestion();}};
+  $('#next').onclick=()=>{
+    if(q.type==='contacts'){
+      answers[q.id]=collectContacts();
+      // хотя бы один руководитель с именем и телефоном
+      if(!answers[q.id].some(c=>(c.name||c.surname)&&c.phone))return toast(tl('ref_need'));
+    }
+    if(T.type==='result'){
+      const ta=$('#text-ans');if(ta)answers[q.id]=ta.value;
+      const ex=$('#explain');if(ex){answers['e'+q.id]=ex.value;
+        // пояснение к выбранному варианту обязательно
+        if(answers[q.id]&&!ex.value.trim())return toast(tl('need_explain'));}
+    }
+    recordTime(q);nextQ();};
+}
+function recordTime(q){times[q.id]=(times[q.id]||0)+Math.round((Date.now()-qStart)/1000);qStart=Date.now();}
+// собрать блоки контактов руководителей (вопрос type=contacts)
+function collectContacts(){
+  const map={};
+  $$('[data-rc]').forEach(el=>{const p=el.dataset.rc.split('-');(map[p[0]]=map[p[0]]||{})[p[1]]=el.value.trim();});
+  return Object.keys(map).sort((a,b)=>a-b).map(k=>map[k]);
+}
+function nextQ(){if(idx<T.questions.length-1){idx++;renderQuestion();}else submit();}
+async function submit(){
+  if(timerInt)clearInterval(timerInt);$('#timer').classList.add('hidden');
+  if(T.type==='result'){T.questions.forEach(q=>{if(q.type==='choice_explain'&&answers['e'+q.id])answers[q.id]=(answers[q.id]||'')+' — '+answers['e'+q.id];});}
+  $('#root').innerHTML='<div class="card"><p class="muted">'+tl('sending')+'</p></div>';
+  await fetch('/api/take/'+code+'/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers,times})});
+  $('#root').innerHTML=`<div class="card" style="text-align:center"><div class="done-mark pop">${CHECK_SVG}</div><h1 style="margin:8px 0">${tl('done')}</h1><p style="font-size:16px">${tl('thanks_test')} «${esc(T.title)}».</p><p class="muted">${tl('sent_recruiter')}</p></div>`;
+}
+load();
+</script>
+</body></html>

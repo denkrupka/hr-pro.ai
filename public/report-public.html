@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Результат теста</title>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head><body>
+<div style="max-width:1000px;margin:0 auto;padding:34px 22px" id="root"><p class="muted">Загрузка…</p></div>
+<script>
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const id=location.pathname.split('/').pop();
+function fmtDur(sec){if(sec==null)return'—';const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60,p=n=>String(n).padStart(2,'0');return p(h)+':'+p(m)+':'+p(s);}
+// HR-scanner-style zone-column bar chart (same as recruiter reports)
+const OCA_GRP={A:'g1',B:'g1',C:'g1',D:'g2',E:'g3',F:'g3',G:'g3',H:'g4',I:'g4',J:'g4'};
+const SALES_GRP={A:'sg1',B:'sg1',C:'sg1',D:'sg1',E:'sg2',F:'sg2',G:'sg2',H:'sg2',I:'sg3',J:'sg3',K:'sg3',L:'sg3'};
+const ZONE_COLS=['Очень низкий','Низкий','Средний','Высокий','Очень высокий'];
+const ICON_BOLT='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>';
+const CFG_TOOLS={width:v=>(v+100)/2,signed:true,kind:'tools',grp:OCA_GRP,zbounds:[16,34,66,84],glines:[16,34,66,84],axis:[['−100',0],['−68',16],['−32',34],['+32',66],['+68',84],['+100',100]]};
+const CFG_SALES={width:v=>v,signed:false,kind:'sales',grp:SALES_GRP,zbounds:[20,40,60,80],glines:[20,40,60,80],axis:[['0',0],['20',20],['40',40],['60',60],['80',80],['100',100]]};
+function zoneOf(w,cfg){const b=cfg.zbounds;return w<b[0]?0:w<b[1]?1:w<b[2]?2:w<b[3]?3:4;}
+function zn(w,cfg){return 'zn'+zoneOf(w,cfg);}
+function zoneHeadRow(cfg){const b=cfg.zbounds,c=[b[0]/2,(b[0]+b[1])/2,(b[1]+b[2])/2,(b[2]+b[3])/2,(b[3]+100)/2];return `<div class="oca-row zc"><span></span><span></span><div class="zc-head">${ZONE_COLS.map((t,i)=>`<span style="left:${c[i]}%">${t}</span>`).join('')}</div><span></span></div>`;}
+function axisRow(cfg){return `<div class="oca-row axis"><span></span><span></span><div class="oca-axis">${cfg.axis.map(a=>`<i style="left:${a[1]}%">${a[0]}</i>`).join('')}</div><span></span></div>`;}
+function barRow(pt,cfg,comp){const w=Math.max(0,Math.min(100,cfg.width(pt.value)));const barCls=(cfg.grp[pt.key]||'g1')+(comp?' comp':'');const num=cfg.signed?(pt.value>0?'+'+pt.value:''+pt.value):''+pt.value;const z=zn(w,cfg);const bolt=pt.manic?`<span class="bolt" title="Плавающая точка — переменчивость под влиянием внешних факторов">${ICON_BOLT}</span>`:'';const poles=pt.low?`<i>${esc(pt.low)} — ${esc(pt.high)}</i>`:(pt.desc?`<i>${esc(pt.desc)}</i>`:'');return `<div class="oca-row${comp?' is-comp':''}"><div class="oca-name"><b>${pt.key}.</b> <span>${esc(pt.name)}</span>${bolt}${poles}</div><div class="oca-val ${z}${comp?' comp':''}">${num}</div><div class="oca-track" data-tip="${esc(pt.interpretation||pt.label||'')}"><div class="oca-bar ${barCls}" style="width:${w}%"></div>${cfg.glines.map(x=>`<i class="gl" style="left:${x}%"></i>`).join('')}</div><div class="oca-zlab ${z}">${esc(pt.label)}${comp?' · компульс.':''}</div></div>`;}
+function barChart(order,points,cfg,isComp){return `<div class="ocachart">${zoneHeadRow(cfg)}${order.map(k=>barRow(points[k],cfg,isComp?isComp(k):false)).join('')}${axisRow(cfg)}</div>`;}
+function chartLegend(cfg,hasComp){const g=cfg.kind==='tools'?`<span><i style="background:#3d6cd1"></i>A–C · внутреннее наполнение</span><span><i style="background:#1fa8c9"></i>D · уверенность</span><span><i style="background:#e8932a"></i>E–G · эффективность</span><span><i style="background:#1f9d6b"></i>H–J · отношения</span>`:`<span><i style="background:#7b52c9"></i>A–D · внутренние качества</span><span><i style="background:#e0982a"></i>E–H · эффективность</span><span><i style="background:#1f9d6b"></i>I–L · отношения</span>`;return `<div class="oca-legend">${g}${hasComp?'<span><i class="ring"></i>компульсивная точка</span>':''}</div>`;}
+function zpill(label,value,cfg){return `<span class="zpill ${zn(Math.max(0,Math.min(100,cfg.width(value))),cfg)}">${esc(label)}</span>`;}
+function interpGrid(order,points,cfg){return `<div class="interp-grid">`+order.map(k=>{const pt=points[k];return `<div class="interp-card"><div class="ic-h"><b>${pt.key}. ${esc(pt.name)}</b>${zpill(pt.label,pt.value,cfg)}</div><p>${esc(pt.interpretation)}</p></div>`;}).join('')+`</div>`;}
+function fillSpec(){requestAnimationFrame(()=>document.querySelectorAll('.oca-bar[data-w]').forEach(b=>{b.style.width=b.dataset.w+'%';}));wireChartTips();}
+function wireChartTips(){let tip=document.getElementById('chart-tip');if(!tip){tip=document.createElement('div');tip.id='chart-tip';tip.className='chart-tip';document.body.appendChild(tip);}document.querySelectorAll('.oca-track[data-tip]').forEach(tr=>{if(!tr.dataset.tip)return;tr.style.cursor='help';tr.addEventListener('mouseenter',()=>{tip.textContent=tr.dataset.tip;tip.classList.add('show');});tr.addEventListener('mousemove',e=>{tip.style.left=e.clientX+'px';tip.style.top=(e.clientY-14)+'px';});tr.addEventListener('mouseleave',()=>tip.classList.remove('show'));});}
+(async()=>{
+  const r=await fetch('/api/r/'+id);
+  if(!r.ok){document.getElementById('root').innerHTML='<div class="card"><h2>Результат недоступен</h2></div>';return;}
+  const d=await r.json();
+  const p=d.participant||{};const nm=((p.name||'')+' '+(p.surname||'')).trim();
+  let html=`<div class="report-head"><span class="brand-mark" style="width:42px;height:42px;border-radius:13px"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><div><div class="muted" style="font-size:13px">«${esc(d.test.title)}» · публичный результат</div><h1>${esc(nm)}</h1></div></div><div class="card">`;
+  if(d.hint)html+=`<div class="ai-banner ${d.hint.tone||'good'}"><small>Подсказка от ИИ</small><h3>${esc(d.hint.verdict)}</h3>
+    <ul>${d.hint.notes.map(n=>'<li>'+esc(n)+'</li>').join('')}</ul></div>`;
+  const res=d.result;
+  if(d.test.type==='tools'){
+    const dVal=res.points.D?res.points.D.value:-100;
+    const isComp=k=>k!=='D'&&dVal>=32&&res.points[k].value>dVal;
+    const hasComp=res.order.some(isComp);
+    html+=`<h3 class="subh" style="margin:0 0 8px;font-family:Manrope;color:var(--indigo)">Спектр профиля</h3>${barChart(res.order,res.points,CFG_TOOLS,isComp)}${chartLegend(CFG_TOOLS,hasComp)}`;
+    html+=`<h2 style="margin-top:26px">Объяснение результатов</h2>`+interpGrid(res.order,res.points,CFG_TOOLS);
+  } else if(d.test.type==='logic'){
+    const iq=res.iq!=null?res.iq:res.percent;
+    html+=`<div class="iq-score">${iq}</div><div style="text-align:center" class="muted">${esc(res.level)} уровень · верных ${res.correct} из ${res.total}</div>`;
+    html+=`<div class="q-grid" style="margin-top:20px">`+(res.bands||[]).map(b=>`<div class="q-card"><b>${esc(b.range)}</b><div class="muted" style="margin-top:6px">${esc(b.text)}</div></div>`).join('')+`</div>`;
+  } else if(d.test.type==='sales'){
+    html+=`<h3 class="subh" style="margin:0 0 8px;font-family:Manrope;color:var(--indigo)">Профиль продавца · 12 показателей</h3>${barChart(res.order,res.points,CFG_SALES,null)}${chartLegend(CFG_SALES,false)}`;
+    html+=`<h2 style="margin-top:26px">Объяснение результатов</h2>`+interpGrid(res.order,res.points,CFG_SALES);
+  } else {
+    html+=res.items.map(it=>`<div class="q-card"><b>Вопрос ${it.id}</b><div>${esc(it.text)}</div>
+      <div class="q-ans"><b>Ответ:</b> ${esc(it.answer)||'—'}</div></div>`).join('');
+  }
+  html+='</div>';
+  document.getElementById('root').innerHTML=html;
+  fillSpec();
+})();
+</script>
+</body></html>

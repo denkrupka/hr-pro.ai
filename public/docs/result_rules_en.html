@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR PRO AI — How to Read the "Rezalt" Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --ink:#16203A; --ink2:#3A4663; --muted:#6B768E;
+  --blue:#3D6CD1; --blue-d:#2A4FA0; --indigo:#23306A;
+  --sky:#EAF0FB; --paper:#F4F7FC; --card:#FFFFFF;
+  --coral:#E8553B; --coral-s:#FFF0EC;
+  --green:#1F9D6B; --green-s:#E9F7F0;
+  --red:#D24B4B;  --red-s:#FBEDED;
+  --amber:#C98A1E; --amber-s:#FBF3E2;
+  --line:#E4EAF4; --line2:#D7E0EF;
+  --shadow:0 1px 2px rgba(20,30,60,.04),0 8px 28px rgba(20,30,60,.06);
+  --r:16px; --r-s:11px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:14.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;background:#fff;
+  box-shadow:0 0 0 1px var(--line),0 30px 80px rgba(20,30,60,.08)}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;color:#fff;padding:46px 52px 42px;overflow:hidden;
+  background:linear-gradient(135deg,#2A4FA0,#3D6CD1 55%,#4E79DA)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.14;
+  background-image:
+    linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(120% 120% at 100% 0%,#000 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(120% 120% at 100% 0%,#000 30%,transparent 75%)}
+.hero>*{position:relative}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+.brand-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:19px;letter-spacing:.06em}
+.brand-tag{font-size:12px;opacity:.82;margin-top:1px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.85;margin-bottom:12px}
+.hero h1{font-family:'Manrope',sans-serif;font-weight:800;font-size:38px;line-height:1.14;letter-spacing:-.015em;margin:0 0 14px;max-width:640px}
+.hero .sub{font-size:15.5px;line-height:1.6;opacity:.92;max-width:620px;margin:0 0 26px}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.32);
+  background:rgba(255,255,255,.10);border-radius:999px;padding:6px 14px;font-size:12.5px}
+.chip b{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:#FF7A5C}
+
+/* ---------- CONTENT ---------- */
+.content{padding:38px 52px 14px}
+.sec{margin-bottom:38px}
+.sec-head{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}
+.sec-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#fff;
+  background:linear-gradient(135deg,var(--blue-d),var(--blue));
+  border-radius:9px;min-width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;padding:0 8px}
+.sec-head h2{font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;margin:0;letter-spacing:-.01em}
+h3{font-family:'Manrope',sans-serif;font-weight:700;font-size:15.5px;margin:22px 0 8px}
+p{margin:0 0 13px;color:var(--ink2)}
+p strong{color:var(--ink)}
+ul.q4{margin:6px 0 14px;padding-left:0;list-style:none}
+ul.q4 li{position:relative;padding:5px 0 5px 26px;color:var(--ink2)}
+ul.q4 li::before{content:"";position:absolute;left:2px;top:13px;width:12px;height:2.5px;border-radius:2px;background:var(--blue)}
+
+/* callouts */
+.callout{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:var(--r-s);
+  padding:14px 18px;margin:18px 0;background:#FBFCFE;break-inside:avoid}
+.callout .ct{font-family:'Manrope',sans-serif;font-weight:700;font-size:13.5px;margin-bottom:5px;color:var(--ink)}
+.callout p{margin:0;font-size:13.5px}
+.callout.ok{border-left-color:var(--green);background:var(--green-s)}
+.callout.warn{border-left-color:var(--amber);background:var(--amber-s)}
+.callout.risk{border-left-color:var(--red);background:var(--red-s)}
+.callout.hot{border-left-color:var(--coral);background:var(--coral-s)}
+
+/* type cards (виннер/дуэр/вэйтер) */
+.type-tag{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:999px;padding:4px 12px;margin-bottom:10px}
+.type-tag.win{background:var(--green-s);color:var(--green)}
+.type-tag.doer{background:var(--sky);color:var(--blue-d)}
+.type-tag.wait{background:var(--red-s);color:var(--red)}
+
+/* tables */
+.tw{overflow-x:auto;margin:18px 0;border-radius:var(--r-s);border:1px solid var(--line2);break-inside:avoid}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:linear-gradient(135deg,var(--indigo),var(--blue-d));color:#fff;text-align:left;padding:10px 13px;
+  font-family:'Manrope',sans-serif;font-weight:700;font-size:12.5px}
+tbody td{padding:10px 13px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+tbody tr:nth-child(even) td{background:#F8FAFE}
+tbody td b{color:var(--ink)}
+td .mono{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+
+/* dialog block */
+.dialog{border:1px solid var(--line);border-radius:var(--r-s);background:#FBFCFE;padding:14px 18px;margin:14px 0;break-inside:avoid}
+.dialog p{margin:0 0 6px;font-size:13.5px}
+.dialog p:last-child{margin:0}
+.dialog .who{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+
+/* question cards */
+.qcard{border:1px solid var(--line);border-radius:var(--r);padding:18px 20px 14px;box-shadow:var(--shadow);
+  position:relative;margin:0 0 18px;background:#fff;break-inside:avoid}
+.qcard::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0;background:var(--blue)}
+.qcard.key{border-color:#F4C9BE;background:linear-gradient(180deg,#FFFBFA,#fff)}
+.qcard.key::before{background:var(--coral)}
+.q-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+.q-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--blue-d);
+  background:var(--sky);border-radius:8px;padding:4px 9px;white-space:nowrap;margin-top:2px}
+.qcard.key .q-num{color:var(--coral);background:var(--coral-s)}
+.q-title{font-family:'Manrope',sans-serif;font-weight:700;font-size:14.5px;line-height:1.45;color:var(--ink)}
+.q-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--coral);border:1px solid #F4C9BE;border-radius:999px;padding:2px 9px;margin-left:auto;white-space:nowrap;margin-top:4px}
+.q-opts{font-size:13px;color:var(--muted);border:1px dashed var(--line2);border-radius:9px;padding:9px 13px;margin:8px 0 12px;background:#FBFCFE}
+.q-opts b{color:var(--ink2);font-weight:600}
+.q-int-label{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--blue-d);margin-bottom:5px}
+.qcard p{font-size:13.5px}
+.qcard p:last-child{margin-bottom:4px}
+
+/* do / don't chips */
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.dd .col{border:1px solid var(--line);border-radius:var(--r-s);padding:14px 16px;break-inside:avoid}
+.dd .col h4{font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;margin:0 0 10px;letter-spacing:.02em}
+.dd .col.good h4{color:var(--green)} .dd .col.bad h4{color:var(--red)}
+.pill{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.pill::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;margin-top:6px}
+.col.good .pill::before{background:var(--green)} .col.bad .pill::before{background:var(--red)}
+
+/* summary banner */
+.verdict{border:1px solid var(--line2);border-radius:var(--r);overflow:hidden;margin:22px 0;box-shadow:var(--shadow);break-inside:avoid}
+.verdict-head{background:linear-gradient(135deg,var(--indigo),var(--blue-d));color:#fff;padding:13px 20px;
+  display:flex;align-items:center;gap:12px}
+.verdict-head .vb{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:3px 11px}
+.verdict-head b{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px}
+.verdict-body{padding:16px 20px}
+.verdict-body p{font-size:13.5px}
+
+.footnote{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding:16px 0 26px;margin-top:8px}
+
+/* footer */
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 52px;background:var(--indigo);color:#fff}
+.foot .f-brand{display:flex;align-items:center;gap:12px}
+.foot .f-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em}
+.foot .f-slogan{font-size:12.5px;opacity:.85;text-align:right}
+
+/* print */
+@media print{
+  @page{ size:A4; margin:13mm; }
+  body{ background:#fff; }
+  .wrap{ max-width:none; box-shadow:none; }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .sec,.qcard,.callout,.verdict,.tw,.dd .col,.dialog{ break-inside:avoid; }
+  .hero{padding:34px 40px 30px}
+  .content{padding:26px 40px 8px}
+  .foot{padding:18px 40px}
+}
+
+/* responsive */
+@media (max-width:680px){
+  .hero{padding:32px 22px 28px}
+  .hero h1{font-size:28px}
+  .content{padding:26px 22px 8px}
+  .foot{padding:18px 22px;flex-direction:column;align-items:flex-start}
+  .foot .f-slogan{text-align:left}
+  .dd{grid-template-columns:1fr}
+  .q-badge{display:none}
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+
+<main class="content">
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Three Baskets of Effectiveness</h2></div>
+  <p>In life we often meet people who seem incapable of doing any job brilliantly. There are also those who appear able to do something, but only under supervision or after a good push. In contrast, there are people who act with maximum effectiveness, handle difficulties on their own and are genuinely valuable employees.</p>
+  <p>Years of observing candidates have shown that <strong>effectiveness runs through a person's entire life</strong>. When we meet a results-driven employee, in most cases they also have successes in other areas beyond work — in sport, studies, various projects. Another interesting observation: effective people can talk about their results, they keep track of them and are often even proud of them.</p>
+  <p>By their ability to see things through and deliver the outcome expected of their role, all candidates can be sorted into three big baskets labelled <strong>winners, doers and waiters</strong>. Let's look at why a candidate falls into one basket or another and why these names were chosen.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Type</th><th>In one line</th><th>Share in society</th></tr></thead>
+    <tbody>
+      <tr><td><b>Winner</b></td><td>Sees what needs to be done — and does it on their own</td><td><span class="mono">≈ 20%</span></td></tr>
+      <tr><td><b>Doer</b></td><td>Sees and does — once shown how</td><td><span class="mono">≈ 40%</span></td></tr>
+      <tr><td><b>Waiter</b></td><td>Doesn't see and is in no hurry to act</td><td><span class="mono">≈ 40%</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">02</span><h2>The Winner</h2></div>
+  <span class="type-tag win">win → victory</span>
+  <p>The name comes from the English word "win". Winners are the category of employees who clearly understand what is expected of them and reliably produce their product. These are productive employees with four excellent qualities:</p>
+  <ul class="q4">
+    <li>they see a problem or something that can be improved;</li>
+    <li>they can find a solution on their own;</li>
+    <li>they put that solution into practice;</li>
+    <li>they do it independently, without external pressure.</li>
+  </ul>
+  <p>Most successful entrepreneurs are winners, because without these four qualities it is practically impossible to achieve any tangible results.</p>
+  <p>A person can be a winner in a specific area — for example, an excellent salesperson. They are effective in sales and deliver great numbers. We can call such a person a <strong>specialist winner</strong>. But if we promote this star seller to head of the sales department, we will most likely lose a good salesperson and gain a mediocre manager.</p>
+
+  <div class="callout warn">
+    <div class="ct">The "Michael Jordan rule"</div>
+    <p>Recruiting has a rule named after Michael Jordan. It was formulated after a story involving the famous Chicago Bulls. The team lost its coach, and Michael Jordan was appointed as the replacement. He is, of course, a brilliant basketball player — a true winner. But the game is such a natural process for him that he may simply be unable to coach other players, being in fact a specialist player. And how is the team supposed to win if Michael Jordan sits on the bench instead of running the court?</p>
+  </div>
+
+  <h3>Universal winners</h3>
+  <p>There is a category of employees — <strong>universal winners</strong>. These are people who reliably improve whatever area they enter without being an expert in it beforehand: they orient themselves quickly, learn, grasp the key nuances of the job, understand what is required and start producing it well.</p>
+  <p>We have met such people among entrepreneurs more than once: wherever such a person went, whatever position they held, they reliably saw what needed to be improved, understood the solution and the tools required, put their decisions into practice and — most importantly — did it themselves, without pressure.</p>
+  <p>People of this category can be found not only among entrepreneurs but also among managers and even line staff. These employees usually climb the career ladder quickly. Universal winners are often effective not only at work but also in sport, chess and other human activities where you need to figure things out and get them done.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The Doer</h2></div>
+  <span class="type-tag doer">do → to do</span>
+  <p>The doer is the second type of employee, named after the English word "do". This category includes employees who love their work and the field they are in. Doers handle their duties with enthusiasm and pleasure. They are able to understand what is required of them and produce it, with minor exceptions. They possess <strong>three of the four qualities</strong> we found in winners.</p>
+  <p>For example, a doer may see a problem or something that needs improving, but fail to find a way to do it. If someone suggests a solution, they will do what is necessary. There are also situations where they understand the task and the method for solving it, yet do not act independently, asking their manager for permission or approval first.</p>
+  <p>In the business world doers are often called executors. There is also the well-known classification of process-oriented versus results-oriented people. In that scheme, doers belong to the first group, and winners, of course, to the second.</p>
+  <p>If a winner and a doer stand at the start of a running race, the results-focused winner thinks about the finish line: how to come first, how to pace themselves — and sometimes even analyses opponents' strengths and weaknesses to pick the right winning strategy. The doer simply understands that being at the start line means they will have to run.</p>
+  <div class="callout ok">
+    <div class="ct">Doers are the winners' hands</div>
+    <p>They can be highly productive and are recommended for hiring when a winner-manager stands above them. This alliance can deliver solid results. The manager will see the solutions and implementation methods himself and give the executors specific instructions, correcting and stimulating their work.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The Waiter</h2></div>
+  <span class="type-tag wait">wait → to wait</span>
+  <p>The third category is waiters, from the English word "wait". In our classification, a waiter is an employee who is not particularly eager to do their job, is in no hurry and needs constant supervision. The key difference between waiters and doers is <strong>the absence of desire</strong>. Waiters have no desire to help and no desire to do the work.</p>
+  <p>In a sense, a waiter is a poor executor who seems able to do things, but as soon as any obstacle appears at work, they will immediately seize the opportunity and stop working.</p>
+  <p>Typically, when you ask such employees to step even slightly outside their zone of responsibility — say, help move a desk or join everyone in unloading a truck that arrived unexpectedly because the loader didn't show up — you will hear displeased muttering and attempts to dodge the work at any opportunity and under any pretext.</p>
+  <p>A doer, by the way, would happily pitch in in the same situation, help out and even enjoy the chance to switch briefly from one kind of work to another.</p>
+  <p>If you ask them to stay late, come in at the weekend or occasionally arrive at the office early, waiters will invariably produce stories and unmissable prior commitments — anything to avoid taking on extra responsibility and additional duties.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Example: the Annual Report and Three Accountants</h2></div>
+  <p>To better understand how all three categories behave in real life, here is an example of an annual report being submitted by three accountants — one a winner, the second a doer, the third a waiter.</p>
+  <p>Suppose their product is a report submitted on time and without errors, and on the way to this goal an unexpected obstacle appears — <strong>the office has run out of paper</strong>.</p>
+
+  <h3>The winner accountant</h3>
+  <p>The winner sees that the lack of paper may prevent her from completing the task and solves the problem promptly. She might ask one of the colleagues to run to the nearest stationery shop and even give him money from her own wallet, reasoning that a couple of coins is nothing compared to missing the report deadline. She might also simply borrow a pack of paper from the office next door. The main thing is to overcome the obstacle quickly, by whatever means, and complete the task.</p>
+
+  <h3>The doer accountant</h3>
+  <p>The doer, being a good executor, also springs into action when she sees the obstacle. Only she will most likely go to the manager and say:</p>
+  <div class="dialog">
+    <p><span class="who">Doer</span>— We've run out of paper in the office, and I need to submit the report tonight. What should I do?</p>
+    <p><span class="who">Manager</span>— Well, go and buy some.</p>
+  </div>
+  <p>Having received approval, the doer accountant will most often follow up with questions: should she take cash from petty cash or pay by transfer, should she order the paper from the usual supplier — though a transfer and delivery might take a couple of days — or buy it at the market, where it might cost slightly more. In the end the manager, especially if he is a winner, will give clear instructions — or, more likely, simply hand over the cash and say something like: "Just buy the paper already and, most importantly, submit the report on time."</p>
+
+  <h3>The waiter accountant</h3>
+  <p>In the case of the waiter accountant, when the paper runs out she will most likely simply stop working on the report, perhaps open a game of Solitaire on her computer, and when the manager comes running, a dialogue like this will take place:</p>
+  <div class="dialog">
+    <p><span class="who">Manager</span>— So, is everything ready? Are we submitting the report?</p>
+    <p><span class="who">Waiter</span>— No, we've run out of paper.</p>
+    <p><span class="who">Manager</span>— Then why are you silent? Why didn't you tell anyone?</p>
+    <p><span class="who">Waiter</span>— Nobody asked.</p>
+    <p><span class="who">Manager</span>— Then someone urgently needs to go to the shop and buy some.</p>
+    <p><span class="who">Waiter</span>— Well, we have an office manager, let him go. I didn't take this job to run around fetching paper.</p>
+  </div>
+
+  <p>We believe that while reading this chapter you have recognised all three types of people — with their different attitudes to results and to work in general — in your own team and environment. You can protect your company from ineffective characters if you learn to identify waiters at the selection stage: people who do not love work and avoid responsibility at every convenient opportunity. You will stop racking your brains over why a new manager keeps asking for your approval and cannot make decisions independently — understanding that he is a doer. And you will raise the company's effectiveness by making smart personnel moves and putting people who think in terms of results — true productive winners — into leadership positions.</p>
+
+  <div class="callout hot">
+    <div class="ct">The 20 / 40 / 40 proportion</div>
+    <p>In society, these three types of employees are distributed roughly as follows: winners — 20 percent, doers — 40 percent, and waiters — likewise 40 percent. Moreover, those 20 percent of winners produce <strong>80 percent of all expected results</strong> in any company and in society as a whole.</p>
+  </div>
+  <p>To determine efficiently which of the three categories a candidate responding to your vacancy belongs to, a short but crucial productivity test was created — the "Rezalt" test.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">06</span><h2>About the "Rezalt" Test</h2></div>
+  <p>An HR manager's or executive's toolkit contains plenty of questionnaires and tests for assessing employee effectiveness and measuring productivity. But far from all of them are convenient for candidates to complete and — most importantly — the results are not always easy to interpret unambiguously.</p>
+  <p>In this guide we share a technique for assessing a person's productivity that divides people into three types and determines whether our candidate is a winner, a doer or a waiter. If we describe the types in a single sentence: <strong>winners</strong> are those who see and do on their own; <strong>doers</strong> are those who see and do once shown how; and <strong>waiters</strong>, the least desirable in a company, are those who do not see and are in no hurry to act.</p>
+  <p>So, this is about typing candidates using the short "Rezalt" test of roughly 20 questions. A candidate needs 10 to 25 minutes to complete it, which makes it easy to use, and at HR PRO AI we use it as our primary tool for assessing a person's productivity and effectiveness. The word "roughly" about the number of questions is no accident: the test is not linear but scenario-based — after each answer, one branch or another plays out depending on the nature of the response.</p>
+  <p>For example, there is a question about whether the candidate was given targets at their previous company. If the person answers "yes", they then get a question about whether they met those targets and why. If they say no targets were set, asking about meeting them makes no sense.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Test Structure</h2></div>
+  <p>The "Rezalt" test contains four questions whose answers trigger different scenarios, so the total number of questions in the final result can vary <strong>from 17 to 26</strong>. This makes it very problematic to use the test on paper — although you can transfer the questions to paper if you must, they work best in their optimal implementation on the HR PRO AI platform, which we use across all our hiring departments; we sincerely recommend this tool to everyone who hires people.</p>
+  <p>Our task during hiring is to determine which candidates will cope best with the offered job and bring maximum results — essentially, to <strong>predict the future</strong>. To build a forecast, it is wise to rely on something solid that can be verified, which is why the object of study is the person's previous jobs and, indeed, their whole life.</p>
+  <p>That is exactly the area the test questions target, because practice shows that people's productivity does not change when they change jobs. And if one applicant has ever had hard, measurable results that they tracked and can discuss confidently, while another offers only vague wording and stories about the wrong managers, the wrong company, the wrong product — "but with you I'll definitely deliver super results" — then preference should go not to the one who tells a pretty story, but to the one who produces effectively.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Additional Effect</h2></div>
+  <p>Before moving on to the questions and how to interpret the results, let us note a few more positive aspects of the "Rezalt" test.</p>
+  <p>The mere act of sending the test already cuts off the first layer of minimally interested candidates — those who most likely responded to your vacancy by accident and are not prepared to lift a finger to get the job. They will simply refuse to fill in the test.</p>
+  <div class="callout ok">
+    <div class="ct">"Productive candidates will refuse the test" — a myth</div>
+    <p>Any results-driven, genuinely effective candidate will gladly help you do your job and will talk about their results, their attitude to work and the things they are proud of. Hundreds of vacancies have been closed with this testing methodology, and in every case the candidates who completed the short test quickly, spending 10–15 minutes, turned out in reality to be the most interested, motivated and — most importantly — productive, compared with those who tried in every way to dodge the test, insisting on an interview or pointing to their CV.</p>
+  </div>
+  <p>Incidentally, the "Rezalt" test effectively lets us reassemble the candidate's CV, only in the productivity context we need, with clear, comparable indicators for benchmarking a large flow of candidates to identify the strongest — saving time on detailed CV study. With one click on the HR PRO AI platform we send the candidate a link right after they respond to our vacancy, and within 30 seconds we understand how adequate this person is and whether it makes sense to keep talking to them or we can confidently send a rejection.</p>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Questions and Interpretation of Answers</h2></div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-01</span>
+      <div class="q-title">Every person, in the course of their work at a company, creates certain value for the organisation. Let's call the end result of an employee's work the "product of the position". For example, a janitor sweeps and cleans the grounds — the product of his position is a clean yard. A secretary handles incoming calls — her "product" is a client's call routed to the right employee as fast as possible. It is precisely for producing this "product" that the company pays the employee a salary and supports them. Do you agree that every position in an organisation has its own "product"?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "Yes, I fully agree" · "Yes, but not always" · "No, I disagree"</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>The preferred, expected and objectively correct answer is <strong>"Yes, I fully agree"</strong>. There is no need to explain at length why: this question provokes disagreement only in perpetual arguers who try to push the opposite view in any situation, even when the wording itself obviously presupposes agreement.</p>
+    <p>Roughly 5–7% of candidates choose "No, I disagree", and frankly they raise a red flag from the start: in 99% of cases all their subsequent answers are steeped in the spirit of disagreement and resistance. Think about your future work with a person who refuses to agree with such an obvious and objectively correct statement. There is also a group of candidates who choose "Yes, but not always" and then, in the vast majority of cases, start explaining why an employee should simply perform their duties, and that there is work whose results cannot be measured and there is no point in trying.</p>
+    <p>Remember: our main task is to select, from the mass of candidates, those most likely to get up to speed quickly and, with the least friction, start delivering the product of the position we expect from them. That is why we almost always prefer candidates who grasped the idea and answered "Yes, I fully agree". In work and in life they turn out to be the most adequate and results-driven.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-02</span>
+      <div class="q-title">Please explain your previous answer.</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the person shares their thoughts and reasoning on why they chose that option.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>We read with interest — though usually just skim — how the candidate justifies their earlier choice. Most often the answer contains logical, understandable reasoning. Some answer briefly and to the point; others write half a page and ramble. One might draw a conclusion about how the candidate presents information, but this is not the key question of the test, so simply take a look — and if the answer falls into the adequate category, move on. Occasionally, though, you will come across an answer that catches your eye and may make you tense and doubt the candidate's mental faculties. We suggest not jumping to conclusions yet — but take note of it.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-03</span>
+      <div class="q-title">What position did you hold at your most recent job?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the candidate states what they did recently and which position the test will be about.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>Knowing what the candidate did will be needed to analyse the product of the position they describe in the following questions. Having received this answer, we should ask ourselves: if a person held this position in our company, what results would we expect from them, and what should they, as an employee, produce for us to say confidently that they are doing their job well.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-04</span>
+      <div class="q-title">How long did you work in this position?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the candidate states how long they worked at the job in question.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>This is a reference question that simply shows how long our candidate worked in the position they will be discussing.</p>
+  </div>
+
+  <div class="qcard key">
+    <div class="q-top"><span class="q-num">Q-05</span>
+      <div class="q-title">How would you describe your product at your place of work?</div>
+      <span class="q-badge">key question</span>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "my product is…" · "it's hard for me to describe my product; I can more precisely describe my duties" · "at this job it's practically impossible to say what the product is". Each option has a comment field (for the first — a field to describe the product).</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>This is one of the most important, key questions of the test, and we pay special attention to it. Preferred for further analysis are those who chose <strong>"my product is"</strong> and named a genuinely real product of the position — one that you, as their manager, would happily reward with a good salary. People who chose this option and named their product clearly and correctly can, at this stage, be provisionally classed as winners.</p>
+    <p>Those who chose the second option — who find it hard to talk about a product but happily talk about their duties — we classify as doers. And those who pick the third option, struggling to understand what is being asked and unable to even grasp what is wanted of them at this job, we confidently assign to the waiters. We do not recommend inviting the latter to an interview, and we send a rejection to every candidate who chose this option. Their level of awareness and understanding of what is going on does not allow us to entrust them with any work at all, so we suggest they look for a job at another company.</p>
+    <p>There is also the case where a person chose the first option, intending to state their product, but instead described their duties or processes, passing them off as results. We classify these people as doers and will, in practice, keep looking through the whole pool for candidates who understand as precisely as possible what the employer expects of them. This question filters out a good share of candidates — provided we are clear about who we are looking for in this role: winners only, or whether good doer-executors will also do, since a strong manager will definitely stand above them.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-06</span>
+      <div class="q-title">Do you, or someone else, measure the volume of the "product" you produce?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "yes" · "no". The question appears if "my product is" was chosen in the previous question. If the person chose the third option and said it was hard to reason about a product, they will not see this question. If they chose the second option (can talk about duties), then instead of this question they are asked simply to list the main functions they perform at work.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>The preferred answer is <strong>"yes"</strong>, since results-driven candidates always measure their output to some degree and are able to talk about results.</p>
+    <p>If the candidate chooses "no", they simply lose out to more productive candidates who will tell us about their results in the following questions, and almost always receive a rejection — unless we are specifically looking for a doer who finds it hard to talk about how much they produce. Although practice shows that effective doers still measure the volume of actions, calls and emails they make.</p>
+    <p>Since our main task, based on the test results, is to pick the most effective people from the pool of applicants, we give preference to those who measure and reject those who cannot — or deliberately will not — talk about their results.</p>
+  </div>
+
+  <div class="qcard key">
+    <div class="q-top"><span class="q-num">Q-07</span>
+      <div class="q-title">Please describe below the results of your work in this position — that is, how much product you produced over a given period.</div>
+      <span class="q-badge">key question</span>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "my exact results…" · "it's hard to describe them exactly; I can only give approximations" · "at this job it's practically impossible to measure results, and here's why". Choosing the first option, candidates describe their exact results in a free-form field; the second and third options have similar comment fields.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>One of the key questions of the test, where effective candidates show their productivity metrics. The preferred answer is the first — "my exact results…". The most effective candidates share numbers, achievements, changes, quantities, and the answer to this question often forms a realistic picture of the candidate's abilities and scale. It is on this question that favourites emerge — those who, without any fluff, describe their productivity metrics clearly and precisely, demonstrating maximum adequacy and high resolution in their field. <strong>Winners show themselves clearly on this question by choosing the first answer and describing results.</strong></p>
+    <p>Some candidates choose the first option, but in the answer itself, instead of precise data, pour out vague verbiage with no numbers or metrics. You can practically feel that they are trying to blur things over and pass off the absence of a result as a result. We choose those who are maximally precise and adequate.</p>
+    <p>Those who choose the second option and cannot describe their results precisely, but give some approximate benchmarks for analysis, are less preferable for us — yet they can be decent executors, so if you are looking for doers, do not write them off.</p>
+    <p>The last option is clearly for those who barely understand what they do, with an evident lack of desire to figure things out, count and measure their productivity. A clear sign of waiters. To these, we suggest sending a rejection without hesitation — you surely have worthier candidates among those who chose the first option.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-08</span>
+      <div class="q-title">Can you somehow compare the results you achieve at work with the results of other people holding a similar position in your organisation or outside it?</div>
+    </div>
+    <div class="q-opts"><b>Answer options (6):</b> "my results are significantly higher than people in similar positions" · "my results are higher than people in similar positions" · "my results are slightly higher than people in similar positions" · "my results are about the same as others'" · "my results are lower than others'" · "I find it hard to compare results". At the end, the applicant is asked to comment on their answer.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>The preferred options are the first three, in which the candidate compares their results with others and rates them — significantly or slightly — higher than those of people in similar positions. What matters to us is the very fact that the person evaluates their productivity, compares it with others and notes their advantage. This is an indicative question that simply shows how far the person looks beyond their own job and assesses their standing among other people. Results-driven employees usually answer with the first three options; waiters either do not compare themselves with others at all, having no desire to, or do their work at the bare minimum — and operate with the last three answers.</p>
+    <p>Either way, the answer to this question helps complete the assessment picture and improves the accuracy of identifying the strongest people in the whole flow.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-09</span>
+      <div class="q-title">How did the scope of your responsibility change over time, from the moment you joined the company until now?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "it grew" · "it stayed the same" · "it decreased". After choosing an option, the candidate is asked to comment in a dedicated field.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>As with the previous questions, the preferred answer is the first — "it grew" — chosen by people who are not afraid to take responsibility for new areas. If, on the contrary, an employee's scope of responsibility shrinks after joining the company, this most likely means the manager did not trust our candidate much, or that they are not particularly keen to take on responsibility — which is an indicator of waiters, the people we prefer not to hire into our companies.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-10</span>
+      <div class="q-title">How did the volume of work you performed change over time, from the moment you joined the company until now?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "it grew" · "it stayed the same" · "it decreased". After choosing an option, the candidate is asked to comment in a dedicated field.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>The preferred answer is the first — "it grew" — because, for objective reasons, an effective employee with a desire to develop starts doing more work over time and handling more duties than at the very beginning of their life in the company. If the volume of tasks an employee handles does not change since joining, or even decreases, this most likely means they are either not being trusted with new tasks or have no desire to take them on. Productive employees choose the first option — these can be both winners and good executors, whom we call doers; those with no particular desire to work — whom we call waiters — choose the second and third options.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-11</span>
+      <div class="q-title">Do you operate in your work on the basis of targets set for you?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "yes" · "no".</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>An introductory clarifying question in a short scenario, to establish whether targets were set for the employee.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-12</span>
+      <div class="q-title">Are the results of your work above target?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "above" · "below". After choosing, the applicant must comment on the answer in a dedicated field. The question is shown if the candidate answered "yes" to the previous question.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>There is no preferred answer here, since both situations are possible: companies do sometimes set unreasonably high targets that are genuinely very hard to meet, and sometimes targets are set so low that every employee meets them without difficulty. This question creates a field for dialogue at the interview and shows the candidate's objectivity and attitude to the targets set for them.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-13</span>
+      <div class="q-title">Who did you report to directly at this job? State the person's name and position.</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the employee writes their direct manager.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>The presence of the direct manager's first and last name in the answer indicates that the employee is not hiding contacts and is potentially prepared for the data provided in this test to be verified. In some cases you will see answers saying the manager cannot be named, that it is confidential information, or that they had several managers. For us this is a signal to be more careful when verifying the information the employee provided in the results block.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-14</span>
+      <div class="q-title">What motivates you to do your work?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the candidate states their motives.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>This question has no single interpretation, since all answers are correct. We can note that a number of people write "money" here, and if you have several productive candidates, those who, besides money, also named other motives — such as the desire to grow or to enjoy what they have accomplished — turn out, in our practice, to be more stable at work than those who do things purely for money. When choosing among equals, give preference to those who write about more than money.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-15</span>
+      <div class="q-title">What factor is most important for you to feel happy at work?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the candidate shares their thoughts.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>Here, too, there are no right or wrong answers. The response contains the factors the candidate considers important for feeling happy at work, and you can use this information as a motivator in cases where an effective candidate is hesitating or has offers from other companies. There are people for whom, here as well, only money matters: that is not bad in itself, but take note.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-16</span>
+      <div class="q-title">What benefit do you bring to the employer, and what benefit does the employer bring to you?</div>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the candidate shares their thoughts.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>This question is about exchange: our candidate writes what, in their view, they bring to the company and what the company should give them in return. There are no preferred answers here either, but there will certainly be answers that resonate with your company's values and your own life values, and there will be answers in the spirit of "I bring money, they give me money". This and the previous two questions help us build a broader picture of the candidate's values, motives and views.</p>
+  </div>
+
+  <div class="qcard key">
+    <div class="q-top"><span class="q-num">Q-17</span>
+      <div class="q-title">Please give examples of something you have done or created that you are proud of and pleased with. These can be results and achievements, projects or things you have created. The question relates not only to work but also to life, sport, studies and family.</div>
+      <span class="q-badge">key question</span>
+    </div>
+    <div class="q-opts"><b>Format:</b> open field — the candidate shares their achievements and points of pride.</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>This is the last substantive question of the test, and we always pay special attention to it, because a number of candidates reveal themselves from an unexpected side here: what your future employee is passionate about in life, whether they have successes in sport or studies, and what they take pride in. Since, as we remember, effectiveness runs through a person's whole life, the answer to this question lets us recognise productive candidates — and those whose lifetime achievement is "renovated the kitchen" or "potted a ficus". An excellent question for understanding the many-sidedness and scale of the person you are planning to hire.</p>
+  </div>
+
+  <div class="qcard">
+    <div class="q-top"><span class="q-num">Q-18</span>
+      <div class="q-title">Is there another place of work you would like to tell us about in the course of this test?</div>
+    </div>
+    <div class="q-opts"><b>Answer options:</b> "yes" · "no".</div>
+    <div class="q-int-label">Interpreting the answer</div>
+    <p>If the candidate chooses "yes", they get the opportunity to share the results, product and targets from one more job they consider important to tell us about — possibly the place where they were most productive. In that case another 7–8 questions about that position are added to the test. If the test-taker chooses "no", the system simply moves on to the next step.</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Summing Up</h2></div>
+  <p>The end goal of interpreting the "Rezalt" test results is a formed view of the candidate in terms of their productivity relative to the other applicants for the position. Having reviewed the test, you will be able to understand with high probability whether further dialogue with the person who gave these answers is worth your while, or whether it would be a waste of time. You can also determine from the character of the answers which of the three employee types our applicant belongs to: winner, doer or waiter.</p>
+
+  <div class="callout hot">
+    <div class="ct">Control questions of the test</div>
+    <p>The important control questions are <strong>No. 5</strong> — on formulating the product, <strong>No. 7</strong> — on exact results, and <strong>No. 17</strong> — on points of pride. Pay special attention to them. All the other questions are no less important for understanding the person's behaviour model at their previous job and their values. After all, our task is essentially to predict the future — that is, to build a forecast based on the data you received from the candidate.</p>
+  </div>
+
+  <p>By adding a tool as simple as the "Rezalt" test to your hiring system, you will be able to make far more accurate decisions than, say, by relying on a plain CV. You gain a wealth of data and metrics for comparing candidates — which is what matters most for spotting the very best in the flow and hiring exactly them.</p>
+  <p>You could, of course, call each candidate and offer to run through these questions by phone, but it is far more sensible and time-efficient to use the ready-made solution on the <strong>HR PRO AI</strong> platform. You can also use the "Rezalt" test to assess the people already working in your company. You will be surprised to learn what matters to your employees for feeling happy at work, and what product they consider the end result of their work. In a number of cases it will be nothing like the product you expect from them — and as a result you gain valuable information for correcting the working style of current team members or making management decisions about who you need to part with.</p>
+
+  <h3>Can the test be gamed?</h3>
+  <p>There is an opinion that any system and any test can be gamed. And indeed, a clever employee can give socially desirable, expected answers. Two things matter here. First: if a person manages this, they are at the very least a thinking, adequate individual — they grasped the idea and gave you what you wanted, unlike the flow of other candidates.</p>
+  <p>That kind of quick-wittedness is already quite valuable at work. Second: this test is also about hard results, which we can always verify with a few calls to previous employers or with probing questions about how the metrics were formed — how the person achieved them, what they consisted of. If someone bent the truth somewhere, it is easily detected.</p>
+  <p>The question about the product of the position is also, among other things, a logic test: the person has to draw an analogy with the given examples and formulate an answer in a similar format — which for many candidates is already an insurmountable task; they write all sorts of nonsense, immediately ceding ground to more adequate, thinking people, who are exactly the ones we usually want to see in our company.</p>
+
+  <div class="verdict">
+    <div class="verdict-head"><span class="vb">Conclusion</span><b>"Rezalt" is a filter at your company's entrance</b></div>
+    <div class="verdict-body">
+      <p>With the keys we have covered in this guide, you will be able to open the door to the most productive professionals on the market.</p>
+      <div class="dd" style="margin-bottom:4px">
+        <div class="col good">
+          <h4>✓ Do</h4>
+          <div class="pill">Send the test right after the application — one click on the HR PRO AI platform</div>
+          <div class="pill">Read questions No. 5, No. 7 and No. 17 with special care</div>
+          <div class="pill">Prefer candidates who measure and quote exact numbers</div>
+          <div class="pill">Verify hard results with calls and probing questions</div>
+        </div>
+        <div class="col bad">
+          <h4>× Don't</h4>
+          <div class="pill">Don't invite for interview those who "can't see what the product is here"</div>
+          <div class="pill">Don't trust pretty stories with no numbers or metrics</div>
+          <div class="pill">Don't promote a specialist winner into management "by default"</div>
+          <div class="pill">Don't waste time on those who dodge taking the test</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">Document prepared under the HR&nbsp;PRO&nbsp;AI methodology. The results of the "Rezalt" test are a basis for the recruiter's analysis and decision, not an automatic verdict. The methodology is used together with interviews and reference checks.</div>
+</section>
+
+</main>
+
+
+
+</div>
+</body>
+</html>

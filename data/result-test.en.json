@@ -1,0 +1,24 @@
+{
+  "type": "result",
+  "title": "Result",
+  "intro": "A short questionnaire containing questions about the results you achieved at previous places of work. There are no right or wrong answers here — answer as honestly and thoroughly as possible. Completing it will take no more than 15 minutes.",
+  "questions": [
+    { "id": 1, "type": "choice_explain", "text": "Every person, in the course of their work at a company, creates a certain value for the organization. Let us call the end result of an employee's work the \"product of the position.\" For example, a janitor sweeps and cleans the grounds — the product of their position is a clean yard. A secretary handles incoming calls — the \"product of their position\" is the client's call being directed to the right employee as quickly as possible. It is precisely for producing such a \"product\" that the company pays the employee a salary and supports them. Do you agree that every position in an organization has its own \"product\"?", "options": ["Yes, completely", "Yes, but not always", "No, I disagree"] },
+    { "id": 3, "type": "text", "text": "What position did you hold at your last place of work?" },
+    { "id": 4, "type": "text", "text": "How long did you work in this position?" },
+    { "id": 5, "type": "choice_explain", "text": "How would you describe the product of your position at your place of work?", "options": ["The product of my position is:", "It is difficult for me to describe the product of the position; I can describe my duties more precisely:", "In this job it is practically impossible to say what the product of the position is. Provide your comment:"] },
+    { "id": 6, "type": "choice", "text": "Do you or someone else measure the amount of \"product\" you produce at work?", "options": ["Yes", "To a certain extent", "No"] },
+    { "id": 7, "type": "choice_explain", "text": "Please describe below the results of your activity in this position, that is, how much product you produced in a given period of time.", "options": ["My exact results:", "It is difficult for me to describe them exactly, I can only estimate:", "In this job it is practically impossible to describe the results. Explain why:"] },
+    { "id": 8, "type": "choice_explain", "text": "Can you somehow compare the results you achieve in your work with the results of other people holding a similar position in your organization or outside it?", "options": ["My results are significantly higher than those of people in similar positions", "My results are higher than those of people in similar positions", "My results are slightly higher than those of people in similar positions", "My results are roughly the same as others'", "My results are slightly lower than others'", "It is difficult for me to compare results"] },
+    { "id": 9, "type": "choice_explain", "text": "How did the amount of responsibility assigned to you change over time?", "options": ["Grew", "Stayed the same", "Decreased"] },
+    { "id": 10, "type": "choice_explain", "text": "How did the volume of work you perform change over time from the moment you joined the company until now?", "options": ["Grew", "Stayed the same", "Decreased"] },
+    { "id": 11, "type": "choice", "text": "Do you act in your work on the basis of set plans?", "options": ["Yes", "No"] },
+    { "id": 12, "type": "choice_explain", "text": "Are the results of your activity in this job above the plan?", "options": ["Above", "Below"] },
+    { "id": 13, "type": "contacts", "text": "List your direct supervisors from previous jobs. We will contact them to confirm your results. The more contacts the better; three is optimal." },
+    { "id": 14, "type": "text", "text": "What motivates you when performing this work?" },
+    { "id": 15, "type": "text", "text": "Which factor is the most important for you to feel happy at work?" },
+    { "id": 16, "type": "text", "text": "What benefit do you bring to your employer, and what benefit does your employer bring to you?" },
+    { "id": 17, "type": "text", "text": "Please give examples of something you have done or created: something you are proud of in the past, present, or that you plan to do. These can be results and achievements you have attained, projects or things you have created. The question relates not only to work, but also to life, sports, studies, and family." },
+    { "id": 18, "type": "choice", "text": "Do you have another place of work you would like to tell us about?", "options": ["Yes", "No"] }
+  ]
+}

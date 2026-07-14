@@ -1,0 +1,71 @@
+/* Специфика админ-панели (всё остальное — styles.css) */
+.adm-badge{position:fixed;top:0;left:0;right:0;height:4px;background:var(--coral,#e8553b);z-index:200;overflow:hidden}
+/* длинные значения KPI (суммы с валютой) не должны ломать сетку */
+.kpi .kpi-n{white-space:nowrap;font-size:clamp(17px,1.6vw,26px)}
+.adm-badge::after{content:"ADMIN";position:fixed;top:4px;right:14px;background:var(--coral,#e8553b);color:#fff;
+  font:800 10px/1 Manrope,system-ui,sans-serif;letter-spacing:.12em;border-radius:0 0 8px 8px;padding:4px 10px;z-index:200}
+.adm-mark{background:linear-gradient(135deg,#e8553b,#c93a22)!important}
+/* строки таблиц-списков */
+.adm-row{cursor:pointer}
+.adm-row:hover{background:var(--surface-2)}
+/* бейджи операций журнала баланса */
+.blk{font-size:11px;font-weight:700;padding:2px 9px;border-radius:var(--pill);white-space:nowrap}
+.blk.purchase{background:#e4f6ec;color:#1f9d6b}
+.blk.admin_add{background:#e8f1ff;color:#2a4fa0}
+.blk.admin_sub{background:#fff4e0;color:#b5791a}
+.blk.test_spend{background:var(--surface-2);color:var(--muted)}
+.blk.refund{background:#fdeaea;color:#d24b4b}
+.blk.signup_bonus{background:#e5f6fb;color:#1780a1}
+[data-theme="dark"] .blk.purchase{background:#16321f;color:#4fd39a}
+[data-theme="dark"] .blk.admin_add{background:#1b2947;color:#7ea4e8}
+[data-theme="dark"] .blk.admin_sub{background:#3a2c15;color:#e0a94e}
+[data-theme="dark"] .blk.refund{background:#3a1a1c;color:#e97070}
+[data-theme="dark"] .blk.signup_bonus{background:#12303a;color:#5cc4e0}
+/* метод оплаты */
+.blk.m-stripe{background:#efeaff;color:#5847b5}
+.blk.m-demo{background:var(--surface-2);color:var(--muted)}
+[data-theme="dark"] .blk.m-stripe{background:#2a2350;color:#a99af0}
+/* статусы клиента */
+.blk.st-on{background:#e4f6ec;color:#1f9d6b}
+.blk.st-off{background:#fdeaea;color:#d24b4b}
+[data-theme="dark"] .blk.st-on{background:#16321f;color:#4fd39a}
+[data-theme="dark"] .blk.st-off{background:#3a1a1c;color:#e97070}
+/* стат-грид карточки клиента и платежей */
+.adm-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.adm-stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 15px}
+.adm-stat b{display:block;font-family:'JetBrains Mono',monospace;font-size:21px}
+.adm-stat span{font-size:12px;color:var(--muted)}
+/* пагинация */
+.adm-pager{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:14px}
+.adm-pager button{border:1px solid var(--line);background:var(--surface);border-radius:8px;min-width:32px;height:32px;
+  cursor:pointer;font-weight:700;color:var(--text-2)}
+.adm-pager button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.adm-pager button:disabled{opacity:.4;cursor:default}
+/* мини-графики дашборда */
+.adm-chart-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.adm-chart-h h3{margin:0;font-size:15px}
+/* карточка интеграции */
+.adm-intg-src{font-size:11.5px;color:var(--muted)}
+/* журнал: моноширинные детали */
+.adm-json{background:var(--surface-2);border-radius:10px;padding:12px 14px;font:12.5px/1.55 'JetBrains Mono',monospace;
+  white-space:pre-wrap;word-break:break-word;max-height:50vh;overflow:auto}
+/* HTML-редактор писем */
+.rte-box{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.rte-bar{display:flex;gap:4px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.rte-bar button{border:1px solid transparent;background:transparent;border-radius:7px;padding:4px 9px;font-size:12.5px;
+  color:var(--text-2);cursor:pointer;font-weight:600}
+.rte-bar button:hover{background:var(--surface);border-color:var(--line-2)}
+.rte-bar button.on{background:var(--brand);color:#fff}
+.rte-area{min-height:220px;max-height:420px;overflow:auto;padding:12px 15px;outline:none;line-height:1.55;font-size:13.5px}
+.rte-code{border:none;border-radius:0;font:12.5px/1.55 'JetBrains Mono',monospace}
+/* редактор markdown обучения */
+.adm-md{width:100%;min-height:420px;font:13px/1.6 'JetBrains Mono',monospace;resize:vertical}
+/* плашка имперсонации (используется и в кабинете клиента) */
+.imp-bar{position:fixed;left:0;right:0;top:0;z-index:300;background:var(--coral,#e8553b);color:#fff;
+  display:flex;align-items:center;justify-content:center;gap:14px;padding:8px 16px;font-size:13.5px;font-weight:600}
+.imp-bar button{border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.12);color:#fff;border-radius:var(--pill);
+  padding:4px 14px;font-weight:700;cursor:pointer}
+.imp-bar button:hover{background:rgba(255,255,255,.25)}
+body.imp-active .app{padding-top:38px}
+/* страница вакансии в режиме имперсонации: учесть высоту плашки */
+body.imp-active .main.vac-lock{height:calc(100vh - 38px)}

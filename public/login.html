@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="page_title">HR PRO AI — Вход</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+.lang-switch{position:absolute;top:20px;right:22px;z-index:5;display:flex;gap:4px}
+.lang-switch button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font:600 12px/1 Inter,sans-serif;padding:6px 9px;border-radius:7px;cursor:pointer;opacity:.75}
+.lang-switch button.on{opacity:1;background:rgba(255,255,255,.28)}
+</style>
+</head><body>
+<div class="auth-wrap">
+  <div class="auth-visual">
+    <a href="/" class="lp-logo" style="color:#fff">
+      <span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
+      <span style="display:flex;flex-direction:column;line-height:1.15"><b style="font-family:Manrope;font-weight:800;letter-spacing:.04em;font-size:17px">HR PRO AI</b><span style="font-size:11.5px;opacity:.8" data-i18n="brand_tagline">технология, которая чувствует людей</span></span>
+    </a>
+    <div class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
+    <div style="position:relative;z-index:1">
+      <div class="eyebrow" style="color:#fff;opacity:.85" data-i18n="eyebrow">Психометрика найма</div>
+      <h1 style="color:#fff;font-size:38px;margin:16px 0 14px;line-height:1.1" data-i18n="visual_h1">Узнайте, кто перед вами,<br>до того как нанять</h1>
+      <p style="color:rgba(255,255,255,.72);font-size:16px;max-width:400px;line-height:1.6" data-i18n="visual_p">Четыре теста — личность, продуктивность, интеллект и продажи — раскрывают кандидата на одном графике.</p>
+      <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);margin-top:34px;max-width:420px;backdrop-filter:blur(8px)">
+        <div style="display:flex;justify-content:space-between;color:#fff;font-weight:700;margin-bottom:14px"><span data-i18n="candidate_profile">Профиль кандидата</span> <span class="mono" style="color:#7fe3bf" data-i18n="winner">Виннер</span></div>
+        <div id="demo-bars"></div>
+      </div>
+    </div>
+    <div style="color:rgba(255,255,255,.5);font-size:13px;position:relative;z-index:1" data-i18n="brand_footer">HR PRO AI · технология, которая чувствует людей</div>
+  </div>
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <h1 id="title">С возвращением</h1>
+      <p class="muted" id="sub" style="margin:0 0 22px">Войдите, чтобы продолжить работу</p>
+      <div class="seg">
+        <button class="on" id="tab-login" data-i18n="tab_login">Вход</button>
+        <button id="tab-reg" data-i18n="tab_register">Регистрация</button>
+      </div>
+      <div id="reg-fields" class="hidden">
+        <input class="field" id="name" placeholder="Ваше имя" data-i18n-ph="ph_name">
+        <input class="field" id="company" placeholder="Компания" data-i18n-ph="ph_company">
+      </div>
+      <input class="field" id="email" type="email" placeholder="Рабочий email" autocomplete="username" data-i18n-ph="ph_email">
+      <input class="field" id="password" type="password" placeholder="Пароль" autocomplete="current-password" data-i18n-ph="ph_password">
+      <div id="err" class="hidden" style="color:var(--bad);margin-bottom:12px;font-size:14px"></div>
+      <button class="btn lg" id="submit">Войти</button>
+      <p class="muted" style="text-align:center;margin-top:18px;font-size:13px" data-i18n="gift_note">Новым аккаунтам — <b style="color:var(--brand)">200 тестов</b> в подарок</p>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
+
+const I18N={
+  ru:{
+    page_title:'HR PRO AI — Вход',
+    brand_tagline:'технология, которая чувствует людей',
+    eyebrow:'Психометрика найма',
+    visual_h1:'Узнайте, кто перед вами,<br>до того как нанять',
+    visual_p:'Четыре теста — личность, продуктивность, интеллект и продажи — раскрывают кандидата на одном графике.',
+    candidate_profile:'Профиль кандидата',
+    winner:'Виннер',
+    brand_footer:'HR PRO AI · технология, которая чувствует людей',
+    tab_login:'Вход',
+    tab_register:'Регистрация',
+    ph_name:'Ваше имя',
+    ph_company:'Компания',
+    ph_email:'Рабочий email',
+    ph_password:'Пароль',
+    gift_note:'Новым аккаунтам — <b style="color:var(--brand)">200 тестов</b> в подарок',
+    title_login:'С возвращением',
+    title_register:'Создать аккаунт',
+    sub_login:'Войдите, чтобы продолжить работу',
+    sub_register:'Начните оценивать кандидатов за минуты',
+    submit_login:'Войти',
+    submit_register:'Создать аккаунт',
+    submitting:'Минуту…',
+    err_generic:'Ошибка',
+    err_network:'Нет связи с сервером',
+    bar_attention:'Внимательность',
+    bar_activity:'Активность',
+    bar_confidence:'Уверенность',
+    bar_persistence:'Настойчивость',
+    bar_objectivity:'Объективность'
+  },
+  pl:{
+    page_title:'HR PRO AI — Logowanie',
+    brand_tagline:'technologia, która czuje ludzi',
+    eyebrow:'Psychometria rekrutacji',
+    visual_h1:'Poznaj, kto jest przed tobą,<br>zanim go zatrudnisz',
+    visual_p:'Cztery testy — osobowość, produktywność, inteligencja i sprzedaż — ukazują kandydata na jednym wykresie.',
+    candidate_profile:'Profil kandydata',
+    winner:'Winner',
+    brand_footer:'HR PRO AI · technologia, która czuje ludzi',
+    tab_login:'Logowanie',
+    tab_register:'Rejestracja',
+    ph_name:'Twoje imię',
+    ph_company:'Firma',
+    ph_email:'Służbowy e-mail',
+    ph_password:'Hasło',
+    gift_note:'Nowe konta otrzymują <b style="color:var(--brand)">200 testów</b> w prezencie',
+    title_login:'Witaj ponownie',
+    title_register:'Załóż konto',
+    sub_login:'Zaloguj się, aby kontynuować pracę',
+    sub_register:'Zacznij oceniać kandydatów w kilka minut',
+    submit_login:'Zaloguj się',
+    submit_register:'Załóż konto',
+    submitting:'Chwileczkę…',
+    err_generic:'Błąd',
+    err_network:'Brak połączenia z serwerem',
+    bar_attention:'Uważność',
+    bar_activity:'Aktywność',
+    bar_confidence:'Pewność siebie',
+    bar_persistence:'Wytrwałość',
+    bar_objectivity:'Obiektywność'
+  },
+  en:{
+    page_title:'HR PRO AI — Sign in',
+    brand_tagline:'technology that senses people',
+    eyebrow:'Hiring psychometrics',
+    visual_h1:'See who is in front of you,<br>before you hire',
+    visual_p:'Four tests — personality, productivity, intelligence and sales — reveal a candidate on a single chart.',
+    candidate_profile:'Candidate profile',
+    winner:'Winner',
+    brand_footer:'HR PRO AI · technology that senses people',
+    tab_login:'Sign in',
+    tab_register:'Sign up',
+    ph_name:'Your name',
+    ph_company:'Company',
+    ph_email:'Work email',
+    ph_password:'Password',
+    gift_note:'New accounts get <b style="color:var(--brand)">200 tests</b> free',
+    title_login:'Welcome back',
+    title_register:'Create an account',
+    sub_login:'Sign in to continue working',
+    sub_register:'Start assessing candidates in minutes',
+    submit_login:'Sign in',
+    submit_register:'Create an account',
+    submitting:'One moment…',
+    err_generic:'Error',
+    err_network:'No connection to server',
+    bar_attention:'Attention',
+    bar_activity:'Activity',
+    bar_confidence:'Confidence',
+    bar_persistence:'Persistence',
+    bar_objectivity:'Objectivity'
+  }
+};
+function pickLang(){const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
+let LANG=pickLang();
+const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
+
+let mode='login';
+function renderDemoBars(){
+  const bars=[[t('bar_attention'),82,'#5c86e0'],[t('bar_activity'),94,'#ff7a5c'],[t('bar_confidence'),68,'#5c86e0'],[t('bar_persistence'),44,'#5c86e0'],[t('bar_objectivity'),28,'#5c86e0']];
+  $('demo-bars').innerHTML=bars.map(b=>`<div class="hv-row" style="grid-template-columns:110px 1fr 30px">
+    <div class="hn" style="color:rgba(255,255,255,.8)">${b[0]}</div>
+    <div class="hbar" style="background:rgba(255,255,255,.1)"><span data-w="${b[1]}" style="background:${b[2]}"></span></div>
+    <div class="hv" style="color:#fff">${b[1]}</div></div>`).join('');
+  setTimeout(()=>document.querySelectorAll('#demo-bars .hbar>span').forEach(s=>s.style.width=s.dataset.w+'%'),200);
+}
+function applyLang(){
+  LANG=pickLang();
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(v==null)return;if(/<[a-z][\s\S]*>/i.test(v))el.innerHTML=v;else el.textContent=v;});
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});
+  document.title=t('page_title');
+  setModeLabels();
+  renderDemoBars();
+  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+}
+function setModeLabels(){const reg=mode==='register';
+  $('title').textContent=reg?t('title_register'):t('title_login');
+  $('sub').textContent=reg?t('sub_register'):t('sub_login');
+  $('submit').textContent=reg?t('submit_register'):t('submit_login');}
+function setMode(m){mode=m;const reg=m==='register';
+  $('reg-fields').classList.toggle('hidden',!reg);
+  $('tab-login').classList.toggle('on',!reg);$('tab-reg').classList.toggle('on',reg);
+  setModeLabels();}
+$('tab-login').onclick=()=>setMode('login');$('tab-reg').onclick=()=>setMode('register');
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+$('submit').onclick=async()=>{
+  $('err').classList.add('hidden');
+  const body={email:$('email').value.trim(),password:$('password').value};
+  if(mode==='register'){body.name=$('name').value.trim();body.company=$('company').value.trim();
+    // язык интерфейса и часовой пояс определяем автоматически из браузера
+    body.uiLang=(navigator.language||'').slice(0,2).toLowerCase();
+    try{body.timezone=Intl.DateTimeFormat().resolvedOptions().timeZone;}catch(e){}}
+  const btn=$('submit');btn.disabled=true;btn.textContent=t('submitting');
+  try{
+    const r=await fetch('/api/'+mode,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok){$('err').textContent=d.error||t('err_generic');$('err').classList.remove('hidden');btn.disabled=false;setMode(mode);return;}
+    location.href=new URLSearchParams(location.search).get('next')||'/app';
+  }catch(e){$('err').textContent=t('err_network');$('err').classList.remove('hidden');btn.disabled=false;setMode(mode);}
+};
+$('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('submit').click();});
+const p=new URLSearchParams(location.search);if(p.get('mode')==='register')setMode('register');
+// Регистрация может быть закрыта администратором портала
+fetch('/api/meta').then(r=>r.json()).then(m=>{
+  if(m&&m.registrationOpen===false){$('tab-reg').style.display='none';if(mode==='register')setMode('login');}
+}).catch(()=>{});
+applyLang();
+</script>
+</body></html>

@@ -1,0 +1,966 @@
+{
+  "type": "logic",
+  "title": "Logis",
+  "intro": "Test sprawdzający poziom inteligencji (IQ), zdolność myślenia i podejmowania decyzji. 80 pytań, ograniczenie czasowe. W każdym pytaniu wybierz jedną opcję. Trudne pytania można pomijać.",
+  "timeLimitSec": 1800,
+  "questions": [
+    {
+      "id": 1,
+      "text": "Jeśli dwie porcje lodów kosztują osiem dolarów, to ile porcji mógłbyś kupić za osiemdziesiąt dolarów?",
+      "options": [
+        "160",
+        "16",
+        "20",
+        "64",
+        "6"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 2,
+      "text": "Jeśli 5 skrzynek pomarańczy waży 200 kg, a każda pusta skrzynka waży 5 kg, to ile kg pomarańczy jest w pięciu skrzynkach?",
+      "options": [
+        "205",
+        "55",
+        "175",
+        "120",
+        "195"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 3,
+      "text": "Jeśli pierwsze dwa zdania są prawdziwe, to trzecie ... ? «Nie można zostać mistrzem w pływaniu bez intensywnego treningu. Jim często trenuje pływanie. Jim zostanie mistrzem w pływaniu.»",
+      "options": [
+        "prawdziwe",
+        "fałszywe",
+        "nieokreślone"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 4,
+      "text": "Księżyc ma się do Ziemi tak, jak Ziemia ma się do ...?",
+      "options": [
+        "Wenus",
+        "chmur",
+        "Słońca",
+        "gwiazd",
+        "Wszechświata"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 5,
+      "text": "Syfon przygotowuje mieszankę z trzech części wody i dwóch części syropu pomarańczowego. Ile litrów wody potrzeba do przygotowania 100 litrów mieszanki?",
+      "options": [
+        "80",
+        "33 1/2",
+        "60",
+        "66 2/3",
+        "40"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 6,
+      "text": "Jeśli przestawić poniższe słowa tak, aby powstało sensowne zdanie, to od jakiej litery zacznie się drugie słowo w tym zdaniu? LUDZI DWIE MAJĄ NOGI WIĘKSZOŚĆ",
+      "options": [
+        "A",
+        "D",
+        "L",
+        "N",
+        "M"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 7,
+      "text": "Która cyfra znajduje się w tej samej figurze geometrycznej lub figurach, co cyfra 7?",
+      "options": [
+        "4",
+        "3",
+        "2",
+        "6",
+        "5"
+      ],
+      "answer": 3,
+      "image": "/img/iq/78/78-0-1.png"
+    },
+    {
+      "id": 8,
+      "text": "LAK ma się do BAK tak, jak ...? do KOZA.",
+      "options": [
+        "łuk",
+        "boty",
+        "kraj",
+        "kipa",
+        "łoza"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 9,
+      "text": "Co ma się do sfery tak samo, jak kwadrat ma się do sześcianu?",
+      "options": [
+        "boki",
+        "okrąg",
+        "trójkąt",
+        "kąty",
+        "wymiary"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 10,
+      "text": "Jeśli pociąg elektryczny jedzie na północ z prędkością 15 km/h, a wiatr wieje na południe z prędkością 30 km/h, to pociąg będzie poruszał się na południe z prędkością 15 km/h.",
+      "options": [
+        "prawda",
+        "fałsz",
+        "nieokreślone"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 11,
+      "text": "IDĄCY ma się do ODESZŁY tak, jak TERAZ ma się do ...?",
+      "options": [
+        "będzie",
+        "dzisiaj",
+        "wtedy",
+        "wczoraj",
+        "w przyszłości"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 12,
+      "text": "Spośród pięciu słów podanych poniżej cztery są w pewien sposób podobne. Które różni się od pozostałych czterech?",
+      "options": [
+        "biec",
+        "iść pieszo",
+        "pełzać",
+        "przywrzeć do ziemi/płaszczyć się",
+        "skakać"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 13,
+      "text": "Która liczba w tym ciągu pojawia się drugi raz najbliżej początku? 7 5 6 4 8 9 1 0 6 0 9 9 7 6 5 8 4 1 9 0 2",
+      "options": [
+        "5",
+        "1",
+        "0",
+        "6",
+        "7"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 14,
+      "text": "W szkole najprawdopodobniej znajduje się ...?",
+      "options": [
+        "podręcznik",
+        "tablica",
+        "sprzątaczka",
+        "nauczyciel",
+        "ołówek"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 15,
+      "text": "Ile jest tu cyfr, z których każda znajduje się w dwóch różnych figurach geometrycznych: kole, prostokącie, trójkącie (ale tylko w dwóch)?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": 2,
+      "image": "/img/iq/78/78-0-1.png"
+    },
+    {
+      "id": 16,
+      "text": "Jeśli pierwsze dwa z podanych zdań są prawdziwe, to trzecie...? Niektórzy z naszych znajomych to urzędnicy. Niektórzy z naszych znajomych to mężczyźni. Niektórzy z naszych znajomych to mężczyźni-urzędnicy.",
+      "options": [
+        "prawdziwe",
+        "fałszywe",
+        "nieokreślone"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 17,
+      "text": "Budowla (budynek) zawsze ma ...?",
+      "options": [
+        "drzwi",
+        "okna",
+        "ściany",
+        "cegły",
+        "kominy"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 18,
+      "text": "Jeśli z podanych poniżej słów ułożyć zdanie, to na jaką literę będzie się kończyć ostatnie słowo w zdaniu? WIE MATKA NAJLEPIEJ ZAWSZE ODPOWIEDŹ NIE",
+      "options": [
+        "A",
+        "Ź",
+        "T"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 19,
+      "text": "Kawałek sznurka o długości 72 centymetry kurczy się do 66 centymetrów, jeśli go zamoczyć. Jaką długość będzie miał 96-centymetrowy sznurek po zamoczeniu?",
+      "options": [
+        "92",
+        "48",
+        "88",
+        "90",
+        "76"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 20,
+      "text": "Diamenty są droższe od szkła, ponieważ są ...?",
+      "options": [
+        "piękne",
+        "czystsze",
+        "przezroczyste",
+        "z węgla",
+        "rzadziej spotykane"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 21,
+      "text": "Tygrys jest najbardziej podobny do ...?",
+      "options": [
+        "osła",
+        "słonia",
+        "wilka",
+        "kota",
+        "zebry"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 22,
+      "text": "Gdybyś patrzył na pięć podanych poniżej słów w lustrze ustawionym pionowo u góry strony, to które z nich wyglądałoby prawie tak samo, jak gdybyś patrzył na nie wprost?",
+      "options": [
+        "OKNO",
+        "MAMA",
+        "ŁAPA",
+        "ONO",
+        "LILIA"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 23,
+      "text": "«Czynność polegająca na zmianie rozmieszczenia» - to dobra definicja słowa ... ?",
+      "options": [
+        "chaos",
+        "działalność",
+        "przestawienie",
+        "zamęt",
+        "awans"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 24,
+      "text": "W fizyce zasada zachowania energii jest ...?",
+      "options": [
+        "przestarzała",
+        "absolutna",
+        "hipotetyczna",
+        "teoretyczna",
+        "obowiązująca"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 25,
+      "text": "Przeciwieństwem słowa NIEZGRABNY jest ...?",
+      "options": [
+        "silny",
+        "zdrowy",
+        "piękny",
+        "powolny",
+        "pełen gracji"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 26,
+      "text": "ZEGAR ma się do CZASU tak, jak WAGA do ...?",
+      "options": [
+        "ciężaru",
+        "ruchu",
+        "masy",
+        "uncji",
+        "bezmianu"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 27,
+      "text": "FILM ma się do FOTOGRAFII tak samo, jak ...? ma się do JEZIORA.",
+      "options": [
+        "pływanie",
+        "wodospad",
+        "jacht",
+        "ryba",
+        "ocean światowy"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 28,
+      "text": "Które z tych słów występuje w słowniku jako pierwsze w kolejności?",
+      "options": [
+        "frukty",
+        "fortka",
+        "fabryka",
+        "fajans",
+        "fajerwerk"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 29,
+      "text": "Które z tych wyrażeń jest najmniej podobne do pozostałych trzech?",
+      "options": [
+        "czytać książki",
+        "słać łóżko",
+        "przyjmować gości",
+        "stwarzać trudności"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 30,
+      "text": "Takie rzeczy jak język, ubiór, tradycje, kolor skóry określają ...?",
+      "options": [
+        "temperament",
+        "przynależność rasową",
+        "miejsce urodzenia",
+        "miejsce zamieszkania",
+        "osobowość"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 31,
+      "text": "Jeśli 13,5 metra drutu kosztuje 1,35 dolara, to ile będzie kosztować 10,5 metra?",
+      "options": [
+        "1,25$",
+        "1,05$",
+        "75 centów",
+        "1,47$",
+        "57 centów"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 32,
+      "text": "Które z pięciu słów podanych poniżej jest najmniej podobne do pozostałych czterech?",
+      "options": [
+        "lew",
+        "akrobata",
+        "klaun",
+        "cyrk",
+        "koń"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 33,
+      "text": "REGRES ma się do EWOLUCJI tak, jak POSTĘP ma się do ...?",
+      "options": [
+        "ekspresji",
+        "dewaluacji",
+        "retrogresji",
+        "rewolucji",
+        "spowolnienia"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 34,
+      "text": "Stwierdzenie, które nie ma określonego znaczenia, nazywa się ...?",
+      "options": [
+        "niesprawiedliwym",
+        "prawdziwym",
+        "niejasnym",
+        "wątpliwym",
+        "fałszywym"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 35,
+      "text": "Która z tych par słów jest najmniej podobna do pozostałych trzech?",
+      "options": [
+        "smutny-litość",
+        "piękny-brzydki",
+        "prawda-kłamstwo",
+        "dawać-brać"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 36,
+      "text": "Które z tych wyrażeń jest najmniej podobne do pozostałych trzech?",
+      "options": [
+        "korzystny – dobry",
+        "piękny – wspaniały",
+        "mały – niewielki",
+        "ciepły - gorący"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 37,
+      "text": "Ile z podanych poniżej słów można ułożyć z liter słowa KRESTOWINA, używając każdej litery dowolną liczbę razy? Frant, krossowki, akwamaryn, wintowka, wersta, treska, antonowka.",
+      "options": [
+        "3",
+        "6",
+        "7",
+        "5",
+        "4"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 38,
+      "text": "Która cyfra znajduje się tutaj w przestrzeni, która jest w okręgu i w trójkącie, ale nie w prostokącie?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": 2,
+      "image": "/img/iq/78/78-0-1.png"
+    },
+    {
+      "id": 39,
+      "text": "Ojciec jest zawsze ...?, niż jego syn.",
+      "options": [
+        "wyższy",
+        "powolniejszy",
+        "starszy",
+        "mądrzejszy",
+        "bystrzejszy"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 40,
+      "text": "Które dodatkowe słowo z pięciu poniższych uzupełniłoby to zdanie najbardziej poprawnie? Nauczyciele ...? są mądrzejsi od swoich uczniów.",
+      "options": [
+        "zawsze",
+        "nigdy nie",
+        "znacznie",
+        "zazwyczaj",
+        "rzadko"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 41,
+      "text": "Jeśli pierwsze dwa zdania są prawdziwe, to trzecie ...? George jest starszy od Billa. Harry jest starszy od George'a. Bill jest młodszy od Harry'ego.",
+      "options": [
+        "prawdziwe",
+        "fałszywe",
+        "nieokreślone"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 42,
+      "text": "Dwa słowa NIEZBĘDNY i UPRAGNIONY oznaczają ...?",
+      "options": [
+        "przeciwieństwo",
+        "to samo",
+        "ani to samo, ani przeciwieństwo"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 43,
+      "text": "Znajdź 2 litery w słowie NEUROPATOLOG, między którymi w słowie jest tyle samo liter, ile liter jest między nimi w alfabecie. Która z tych dwóch liter występuje pierwsza w alfabecie?",
+      "options": [
+        "L",
+        "O",
+        "N",
+        "T",
+        "W"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 44,
+      "text": "Które z następujących słów jest cechą osobowości?",
+      "options": [
+        "bogactwo",
+        "reputacja",
+        "pozycja",
+        "zamknięcie w sobie",
+        "władza"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 45,
+      "text": "Jeśli kawałek sznurka przeciąć tak, że jedna część stanowi 2/3 drugiej części, a całkowita długość sznurka to 40 metrów, to jaka jest długość krótszej części?",
+      "options": [
+        "36 1/3",
+        "16",
+        "18",
+        "23 2/3",
+        "24"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 46,
+      "text": "Które z pięciu podanych poniżej słów jest najmniej podobne do pozostałych czterech?",
+      "options": [
+        "prędki",
+        "szybki",
+        "chyży",
+        "biec",
+        "rączy"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 47,
+      "text": "Jeśli poniższe słowa przestawić tak, aby powstało zdanie, to na jaką literę będzie się kończyć czwarte słowo w zdaniu? W ŻURAW SIKORA RĘKU W LEPSZY NIEBIE NIŻ",
+      "options": [
+        "E",
+        "Ż",
+        "A",
+        "Ż",
+        "W"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 48,
+      "text": "Która litera jest czwartą na prawo od litery stojącej pośrodku między \"H\" a \"E\" w słowie STICHOTWORENIE?",
+      "options": [
+        "O",
+        "E",
+        "R",
+        "I",
+        "N"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 49,
+      "text": "Dyskusja zawsze zakłada obecność ...?",
+      "options": [
+        "argumentu",
+        "biura",
+        "przewodniczącego",
+        "słuchaczy",
+        "tematu"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 50,
+      "text": "Jeśli pies może przebiec 3 metry w 1/5 sekundy, to ile metrów może przebiec w 20 sekund?",
+      "options": [
+        "150",
+        "105",
+        "750",
+        "300",
+        "75"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 51,
+      "text": "Cztery z tych pięciu słów są w czymś podobne, które z nich nie pasuje do tego szeregu?",
+      "options": [
+        "benzyna",
+        "ropa naftowa",
+        "drewno",
+        "elektryczność",
+        "węgiel"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 52,
+      "text": "Dziecko nie zawsze ma ...?",
+      "options": [
+        "oczy",
+        "nos",
+        "zabawki",
+        "płuco",
+        "usta"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 53,
+      "text": "Na przyjęciu zawsze są ... ?",
+      "options": [
+        "napoje",
+        "gry",
+        "goście",
+        "kabaret",
+        "kelnerzy"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 54,
+      "text": "Jedna liczba w następującym ciągu wypada z sekwencji: 1, 6, 2, 7, 3, 8, 4, 9, 5, 9. Która liczba jest błędna?",
+      "options": [
+        "7",
+        "9",
+        "10",
+        "12",
+        "6"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 55,
+      "text": "Przeciwieństwem słowa SUKCES jest ...?",
+      "options": [
+        "zapewnić",
+        "wycofać się",
+        "porażka",
+        "opóźnienie",
+        "zwycięstwo"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 56,
+      "text": "Cztery z tych słów są w czymś podobne. Które nie jest tak podobne do pozostałych?",
+      "options": [
+        "porzucać",
+        "nie darzyć sympatią",
+        "odrzucać",
+        "odpowiadać",
+        "słuchać"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 57,
+      "text": "To, co w pamięci nie jest dokładne, można nazwać ...?",
+      "options": [
+        "bezpiecznym",
+        "mglistym",
+        "zapomnianym",
+        "wspaniałym",
+        "smutnym"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 58,
+      "text": "Jeśli 2,5 metra drutu kosztuje 15 centów, to ile będzie kosztować 20 metrów?",
+      "options": [
+        "2,5$",
+        "35 centów",
+        "1,2$",
+        "21 centów",
+        "75 centów"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 59,
+      "text": "Przeciwieństwo słowa RZADKO ... ?",
+      "options": [
+        "rzadko",
+        "okresowo",
+        "często",
+        "nigdy",
+        "na przemian"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 60,
+      "text": "Zazwyczaj o charakterze człowieka pewniej można sądzić po ...?",
+      "options": [
+        "bogactwie",
+        "wyglądzie",
+        "głosie",
+        "czynach",
+        "butach"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 61,
+      "text": "Przeciwieństwo słowa ŻYCZLIWOŚĆ ... ?",
+      "options": [
+        "miłość",
+        "zachęta",
+        "radość",
+        "niechęć",
+        "strach"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 62,
+      "text": "Jeśli ojciec może przejść 10 metrów, podczas gdy dziecko przeczołga się 4 metry, to ile metrów może przejść ojciec, zanim dziecko przeczołga się 6 metrów?",
+      "options": [
+        "12",
+        "8",
+        "15",
+        "18",
+        "20"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 63,
+      "text": "Poprzedzać oznacza «być przed kimś lub czymś», przewidywać oznacza «wiedzieć z góry», zatem «prze-/przed-» oznacza",
+      "options": [
+        "urządzić",
+        "przed",
+        "zrobić z góry",
+        "iść przed",
+        "zrobić przed i po"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 64,
+      "text": "Która litera w słowie PERGAMIN zajmuje pod względem kolejności to samo miejsce (licząc od początku), co w alfabecie?",
+      "options": [
+        "N",
+        "R",
+        "P",
+        "A",
+        "G"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 65,
+      "text": "Przeciwieństwem oszczędności jest ...?",
+      "options": [
+        "nabywanie",
+        "skąpstwo",
+        "marnotrawstwo",
+        "nierozsądne wydawanie",
+        "wydawanie"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 66,
+      "text": "Która z pięciu rzeczy podanych poniżej jest najbardziej podobna do tych trzech: wapno, bawełna, kość słoniowa?",
+      "options": [
+        "woda",
+        "śnieg",
+        "ropa naftowa",
+        "ser",
+        "morze"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 67,
+      "text": "Mężczyzna i jego żona, jego dwie córki oraz ich mężowie i czworo dzieci w rodzinie każdej córki tworzą grupę ...? osób.",
+      "options": [
+        "14",
+        "12",
+        "6",
+        "9",
+        "15"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 68,
+      "text": "Jeśli człowiek mówi rzeczy, o których wie, że są nieprawdziwe, to nazywa się go...?",
+      "options": [
+        "ostrożnym",
+        "upartym",
+        "kłamliwym",
+        "niepoinformowanym",
+        "pewnym siebie"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 69,
+      "text": "Jeśli pierwsze dwa zdania są prawdziwe, to trzecie ...? «Wszyscy studenci zdali swoje egzaminy. John nie zdał swojego egzaminu. John jest studentem.»",
+      "options": [
+        "prawdziwe",
+        "fałszywe",
+        "niejasne"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 70,
+      "text": "W danym ciągu jedna liczba jest błędna - 2, 12, 4, 9, 8, 6, 16, 4. Jaka liczba powinna być zamiast niej?",
+      "options": [
+        "11",
+        "3",
+        "5",
+        "9",
+        "10"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 71,
+      "text": "PRAWDA odnosi się do KŁAMSTWA tak samo, jak ...? do NIEOBECNOŚCI.",
+      "options": [
+        "kłamstwo",
+        "urlop",
+        "obecność",
+        "wagary",
+        "wizyta"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 72,
+      "text": "Myśl, że Ziemia jest centrum Wszechświata, jest ...?",
+      "options": [
+        "błędna",
+        "mądra",
+        "zgubna",
+        "ograniczona",
+        "astronomiczna"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 73,
+      "text": "Które z tych słów odnosi się do WOLNO tak, jak DUŻO odnosi się do MAŁO?",
+      "options": [
+        "iść",
+        "zawsze",
+        "bardzo",
+        "mówić",
+        "szybko"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 74,
+      "text": "Przeciwieństwem słowa ODWAŻNY jest ...?",
+      "options": [
+        "uparty",
+        "zdrajca",
+        "tchórzliwy",
+        "powolny",
+        "nieodpowiedzialny"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 75,
+      "text": "Jedna liczba jest błędna w następującym ciągu: 2, 4, 8, 16, 32, 60, 128. Jaka powinna być ta liczba?",
+      "options": [
+        "3",
+        "9",
+        "18",
+        "64",
+        "96"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 76,
+      "text": "Pierwsza figura odnosi się do drugiej tak samo, jak trzecia figura odnosi się do jednej z następujących czterech. Do której?",
+      "image": "/img/iq/5/5-0-1.png",
+      "optionImages": [
+        "/img/iq/5/5a.png",
+        "/img/iq/5/5b.png",
+        "/img/iq/5/5c.png",
+        "/img/iq/5/5d.png"
+      ],
+      "options": [
+        "Wariant 1",
+        "Wariant 2",
+        "Wariant 3",
+        "Wariant 4"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 77,
+      "text": "Pierwsza figura odnosi się do drugiej tak samo, jak trzecia figura odnosi się do jednej z następujących czterech. Do której?",
+      "image": "/img/iq/18/18-0-1.png",
+      "optionImages": [
+        "/img/iq/18/18a.png",
+        "/img/iq/18/18b.png",
+        "/img/iq/18/18c.png",
+        "/img/iq/18/18d.png"
+      ],
+      "options": [
+        "Wariant 1",
+        "Wariant 2",
+        "Wariant 3",
+        "Wariant 4"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 78,
+      "text": "Pierwsza figura odnosi się do drugiej tak samo, jak trzecia figura odnosi się do jednej z następujących czterech. Do której?",
+      "image": "/img/iq/39/39-0-1.png",
+      "optionImages": [
+        "/img/iq/39/39a.png",
+        "/img/iq/39/39b.png",
+        "/img/iq/39/39c.png",
+        "/img/iq/39/39d.png"
+      ],
+      "options": [
+        "Wariant 1",
+        "Wariant 2",
+        "Wariant 3",
+        "Wariant 4"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 79,
+      "text": "Pierwsza figura odnosi się do drugiej tak samo, jak trzecia figura odnosi się do jednej z następujących czterech. Do której?",
+      "image": "/img/iq/66/66-0-1.png",
+      "optionImages": [
+        "/img/iq/66/66a.png",
+        "/img/iq/66/66b.png",
+        "/img/iq/66/66c.png",
+        "/img/iq/66/66d.png"
+      ],
+      "options": [
+        "Wariant 1",
+        "Wariant 2",
+        "Wariant 3",
+        "Wariant 4"
+      ],
+      "answer": 2
+    }
+  ]
+}

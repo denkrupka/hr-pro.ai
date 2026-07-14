@@ -1,0 +1,24 @@
+{
+  "type": "result",
+  "title": "Rezultat",
+  "intro": "Krótka ankieta zawierająca pytania o wyniki osiągnięte w poprzednich miejscach pracy. Nie ma tu odpowiedzi dobrych ani złych — odpowiadaj tak szczerze i szczegółowo, jak to możliwe. Wypełnienie zajmie nie więcej niż 15 minut.",
+  "questions": [
+    { "id": 1, "type": "choice_explain", "text": "Każdy człowiek w toku swojej pracy w firmie tworzy określoną wartość dla organizacji. Końcowy rezultat pracy pracownika nazwijmy „produktem stanowiska”. Na przykład dozorca zamiata i sprząta teren, produktem jego stanowiska jest czyste podwórko. Sekretarka odbiera połączenia przychodzące, jej „produktem stanowiska” jest jak najszybsze przekierowanie połączenia klienta do właściwego pracownika. To właśnie za wytwarzanie takiego „produktu” firma wypłaca pracownikowi wynagrodzenie i go utrzymuje. Czy zgadzasz się, że każde stanowisko w organizacji ma swój „produkt”?", "options": ["Tak, w pełni", "Tak, ale nie zawsze", "Nie, nie zgadzam się"] },
+    { "id": 3, "type": "text", "text": "Jakie stanowisko zajmowałeś w ostatnim miejscu pracy?" },
+    { "id": 4, "type": "text", "text": "Jak długo pracowałeś na tym stanowisku?" },
+    { "id": 5, "type": "choice_explain", "text": "Jak mógłbyś opisać produkt swojego stanowiska w miejscu pracy?", "options": ["Produktem mojego stanowiska jest:", "Trudno mi opisać produkt stanowiska, dokładniej mogę opisać moje obowiązki:", "W tej pracy praktycznie niemożliwe jest określenie, jaki jest tu produkt stanowiska. Podaj swój komentarz:"] },
+    { "id": 6, "type": "choice", "text": "Czy Ty lub ktoś inny mierzy ilość wytwarzanego przez Ciebie „produktu” w pracy?", "options": ["Tak", "W pewnym stopniu", "Nie"] },
+    { "id": 7, "type": "choice_explain", "text": "Proszę, opisz poniżej wyniki swojej działalności na tym stanowisku, to znaczy ile produktu wytwarzałeś w określonym czasie.", "options": ["Moje dokładne wyniki:", "Trudno mi opisać je dokładnie, mogę tylko w przybliżeniu:", "W tej pracy praktycznie niemożliwe jest opisanie wyników. Wyjaśnij, dlaczego:"] },
+    { "id": 8, "type": "choice_explain", "text": "Czy możesz jakoś porównać wyniki, które osiągasz w pracy, z wynikami innych osób zajmujących analogiczne stanowisko w Twojej organizacji lub poza nią?", "options": ["Moje wyniki są znacznie wyższe niż osób na analogicznych stanowiskach", "Moje wyniki są wyższe niż osób na analogicznych stanowiskach", "Moje wyniki są nieco wyższe niż osób na analogicznych stanowiskach", "Moje wyniki są mniej więcej takie same jak u innych", "Moje wyniki są nieco niższe niż u innych", "Trudno mi porównać wyniki"] },
+    { "id": 9, "type": "choice_explain", "text": "Jak z czasem zmieniał się zakres nałożonej na Ciebie odpowiedzialności?", "options": ["Rósł", "Pozostawał niezmienny", "Malał"] },
+    { "id": 10, "type": "choice_explain", "text": "Jak z czasem zmieniał się zakres wykonywanej przez Ciebie pracy od momentu przyjścia do firmy do chwili obecnej?", "options": ["Rósł", "Pozostawał niezmienny", "Malał"] },
+    { "id": 11, "type": "choice", "text": "Czy w swojej pracy działasz w oparciu o wyznaczone plany?", "options": ["Tak", "Nie"] },
+    { "id": 12, "type": "choice_explain", "text": "Czy wyniki Twojej działalności w tej pracy są powyżej planu?", "options": ["Powyżej", "Poniżej"] },
+    { "id": 13, "type": "contacts", "text": "Podaj swoich bezpośrednich przełożonych z poprzednich miejsc pracy. Skontaktujemy się z nimi, aby potwierdzić Twoje wyniki. Im więcej kontaktów, tym lepiej; optymalnie trzy." },
+    { "id": 14, "type": "text", "text": "Co jest dla Ciebie motywacją przy wykonywaniu tej pracy?" },
+    { "id": 15, "type": "text", "text": "Jaki czynnik jest dla Ciebie najważniejszy, aby czuć się szczęśliwym w pracy?" },
+    { "id": 16, "type": "text", "text": "Jaką korzyść przynosisz pracodawcy, a jaką korzyść pracodawca przynosi Tobie?" },
+    { "id": 17, "type": "text", "text": "Proszę, podaj przykłady czegoś zrobionego lub stworzonego przez Ciebie: z czego jesteś dumny w przeszłości, teraźniejszości lub co planujesz zrobić. Mogą to być osiągnięte przez Ciebie wyniki i sukcesy, stworzone projekty lub rzeczy. Pytanie dotyczy nie tylko pracy, ale również życia, sportu, nauki, rodziny." },
+    { "id": 18, "type": "choice", "text": "Czy masz jeszcze inne miejsce pracy, o którym chciałbyś opowiedzieć?", "options": ["Tak", "Nie"] }
+  ]
+}

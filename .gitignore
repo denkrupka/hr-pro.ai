@@ -1,0 +1,28 @@
+# секреты и локальные данные — НИКОГДА не коммитить
+integrations.config.json
+.env
+.env.*
+.dev.vars
+
+# рабочая БД (юзеры, пароли, платежи) — мигрирует в Supabase
+data/db.json
+data/db.json.tmp
+
+# загруженные пользователями файлы (переезжают в Supabase/R2 Storage)
+public/uploads/
+
+# зависимости и сборка
+node_modules/
+dist/
+.wrangler/
+.vercel/
+.output/
+
+# системное
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# крупные видео обучения — хранятся в Supabase Storage, не в git/Pages
+public/media/

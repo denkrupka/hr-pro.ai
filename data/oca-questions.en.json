@@ -1,0 +1,802 @@
+[
+  {
+    "id": 1,
+    "text": "Do you make thoughtless remarks or accusations that you later regret?"
+  },
+  {
+    "id": 2,
+    "text": "When others begin to lose their patience, do you remain fairly calm?"
+  },
+  {
+    "id": 3,
+    "text": "Do you browse through train timetables, telephone directories, or dictionaries for pleasure?"
+  },
+  {
+    "id": 4,
+    "text": "If you were asked to make a decision, could your liking or disliking of the person concerned sway you?"
+  },
+  {
+    "id": 5,
+    "text": "Do you intend to have two children (or fewer) in your family, even if your health and income level would allow you to have more?"
+  },
+  {
+    "id": 6,
+    "text": "Do your muscles cramp from time to time, even when there is no logical explanation for it?"
+  },
+  {
+    "id": 7,
+    "text": "Do you prefer to be in a situation where you don't have to take responsibility for making decisions?"
+  },
+  {
+    "id": 8,
+    "text": "Do other people consider your actions unpredictable?"
+  },
+  {
+    "id": 9,
+    "text": "Do you think that more money should be spent on social welfare?"
+  },
+  {
+    "id": 10,
+    "text": "Are you strongly interested in other people?"
+  },
+  {
+    "id": 11,
+    "text": "Is your voice rather monotonous than varied?"
+  },
+  {
+    "id": 12,
+    "text": "Do you usually wait for the other person to start the conversation?"
+  },
+  {
+    "id": 13,
+    "text": "Do you readily join in on other people's conversations?"
+  },
+  {
+    "id": 14,
+    "text": "Would the thought of causing pain to game (birds), small animals, or fish keep you from hunting or fishing?"
+  },
+  {
+    "id": 15,
+    "text": "Are you often impulsive in your behavior?"
+  },
+  {
+    "id": 16,
+    "text": "Do you speak slowly?"
+  },
+  {
+    "id": 17,
+    "text": "Does the need to look after your health worry you?"
+  },
+  {
+    "id": 18,
+    "text": "Does some unexpected event make your muscles tense up?"
+  },
+  {
+    "id": 19,
+    "text": "Are you usually tactful in your demands on subordinates, relatives, or students?"
+  },
+  {
+    "id": 20,
+    "text": "Do you think you are able to give a valuable \"snap judgment\"?"
+  },
+  {
+    "id": 21,
+    "text": "Do past failures still trouble you?"
+  },
+  {
+    "id": 22,
+    "text": "Do you have periods of heightened activity lasting several days in a row?"
+  },
+  {
+    "id": 23,
+    "text": "Do other people's efforts to tell you what you should do annoy you?"
+  },
+  {
+    "id": 24,
+    "text": "Do you usually find it difficult to admit something frankly and take the blame?"
+  },
+  {
+    "id": 25,
+    "text": "Do you have a rather small circle of close friends rather than a large number of acquaintances you can simply chat with?"
+  },
+  {
+    "id": 26,
+    "text": "Is your life a constant struggle for survival?"
+  },
+  {
+    "id": 27,
+    "text": "Do you often hum or whistle?"
+  },
+  {
+    "id": 28,
+    "text": "Do your friends consider you a warm, responsive person?"
+  },
+  {
+    "id": 29,
+    "text": "Do you prefer giving orders to carrying them out?"
+  },
+  {
+    "id": 30,
+    "text": "Does it give you pleasure to pass on the latest gossip about your acquaintances?"
+  },
+  {
+    "id": 31,
+    "text": "Would you agree to \"strict discipline\"?"
+  },
+  {
+    "id": 32,
+    "text": "Does the thought of starting some new undertaking worry you greatly?"
+  },
+  {
+    "id": 33,
+    "text": "Do you try to make other people laugh and smile?"
+  },
+  {
+    "id": 34,
+    "text": "Is it easy for you to express your emotions?"
+  },
+  {
+    "id": 35,
+    "text": "Do you refrain from expressing displeasure if someone is late for a meeting?"
+  },
+  {
+    "id": 36,
+    "text": "Are you sometimes considered a person who spoils other people's mood?"
+  },
+  {
+    "id": 37,
+    "text": "Do you think there are people who are clearly unfriendly toward you and are \"scheming\" against you?"
+  },
+  {
+    "id": 38,
+    "text": "Can you admit that you were wrong just to \"keep the peace\"?"
+  },
+  {
+    "id": 39,
+    "text": "Is it true that there are only a few people you truly love?"
+  },
+  {
+    "id": 40,
+    "text": "Is it true that you are rarely happy unless there is a special reason for it?"
+  },
+  {
+    "id": 41,
+    "text": "When in company, do you actively socialize with your friends?"
+  },
+  {
+    "id": 42,
+    "text": "Do you take reasonable precautions to avoid accidents?"
+  },
+  {
+    "id": 43,
+    "text": "Do you get nervous at the thought of having to speak in front of an audience?"
+  },
+  {
+    "id": 44,
+    "text": "If you saw an item in a shop with a clearly mistaken lower price on it, would you try to buy it at that price?"
+  },
+  {
+    "id": 45,
+    "text": "Do you often feel that people are looking at you or talking about you behind your back?"
+  },
+  {
+    "id": 46,
+    "text": "Is it true that you are forever getting into trouble?"
+  },
+  {
+    "id": 47,
+    "text": "Is there something you are particularly afraid of or dislike?"
+  },
+  {
+    "id": 48,
+    "text": "Is it true that you prefer to be a spectator rather than a participant in competitions?"
+  },
+  {
+    "id": 49,
+    "text": "Is it easy for you to take an unbiased view of what has happened?"
+  },
+  {
+    "id": 50,
+    "text": "Do you have clear, settled standards of polite behavior toward the members of your family?"
+  },
+  {
+    "id": 51,
+    "text": "Can you be the \"life of the party\" at gatherings?"
+  },
+  {
+    "id": 52,
+    "text": "Would you \"buy things on credit\" in the hope that you would be able to find the means to pay it off?"
+  },
+  {
+    "id": 53,
+    "text": "Does your reaction come only after something unexpected has happened, such as an accident or another unpleasant incident?"
+  },
+  {
+    "id": 54,
+    "text": "Is it true that you take a group's interests into account more than your own personal interests?"
+  },
+  {
+    "id": 55,
+    "text": "When you listen to a lecturer, do you sometimes get the thought that they are addressing you exclusively?"
+  },
+  {
+    "id": 56,
+    "text": "Do extraneous noises rarely stop you from concentrating?"
+  },
+  {
+    "id": 57,
+    "text": "Are you always \"up to date\" with what is happening day to day?"
+  },
+  {
+    "id": 58,
+    "text": "Are you able to confidently plan something and work toward carrying it out six months in advance?"
+  },
+  {
+    "id": 59,
+    "text": "Do you think that the modern system of \"prison without bars\" is doomed to fail?"
+  },
+  {
+    "id": 60,
+    "text": "Do you tend to be carefree and not worry about anything?"
+  },
+  {
+    "id": 61,
+    "text": "Do you ever get the feeling that you are dreaming, when everything in life seems unreal?"
+  },
+  {
+    "id": 62,
+    "text": "Do you quickly recover from the effect of bad news?"
+  },
+  {
+    "id": 63,
+    "text": "When you criticize someone, do you try at the same time to encourage them?"
+  },
+  {
+    "id": 64,
+    "text": "Are you usually considered a cold person?"
+  },
+  {
+    "id": 65,
+    "text": "Do you think your opinions are not important enough to share with other people?"
+  },
+  {
+    "id": 66,
+    "text": "Are you so self-assured that it sometimes irritates others?"
+  },
+  {
+    "id": 67,
+    "text": "Do you \"keep an eye on\" things that you have lent to your friends?"
+  },
+  {
+    "id": 68,
+    "text": "Does an activity you have chosen yourself give you pleasure?"
+  },
+  {
+    "id": 69,
+    "text": "Does emotional music have a strong effect on you?"
+  },
+  {
+    "id": 70,
+    "text": "Is it true that you completely condemn a person simply because they are your rival or opponent on some matter in your relationship with them?"
+  },
+  {
+    "id": 71,
+    "text": "Do you often \"sit and brood\" about death, illness, pain, and sorrow?"
+  },
+  {
+    "id": 72,
+    "text": "Does the thought of losing your sense of self-worth worry you?"
+  },
+  {
+    "id": 73,
+    "text": "Is it true that you are constantly collecting things that \"might come in handy later\"?"
+  },
+  {
+    "id": 74,
+    "text": "Would you criticize shortcomings and point out to a person the bad traits of their character or the poor work they have done?"
+  },
+  {
+    "id": 75,
+    "text": "Do you openly express your admiration for beautiful things?"
+  },
+  {
+    "id": 76,
+    "text": "Does it happen that you give away things that, strictly speaking, do not belong to you?"
+  },
+  {
+    "id": 77,
+    "text": "Do you greet people in an emotional way?"
+  },
+  {
+    "id": 78,
+    "text": "Do you often dwell on past failures?"
+  },
+  {
+    "id": 79,
+    "text": "Are you sometimes considered a domineering person in your actions and views?"
+  },
+  {
+    "id": 80,
+    "text": "Do you take criticism easily and without taking offense?"
+  },
+  {
+    "id": 81,
+    "text": "Does \"complete silence\" usually not bother you when you want to rest?"
+  },
+  {
+    "id": 82,
+    "text": "Are you inclined to be jealous?"
+  },
+  {
+    "id": 83,
+    "text": "Is it true that you tend to put things off until later, and then you find that it is already too late?"
+  },
+  {
+    "id": 84,
+    "text": "Is it true that you prefer to act in accordance with the wishes of others rather than striving to do everything your own way?"
+  },
+  {
+    "id": 85,
+    "text": "Is it easy for you to get started on some task?"
+  },
+  {
+    "id": 86,
+    "text": "Do you have a habit of biting your nails or the end of a pencil?"
+  },
+  {
+    "id": 87,
+    "text": "Does it happen that, to create some effect, you exaggerate the degree to which you express your emotions?"
+  },
+  {
+    "id": 88,
+    "text": "If your country invaded another country, would you sympathize with those of its citizens who refused military service on political or religious grounds?"
+  },
+  {
+    "id": 89,
+    "text": "Do you have sensitive spots that cause you a painful reaction when touched upon?"
+  },
+  {
+    "id": 90,
+    "text": "Is it true that you have a small range of interests and activities that you pursue by your own choice?"
+  },
+  {
+    "id": 91,
+    "text": "Does it happen that a thought takes hold of your mind for several days?"
+  },
+  {
+    "id": 92,
+    "text": "Do you eat slowly?"
+  },
+  {
+    "id": 93,
+    "text": "Can you have a stabilizing effect when others begin to panic?"
+  },
+  {
+    "id": 94,
+    "text": "Would you stop and try to find out whether a person needs help, even if they haven't directly asked for it?"
+  },
+  {
+    "id": 95,
+    "text": "Do you tend to think that your school, college, club, team, etc. are better than others?"
+  },
+  {
+    "id": 96,
+    "text": "Do you pay your debts and keep your promises whenever possible?"
+  },
+  {
+    "id": 97,
+    "text": "Do you sleep well?"
+  },
+  {
+    "id": 98,
+    "text": "Would you use corporal punishment on a 10-year-old child if they refused to obey you?"
+  },
+  {
+    "id": 99,
+    "text": "Do you prefer to take a passive role in any group or organization you belong to?"
+  },
+  {
+    "id": 100,
+    "text": "Is there logic and a scientific approach in your way of thinking?"
+  },
+  {
+    "id": 101,
+    "text": "Is it true that today's youth have more opportunities than the youth of the previous generation?"
+  },
+  {
+    "id": 102,
+    "text": "Does it happen that you throw away your things and later find that you need them?"
+  },
+  {
+    "id": 103,
+    "text": "Would you readily give up a chosen course of action if it caused you even a few difficulties?"
+  },
+  {
+    "id": 104,
+    "text": "Is it true that only certain specific topics deeply move you?"
+  },
+  {
+    "id": 105,
+    "text": "Is it true that you rarely question other people's actions?"
+  },
+  {
+    "id": 106,
+    "text": "Is it true that you sometimes ask yourself whether anyone really cares about you?"
+  },
+  {
+    "id": 107,
+    "text": "Do you decline responsibility for something because of your doubts that you might not be able to handle it?"
+  },
+  {
+    "id": 108,
+    "text": "Do you feel that you sometimes have to repeat some interesting piece of news or rumor several times?"
+  },
+  {
+    "id": 109,
+    "text": "Do you tend to exaggerate a justified grievance?"
+  },
+  {
+    "id": 110,
+    "text": "Is it true that your facial expression is changeable rather than constant?"
+  },
+  {
+    "id": 111,
+    "text": "Do you usually need confirmation or rejection of an opinion you have once expressed?"
+  },
+  {
+    "id": 112,
+    "text": "Do you openly and sincerely admire the beauty of other people?"
+  },
+  {
+    "id": 113,
+    "text": "Do you find it difficult to consider the subject of suicide?"
+  },
+  {
+    "id": 114,
+    "text": "Do you consider yourself energetic in your attitude toward life?"
+  },
+  {
+    "id": 115,
+    "text": "Can a difference of opinion affect your overall relationship with another person?"
+  },
+  {
+    "id": 116,
+    "text": "Is it true that your minor setbacks rarely trouble you?"
+  },
+  {
+    "id": 117,
+    "text": "Do you sometimes feel that you talk too much?"
+  },
+  {
+    "id": 118,
+    "text": "Do you smile often?"
+  },
+  {
+    "id": 119,
+    "text": "Are you a person who is easy to please?"
+  },
+  {
+    "id": 120,
+    "text": "When you meet open resistance, do you still try to do something your own way?"
+  },
+  {
+    "id": 121,
+    "text": "If the distance is not too great, do you prefer to take transport rather than walk?"
+  },
+  {
+    "id": 122,
+    "text": "Does the sound of the wind or of a \"settling house\" ever bother you?"
+  },
+  {
+    "id": 123,
+    "text": "Is your opinion shaped by viewing things from the perspective of your life experience, profession, or education?"
+  },
+  {
+    "id": 124,
+    "text": "Do you often make tactless mistakes?"
+  },
+  {
+    "id": 125,
+    "text": "Are you suspicious of people who ask to borrow money from you?"
+  },
+  {
+    "id": 126,
+    "text": "Do your personal interests influence your decisions?"
+  },
+  {
+    "id": 127,
+    "text": "Can you become delighted by some \"simple little thing\"?"
+  },
+  {
+    "id": 128,
+    "text": "Do you often take action even though your own common sense points to the contrary?"
+  },
+  {
+    "id": 129,
+    "text": "Are you in favor of dividing people by skin color and class?"
+  },
+  {
+    "id": 130,
+    "text": "Do you have habits such as stroking your hair, nose, ears, etc.?"
+  },
+  {
+    "id": 131,
+    "text": "Can you quickly adapt to and make use of new conditions and situations, even if they may turn out to be difficult?"
+  },
+  {
+    "id": 132,
+    "text": "Can certain sounds cause you extremely unpleasant sensations, such as \"setting your teeth on edge\"?"
+  },
+  {
+    "id": 133,
+    "text": "Can you understand another person's point of view if you want to?"
+  },
+  {
+    "id": 134,
+    "text": "Do you go to bed when you feel like it rather than by the clock?"
+  },
+  {
+    "id": 135,
+    "text": "Do you lose patience over the \"petty flaws\" of other people?"
+  },
+  {
+    "id": 136,
+    "text": "Do children irritate you?"
+  },
+  {
+    "id": 137,
+    "text": "Are you less talkative than your acquaintances?"
+  },
+  {
+    "id": 138,
+    "text": "Do you usually carry out tasks quickly and systematically?"
+  },
+  {
+    "id": 139,
+    "text": "Would you help a fellow traveler rather than leave it to the officials?"
+  },
+  {
+    "id": 140,
+    "text": "When you vote, do you vote for the same party instead of studying the candidates and their election programs?"
+  },
+  {
+    "id": 141,
+    "text": "Do you often dwell on your past illnesses and painful experiences?"
+  },
+  {
+    "id": 142,
+    "text": "Do you feel quite uneasy when there is a mess around you?"
+  },
+  {
+    "id": 143,
+    "text": "Do you usually criticize a film or play you are watching, or a book you are reading?"
+  },
+  {
+    "id": 144,
+    "text": "When telling an amusing story, can you easily imitate the manners or speech of those involved in it?"
+  },
+  {
+    "id": 145,
+    "text": "In areas where you are not an expert, is your opinion important enough to express to other people?"
+  },
+  {
+    "id": 146,
+    "text": "Are you inclined to tidy up in someone else's home if it is messy?"
+  },
+  {
+    "id": 147,
+    "text": "Is it easy for you to accept defeat without feeling frustrated?"
+  },
+  {
+    "id": 148,
+    "text": "Do you often feel depressed?"
+  },
+  {
+    "id": 149,
+    "text": "Do you feel awkward in the company of children?"
+  },
+  {
+    "id": 150,
+    "text": "Do you get upset when you can't do something, instead of finding a substitute for that activity?"
+  },
+  {
+    "id": 151,
+    "text": "Are you sometimes unable to fully grasp the essence of things?"
+  },
+  {
+    "id": 152,
+    "text": "Do you rarely express your displeasure?"
+  },
+  {
+    "id": 153,
+    "text": "Do you work in \"bursts,\" being relatively passive and then overly active for a day or two?"
+  },
+  {
+    "id": 154,
+    "text": "Does a certain number of unfinished current tasks bother you?"
+  },
+  {
+    "id": 155,
+    "text": "Do people enjoy being in your company?"
+  },
+  {
+    "id": 156,
+    "text": "Can you refrain from interfering when someone else is finishing a crossword puzzle?"
+  },
+  {
+    "id": 157,
+    "text": "Do you take into account the better sides of most people and only rarely speak of them disrespectfully?"
+  },
+  {
+    "id": 158,
+    "text": "Do you laugh or smile readily?"
+  },
+  {
+    "id": 159,
+    "text": "Are your voice and manner definite and expressive?"
+  },
+  {
+    "id": 160,
+    "text": "Do you show your short temper only toward close friends, if you show it at all?"
+  },
+  {
+    "id": 161,
+    "text": "Are your interests and areas of knowledge so important to you that they leave you little time for anything else?"
+  },
+  {
+    "id": 162,
+    "text": "Would you like to start a \"new venture\" near the place where you live?"
+  },
+  {
+    "id": 163,
+    "text": "Would you take the necessary action to kill an animal in order to relieve it of pain?"
+  },
+  {
+    "id": 164,
+    "text": "Is it easy for you to relax?"
+  },
+  {
+    "id": 165,
+    "text": "Do you have few regrets about past hardships and failures?"
+  },
+  {
+    "id": 166,
+    "text": "Do gloomy forebodings or the thought of fear cause you a physical reaction?"
+  },
+  {
+    "id": 167,
+    "text": "Can you rely on what your common sense tells you in an emotional situation you have found yourself in?"
+  },
+  {
+    "id": 168,
+    "text": "Could someone else consider you truly active?"
+  },
+  {
+    "id": 169,
+    "text": "Do you find it difficult to get down to a task that needs to be done?"
+  },
+  {
+    "id": 170,
+    "text": "Are you opposed to the \"probation system\" for criminals?"
+  },
+  {
+    "id": 171,
+    "text": "Do you spend a lot of time worrying over trifles?"
+  },
+  {
+    "id": 172,
+    "text": "During an argument, do you find it hard to understand why the other person cannot accept your point of view and thus agree with you?"
+  },
+  {
+    "id": 173,
+    "text": "Do you cope well enough with the problems of everyday life?"
+  },
+  {
+    "id": 174,
+    "text": "Are you usually truthful with those around you?"
+  },
+  {
+    "id": 175,
+    "text": "Do you prefer to wait for events to unfold rather than start acting yourself?"
+  },
+  {
+    "id": 176,
+    "text": "Do you spend money as easily as you earn it?"
+  },
+  {
+    "id": 177,
+    "text": "Are you able to take a \"reasonable risk\" without much anxiety?"
+  },
+  {
+    "id": 178,
+    "text": "If you were in a minor car accident, would you take the trouble to see that the damage you caused was made good?"
+  },
+  {
+    "id": 179,
+    "text": "Do other people push you around?"
+  },
+  {
+    "id": 180,
+    "text": "Do you show leniency toward your friends in cases where you would treat others more strictly?"
+  },
+  {
+    "id": 181,
+    "text": "Do you often dwell on your own inferiority?"
+  },
+  {
+    "id": 182,
+    "text": "Does it happen that people criticize you in conversation with other people?"
+  },
+  {
+    "id": 183,
+    "text": "Do displays of warmth at a greeting, such as a kiss, a firm hug, or a pat on the back, embarrass you if they take place in public?"
+  },
+  {
+    "id": 184,
+    "text": "Do you often have to refrain from doing what you would like to do, out of consideration for other people's wishes?"
+  },
+  {
+    "id": 185,
+    "text": "Are you often convinced that your view on a subject is correct, even if you are not an expert on the matter?"
+  },
+  {
+    "id": 186,
+    "text": "Do you often find yourself in situations where you have to \"handle everything\" at once (\"work on several fronts\")?"
+  },
+  {
+    "id": 187,
+    "text": "Does it seem to you that your acquaintances have a higher opinion of your abilities than you do yourself?"
+  },
+  {
+    "id": 188,
+    "text": "Does the thought of death, or even a reminder of it, horrify you?"
+  },
+  {
+    "id": 189,
+    "text": "After settling a disputed matter, do you continue to feel dissatisfied for some time?"
+  },
+  {
+    "id": 190,
+    "text": "Is there friendliness in your voice, attitude, and facial expression?"
+  },
+  {
+    "id": 191,
+    "text": "Does life seem unreal and rather hazy to you?"
+  },
+  {
+    "id": 192,
+    "text": "Do you often get upset over the fate of war victims and political refugees?"
+  },
+  {
+    "id": 193,
+    "text": "Do \"mere acquaintances\" turn to you for help or advice with their personal problems?"
+  },
+  {
+    "id": 194,
+    "text": "If you lose something, does the thought occur to you that \"someone must have stolen it or put it in the wrong place\"?"
+  },
+  {
+    "id": 195,
+    "text": "If you thought that someone regarded you and your actions with suspicion, would you take the matter up with them rather than leave them to figure it all out for themselves?"
+  },
+  {
+    "id": 196,
+    "text": "Do you feel that your age works against you (that you are too young or too old)?"
+  },
+  {
+    "id": 197,
+    "text": "Do you have bouts of sadness and depression for no reason at all?"
+  },
+  {
+    "id": 198,
+    "text": "Do you often grumble about the living conditions you have to deal with?"
+  },
+  {
+    "id": 199,
+    "text": "Do you tend to hide your feelings?"
+  },
+  {
+    "id": 200,
+    "text": "Do you think you have many close friends?"
+  }
+]

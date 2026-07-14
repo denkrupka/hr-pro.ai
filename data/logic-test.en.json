@@ -1,0 +1,966 @@
+{
+  "type": "logic",
+  "title": "Logis",
+  "intro": "A test to assess the level of intelligence (IQ), thinking ability, and decision-making. 80 questions, time limit. In each question, choose one option. You may skip difficult questions.",
+  "timeLimitSec": 1800,
+  "questions": [
+    {
+      "id": 1,
+      "text": "If two servings of ice cream cost eight dollars, how many servings could you buy for eighty dollars?",
+      "options": [
+        "160",
+        "16",
+        "20",
+        "64",
+        "6"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 2,
+      "text": "If 5 crates of oranges weigh 200 kg, and each empty crate weighs 5 kg, then how many kg of oranges are in the five crates?",
+      "options": [
+        "205",
+        "55",
+        "175",
+        "120",
+        "195"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 3,
+      "text": "If the first two statements are true, then the third is ... ? «You cannot become a swimming champion without a lot of training. Jim trains in swimming often. Jim will be a swimming champion.»",
+      "options": [
+        "true",
+        "false",
+        "uncertain"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 4,
+      "text": "The Moon is to the Earth as the Earth is to ...?",
+      "options": [
+        "Venus",
+        "the clouds",
+        "the Sun",
+        "the stars",
+        "the Universe"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 5,
+      "text": "A siphon makes a mixture of three parts water and two parts orange syrup. How many liters of water are needed to make 100 liters of the mixture?",
+      "options": [
+        "80",
+        "33 1/2",
+        "60",
+        "66 2/3",
+        "40"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 6,
+      "text": "If you rearrange the words below to make a meaningful sentence, then with which letter will the second word in this sentence begin? PEOPLE TWO HAVE LEGS MOST",
+      "options": [
+        "A",
+        "T",
+        "P",
+        "L",
+        "H"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 7,
+      "text": "Which digit falls within the same geometric figure or figures as the digit 7?",
+      "options": [
+        "4",
+        "3",
+        "2",
+        "6",
+        "5"
+      ],
+      "answer": 3,
+      "image": "/img/iq/78/78-0-1.png"
+    },
+    {
+      "id": 8,
+      "text": "LAK is to BAK as ...? is to KOZA.",
+      "options": [
+        "luk",
+        "boty",
+        "kray",
+        "kipa",
+        "loza"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 9,
+      "text": "What relates to a sphere in the same way a square relates to a cube?",
+      "options": [
+        "sides",
+        "circle",
+        "triangle",
+        "angles",
+        "dimensions"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 10,
+      "text": "If an electric train is moving north at a speed of 15 km/h, and the wind blows south at a speed of 30 km/h, then the train will move south at a speed of 15 km/h.",
+      "options": [
+        "true",
+        "false",
+        "uncertain"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 11,
+      "text": "GOING is to GONE as NOW is to ...?",
+      "options": [
+        "will be",
+        "today",
+        "then",
+        "yesterday",
+        "afterward"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 12,
+      "text": "Of the five words given below, four are similar in a certain way. Which one differs from the other four?",
+      "options": [
+        "run",
+        "walk",
+        "crawl",
+        "cling to the ground/grovel",
+        "jump"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 13,
+      "text": "Which number in this row appears for the second time closest to the beginning? 7 5 6 4 8 9 1 0 6 0 9 9 7 6 5 8 4 1 9 0 2",
+      "options": [
+        "5",
+        "1",
+        "0",
+        "6",
+        "7"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 14,
+      "text": "A school is most likely to have ...?",
+      "options": [
+        "a textbook",
+        "a blackboard",
+        "a cleaner",
+        "a teacher",
+        "a pencil"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 15,
+      "text": "How many digits are there here, each of which falls within two different geometric figures: circle, rectangle, triangle (but only within two)?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": 2,
+      "image": "/img/iq/78/78-0-1.png"
+    },
+    {
+      "id": 16,
+      "text": "If the first two of the given statements are true, then the third is...? Some of our acquaintances are clerks. Some of our acquaintances are men. Some of our acquaintances are male clerks.",
+      "options": [
+        "true",
+        "false",
+        "uncertain"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 17,
+      "text": "A structure (building) always has ...?",
+      "options": [
+        "doors",
+        "windows",
+        "walls",
+        "bricks",
+        "chimneys"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 18,
+      "text": "If you build a sentence from the words given below, then with which letter will the last word in the sentence end? KNOWS MOTHER BEST ALWAYS ANSWER NOT",
+      "options": [
+        "A",
+        "R",
+        "T"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 19,
+      "text": "A piece of string 72 centimeters long shrinks to 66 centimeters when wetted. What length will a 96-centimeter string have after it is wetted?",
+      "options": [
+        "92",
+        "48",
+        "88",
+        "90",
+        "76"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 20,
+      "text": "Diamonds are more expensive than glass because they are ...?",
+      "options": [
+        "beautiful",
+        "cleaner",
+        "transparent",
+        "made of carbon",
+        "rarer"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 21,
+      "text": "A tiger is most similar to a ...?",
+      "options": [
+        "donkey",
+        "elephant",
+        "wolf",
+        "cat",
+        "zebra"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 22,
+      "text": "If you looked at the five words given below in a mirror standing upright at the top of the page, then which of them would look almost the same as if you looked directly at it?",
+      "options": [
+        "OKNO",
+        "MAMA",
+        "LAPA",
+        "ONO",
+        "LILIYA"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 23,
+      "text": "«An action of changing the arrangement» - is a good definition for the word ... ?",
+      "options": [
+        "chaos",
+        "activity",
+        "rearrangement",
+        "confusion",
+        "advancement"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 24,
+      "text": "In physics, the law of conservation of energy is ...?",
+      "options": [
+        "outdated",
+        "absolute",
+        "hypothetical",
+        "theoretical",
+        "in effect"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 25,
+      "text": "The opposite of the word CLUMSY is ...?",
+      "options": [
+        "strong",
+        "healthy",
+        "beautiful",
+        "slow",
+        "graceful"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 26,
+      "text": "A CLOCK relates to TIME as a SCALE to ...?",
+      "options": [
+        "heaviness",
+        "motion",
+        "weight",
+        "the ounce",
+        "the steelyard"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 27,
+      "text": "A MOVIE relates to a PHOTOGRAPH the same way ...? relates to a LAKE.",
+      "options": [
+        "swimming",
+        "waterfall",
+        "yacht",
+        "fish",
+        "the world ocean"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 28,
+      "text": "Which of these words comes first in order in the dictionary?",
+      "options": [
+        "fruits",
+        "little window",
+        "factory",
+        "faience",
+        "fireworks"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 29,
+      "text": "Which of these expressions is least like the other three?",
+      "options": [
+        "read books",
+        "make the bed",
+        "receive guests",
+        "create difficulties"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 30,
+      "text": "Such things as language, clothing, traditions, and skin color determine ...?",
+      "options": [
+        "temperament",
+        "racial affiliation",
+        "place of birth",
+        "place of residence",
+        "personality"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 31,
+      "text": "If 13.5 meters of wire cost 1.35 dollars, then how much will 10.5 meters cost?",
+      "options": [
+        "$1.25",
+        "$1.05",
+        "75 cents",
+        "$1.47",
+        "57 cents"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 32,
+      "text": "Which of the five words given below is least like the other four?",
+      "options": [
+        "lion",
+        "acrobat",
+        "clown",
+        "circus",
+        "horse"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 33,
+      "text": "REGRESSION relates to EVOLUTION as PROGRESS relates to ...?",
+      "options": [
+        "expression",
+        "devaluation",
+        "retrogression",
+        "revolution",
+        "slowdown"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 34,
+      "text": "A statement that has no definite meaning is called ...?",
+      "options": [
+        "unfair",
+        "true",
+        "unclear",
+        "doubtful",
+        "false"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 35,
+      "text": "Which of these pairs of words is least like the other three?",
+      "options": [
+        "sad-pity",
+        "beautiful-ugly",
+        "truth-lie",
+        "give-take"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 36,
+      "text": "Which of these expressions is least like the other three?",
+      "options": [
+        "favorable – good",
+        "beautiful – wonderful",
+        "small – little",
+        "warm - hot"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 37,
+      "text": "How many of the words given below can be formed from the letters of the word KRESTOVINA, using any letter any number of times? Frant, krossovki, akvamarin, vintovka, versta, treska, antonovka.",
+      "options": [
+        "3",
+        "6",
+        "7",
+        "5",
+        "4"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 38,
+      "text": "Which digit is located here in the space that is within the circle and the triangle, but not within the rectangle?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "answer": 2,
+      "image": "/img/iq/78/78-0-1.png"
+    },
+    {
+      "id": 39,
+      "text": "A father is always ...? than his son.",
+      "options": [
+        "taller",
+        "slower",
+        "older",
+        "smarter",
+        "more perceptive"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 40,
+      "text": "Which additional word from the five below would complete this sentence most correctly? Teachers ...? wiser than their students.",
+      "options": [
+        "always",
+        "never",
+        "much",
+        "usually are",
+        "rarely are"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 41,
+      "text": "If the first two statements are true, then the third is ...? George is older than Bill. Harry is older than George. Bill is younger than Harry.",
+      "options": [
+        "true",
+        "false",
+        "uncertain"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 42,
+      "text": "The two words NECESSARY and DESIRED mean ...?",
+      "options": [
+        "the opposite",
+        "the same",
+        "neither the same nor the opposite"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 43,
+      "text": "Find 2 letters in the word NEVROPATOLOG between which in the word there are as many letters as there are between them in the alphabet. Which of these two letters comes first in the alphabet?",
+      "options": [
+        "L",
+        "O",
+        "N",
+        "T",
+        "V"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 44,
+      "text": "Which of the following words is a personality trait?",
+      "options": [
+        "wealth",
+        "reputation",
+        "position",
+        "reticence",
+        "power"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 45,
+      "text": "If a piece of string is cut so that one part is 2/3 of the second part, and the total length of the string is 40 meters, then what is the length of the short part?",
+      "options": [
+        "36 1/3",
+        "16",
+        "18",
+        "23 2/3",
+        "24"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 46,
+      "text": "Which of the five words given below is least like the other four?",
+      "options": [
+        "prompt",
+        "fast",
+        "speedy",
+        "run",
+        "swift"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 47,
+      "text": "If the words given below are rearranged to make a sentence, then with which letter will the fourth word in the sentence end? A CRANE TIT HAND IN BETTER SKY THAN",
+      "options": [
+        "E",
+        "D",
+        "A",
+        "N",
+        "I"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 48,
+      "text": "Which letter is the fourth to the right of the letter standing in the middle between \"H\" and \"E\" in the word STIKHOTVORENIE?",
+      "options": [
+        "O",
+        "E",
+        "R",
+        "I",
+        "N"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 49,
+      "text": "A discussion always presupposes the presence of ...?",
+      "options": [
+        "an argument",
+        "an office",
+        "a chairman",
+        "listeners",
+        "a topic"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 50,
+      "text": "If a dog can run 3 meters in 1/5 of a second, then how many meters can it run in 20 seconds?",
+      "options": [
+        "150",
+        "105",
+        "750",
+        "300",
+        "75"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 51,
+      "text": "Four of these five words are similar in some way; which of them does not fit into this row?",
+      "options": [
+        "gasoline",
+        "oil",
+        "wood",
+        "electricity",
+        "coal"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 52,
+      "text": "A child does not always have ...?",
+      "options": [
+        "eyes",
+        "a nose",
+        "toys",
+        "a lung",
+        "a mouth"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 53,
+      "text": "At a party there is always ... ?",
+      "options": [
+        "drinks",
+        "games",
+        "guests",
+        "cabaret",
+        "waiters"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 54,
+      "text": "One number in the following row falls out of the sequence: 1, 6, 2, 7, 3, 8, 4, 9, 5, 9. Which number is wrong?",
+      "options": [
+        "7",
+        "9",
+        "10",
+        "12",
+        "6"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 55,
+      "text": "The opposite of the word SUCCESS is ...?",
+      "options": [
+        "provide",
+        "retreat",
+        "failure",
+        "delay",
+        "victory"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 56,
+      "text": "Four of these words are similar in some way. Which one is not so similar to the others?",
+      "options": [
+        "abandon",
+        "dislike",
+        "reject",
+        "answer",
+        "listen"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 57,
+      "text": "That which is not precise in memory can be called ...?",
+      "options": [
+        "safe",
+        "vague",
+        "forgotten",
+        "wonderful",
+        "sad"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 58,
+      "text": "If 2.5 meters of wire cost 15 cents, then how much will 20 meters cost?",
+      "options": [
+        "$2.5",
+        "35 cents",
+        "$1.2",
+        "21 cents",
+        "75 cents"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 59,
+      "text": "The opposite of the word RARELY ... ?",
+      "options": [
+        "seldom",
+        "periodically",
+        "often",
+        "never",
+        "alternately"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 60,
+      "text": "Usually a person's character can be judged more reliably by ...?",
+      "options": [
+        "wealth",
+        "appearance",
+        "voice",
+        "actions",
+        "shoes"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 61,
+      "text": "The opposite of the word FRIENDLINESS ... ?",
+      "options": [
+        "love",
+        "encouragement",
+        "joy",
+        "hostility",
+        "fear"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 62,
+      "text": "If a father can walk 10 meters while a child crawls 4 meters, then how many meters can the father walk while the child crawls 6 meters?",
+      "options": [
+        "12",
+        "8",
+        "15",
+        "18",
+        "20"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 63,
+      "text": "To precede means «to be before someone or something», to foresee means «to know in advance», therefore «pre-» means",
+      "options": [
+        "to arrange",
+        "before",
+        "to do in advance",
+        "to go before",
+        "to do before and after"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 64,
+      "text": "Which letter in the word PERGAMENT occupies the same place by count (counting from the beginning) as in the alphabet?",
+      "options": [
+        "N",
+        "R",
+        "P",
+        "A",
+        "G"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 65,
+      "text": "The opposite of economy is ...?",
+      "options": [
+        "acquisition",
+        "stinginess",
+        "waste",
+        "unreasonable spending",
+        "spending"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 66,
+      "text": "Which of the five things given below is most similar to these three: lime, cotton, ivory?",
+      "options": [
+        "water",
+        "snow",
+        "oil",
+        "cheese",
+        "sea"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 67,
+      "text": "A man and his wife, his two daughters and their husbands, and four children in the family of each daughter make up a group of ...? people.",
+      "options": [
+        "14",
+        "12",
+        "6",
+        "9",
+        "15"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 68,
+      "text": "If a person says things that he knows are untrue, then he is called...?",
+      "options": [
+        "cautious",
+        "stubborn",
+        "deceitful",
+        "uninformed",
+        "self-assured"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 69,
+      "text": "If the first two statements are true, then the third is ...? «All the students passed their exams. John did not pass his exam. John is a student.»",
+      "options": [
+        "true",
+        "false",
+        "unclear"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 70,
+      "text": "In the given row one number is wrong - 2, 12, 4, 9, 8, 6, 16, 4. Which number should be in its place?",
+      "options": [
+        "11",
+        "3",
+        "5",
+        "9",
+        "10"
+      ],
+      "answer": 1
+    },
+    {
+      "id": 71,
+      "text": "TRUTH relates to LIE the same way ...? relates to ABSENCE.",
+      "options": [
+        "lie",
+        "vacation",
+        "presence",
+        "truancy",
+        "visit"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 72,
+      "text": "The idea that the Earth is the center of the Universe is ...?",
+      "options": [
+        "incorrect",
+        "clever",
+        "ruinous",
+        "narrow-minded",
+        "astronomical"
+      ],
+      "answer": 0
+    },
+    {
+      "id": 73,
+      "text": "Which of these words relates to SLOWLY as MANY relates to FEW?",
+      "options": [
+        "go",
+        "always",
+        "very",
+        "speak",
+        "fast"
+      ],
+      "answer": 4
+    },
+    {
+      "id": 74,
+      "text": "The opposite of the word BRAVE is ...?",
+      "options": [
+        "stubborn",
+        "traitor",
+        "cowardly",
+        "sluggish",
+        "irresponsible"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 75,
+      "text": "One number is wrong in the following row: 2, 4, 8, 16, 32, 60, 128. What should this number be?",
+      "options": [
+        "3",
+        "9",
+        "18",
+        "64",
+        "96"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 76,
+      "text": "The first figure relates to the second the same way the third figure relates to one of the following four. To which one?",
+      "image": "/img/iq/5/5-0-1.png",
+      "optionImages": [
+        "/img/iq/5/5a.png",
+        "/img/iq/5/5b.png",
+        "/img/iq/5/5c.png",
+        "/img/iq/5/5d.png"
+      ],
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 77,
+      "text": "The first figure relates to the second the same way the third figure relates to one of the following four. To which one?",
+      "image": "/img/iq/18/18-0-1.png",
+      "optionImages": [
+        "/img/iq/18/18a.png",
+        "/img/iq/18/18b.png",
+        "/img/iq/18/18c.png",
+        "/img/iq/18/18d.png"
+      ],
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4"
+      ],
+      "answer": 3
+    },
+    {
+      "id": 78,
+      "text": "The first figure relates to the second the same way the third figure relates to one of the following four. To which one?",
+      "image": "/img/iq/39/39-0-1.png",
+      "optionImages": [
+        "/img/iq/39/39a.png",
+        "/img/iq/39/39b.png",
+        "/img/iq/39/39c.png",
+        "/img/iq/39/39d.png"
+      ],
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4"
+      ],
+      "answer": 2
+    },
+    {
+      "id": 79,
+      "text": "The first figure relates to the second the same way the third figure relates to one of the following four. To which one?",
+      "image": "/img/iq/66/66-0-1.png",
+      "optionImages": [
+        "/img/iq/66/66a.png",
+        "/img/iq/66/66b.png",
+        "/img/iq/66/66c.png",
+        "/img/iq/66/66d.png"
+      ],
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4"
+      ],
+      "answer": 2
+    }
+  ]
+}
