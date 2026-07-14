@@ -209,4 +209,4 @@ export function buildBoard(v, parts, tests, lang) {
   return { vacancy: vacFull(v), cards, funnel, columns };
 }
 
-export { recruit, OPT_TITLE };
+export { recruit, ai, air, OPT_TITLE };

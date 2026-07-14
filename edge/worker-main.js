@@ -4,7 +4,7 @@
 import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
 import { notifyCandidate } from './notify-edge.js';
-import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit } from './workflow-edge.js';
+import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -217,6 +217,17 @@ async function api(req, env, url) {
   const saveUser = async (u) => S.upsert('users', { id: u.id, data: u });
   const BASE = env.PORTAL_BASE_URL || url.origin;
   const lang = ['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru';
+  const shortCode = (n = 10) => { const a = 'abcdefghijkmnpqrstuvwxyz23456789'; const b = new Uint8Array(n); crypto.getRandomValues(b);
+    return Array.from(b, x => a[x % a.length]).join(''); };
+  const findByCode = async (code) => { const r = await S.select('tests', `code=eq.${encodeURIComponent(code)}&select=data`); return r[0] ? r[0].data : null; };
+  const logBalance = async (u, delta, kind, extra) => S.upsert('balance_log', { id: uid(12),
+    data: { id: uid(12), userId: u.id, delta, kind, comment: '', adminId: null, purchaseId: null, testId: null,
+      balanceAfter: u.balanceTotal, createdAt: new Date().toISOString(), ...(extra || {}) } });
+  const orderTypes = (types, u, vac) => {
+    const ord = vac ? (processOf(vac).order || ['tools', 'result', 'logic', 'sales'])
+      : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['tools', 'result', 'logic', 'sales']);
+    return types.slice().sort((a, b) => { const ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+  };
   async function participantView(x) {
     const tr = await S.select('tests', `participant_id=eq.${x.id}&select=data`);
     const tests = tr.map(r => r.data).map(t => ({ id: t.id, type: t.type, title: testTitleOf(t.type), status: t.status,
@@ -324,6 +335,141 @@ async function api(req, env, url) {
     if (m === 'PUT') { ['name', 'surname', 'email', 'sex', 'age', 'tel', 'city', 'stage', 'comment', 'color', 'vacancyId', 'starred'].forEach(f => { if (body[f] !== undefined) cur[f] = body[f]; });
       await S.upsert('participants', { id: cur.id, data: cur }); return j({ participant: await participantView(cur) }); }
     if (m === 'DELETE') { await S.del('tests', `participant_id=eq.${cur.id}`); await S.del('participants', `id=eq.${cur.id}`); return j({ ok: true }); }
+  }
+
+  // ── УПРАВЛЕНИЕ ТЕСТАМИ (по кандидату / по тесту) ──
+  let mSendT = p.match(/^\/api\/participants\/([\w-]+)\/send-test$/);
+  if (mSendT && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mSendT[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Кандидат не найден' }, 404);
+    const type = body.type;
+    if (!type || !['tools', 'result', 'logic', 'sales'].includes(type)) return j({ error: 'Неверный тип теста' }, 400);
+    if (((me.balanceTotal || 0) - (me.balancePending || 0)) < 1) return j({ error: 'Недостаточно тестов на балансе' }, 400);
+    const code = shortCode(10);
+    const pvac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    const test = { id: uid(12), participantId: part.id, userId: me.id, type, status: 'sent', code,
+      lang: pvac ? (pvac.lang || 'ru') : 'ru', sentAt: new Date().toISOString(), startedAt: null, finishedAt: null, durationSec: null,
+      answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
+    await S.upsert('tests', { id: test.id, data: test });
+    me.balancePending = (me.balancePending || 0) + 1;
+    await saveUser(me);
+    const link = `${BASE}/t/${code}`;
+    const delivery = await notifyCandidate(env, me, part, test, pvac, link, testTitleOf(type));
+    return j({ test: { id: test.id, type, title: testTitleOf(type), status: 'sent', code }, link, delivery, balance: publicUser(me) });
+  }
+  let mResend = p.match(/^\/api\/tests\/([\w-]+)\/resend$/);
+  if (mResend && m === 'POST') {
+    if (!me) return needAuth();
+    const test = await S.one('tests', mResend[1]);
+    if (!test || test.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (test.startedAt || test.status === 'done') return j({ error: 'Тест уже начат — повторная отправка не нужна' }, 400);
+    test.sentAt = new Date().toISOString();
+    await S.upsert('tests', { id: test.id, data: test });
+    const rp = await S.one('participants', test.participantId);
+    const rvac = rp && rp.vacancyId ? await S.one('vacancies', rp.vacancyId) : null;
+    let delivery = null;
+    if (rp) delivery = await notifyCandidate(env, me, rp, test, rvac, `${BASE}/t/${test.code}`, testTitleOf(test.type));
+    return j({ ok: true, link: `${BASE}/t/${test.code}`, delivery });
+  }
+  let mDelT = p.match(/^\/api\/tests\/([\w-]+)$/);
+  if (mDelT && m === 'DELETE') {
+    if (!me) return needAuth();
+    const test = await S.one('tests', mDelT[1]);
+    if (!test || test.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (test.status !== 'done' && test.balancePending !== true) { me.balancePending = Math.max(0, (me.balancePending || 0) - 1); await saveUser(me); }
+    await S.del('tests', `id=eq.${test.id}`);
+    return j({ ok: true, balance: publicUser(me) });
+  }
+
+  // ── ЗАЯВКИ НА ВАКАНСИЮ (requisitions) ──
+  const reqView = async (r) => { const vac = r.vacancyId ? await S.one('vacancies', r.vacancyId) : null;
+    return { id: r.id, code: r.code, status: r.status, lang: r.lang, form: r.form || {}, createdBy: r.createdBy,
+      vacancyId: r.vacancyId || null, vacancyName: vac ? vac.name : null, position: (r.form && r.form.position) || '',
+      createdAt: r.createdAt, submittedAt: r.submittedAt, approvedAt: r.approvedAt }; };
+  if (p === '/api/requisitions' && m === 'GET') {
+    if (!me) return needAuth();
+    const rows = (await S.select('requisitions', `user_id=eq.${me.id}&select=data`)).map(r => r.data)
+      .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    return j({ requisitions: await Promise.all(rows.map(reqView)) });
+  }
+  if (p === '/api/requisitions' && m === 'POST') {
+    if (!me) return needAuth();
+    const rlang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : 'ru';
+    const r = { id: uid(10), userId: me.id, code: shortCode(10), status: 'draft', lang: rlang,
+      form: (typeof body.form === 'object' && body.form) ? body.form : {}, vacancyId: null,
+      createdBy: 'hr', createdAt: new Date().toISOString(), submittedAt: null, approvedAt: null };
+    await S.upsert('requisitions', { id: r.id, data: r });
+    return j({ requisition: await reqView(r), link: `${BASE}/req/${r.code}` });
+  }
+  let mReq = p.match(/^\/api\/requisitions\/([\w-]+)$/);
+  if (mReq && me) {
+    const r = await S.one('requisitions', mReq[1]);
+    if (!r || r.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (m === 'GET') {
+      let analysis = null; try { analysis = air.requisitionAnalysis(r.form, lang); } catch (e) {}
+      return j({ requisition: await reqView(r), link: `${BASE}/req/${r.code}`, analysis });
+    }
+    if (m === 'PUT') {
+      if (body.form && typeof body.form === 'object') r.form = body.form;
+      if (body.lang && ['ru', 'pl', 'en'].includes(body.lang)) r.lang = body.lang;
+      if (body.status && ['draft', 'submitted', 'approved', 'rejected'].includes(body.status)) { r.status = body.status; if (r.status === 'approved') r.approvedAt = new Date().toISOString(); }
+      await S.upsert('requisitions', { id: r.id, data: r });
+      return j({ requisition: await reqView(r) });
+    }
+    if (m === 'DELETE') { await S.del('requisitions', `id=eq.${r.id}`); return j({ ok: true }); }
+  }
+  let mReqAppr = p.match(/^\/api\/requisitions\/([\w-]+)\/approve$/);
+  if (mReqAppr && m === 'POST') {
+    if (!me) return needAuth();
+    const r = await S.one('requisitions', mReqAppr[1]);
+    if (!r || r.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    r.status = 'approved'; r.approvedAt = new Date().toISOString();
+    let sectionId = null;
+    const secName = String((r.form && r.form.section) || '').trim();
+    if (secName) {
+      const secs = (await S.select('sections', `user_id=eq.${me.id}&select=data`)).map(x => x.data);
+      let sec = secs.find(s => s.name.toLowerCase() === secName.toLowerCase());
+      if (!sec) { sec = { id: uid(10), userId: me.id, name: secName, order: secs.length, createdAt: new Date().toISOString() }; await S.upsert('sections', { id: sec.id, data: sec }); }
+      sectionId = sec.id;
+    }
+    let vac = r.vacancyId ? await S.one('vacancies', r.vacancyId) : null;
+    if (!vac) {
+      const cnt = (await S.select('vacancies', `user_id=eq.${me.id}&select=id`)).length;
+      vac = { id: uid(10), userId: me.id, sectionId, name: (r.form && r.form.position) || 'Вакансия', lang: r.lang, order: cnt,
+        createdAt: new Date().toISOString(), requisitionId: r.id, adText: '', adMode: 'manual', published: false,
+        workflow: recruit.STAGE_KEYS.slice(), knowledge: { questions: [], passScore: 60 }, motivationQuestions: [] };
+      await S.upsert('vacancies', { id: vac.id, data: vac }); r.vacancyId = vac.id;
+    } else if (sectionId) { vac.sectionId = sectionId; await S.upsert('vacancies', { id: vac.id, data: vac }); }
+    await S.upsert('requisitions', { id: r.id, data: r });
+    return j({ requisition: await reqView(r), vacancyId: vac.id });
+  }
+  let mReqAd = p.match(/^\/api\/requisitions\/([\w-]+)\/generate-ad$/);
+  if (mReqAd && m === 'POST') {
+    if (!me) return needAuth();
+    const r = await S.one('requisitions', mReqAd[1]);
+    if (!r || r.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const adLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : r.lang;
+    return j({ ad: air.generateAd(r.form, adLang, { company: me.company, target: body.target }) });
+  }
+  // Публичная заявка (руководитель по ссылке)
+  let mReqPub = p.match(/^\/api\/req\/([\w-]+)$/);
+  if (mReqPub) {
+    const rows = await S.select('requisitions', `code=eq.${encodeURIComponent(mReqPub[1])}&select=data`);
+    const r = rows[0] && rows[0].data;
+    if (!r) return j({ error: 'Заявка не найдена' }, 404);
+    if (m === 'GET') {
+      const owner = await S.one('users', r.userId);
+      return j({ requisition: { code: r.code, status: r.status, lang: r.lang, form: r.form || {},
+        company: owner ? owner.company : '', logo: owner && owner.settings ? owner.settings.logo : '' } });
+    }
+    if (m === 'POST') {
+      if (r.status === 'approved') return j({ error: 'Заявка утверждена — изменения вносит HR' }, 403);
+      if (body && typeof body.form === 'object') r.form = body.form;
+      r.status = 'submitted'; r.submittedAt = new Date().toISOString(); r.createdBy = 'manager';
+      await S.upsert('requisitions', { id: r.id, data: r });
+      return j({ ok: true });
+    }
   }
 
   // ── WORKFLOW кандидата ──
@@ -464,19 +610,6 @@ async function api(req, env, url) {
   }
 
   // ── ОТПРАВКА ТЕСТОВ ──
-  const shortCode = (n = 10) => { const a = 'abcdefghijkmnpqrstuvwxyz23456789'; const b = new Uint8Array(n); crypto.getRandomValues(b);
-    return Array.from(b, x => a[x % a.length]).join(''); };
-  const findByCode = async (code) => { const r = await S.select('tests', `code=eq.${encodeURIComponent(code)}&select=data`); return r[0] ? r[0].data : null; };
-  const logBalance = async (u, delta, kind, extra) => S.upsert('balance_log', { id: uid(12),
-    data: { id: uid(12), userId: u.id, delta, kind, comment: '', adminId: null, purchaseId: null, testId: null,
-      balanceAfter: u.balanceTotal, createdAt: new Date().toISOString(), ...(extra || {}) } });
-  const processOf = (vac) => (vac && vac.process) || {};
-  const orderTypes = (types, u, vac) => {
-    const ord = vac ? (processOf(vac).order || ['tools', 'result', 'logic', 'sales'])
-      : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['tools', 'result', 'logic', 'sales']);
-    return types.slice().sort((a, b) => { const ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
-  };
-
   if (p === '/api/tests/send' && m === 'POST') {
     if (!me) return needAuth();
     const reqLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : null;
