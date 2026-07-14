@@ -13,11 +13,11 @@ const DEFAULT_SMS = {
 
 // ---------- Дизайн-обёртка письма (единый шаблон HR PRO AI) ----------
 const EMAIL_I18N = {
-  ru: { eyebrow: 'Приглашение на оценку', tagline: 'чувствует людей', help: 'Помощь', privacy: 'Конфиденциальность', terms: 'Условия', unsub: 'Отписаться', cta: 'Начать оценку',
+  ru: { eyebrow: 'Приглашение на оценку', tagline: 'Технология, которая чувствует людей', help: 'Помощь', privacy: 'Конфиденциальность', terms: 'Условия', unsub: 'Отписаться', cta: 'Начать оценку',
     legal: 'Вы получили это письмо, потому что участвуете в подборе через платформу HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
-  pl: { eyebrow: 'Zaproszenie do oceny', tagline: 'czuje ludzi', help: 'Pomoc', privacy: 'Prywatność', terms: 'Regulamin', unsub: 'Wypisz się', cta: 'Rozpocznij ocenę',
+  pl: { eyebrow: 'Zaproszenie do oceny', tagline: 'Technologia, która czuje ludzi', help: 'Pomoc', privacy: 'Prywatność', terms: 'Regulamin', unsub: 'Wypisz się', cta: 'Rozpocznij ocenę',
     legal: 'Otrzymujesz tę wiadomość, ponieważ bierzesz udział w rekrutacji przez platformę HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
-  en: { eyebrow: 'Assessment invitation', tagline: 'reads people', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe', cta: 'Start assessment',
+  en: { eyebrow: 'Assessment invitation', tagline: 'Technology that reads people', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe', cta: 'Start assessment',
     legal: 'You received this email because you are part of a hiring process on the HR PRO AI platform. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warsaw, Poland.' },
 };
 const ELOGO = (c) => `<svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px;vertical-align:middle"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="${c}" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>`;

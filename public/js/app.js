@@ -35,7 +35,7 @@ let eduTab = 'info';
 const I18N = {
   ru: {
     nav_vacancies: 'Рекрутация', rec_applications: 'Заявки', rec_vacancies: 'Вакансии', nav_anketas: 'Анкеты', nav_candidates: 'Кандидаты', nav_tests: 'Тесты', nav_education: 'Обучение', nav_integrations: 'Интеграции', nav_balance: 'Баланс', nav_faq: 'FAQ', nav_settings: 'Настройки', nav_logout: 'Выйти', nav_theme: 'Тема',
-    brand_tag: 'чувствует людей', role_admin: 'Администратор',
+    brand_tag: 'Технология, которая<br>чувствует людей', role_admin: 'Администратор',
     edu: 'Обучение', edu_kb: 'База знаний', edu_soon: 'Материалы готовятся.', loading: 'Загрузка…',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
@@ -78,7 +78,7 @@ const I18N = {
   },
   pl: {
     nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj', nav_theme: 'Motyw',
-    brand_tag: 'czuje ludzi', role_admin: 'Administrator',
+    brand_tag: 'Technologia, która<br>czuje ludzi', role_admin: 'Administrator',
     edu: 'Szkolenia', edu_kb: 'Baza wiedzy', edu_soon: 'Materiały w przygotowaniu.', loading: 'Ładowanie…',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
@@ -121,7 +121,7 @@ const I18N = {
   },
   en: {
     nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out', nav_theme: 'Theme',
-    brand_tag: 'feels people', role_admin: 'Administrator',
+    brand_tag: 'Technology that<br>reads people', role_admin: 'Administrator',
     edu: 'Learning', edu_kb: 'Knowledge base', edu_soon: 'Materials are being prepared.', loading: 'Loading…',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',

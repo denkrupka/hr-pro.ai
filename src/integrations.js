@@ -102,11 +102,11 @@ async function http(url, opts) {
 // ---------- Resend: e-mail ----------
 // ---------- Дизайн-обёртка письма (единый шаблон HR PRO AI для всех писем) ----------
 const EMAIL_I18N = {
-  ru: { eyebrow: 'Уведомление', tagline: 'чувствует людей', help: 'Помощь', privacy: 'Конфиденциальность', terms: 'Условия', unsub: 'Отписаться',
+  ru: { eyebrow: 'Уведомление', tagline: 'Технология, которая чувствует людей', help: 'Помощь', privacy: 'Конфиденциальность', terms: 'Условия', unsub: 'Отписаться',
     legal: 'Вы получили это письмо, потому что участвуете в подборе через платформу HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
-  pl: { eyebrow: 'Powiadomienie', tagline: 'czuje ludzi', help: 'Pomoc', privacy: 'Prywatność', terms: 'Regulamin', unsub: 'Wypisz się',
+  pl: { eyebrow: 'Powiadomienie', tagline: 'Technologia, która czuje ludzi', help: 'Pomoc', privacy: 'Prywatność', terms: 'Regulamin', unsub: 'Wypisz się',
     legal: 'Otrzymujesz tę wiadomość, ponieważ bierzesz udział w rekrutacji przez platformę HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
-  en: { eyebrow: 'Notification', tagline: 'reads people', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe',
+  en: { eyebrow: 'Notification', tagline: 'Technology that reads people', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe',
     legal: 'You received this email because you are part of a hiring process on the HR PRO AI platform. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warsaw, Poland.' },
 };
 const LOGO_SVG = (stroke, w) => `<svg viewBox="0 0 64 64" fill="none" style="width:${w}px;height:${w}px;vertical-align:middle"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="${stroke}" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.2" stroke="${stroke}" stroke-width="1.8"/><circle cx="41" cy="21" r="3.4" stroke="${stroke}" stroke-width="1.8"/><circle cx="46" cy="35" r="3" stroke="${stroke}" stroke-width="1.8"/><circle cx="29" cy="45" r="2.8" stroke="${stroke}" stroke-width="1.8"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>`;
