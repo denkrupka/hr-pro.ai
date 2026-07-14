@@ -42,7 +42,7 @@ const testTitleOf = t => TEST_TYPES[t] || (t === 'knowledge' ? 'Проверка
 function defaultSettings() {
   return { surname: '', employees: '', phone: '', timezone: 'GMT+1 Europe/Warsaw', linkDays: 3, uiLang: 'ru', logo: '',
     notifySms: false, notifyComment: true, searchAllAccounts: true, askPersonalData: true,
-    emailTemplates: {}, smsTemplates: {}, anketaFields: [], testOrder: ['tools', 'result', 'logic', 'sales'] };
+    emailTemplates: {}, smsTemplates: {}, anketaFields: [], testOrder: ['result', 'tools', 'logic', 'sales'] };
 }
 
 // ── подписанные cookie (HMAC-SHA256, замена cookie-parser signed) ───────────────
@@ -252,8 +252,8 @@ async function api(req, env, url) {
     data: { id: uid(12), userId: u.id, delta, kind, comment: '', adminId: null, purchaseId: null, testId: null,
       balanceAfter: u.balanceTotal, createdAt: new Date().toISOString(), ...(extra || {}) } });
   const orderTypes = (types, u, vac) => {
-    const ord = vac ? (processOf(vac).order || ['tools', 'result', 'logic', 'sales'])
-      : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['tools', 'result', 'logic', 'sales']);
+    const ord = vac ? (processOf(vac).order || ['result', 'tools', 'logic', 'sales'])
+      : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['result', 'tools', 'logic', 'sales']);
     return types.slice().sort((a, b) => { const ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
   };
   // Загрузка файла (base64 dataUrl) в Supabase Storage (bucket media, публичный)
@@ -332,6 +332,7 @@ async function api(req, env, url) {
     if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     const proc = processOf(v);
     if (typeof body.auto === 'boolean') proc.auto = body.auto;
+    if (body.target === 'performer' || body.target === 'executor') proc.target = body.target;
     if (body.linkDays !== undefined) proc.linkDays = Math.max(1, Math.min(365, parseInt(body.linkDays, 10) || 3));
     if (Array.isArray(body.order)) {
       const def = ['result', 'tools', 'logic', 'sales', 'knowledge'];
@@ -468,7 +469,7 @@ async function api(req, env, url) {
   const applyAnketaFields = (a, b) => {
     if (b.title != null) a.title = String(b.title);
     if (b.vacancyId !== undefined) a.vacancyId = b.vacancyId || null;
-    if (Array.isArray(b.tests)) a.tests = b.tests.filter(t => ['tools', 'result', 'logic', 'sales'].includes(t));
+    if (Array.isArray(b.tests)) a.tests = b.tests.filter(t => ['result', 'tools', 'logic', 'sales'].includes(t));
     ['btnText', 'pageTitle', 'msgApply', 'msgDone', 'description'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
     ['noCaptcha', 'sendEmail'].forEach(f => { if (b[f] != null) a[f] = !!b[f]; });
   };
@@ -552,7 +553,7 @@ async function api(req, env, url) {
     await S.upsert('participants', { id: part.id, data: part });
     const links = [];
     const alang = avac ? (avac.lang || 'ru') : 'ru';
-    const wantTypes = orderTypes((a.tests || []).filter(t => ['tools', 'result', 'logic', 'sales'].includes(t)), owner || me, avac);
+    const wantTypes = orderTypes((a.tests || []).filter(t => ['result', 'tools', 'logic', 'sales'].includes(t)), owner || me, avac);
     for (const type of wantTypes) {
       const available = owner ? (owner.balanceTotal || 0) - (owner.balancePending || 0) : 0;
       if (owner && available < 1) continue;
@@ -574,7 +575,7 @@ async function api(req, env, url) {
     const part = await S.one('participants', mSendT[1]);
     if (!part || part.userId !== me.id) return j({ error: 'Кандидат не найден' }, 404);
     const type = body.type;
-    if (!type || !['tools', 'result', 'logic', 'sales'].includes(type)) return j({ error: 'Неверный тип теста' }, 400);
+    if (!type || !['result', 'tools', 'logic', 'sales'].includes(type)) return j({ error: 'Неверный тип теста' }, 400);
     if (((me.balanceTotal || 0) - (me.balancePending || 0)) < 1) return j({ error: 'Недостаточно тестов на балансе' }, 400);
     const code = shortCode(10);
     const pvac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
@@ -875,7 +876,7 @@ async function api(req, env, url) {
     if (!me) return needAuth();
     const reqLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : null;
     let types = Array.isArray(body.types) ? body.types : (body.type ? [body.type] : []);
-    types = types.filter(t => ['tools', 'result', 'logic', 'sales'].includes(t));
+    types = types.filter(t => ['result', 'tools', 'logic', 'sales'].includes(t));
     if (!types.length) return j({ error: 'Выберите хотя бы один тип теста' }, 400);
     const list = String(body.emails || '').split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
     if (!list.length) return j({ error: 'Укажите email или телефон кандидата' }, 400);
@@ -1174,6 +1175,9 @@ async function api(req, env, url) {
 const HTML_MAP = [
   [/^\/$/, '/landing'],
   [/^\/login$/, '/login'],
+  [/^\/guide(\/|$)/, '/guide'],
+  [/^\/privacy$/, '/privacy'],
+  [/^\/terms$/, '/terms'],
   [/^\/admin$/, '/admin'],
   [/^\/(app|dashboard|home|vacancies|balance|search|education|anketas|settings|faq|instruct)(\/|$)/, '/'],
   [/^\/result\//, '/'],
@@ -1190,6 +1194,16 @@ export default {
       if (url.pathname.startsWith('/api/')) return await api(req, env, url);
     } catch (e) {
       return j({ error: 'edge error: ' + (e.message || e) }, 500);
+    }
+    // Отписка от писем: проверяем токен, показываем подтверждение
+    if (url.pathname === '/unsubscribe') {
+      const lang = ['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru';
+      let email = '', valid = false;
+      try { email = atob(url.searchParams.get('e') || ''); const { unsubToken } = await import('./notify-edge.js'); valid = !!email && url.searchParams.get('t') === await unsubToken(env.SECRET, email); } catch (_) {}
+      const T = { ru: { ok: 'Вы отписаны', okSub: 'Вы больше не будете получать письма о подборе на этот адрес.', bad: 'Ссылка недействительна', badSub: 'Не удалось подтвердить отписку.', home: 'На главную' }, pl: { ok: 'Wypisano', okSub: 'Nie będziesz już otrzymywać wiadomości rekrutacyjnych.', bad: 'Nieprawidłowy link', badSub: 'Nie udało się potwierdzić wypisania.', home: 'Strona główna' }, en: { ok: 'You are unsubscribed', okSub: 'You will no longer receive hiring emails at this address.', bad: 'Invalid link', badSub: 'We could not confirm the unsubscribe.', home: 'Home' } }[lang];
+      const title = valid ? T.ok : T.bad, sub = valid ? T.okSub : T.badSub, icon = valid ? '#43e0a0' : '#e0555b';
+      const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+      return new Response(`<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} — HR PRO AI</title><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></head><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse 90% 60% at 50% -10%,#12132b,#070813 60%);font-family:Inter,system-ui,sans-serif;color:#9aa3bf"><div style="max-width:440px;text-align:center;padding:40px 28px"><div style="width:60px;height:60px;margin:0 auto 22px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="${icon}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${valid ? '<path d="M5 12l4 4 10-11"/>' : '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>'}</svg></div><h1 style="font-family:Manrope,sans-serif;font-weight:800;font-size:24px;color:#fff;margin:0 0 10px">${title}</h1><p style="font-size:14.5px;line-height:1.6;margin:0 0 26px">${sub}</p><a href="${base}/" style="display:inline-block;font-family:Manrope,sans-serif;font-weight:700;font-size:14px;color:#fff;padding:12px 26px;border-radius:12px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${T.home}</a></div></body></html>`, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     // HTML SPA-роуты — отдать содержимое нужного файла по clean-пути (без редиректа)
     for (const [re, clean] of HTML_MAP) {

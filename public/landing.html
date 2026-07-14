@@ -32,6 +32,109 @@
 <!-- JSON-LD: SoftwareApplication + Offers -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HR PRO AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"4 валидных теста раскрывают личность, продуктивность, интеллект и навыки продаж кандидата. ИИ-анализ, автоворонка найма, ИИ-звонки.","offers":[{"@type":"Offer","name":"Starter","price":"249","priceCurrency":"EUR","description":"25 тестов"},{"@type":"Offer","name":"Standard","price":"499","priceCurrency":"EUR","description":"60 тестов"},{"@type":"Offer","name":"Pro","price":"999","priceCurrency":"EUR","description":"160 тестов"},{"@type":"Offer","name":"Business","price":"1499","priceCurrency":"EUR","description":"300 тестов"}]}</script>
 <style>
+/* ============ ВЕСЬ ЛЕНДИНГ — тёмная hi-tech тема (палитра hero) ============ */
+body.lp{
+  --canvas:#070a16;--surface:#0f1430;--surface-2:#151c3c;--surface-3:#1e2750;
+  --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);
+  --text:#e8ecf8;--text-2:#9aa3bf;--muted:#7a84a3;--faint:#5a6483;
+  --brand:#5c7cff;--brand-2:#8b6cff;--brand-ink:#4760e0;--brand-soft:rgba(92,124,255,.14);--brand-glow:rgba(123,108,255,.42);--indigo:#8b6cff;
+  --coral:#ff7a5c;--coral-s:rgba(255,122,92,.1);--coral-2:#ff8a6a;
+  --good:#43e0a0;--warn:#f5b64c;--bad:#ff6b6b;
+  --ink:#0d1230;--ink-2:#080b1e;
+  --zb1:rgba(255,122,92,.4);--zb2:rgba(255,122,92,.16);--zb3:rgba(255,255,255,.05);--zb4:rgba(123,108,255,.24);--zb5:rgba(123,108,255,.46);
+  background:var(--canvas);color:var(--text)}
+body.lp::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(55% 40% at 82% 8%,rgba(123,108,255,.12),transparent 60%),
+    radial-gradient(50% 40% at 8% 26%,rgba(77,124,255,.09),transparent 60%),
+    radial-gradient(60% 50% at 50% 100%,rgba(123,108,255,.07),transparent 60%),
+    linear-gradient(rgba(120,140,220,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,140,220,.035) 1px,transparent 1px),
+    var(--canvas);
+  background-size:auto,auto,auto,52px 52px,52px 52px,auto}
+body.lp h1,body.lp h2,body.lp h3{text-wrap:balance}
+body.lp .btn{background:linear-gradient(135deg,#6f6ae0,#4f78e6);box-shadow:0 8px 20px rgba(60,90,200,.32)}
+body.lp .btn:hover{background:linear-gradient(135deg,#7b76ea,#5a83f0);box-shadow:0 12px 30px rgba(60,90,200,.5)}
+body.lp .btn.ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line-2);box-shadow:none}
+body.lp .btn.ghost:hover{background:rgba(255,255,255,.1)}
+body.lp .btn.soft{background:var(--brand-soft);color:#a9b8ff}
+body.lp .feat .fic{background:rgba(92,124,255,.12);color:#a9b8ff}
+body.lp .feat .fic-tools{background:rgba(92,124,255,.14);color:#9db0ff}
+body.lp .feat .fic-result{background:rgba(67,224,160,.14);color:#5fe0b0}
+body.lp .feat .fic-logic{background:rgba(139,108,255,.16);color:#b9a9ff}
+body.lp .feat .fic-sales{background:rgba(255,122,92,.14);color:#ff9f8a}
+body.lp .sys .si{background:rgba(92,124,255,.12);color:#a9b8ff}
+body.lp .mcard.win{background:rgba(67,224,160,.06);border-color:rgba(67,224,160,.22)}
+body.lp .mcard.wait{background:rgba(255,122,92,.06);border-color:rgba(255,122,92,.22)}
+body.lp .mcard.win .tag{background:rgba(67,224,160,.15);color:#5fe0b0}
+body.lp .mcard.doer .tag{background:rgba(255,255,255,.08);color:#c3cbe4}
+body.lp .mcard.wait .tag{background:rgba(255,122,92,.15);color:#ff9f8a}
+body.lp .plan .save{background:rgba(67,224,160,.14);color:#5fe0b0}
+body.lp .chain .cnode.last{background:rgba(67,224,160,.07);border-color:rgba(67,224,160,.28)}
+body.lp .cmp-row.total-time .old{color:var(--coral-2)}
+body.lp .eyebrow{color:#b7c2ec}
+body.lp .stats-inner .st .n{background:linear-gradient(135deg,#fff,#c3b8ff 60%,#6f97ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* === плитки секций под макет (графика макета, текст наш) === */
+/* тесты — гексагон-плитки (#31) */
+body.lp .feat{background:linear-gradient(180deg,rgba(139,108,255,.08),rgba(255,255,255,.02));border:1px solid rgba(139,108,255,.2)}
+body.lp .feat:hover{border-color:rgba(139,108,255,.42);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+body.lp .feat .fic{width:auto;height:auto;background:none;box-shadow:none;margin-bottom:16px;color:inherit}
+body.lp .feat .fic svg{width:34px;height:38px}
+body.lp .feat .step-no{display:none}
+/* возможности — точка-свечение (#32) */
+body.lp .sys{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09)}
+body.lp .sys-h{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+body.lp .sys-h .gdot{width:11px;height:11px;border-radius:3px;background:linear-gradient(135deg,#8b6cff,#6f97ff);box-shadow:0 0 12px rgba(123,108,255,.7);flex:none}
+body.lp .sys-h h3{margin:0}
+/* отзывы — без звёзд, аватар-градиент (#33) */
+body.lp .tst{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09)}
+body.lp .tst .stars{display:none}
+body.lp .tst .who .av{background:linear-gradient(135deg,#8b6cff,#6f97ff);color:transparent;font-size:0;box-shadow:0 0 14px rgba(123,108,255,.4)}
+/* шаги-цепочка — большие градиентные номера (#30) */
+body.lp .chain .cn{width:auto;height:auto;border-radius:0;background:linear-gradient(135deg,#8b6cff,#6f97ff);-webkit-background-clip:text;background-clip:text;color:transparent;box-shadow:none;font-family:'JetBrains Mono';font-weight:800;font-size:38px;line-height:1;text-align:left;margin-bottom:8px}
+body.lp .chain .cnode.last .cn{background:linear-gradient(135deg,#43e0a0,#6f97ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* === все блоки/карточки — прозрачное стекло (референс #38) === */
+body.lp .plan,body.lp .cost,body.lp .cmp,body.lp .faq-item,body.lp .pareto,body.lp .chain .cnode,body.lp .proof-inner,body.lp .stats-inner,body.lp .time-save{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);box-shadow:none}
+body.lp .pain{background:rgba(255,255,255,.035)}
+body.lp .mcard{background:rgba(255,255,255,.035)}
+body.lp .plan.pop{border-color:rgba(139,108,255,.6);box-shadow:0 0 42px rgba(123,108,255,.25)}
+body.lp .chain .cnode.last{background:rgba(67,224,160,.07);border-color:rgba(67,224,160,.28)}
+body.lp .cmp-head>div,body.lp .cmp-row .ch{background:transparent}
+body.lp .cmp-row .new{background:rgba(92,124,255,.14)}
+body.lp .cmp-head .new{background:linear-gradient(135deg,#6f6ae0,#4f78e6);color:#fff;display:flex;align-items:center;gap:9px}
+body.lp .cmp-head .new::before{content:"";width:16px;height:18px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 38' fill='none'%3E%3Cpath d='M17 2 31 10 31 28 17 36 3 28 3 10Z' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='17' cy='19' r='3' fill='%23ff8a6a'/%3E%3C/svg%3E") center/contain no-repeat}
+body.lp .cmp-row .cf.new::before{content:"✓";color:#43e0a0;font-weight:800;font-size:13px;margin-right:9px;flex:none}
+body.lp .cmp-row .cf.old::before{content:"✕";color:#6b7492;font-weight:700;font-size:12px;margin-right:9px;flex:none}
+/* прайс: акцент на цене за тест (крупнее), цена пакета — мельче */
+body.lp .plan .per{font-family:'Manrope';font-size:28px;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:4px}
+body.lp .plan .price{font-size:18px;font-weight:700;color:var(--text-2);margin:0 0 18px}
+#method{padding-bottom:30px}
+/* финальный CTA — светящаяся карточка (из макета) */
+body.lp .lp-cta{max-width:var(--maxw);margin:40px auto 0;padding:0 40px 90px}
+.cta-glow{position:relative;overflow:hidden;text-align:center;max-width:920px;margin:0 auto;padding:64px 40px;border-radius:28px;
+  background:radial-gradient(ellipse 80% 120% at 50% 0%,rgba(139,108,255,.22),rgba(255,255,255,.03) 70%);
+  border:1px solid rgba(139,108,255,.28);box-shadow:0 0 80px rgba(123,108,255,.2),inset 0 1px 0 rgba(255,255,255,.08)}
+.cta-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(120,140,220,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,220,.06) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 30%,#000,transparent);mask-image:radial-gradient(ellipse 70% 80% at 50% 30%,#000,transparent)}
+.cta-in{position:relative}
+.cta-h{font-family:'Manrope';font-weight:800;font-size:clamp(30px,4vw,44px);letter-spacing:-.035em;line-height:1.08;margin:0 auto;max-width:17ch;text-wrap:balance;
+  background:linear-gradient(120deg,#fff,#c3b8ff 55%,#6f97ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cta-lead{font-size:17px;line-height:1.6;color:#9aa3bf;margin:20px auto 0;max-width:480px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+/* 4-колоночный футер (из макета) */
+.lp-foot.foot-grid{display:block;max-width:none;margin:0;padding:0;border-top:1px solid var(--line);background:rgba(0,0,0,.2)}
+.foot-cols{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;max-width:var(--maxw);margin:0 auto;padding:52px 40px 0}
+.foot-brand .foot-logo{display:flex;align-items:center;gap:11px}
+.foot-brand .foot-logo .m{width:36px;height:36px;display:grid;place-items:center}
+.foot-brand .foot-logo .m svg{width:34px;height:34px}
+.foot-brand .foot-logo b{font-family:'Manrope';font-weight:800;font-size:17px;color:#fff}
+.foot-tag{font-size:13.5px;color:var(--muted);margin-top:14px;max-width:240px;line-height:1.55}
+.foot-col .foot-h{font-family:'Manrope';font-weight:700;font-size:13px;color:#c3cbe4;margin-bottom:14px}
+.foot-col a{display:block;font-size:13.5px;color:var(--muted);margin-bottom:10px}
+.foot-col a:hover{color:var(--text)}
+.foot-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;max-width:var(--maxw);margin:40px auto 0;padding:22px 40px 40px;border-top:1px solid var(--line)}
+.foot-bottom .fb-r{font-size:12.5px;color:var(--faint)}
+.foot-langs{display:flex;gap:16px;font-family:'JetBrains Mono';font-size:11.5px;color:var(--faint)}
+@media(max-width:760px){.foot-cols{grid-template-columns:1fr 1fr}}
 /* --- landing-only components --- */
 .lang-switch{display:inline-flex;gap:3px;align-items:center}
 .lang-switch button{background:transparent;border:1px solid var(--line);color:var(--muted);font:700 11px/1 Inter,sans-serif;padding:5px 7px;border-radius:6px;cursor:pointer}
@@ -40,8 +143,76 @@
 .lp-logo .m{background:none;box-shadow:none;width:36px;height:36px}
 .lp-logo .m svg{width:36px;height:36px}
 .lp-logo .m svg path,.lp-logo .m svg line,.lp-logo .m svg circle{stroke:var(--brand)}
+/* ===== dark neural hero (imported design) ===== */
+.hd{--hp-a:#4d7cff;--hp-b:#8b6cff;--hp-glow:123,108,255;--hp-mid:#c3b8ff;--hp-end:#6f97ff;--hp-dot:#8b6cff;--hp-blob:139,108,255;
+  position:relative;overflow:hidden;color:#e8ecf8;z-index:0;margin-top:-140px;padding-top:140px;
+  background:
+    radial-gradient(70% 26% at 50% 0%,rgba(255,138,92,.10),transparent 58%),
+    radial-gradient(120% 80% at 30% 2%,#171d44,#0a0d20 52%,#070813 78%)}
+.hd-bg{position:absolute;inset:0;pointer-events:none}
+.hd-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(120,140,220,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,220,.05) 1px,transparent 1px);background-size:52px 52px}
+.hd-blob{position:absolute;top:-160px;left:-60px;width:640px;height:520px;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(var(--hp-blob),.3),transparent 65%);filter:blur(30px);animation:glowPulse 7s ease-in-out infinite}
+#hd-net{position:absolute;inset:0;width:100%;height:100%;opacity:.7;pointer-events:none}
+.hd-inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center;padding:70px 40px 44px}
+.hd-pill{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border:1px solid rgba(139,150,255,.28);color:#b7c2ec;font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 15px;border-radius:999px}
+.hd-dot{width:8px;height:8px;border-radius:50%;background:var(--hp-dot);box-shadow:0 0 10px var(--hp-dot);animation:pulseDot 1.6s infinite}
+.hd-h1{font-family:'Manrope',sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(38px,5vw,56px);margin:22px 0 0;
+  background:linear-gradient(120deg,#fff,var(--hp-mid) 55%,var(--hp-end));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hd-lead{font-size:18px;line-height:1.6;color:#9aa3bf;margin:24px 0 0;max-width:500px}
+.hd-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+.hd-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#6f6ae0,#4f78e6);color:#fff;font-weight:650;font-size:16px;padding:15px 30px;border-radius:14px;box-shadow:0 8px 22px rgba(60,90,200,.35);transition:transform var(--d1) var(--ease),box-shadow var(--d2),filter var(--d2)}
+.hd-btn:hover{transform:translateY(-2px);filter:brightness(1.07);box-shadow:0 12px 30px rgba(60,90,200,.5)}
+.hd-btn.ghost{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);box-shadow:none;color:#e8ecf8}
+.hd-btn.ghost:hover{background:rgba(255,255,255,.1);filter:none}
+.hd-trust{display:flex;gap:30px;margin-top:40px;flex-wrap:wrap}
+.hd-trust .n{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;color:#fff}
+.hd-trust .l{color:#8b93ad;font-size:13px;font-weight:500;margin-top:2px}
+.hd-visual{position:relative}
+.hd-card{position:relative;background:rgba(255,255,255,.04);border:1px solid rgba(var(--hp-glow),.28);border-radius:22px;padding:22px 24px;
+  box-shadow:0 0 60px rgba(var(--hp-glow),.22),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden;backdrop-filter:blur(10px);animation:floatY 8s ease-in-out infinite}
+.hd-scan{position:absolute;left:0;right:0;top:0;height:80px;pointer-events:none;background:linear-gradient(180deg,rgba(var(--hp-glow),0),rgba(var(--hp-glow),.16) 60%,rgba(var(--hp-glow),0));animation:scan1a 3.6s cubic-bezier(.4,0,.6,1) infinite}
+.hd-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative}
+.hd-name{font-family:'Manrope';font-weight:800;font-size:16px;color:#eef1fb}
+.hd-role{font-size:12.5px;color:#8b93ad;margin-top:2px}
+.hd-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(67,224,160,.12);color:#43e0a0;font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px;border:1px solid rgba(67,224,160,.3)}
+.hd-badge .d{width:7px;height:7px;border-radius:50%;background:#43e0a0;box-shadow:0 0 8px #43e0a0}
+.hd-row{display:grid;grid-template-columns:132px 1fr 46px;align-items:center;gap:12px;margin:10px 0}
+.hd-rn{font-size:12.5px;font-weight:600;color:#c3cbe4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-rn b{font-family:'JetBrains Mono',monospace;margin-right:5px}
+.hd-track{position:relative;height:22px}
+.hd-track::before{content:"";position:absolute;inset:6px 0;border-radius:6px;background:linear-gradient(90deg,rgba(255,122,92,.4) 0 16%,rgba(255,122,92,.16) 16% 34%,rgba(255,255,255,.05) 34% 66%,rgba(var(--hp-glow),.24) 66% 84%,rgba(var(--hp-glow),.46) 84% 100%)}
+.hd-track::after{content:"";position:absolute;left:50%;top:2px;bottom:2px;width:1.5px;background:rgba(255,255,255,.28)}
+.hd-fill{position:absolute;top:7px;height:10px;border-radius:6px;left:50%;width:0;background:linear-gradient(90deg,var(--hp-a),var(--hp-b));box-shadow:0 0 14px rgba(var(--hp-glow),.75);transition:width .9s var(--ease),left .9s var(--ease)}
+.hd-fill.comp{background:linear-gradient(90deg,#ff7a5c,#ffab8f);box-shadow:0 0 14px rgba(255,122,92,.7)}
+.hd-node{position:absolute;top:5px;left:50%;width:13px;height:13px;border-radius:50%;background:#0a0c18;border:3px solid var(--hp-a);transform:translateX(-7px);transition:left .9s var(--ease);box-shadow:0 0 10px rgba(var(--hp-glow),.8);z-index:2}
+.hd-node.comp{border-color:#ff8a6a;box-shadow:0 0 10px rgba(255,122,92,.8)}
+.hd-rv{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;text-align:right}
+.hd-scale{height:8px;border-radius:6px;margin-top:12px;background:linear-gradient(90deg,rgba(255,122,92,.5) 0 16%,rgba(255,122,92,.2) 16% 34%,rgba(255,255,255,.06) 34% 66%,rgba(var(--hp-glow),.3) 66% 84%,rgba(var(--hp-glow),.55) 84% 100%)}
+.hd-scale-lbl{display:flex;justify-content:space-between;color:#6b7492;font-size:11px;font-weight:600;margin-top:7px}
+.hd-logos{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;gap:28px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.06);padding:26px 40px 42px}
+.hd-logos-t{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492}
+.hd-logos-row{display:flex;align-items:center;gap:14px 28px;flex-wrap:wrap;opacity:.55}
+.hd-logos-row span{font-family:'Manrope';font-weight:800;font-size:15px;color:#c3cbe4}
+/* nav over dark hero: transparent → solid-dark on scroll */
+body.lp .lp-nav{background:transparent;border-bottom:1px solid transparent;transition:background var(--d2),border-color var(--d2)}
+body.lp .lp-nav.scrolled{background:rgba(11,13,24,.82);backdrop-filter:blur(12px);border-bottom-color:rgba(255,255,255,.08)}
+body.lp .lp-nav .lp-links a{color:#c3cbe4}
+body.lp .lp-nav .lp-links a:hover{color:#fff}
+body.lp .lp-nav .lp-logo b{color:#fff}
+body.lp .lp-nav .lp-logo span[data-i18n="brand_tagline"]{color:#8b93ad}
+body.lp .lp-nav .lp-logo .m svg path,body.lp .lp-nav .lp-logo .m svg line,body.lp .lp-nav .lp-logo .m svg circle{stroke:#fff}
+body.lp .lp-nav .lang-switch button{color:#8b93ad;border-color:rgba(255,255,255,.16)}
+body.lp .lp-nav .lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+body.lp .lp-nav .btn.ghost{background:rgba(255,255,255,.08);color:#eef1fb;border-color:rgba(255,255,255,.24);box-shadow:none}
+body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
+@media(max-width:900px){.hd-inner{grid-template-columns:1fr;padding-top:48px}.hd-visual{margin-top:8px}}
+@keyframes scan1a{0%{transform:translateY(-90px)}100%{transform:translateY(440px)}}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes glowPulse{0%,100%{opacity:.55}50%{opacity:1}}
 /* announcement bar */
-.lp-bar{background:linear-gradient(90deg,var(--brand-ink),var(--brand),var(--brand-2));color:#fff;text-align:center;font-size:13.5px;font-weight:600;padding:9px 16px;letter-spacing:.01em}
+.lp-bar{background:transparent;position:relative;z-index:5;color:#c3cbe4;text-align:center;font-size:13.5px;font-weight:600;padding:9px 16px;letter-spacing:.01em}
 .lp-bar a{color:#fff;text-decoration:underline;text-underline-offset:2px;font-weight:800}
 .lp-bar b{color:#ffe08a}
 /* trust logos strip */
@@ -89,7 +260,7 @@
 .stats-inner .st .n{font-family:'JetBrains Mono';font-size:clamp(30px,4vw,46px);font-weight:800;color:#fff;line-height:1}
 .stats-inner .st .l{color:rgba(255,255,255,.72);font-size:14px;margin-top:10px}
 /* proof / authority band */
-.proof{max-width:var(--maxw);margin:0 auto;padding:70px 40px}
+.proof{max-width:var(--maxw);margin:0 auto;padding:14px 40px 60px}
 .proof-inner{background:linear-gradient(140deg,var(--ink),var(--ink-2));border-radius:var(--r-xl);padding:52px 48px;color:#fff;display:grid;grid-template-columns:minmax(180px,240px) 1fr;gap:44px;align-items:center;position:relative;overflow:hidden}
 .proof-inner::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--coral),var(--brand),var(--brand-2))}
 .proof .big{text-align:center}
@@ -131,23 +302,50 @@
 /* sticky mobile cta */
 .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;padding:12px 16px;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(30,22,60,.1)}
 .sticky-cta .btn{width:100%}
-/* lead-magnet popup */
-.pop-ov{position:fixed;inset:0;z-index:100;background:rgba(16,20,36,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;animation:fade .25s ease}
+/* lead-magnet popup (дизайн из Cloud Design) */
+.pop-ov{position:fixed;inset:0;z-index:100;background:rgba(7,8,19,.68);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;animation:fade .25s ease}
 .pop-ov.on{display:flex}
-.lmp{background:var(--surface);border-radius:var(--r-xl);max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;box-shadow:var(--sh-lg);position:relative}
-.pop-close{position:absolute;top:14px;right:16px;width:34px;height:34px;border-radius:50%;background:var(--surface-2);color:var(--text-2);font-size:20px;line-height:1;display:grid;place-items:center;z-index:2}
-.lmp .l{background:linear-gradient(150deg,var(--ink),var(--ink-2));color:#fff;padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
-.lmp .l .eyebrow{color:#fff}
-.lmp .l h3{color:#fff;font-size:26px;margin:14px 0 12px;line-height:1.15}
-.lmp .l ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:10px}
-.lmp .l li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:rgba(255,255,255,.85)}
-.lmp .l li::before{content:"✓";color:#7fe3bf;font-weight:800}
-.lmp .r{padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
-.lmp .r h4{font-size:20px;margin-bottom:8px}
-.lmp .r p{color:var(--muted);font-size:14px;margin:0 0 18px}
-.lmp .r .field{margin-bottom:12px}
-.lmp .r .ok{color:var(--good);font-weight:700;text-align:center;padding:20px 0}
+.lpop{position:relative;width:520px;max-width:100%;border-radius:24px;overflow:hidden;border:1px solid rgba(139,108,255,.28);box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 80px rgba(123,108,255,.22),inset 0 1px 0 rgba(255,255,255,.08);background:linear-gradient(180deg,#141834,#0b0d1e);animation:popIn .5s cubic-bezier(.22,.9,.3,1) both;color:#e8ecf8}
+.lpop-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(120,140,220,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,220,.05) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000,transparent);mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,#000,transparent)}
+.lpop-blob{position:absolute;top:-120px;right:-80px;width:420px;height:340px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(139,108,255,.32),transparent 65%);filter:blur(28px);animation:glowPulseP 7s ease-in-out infinite;pointer-events:none}
+#neuPop{position:absolute;left:0;top:0;right:0;height:190px;width:100%;opacity:.7;pointer-events:none}
+.lpop-close{position:absolute;top:16px;right:16px;z-index:5;width:34px;height:34px;display:grid;place-items:center;border:none;border-radius:10px;background:rgba(255,255,255,.06);color:#9aa3bf;font-size:15px;line-height:1;cursor:pointer;transition:.2s}
+.lpop-close:hover{background:rgba(255,255,255,.12);color:#fff}
+.lpop-body{position:relative;z-index:3;padding:40px 40px 36px}
+.lpop-top{display:flex;align-items:center;gap:13px}
+.lpop-mail{width:52px;height:52px;flex:none;display:grid;place-items:center;border-radius:14px;background:rgba(139,108,255,.14);border:1px solid rgba(139,108,255,.3);box-shadow:0 0 24px rgba(123,108,255,.3)}
+.lpop-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(139,150,255,.28);color:#b7c2ec;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;border-radius:999px}
+.lpop-eyebrow .d{width:7px;height:7px;border-radius:50%;background:#8b6cff;box-shadow:0 0 10px #8b6cff;animation:pulseDotP 1.6s infinite}
+.lpop-h{font-family:'Manrope';font-weight:800;letter-spacing:-.025em;line-height:1.12;font-size:27px;margin:20px 0 0;background:linear-gradient(120deg,#fff,#c3b8ff 60%,#6f97ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lpop-lead{font-size:15px;line-height:1.6;color:#9aa3bf;margin:14px 0 0}
+.lpop-bullets{display:flex;flex-direction:column;gap:11px;margin:22px 0 26px}
+.lpop-bullets .bl{display:flex;align-items:flex-start;gap:11px;font-size:14px;line-height:1.45;color:#c3cbe4}
+.lpop-bullets .bl .c{width:20px;height:20px;flex:none;display:grid;place-items:center;border-radius:6px;background:rgba(67,224,160,.14);color:#43e0a0;font-weight:800;font-size:12px}
+#pop-form-el{display:flex;flex-direction:column;gap:12px}
+.pfield{width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#eef1fb;font-family:Inter,sans-serif;font-size:14.5px;padding:14px 16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.pfield::placeholder{color:#5f6885}
+.pfield:focus{border-color:rgba(139,108,255,.7);box-shadow:0 0 0 3px rgba(123,108,255,.16);background:rgba(255,255,255,.06)}
+.lpop-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-weight:650;font-size:15px;padding:14px 22px;border-radius:12px;box-shadow:0 8px 20px rgba(139,108,255,.32);border:none;cursor:pointer;transition:transform .16s cubic-bezier(.22,.68,.24,1),box-shadow .28s,filter .28s}
+.lpop-btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.lpop-privacy{display:flex;align-items:center;gap:8px;font-size:12px;color:#6b7492;margin-top:15px}
+.lpop-done{text-align:center;padding:14px 0 6px}
+.lpop-check{position:relative;width:78px;height:78px;margin:0 auto 22px}
+.lpop-check .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(67,224,160,.5);animation:ringP 1.6s ease-out infinite}
+.lpop-check .disc{position:absolute;inset:0;border-radius:50%;background:rgba(67,224,160,.14);border:1px solid rgba(67,224,160,.4);display:grid;place-items:center;box-shadow:0 0 34px rgba(67,224,160,.35)}
+.lpop-check .disc svg{width:38px;height:38px;animation:checkPop .5s cubic-bezier(.22,.9,.3,1) both}
+.lpop-done-h{font-family:'Manrope';font-weight:800;font-size:26px;letter-spacing:-.02em;color:#eef1fb;margin:0}
+.lpop-done-lead{font-size:14.5px;line-height:1.6;color:#9aa3bf;margin:12px auto 24px;max-width:340px}
+.lpop-foot{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-top:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.2)}
+.lpop-logo{display:flex;align-items:center;gap:10px;font-family:'Manrope';font-weight:800;font-size:13px;color:#c3cbe4}
+.lpop-foot .lang-switch button{color:#8b93ad;border:1px solid rgba(255,255,255,.14);background:transparent}
+.lpop-foot .lang-switch button.on{color:#fff;background:rgba(77,124,255,.85);border-color:#6f97ff;box-shadow:0 0 14px rgba(77,124,255,.5)}
+.hidden{display:none!important}
 @keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes popIn{0%{opacity:0;transform:translateY(16px) scale(.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pulseDotP{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@keyframes glowPulseP{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes checkPop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes ringP{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.6);opacity:0}}
 /* test sequence badge */
 .feat .fic{position:relative;overflow:visible}
 .step-no{position:absolute;top:-9px;left:-9px;width:23px;height:23px;border-radius:50%;background:var(--brand);color:#fff;font:800 12px/23px 'JetBrains Mono',monospace;text-align:center;box-shadow:var(--sh-sm)}
@@ -198,7 +396,7 @@
 </style>
 </head><body class="lp">
 
-<div class="lp-bar" id="lp-bar" data-i18n="bar">Новым аккаунтам — по <b>бесплатному тесту каждого вида</b> и 2 вакансии. Карта не нужна. <a href="/login?mode=register">Забрать →</a></div>
+<div class="lp-bar" id="lp-bar" data-i18n="bar">Новым аккаунтам — <b>по одному бесплатному тесту каждого вида</b>. Оцените кандидата целиком, без карты. <a href="/login?mode=register">Забрать →</a></div>
 
 <nav class="lp-nav">
   <a href="/" class="lp-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><span style="display:flex;flex-direction:column;line-height:1.05"><b>HR PRO AI</b><span style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.01em;max-width:150px" data-i18n="brand_tagline">технология, которая чувствует людей</span></span></a>
@@ -214,46 +412,47 @@
   </div>
 </nav>
 
-<header class="hero">
-  <div class="hero-copy reveal">
-    <div class="eyebrow" data-i18n="eyebrow">Наём по данным · PL · UA · RU · EU</div>
-    <h1 style="margin-top:18px" data-i18n="hero_h1">Узнайте, <span class="hl">кто перед вами</span>, до того как нанять</h1>
-    <p class="lead" data-i18n="hero_lead">В резюме человек описывает себя таким, каким хочет выглядеть. Наши тесты показывают, как он работает на самом деле: даёт ли результат, что у него с характером, головой и продажами. Всё это видно на одном графике ещё до встречи.</p>
-    <div class="hero-cta">
-      <a href="/login?mode=register" class="btn lg" data-i18n="hero_cta_try">Попробовать бесплатно →</a>
-      <a href="#how" class="btn ghost lg" data-i18n="hero_cta_how">Как это работает</a>
+<header class="hd">
+  <div class="hd-bg" aria-hidden="true">
+    <div class="hd-grid"></div>
+    <canvas id="hd-net"></canvas>
+    <div class="hd-blob"></div>
+  </div>
+  <div class="hd-inner">
+    <div class="hd-copy reveal">
+      <div class="hd-pill"><span class="hd-dot"></span><span data-i18n="hero_pill">ИИ-анализ в реальном времени</span></div>
+      <h1 class="hd-h1" data-i18n="hero_h1">Узнайте, <span class="hl">кто перед вами</span>, до того как нанять</h1>
+      <p class="hd-lead" data-i18n="hero_lead">В резюме человек описывает себя таким, каким хочет выглядеть. Наш ИИ читает четыре теста и собирает настоящий портрет — личность, продуктивность, интеллект и продажи. Один график ещё до встречи.</p>
+      <div class="hd-cta">
+        <a href="/login?mode=register" class="hd-btn" data-i18n="hero_cta_try">Попробовать бесплатно →</a>
+        <a href="#how" class="hd-btn ghost" data-i18n="hero_cta_how">Как это работает</a>
+      </div>
+      <div class="hd-trust">
+        <div class="t"><div class="n">4</div><div class="l" data-i18n="trust_tests">валидных теста</div></div>
+        <div class="t"><div class="n">10&nbsp;<span data-i18n="trust_min">мин</span></div><div class="l" data-i18n="trust_time">на первую оценку</div></div>
+        <div class="t"><div class="n">5</div><div class="l" data-i18n="trust_gift">тестов в подарок</div></div>
+      </div>
     </div>
-    <div class="hero-trust">
-      <div class="t"><div class="n">4</div><div class="l" data-i18n="trust_tests">валидных теста</div></div>
-      <div class="t"><div class="n">10&nbsp;<span data-i18n="trust_min">мин</span></div><div class="l" data-i18n="trust_time">на первую оценку</div></div>
-      <div class="t"><div class="n">5</div><div class="l" data-i18n="trust_gift">теста в подарок</div></div>
+    <div class="hd-visual reveal d2">
+      <div class="hd-card">
+        <div class="hd-scan"></div>
+        <div class="hd-card-head">
+          <div><div class="hd-name" data-i18n="hero_name">Анна Ковальская</div><div class="hd-role" data-i18n="hero_role">Менеджер по продажам · тест «Тулс»</div></div>
+          <span class="hd-badge"><span class="d"></span><span data-i18n="hero_badge">Виннер</span></span>
+        </div>
+        <div id="hero-bars"></div>
+        <div class="hd-scale"></div>
+        <div class="hd-scale-lbl"><span data-i18n="scale_low">Очень низкий</span><span data-i18n="scale_mid">Средний</span><span data-i18n="scale_high">Очень высокий</span></div>
+      </div>
     </div>
   </div>
-  <div class="hero-visual reveal d2">
-    <div class="hv-head">
-      <div><div style="font-weight:800;font-size:17px" data-i18n="hero_name">Анна Ковальская</div><div class="muted" style="font-size:13px" data-i18n="hero_role">Менеджер по продажам · «Тулс»</div></div>
-      <span class="hv-badge" data-i18n="hero_badge">● Виннер</span>
+  <div class="hd-logos">
+    <span class="hd-logos-t" data-i18n="trust_strip_h">Ваши вакансии — на площадках, где ищут работу</span>
+    <div class="hd-logos-row">
+      <span>Google for Jobs</span><span>Indeed</span><span>Adzuna</span><span>Pracuj.pl</span><span>OLX Praca</span><span>Praca.pl</span><span>GoWork.pl</span><span>Jooble</span>
     </div>
-    <div id="hero-bars"></div>
-    <div class="spectrum" style="margin-top:16px"></div>
-    <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:7px;font-weight:600">
-      <span data-i18n="scale_low">Очень низкий</span><span data-i18n="scale_mid">Средний</span><span data-i18n="scale_high">Очень высокий</span></div>
   </div>
 </header>
-
-<section class="trust-strip reveal">
-  <div class="tl" data-i18n="trust_strip_h">Ваши вакансии — на площадках, где ищут работу</div>
-  <div class="trust-logos">
-    <span class="tlg"><span class="dot"></span>Google for Jobs</span>
-    <span class="tlg"><span class="dot"></span>Indeed</span>
-    <span class="tlg"><span class="dot"></span>Adzuna</span>
-    <span class="tlg"><span class="dot"></span>Pracuj.pl</span>
-    <span class="tlg"><span class="dot"></span>OLX Praca</span>
-    <span class="tlg"><span class="dot"></span>Praca.pl</span>
-    <span class="tlg"><span class="dot"></span>GoWork.pl</span>
-    <span class="tlg"><span class="dot"></span>Jooble</span>
-  </div>
-</section>
 
 <!-- PROBLEM / AGITATION -->
 <section class="lp-section" id="problem">
@@ -286,17 +485,17 @@
 </section>
 
 <!-- TESTS -->
-<section class="lp-section" id="tests" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
+<section class="lp-section" id="tests">
   <div class="si-center">
     <div class="eyebrow" data-i18n="tests_eyebrow">Четыре измерения</div>
     <h2 style="margin-top:14px" data-i18n="tests_h2">Каждый тест отвечает на свой вопрос найма</h2>
     <p class="sub" data-i18n="tests_sub">Вместе они складываются в объёмный портрет кандидата — без догадок и интуиции. Плюс проверка мотивации, референсов и знаний под вашу вакансию.</p>
   </div>
   <div class="feat-grid">
-    <div class="feat reveal"><div class="fic fic-result" aria-hidden="true"><span class="step-no">1</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div><h3 data-i18n="feat_result_h">Резалт — продуктивность</h3><p data-i18n="feat_result_p">Как человек давал результат на прошлой работе. ИИ определяет: Виннер, Дуэр или Вейтер. Главный фильтр найма и проверка референсов.</p></div>
-    <div class="feat reveal d1"><div class="fic fic-tools" aria-hidden="true"><span class="step-no">2</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.2"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.2"/></svg></div><h3 data-i18n="feat_tools_h">Тулс — личность</h3><p data-i18n="feat_tools_p">200 вопросов, 10 черт характера от внимательности до общительности. График с зонами, 28 синдромов и детектор недостоверности. Нормировка по полу и возрасту.</p></div>
-    <div class="feat reveal d2"><div class="fic fic-logic" aria-hidden="true"><span class="step-no">3</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.7 10.7c.6.5.9 1 .9 1.8v.5h5.6v-.5c0-.8.3-1.3.9-1.8A6 6 0 0 0 12 3Z"/></svg></div><h3 data-i18n="feat_logic_h">Логис — интеллект</h3><p data-i18n="feat_logic_p">80 вопросов на логику. IQ-балл 75–155 с интерпретацией и рекомендацией по пригодности к руководящим должностям.</p></div>
-    <div class="feat reveal d3"><div class="fic fic-sales" aria-hidden="true"><span class="step-no">4</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/></svg></div><h3 data-i18n="feat_sales_h">Сэйлс — продажи</h3><p data-i18n="feat_sales_p">120 утверждений, 12 показателей продавца: настойчивость, экспертность, деловая хватка, привлечение и удержание клиентов на одном графике.</p></div>
+    <div class="feat reveal"><div class="fic" aria-hidden="true"><svg viewBox="0 0 34 38" fill="none"><path d="M17 2 31 10 31 28 17 36 3 28 3 10Z" stroke="#8b6cff" stroke-width="1.6" stroke-linejoin="round"/><circle cx="17" cy="19" r="3" fill="#ff8a6a"/></svg></div><h3 data-i18n="feat_result_h">Резалт — продуктивность</h3><p data-i18n="feat_result_p">Как человек давал результат на прошлой работе. ИИ определяет: Виннер, Дуэр или Вейтер. Главный фильтр найма и проверка референсов.</p></div>
+    <div class="feat reveal d1"><div class="fic" aria-hidden="true"><svg viewBox="0 0 34 38" fill="none"><path d="M17 2 31 10 31 28 17 36 3 28 3 10Z" stroke="#8b6cff" stroke-width="1.6" stroke-linejoin="round"/><circle cx="17" cy="19" r="3" fill="#ff8a6a"/></svg></div><h3 data-i18n="feat_tools_h">Тулс — личность</h3><p data-i18n="feat_tools_p">200 вопросов, 10 черт характера от внимательности до общительности. График с зонами, 28 синдромов и детектор недостоверности. Нормировка по полу и возрасту.</p></div>
+    <div class="feat reveal d2"><div class="fic" aria-hidden="true"><svg viewBox="0 0 34 38" fill="none"><path d="M17 2 31 10 31 28 17 36 3 28 3 10Z" stroke="#8b6cff" stroke-width="1.6" stroke-linejoin="round"/><circle cx="17" cy="19" r="3" fill="#ff8a6a"/></svg></div><h3 data-i18n="feat_logic_h">Логис — интеллект</h3><p data-i18n="feat_logic_p">80 вопросов на логику. IQ-балл 75–155 с интерпретацией и рекомендацией по пригодности к руководящим должностям.</p></div>
+    <div class="feat reveal d3"><div class="fic" aria-hidden="true"><svg viewBox="0 0 34 38" fill="none"><path d="M17 2 31 10 31 28 17 36 3 28 3 10Z" stroke="#8b6cff" stroke-width="1.6" stroke-linejoin="round"/><circle cx="17" cy="19" r="3" fill="#ff8a6a"/></svg></div><h3 data-i18n="feat_sales_h">Сэйлс — продажи</h3><p data-i18n="feat_sales_p">120 утверждений, 12 показателей продавца: настойчивость, экспертность, деловая хватка, привлечение и удержание клиентов на одном графике.</p></div>
   </div>
 </section>
 
@@ -338,7 +537,7 @@
 </section>
 
 <!-- AUTO-FUNNEL CHAIN -->
-<section class="lp-section" id="how" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
+<section class="lp-section" id="how">
   <div class="si-center">
     <div class="eyebrow" data-i18n="how_eyebrow">Автоворонка</div>
     <h2 style="margin-top:14px" data-i18n="how_h2">От заявки до нанятого сотрудника</h2>
@@ -367,12 +566,12 @@
     <p class="sub" data-i18n="sys_sub">От первого отклика до оффера — автоматизируем рутину, а решение оставляем вам.</p>
   </div>
   <div class="sys-grid">
-    <div class="sys reveal"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 18Z"/><path d="M8 9h8M8 12h5"/></svg></div><h3 data-i18n="sys3_h">Заявки на подбор + ИИ</h3><p data-i18n="sys3_p">Руководитель заполняет заявку по ссылке → ИИ проверяет её, подсказывает кого искать и генерирует текст вакансии → автоматически создаётся вакансия.</p></div>
-    <div class="sys reveal d1"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><h3 data-i18n="sys6_h">Авто-постинг вакансий</h3><p data-i18n="sys6_p">Вакансии сами публикуются на площадках объявлений и в Google for Jobs. По каждому каналу видно, откуда пришёл кандидат и сколько дошло до найма.</p></div>
-    <div class="sys reveal d2"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 21.5Z"/></svg></div><h3 data-i18n="sys4_h">Анкеты — мини-сайты</h3><p data-i18n="sys4_p">Публичная страница отклика с вашим брендом. Кандидат оставляет CV → карточка создаётся сама и запускаются назначенные тесты.</p></div>
-    <div class="sys reveal d3"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></div><h3 data-i18n="sys2_h">Автоворонка</h3><p data-i18n="sys2_p">Пришёл отклик → тест за тестом по очереди → на нужных шагах ИИ-звонок → все этапы пройдены → колонка «Найм». Без вашего участия.</p></div>
-    <div class="sys reveal d4"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a1 1 0 0 1 1-1h3l2 5-2 1a12 12 0 0 0 5 5l1-2 5 2v3a1 1 0 0 1-1 1A16 16 0 0 1 4 5Z"/></svg></div><h3 data-i18n="sys5_h">ИИ-звонки кандидатам</h3><p data-i18n="sys5_p">Живой голос звонит, рассказывает о вакансии, оценивает мотивацию и заменяет первичное интервью. Русский, польский, английский.</p></div>
-    <div class="sys reveal d4"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="10" y="4" width="4" height="16" rx="1"/><rect x="17" y="4" width="4" height="10" rx="1"/></svg></div><h3 data-i18n="sys1_h">Канбан-воронка</h3><p data-i18n="sys1_p">Кандидаты по этапам с авто-раскладкой. Критичный этап провален — карточка сама уходит в «Отказ». Всё видно на одной доске.</p></div>
+    <div class="sys reveal"><div class="sys-h"><span class="gdot"></span><h3 data-i18n="sys3_h">Заявки на подбор + ИИ</h3></div><p data-i18n="sys3_p">Руководитель заполняет заявку по ссылке → ИИ проверяет её, подсказывает кого искать и генерирует текст вакансии → автоматически создаётся вакансия.</p></div>
+    <div class="sys reveal d1"><div class="sys-h"><span class="gdot"></span><h3 data-i18n="sys6_h">Авто-постинг вакансий</h3></div><p data-i18n="sys6_p">Вакансии сами публикуются на площадках объявлений и в Google for Jobs. По каждому каналу видно, откуда пришёл кандидат и сколько дошло до найма.</p></div>
+    <div class="sys reveal d2"><div class="sys-h"><span class="gdot"></span><h3 data-i18n="sys4_h">Анкеты — мини-сайты</h3></div><p data-i18n="sys4_p">Публичная страница отклика с вашим брендом. Кандидат оставляет CV → карточка создаётся сама и запускаются назначенные тесты.</p></div>
+    <div class="sys reveal d3"><div class="sys-h"><span class="gdot"></span><h3 data-i18n="sys2_h">Автоворонка</h3></div><p data-i18n="sys2_p">Пришёл отклик → тест за тестом по очереди → на нужных шагах ИИ-звонок → все этапы пройдены → колонка «Найм». Без вашего участия.</p></div>
+    <div class="sys reveal d4"><div class="sys-h"><span class="gdot"></span><h3 data-i18n="sys5_h">ИИ-звонки кандидатам</h3></div><p data-i18n="sys5_p">Живой голос звонит, рассказывает о вакансии, оценивает мотивацию и заменяет первичное интервью. Русский, польский, английский.</p></div>
+    <div class="sys reveal d4"><div class="sys-h"><span class="gdot"></span><h3 data-i18n="sys1_h">Канбан-воронка</h3></div><p data-i18n="sys1_p">Кандидаты по этапам с авто-раскладкой. Критичный этап провален — карточка сама уходит в «Отказ». Всё видно на одной доске.</p></div>
   </div>
 </section>
 
@@ -447,7 +646,7 @@
 </section>
 
 <!-- FAQ -->
-<section class="lp-section" id="faq" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
+<section class="lp-section" id="faq">
   <div class="si-center">
     <div class="eyebrow" data-i18n="faq_eyebrow">Вопросы</div>
     <h2 style="margin-top:14px" data-i18n="faq_h2">Что обычно спрашивают</h2>
@@ -455,60 +654,96 @@
   <div class="faq-wrap" id="faq-wrap"></div>
 </section>
 
-<!-- FINAL CTA -->
+<!-- FINAL CTA (дизайн макета · наш текст) -->
 <div class="lp-cta">
-  <div class="inner reveal">
-    <div class="eyebrow" style="justify-content:center;display:flex;color:#fff" data-i18n="cta_eyebrow">Начните сегодня</div>
-    <h2 style="margin-top:14px" data-i18n="cta_h2">Оцените первого кандидата бесплатно</h2>
-    <p data-i18n="cta_p">Зарегистрируйтесь и отправьте первому кандидату тест уже через минуту. Без карты, без обязательств, с двумя готовыми вакансиями в подарок.</p>
-    <a href="/login?mode=register" class="btn lg" style="background:#fff;color:var(--brand)" data-i18n="cta_btn">Создать аккаунт →</a>
+  <div class="cta-glow reveal">
+    <div class="cta-grid" aria-hidden="true"></div>
+    <div class="cta-in">
+      <div class="eyebrow" style="justify-content:center;display:inline-flex" data-i18n="cta_eyebrow">Начните сегодня</div>
+      <h2 class="cta-h" style="margin-top:16px" data-i18n="cta_h2">Оцените первого кандидата бесплатно</h2>
+      <p class="cta-lead" data-i18n="cta_p">Зарегистрируйтесь и отправьте первый тест за минуту. По одному бесплатному тесту каждого вида. Карта не нужна.</p>
+      <div class="cta-btns">
+        <a href="/login?mode=register" class="hd-btn" data-i18n="hero_cta_try">Попробовать бесплатно →</a>
+        <a href="#how" class="hd-btn ghost" data-i18n="hero_cta_how">Как это работает</a>
+      </div>
+    </div>
   </div>
 </div>
 
-<footer class="lp-foot" style="display:block">
-  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:center">
-    <div>
-      <div data-i18n="foot_copy" style="font-weight:700;color:var(--text)">Мы раскрываем личность, чтобы вы создавали сильные команды.</div>
-      <div data-i18n="foot_tagline" style="margin-top:4px">© HR PRO AI · технология, которая чувствует людей</div>
+<!-- FOOTER (дизайн макета · наш текст/ссылки) -->
+<footer class="lp-foot foot-grid">
+  <div class="foot-cols">
+    <div class="foot-brand">
+      <div class="foot-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><b>HR PRO AI</b></div>
+      <div class="foot-tag" data-i18n="foot_copy">Мы раскрываем личность, чтобы вы создавали сильные команды.</div>
     </div>
-    <div style="display:flex;gap:22px;flex-wrap:wrap">
+    <div class="foot-col">
+      <div class="foot-h" data-i18n="foot_col_product">Продукт</div>
       <a href="#tests" data-i18n="nav_tests">Тесты</a>
+      <a href="#system" data-i18n="nav_system">Возможности</a>
       <a href="#pricing" data-i18n="nav_pricing">Цены</a>
       <a href="#faq" data-i18n="nav_faq">FAQ</a>
+    </div>
+    <div class="foot-col">
+      <div class="foot-h" data-i18n="foot_col_method">Методика</div>
+      <a href="#problem" data-i18n="nav_why">Зачем</a>
+      <a href="#method" data-i18n="foot_method_link">Виннер / Дуэр / Вейтер</a>
+      <a href="#how" data-i18n="hero_cta_how">Как это работает</a>
+    </div>
+    <div class="foot-col">
+      <div class="foot-h" data-i18n="foot_col_account">Аккаунт</div>
       <a href="/login" data-i18n="nav_login">Войти</a>
+      <a href="/login?mode=register" data-i18n="nav_start">Начать бесплатно</a>
       <a href="/login?mode=register" data-i18n="foot_referral">Пригласить и получить бонус</a>
     </div>
+  </div>
+  <div class="foot-bottom">
+    <div class="fb-r" data-i18n="foot_tagline">© HR PRO AI · технология, которая чувствует людей</div>
+    <div class="foot-langs"><span>RU</span><span>PL</span><span>EN</span></div>
   </div>
 </footer>
 
 <!-- STICKY MOBILE CTA -->
 <div class="sticky-cta"><a href="/login?mode=register" class="btn lg" data-i18n="sticky_cta">Начать бесплатно — тесты в подарок →</a></div>
 
-<!-- LEAD MAGNET POPUP -->
+<!-- LEAD MAGNET POPUP (дизайн из Cloud Design) -->
 <div class="pop-ov" id="pop">
-  <div class="lmp">
-    <button class="pop-close" id="pop-close" aria-label="Закрыть">×</button>
-    <div class="l">
-      <div class="eyebrow" data-i18n="pop_eyebrow">Бесплатный гайд</div>
-      <h3 data-i18n="pop_h">7 признаков Виннера, которые видно на собеседовании</h3>
-      <ul>
-        <li data-i18n="pop_li1">Как отличить результат от имитации бурной деятельности</li>
-        <li data-i18n="pop_li2">Вопросы, на которых «Вейтер» выдаёт себя</li>
-        <li data-i18n="pop_li3">Чек-лист «продукта должности» под вашу вакансию</li>
-      </ul>
+  <div class="lpop">
+    <div class="lpop-grid" aria-hidden="true"></div>
+    <div class="lpop-blob" aria-hidden="true"></div>
+    <canvas id="neuPop" aria-hidden="true"></canvas>
+    <button class="lpop-close" id="pop-close" aria-label="Закрыть">✕</button>
+    <div class="lpop-body">
+      <div id="pop-form">
+        <div class="lpop-top">
+          <div class="lpop-mail"><svg viewBox="0 0 24 24" fill="none" style="width:26px;height:26px"><path d="M4 5h16v14H4z" stroke="#b3a4ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 6l8 6 8-6" stroke="#b3a4ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="lpop-eyebrow"><span class="d"></span><span data-i18n="pop_eyebrow">Бесплатный гайд</span></div>
+        </div>
+        <h2 class="lpop-h" data-i18n="pop_h">Как нанимать по данным, а не по интуиции</h2>
+        <p class="lpop-lead" data-i18n="pop_lead">PDF-гайд на 24 страницы: 4 теста, чтение спектр-профиля и 12 ошибок найма, которые стоят вам зарплат.</p>
+        <div class="lpop-bullets" id="pop-bullets"></div>
+        <form id="pop-form-el">
+          <input class="pfield" id="pop-email" type="email" placeholder="Рабочий email" data-i18n-ph="pop_ph" autocomplete="email">
+          <button type="submit" class="lpop-btn" id="pop-submit" data-i18n="pop_btn">Получить гайд →</button>
+        </form>
+        <div class="lpop-privacy"><svg viewBox="0 0 24 24" fill="none" style="width:14px;height:14px;flex:none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#6b7492" stroke-width="1.6"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="#6b7492" stroke-width="1.6"/></svg><span data-i18n="pop_privacy">Без спама. Отписка в один клик.</span></div>
+      </div>
+      <div id="pop-done" class="lpop-done hidden">
+        <div class="lpop-check"><span class="ring"></span><span class="disc"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#43e0a0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <h2 class="lpop-done-h" data-i18n="pop_done_h">Гайд уже летит к вам</h2>
+        <p class="lpop-done-lead" data-i18n="pop_done_p">Проверьте почту — письмо со ссылкой придёт в течение минуты. Загляните в «Промоакции», если не видите его.</p>
+        <button class="lpop-btn" id="pop-done-btn" data-i18n="pop_done_btn">Понятно</button>
+      </div>
     </div>
-    <div class="r" id="pop-form-side">
-      <h4 data-i18n="pop_fh">Получите PDF на почту</h4>
-      <p data-i18n="pop_fp">И заодно — бесплатный старт: по тесту каждого вида. Никакого спама.</p>
-      <input class="field" id="pop-email" type="email" placeholder="Рабочий email" data-i18n-ph="pop_ph">
-      <button class="btn lg" id="pop-submit" data-i18n="pop_btn">Забрать гайд →</button>
-      <p class="muted" style="font-size:12px;text-align:center;margin-top:12px" data-i18n="pop_note">Отправляя email, вы соглашаетесь получить гайд и письмо о старте.</p>
+    <div class="lpop-foot">
+      <div class="lpop-logo"><svg viewBox="0 0 64 64" fill="none" style="width:26px;height:26px"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="3" stroke-linejoin="round" opacity=".85"/><circle cx="33" cy="31" r="5" fill="#FF7A5C"/></svg><span>HR&nbsp;PRO&nbsp;AI</span></div>
+      <span class="lang-switch" id="pop-lang"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></span>
     </div>
   </div>
 </div>
 
 <script>
-if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
+document.documentElement.setAttribute('data-theme','dark'); // лендинг всегда в тёмной hi-tech теме
 
 const I18N={
   ru:{
@@ -516,14 +751,15 @@ const I18N={
     meta_desc:'Платформа оценки кандидатов по данным: 4 валидных теста раскрывают личность, продуктивность, интеллект и навыки продаж на одном графике. ИИ-анализ, автоворонка, ИИ-звонки. Старт бесплатно — по тесту каждого вида, без карты.',
     og_title:'HR PRO AI — узнайте, кто перед вами, до того как нанять',
     brand_tagline:'технология, которая чувствует людей',
-    bar:'Новым аккаунтам — по <b>бесплатному тесту каждого вида</b> и 2 вакансии. Карта не нужна. <a href="/login?mode=register">Забрать →</a>',
+    bar:'Новым аккаунтам — <b>по одному бесплатному тесту каждого вида</b>. Оцените кандидата целиком, без карты. <a href="/login?mode=register">Забрать →</a>',
     nav_why:'Зачем',nav_tests:'Тесты',nav_system:'Возможности',nav_pricing:'Цены',nav_faq:'FAQ',nav_login:'Войти',nav_start:'Начать бесплатно',
     eyebrow:'Наём по данным · PL · UA · RU · EU',
     hero_h1:'Узнайте, <span class="hl">кто перед вами</span>, до того как нанять',
-    hero_lead:'В резюме человек описывает себя таким, каким хочет выглядеть. Наши тесты показывают, как он работает на самом деле: даёт ли результат, что у него с характером, головой и продажами. Всё это видно на одном графике ещё до встречи.',
+    hero_pill:'ИИ-анализ в реальном времени',
+    hero_lead:'В резюме человек описывает себя таким, каким хочет выглядеть. Наш ИИ читает четыре теста и собирает настоящий портрет — личность, продуктивность, интеллект и продажи. Один график ещё до встречи.',
     hero_cta_try:'Попробовать бесплатно →',hero_cta_how:'Как это работает',
-    trust_tests:'валидных теста',trust_min:'мин',trust_time:'на первую оценку',trust_gift:'теста в подарок',
-    hero_name:'Анна Ковальская',hero_role:'Менеджер по продажам · «Тулс»',hero_badge:'● Виннер',
+    trust_tests:'валидных теста',trust_min:'мин',trust_time:'на первую оценку',trust_gift:'тестов в подарок',
+    hero_name:'Анна Ковальская',hero_role:'Менеджер по продажам · тест «Тулс»',hero_badge:'Виннер',
     scale_low:'Очень низкий',scale_mid:'Средний',scale_high:'Очень высокий',
     trust_strip_h:'Ваши вакансии — на площадках, где ищут работу',
     prob_eyebrow:'Цена ошибки',prob_h2:'Один неверный найм стоит вам месяцев и денег',
@@ -581,12 +817,15 @@ const I18N={
     pricing_eyebrow:'Прозрачные цены',pricing_h2:'Платите за тесты, а не за подписку',pricing_sub:'Один тест — один кандидат. Чем больше пакет, тем ниже цена за тест.',
     grt1:'По тесту каждого вида — бесплатно',grt2:'Без карты при регистрации',grt3:'Без подписки — платите за тесты',grt4:'Оплата Stripe, безопасно',
     faq_eyebrow:'Вопросы',faq_h2:'Что обычно спрашивают',
-    cta_eyebrow:'Начните сегодня',cta_h2:'Оцените первого кандидата бесплатно',cta_p:'Зарегистрируйтесь и отправьте первый тест за минуту. По бесплатному тесту каждого вида и две готовые вакансии. Карта не нужна.',cta_btn:'Создать аккаунт →',
+    cta_eyebrow:'Начните сегодня',cta_h2:'Оцените первого кандидата бесплатно',cta_p:'Зарегистрируйтесь и отправьте первый тест за минуту. По одному бесплатному тесту каждого вида. Карта не нужна.',cta_btn:'Создать аккаунт →',
     foot_copy:'Мы раскрываем личность, чтобы вы создавали сильные команды.',foot_tagline:'© HR PRO AI · технология, которая чувствует людей',foot_referral:'Пригласить и получить бонус',
+    foot_col_product:'Продукт',foot_col_method:'Методика',foot_col_account:'Аккаунт',foot_method_link:'Виннер / Дуэр / Вейтер',
     sticky_cta:'Начать бесплатно — тесты в подарок →',
-    pop_eyebrow:'Бесплатный гайд',pop_h:'7 признаков Виннера, которые видно на собеседовании',
-    pop_li1:'Как отличить результат от имитации бурной деятельности',pop_li2:'Вопросы, на которых «Вейтер» выдаёт себя',pop_li3:'Чек-лист «продукта должности» под вашу вакансию',
-    pop_fh:'Получите PDF на почту',pop_fp:'И заодно — бесплатный старт: по тесту каждого вида. Никакого спама.',pop_ph:'Рабочий email',pop_btn:'Забрать гайд →',pop_note:'Отправляя email, вы соглашаетесь получить гайд и письмо о старте.',pop_ok:'Готово! Проверьте почту, а пока — создайте аккаунт и начните бесплатно.',
+    pop_eyebrow:'Бесплатный гайд',pop_h:'Как нанимать по данным, а не по интуиции',
+    pop_lead:'PDF-гайд на 24 страницы: 4 теста, чтение спектр-профиля и 12 ошибок найма, которые стоят вам зарплат.',
+    pop_bullets:['Чек-лист оценки кандидата за 10 минут','Как отличить «удобные» ответы от настоящих','Шаблоны эталонных ролей для 6 позиций'],
+    pop_ph:'Рабочий email',pop_btn:'Получить гайд →',pop_privacy:'Без спама. Отписка в один клик.',
+    pop_done_h:'Гайд уже летит к вам',pop_done_p:'Проверьте почту — письмо со ссылкой придёт в течение минуты. Загляните в «Промоакции», если не видите его.',pop_done_btn:'Понятно',
     plan_tests:'тестов',plan_hit:'Хит',plan_save:'Выгода',plan_per:'за тест',plan_buy:'Купить',plan_currency:'€',plan_locale:'ru',
     trait_attention:'Внимательность',trait_positivity:'Позитивность',trait_composure:'Самообладание',trait_activity:'Активность',trait_persistence:'Настойчивость',trait_empathy:'Чуткость',
     faq:[
@@ -603,14 +842,15 @@ const I18N={
     meta_desc:'Platforma oceny kandydatów na podstawie danych: 4 rzetelne testy ukazują osobowość, produktywność, inteligencję i sprzedaż na jednym wykresie. Analiza AI, autolejek, rozmowy AI. Darmowy start — po jednym teście każdego rodzaju, bez karty.',
     og_title:'HR PRO AI — poznaj kandydata, zanim go zatrudnisz',
     brand_tagline:'technologia, która czuje ludzi',
-    bar:'Nowe konta — po <b>darmowym teście każdego rodzaju</b> i 2 oferty. Karta nie jest potrzebna. <a href="/login?mode=register">Odbierz →</a>',
+    bar:'Nowe konta — <b>po jednym darmowym teście każdego rodzaju</b>. Oceń kandydata w całości, bez karty. <a href="/login?mode=register">Odbierz →</a>',
     nav_why:'Po co',nav_tests:'Testy',nav_system:'Możliwości',nav_pricing:'Cennik',nav_faq:'FAQ',nav_login:'Zaloguj się',nav_start:'Zacznij za darmo',
     eyebrow:'Rekrutacja na podstawie danych · PL · UA · RU · EU',
     hero_h1:'Poznaj, <span class="hl">kto jest przed tobą</span>, zanim go zatrudnisz',
+    hero_pill:'Analiza AI w czasie rzeczywistym',
     hero_lead:'W CV człowiek opisuje siebie takim, jakim chce wyglądać. Nasze testy pokazują, jak naprawdę pracuje: czy daje wynik, co u niego z charakterem, głową i sprzedażą. Widzisz to na jednym wykresie, jeszcze przed spotkaniem.',
     hero_cta_try:'Wypróbuj za darmo →',hero_cta_how:'Jak to działa',
     trust_tests:'rzetelne testy',trust_min:'min',trust_time:'na pierwszą ocenę',trust_gift:'testy w prezencie',
-    hero_name:'Anna Kowalska',hero_role:'Menedżer sprzedaży · „Tools”',hero_badge:'● Winner',
+    hero_name:'Anna Kowalska',hero_role:'Menedżer sprzedaży · test „Tools”',hero_badge:'Winner',
     scale_low:'Bardzo niski',scale_mid:'Średni',scale_high:'Bardzo wysoki',
     trust_strip_h:'Twoje oferty — na portalach, gdzie szukają pracy',
     prob_eyebrow:'Koszt błędu',prob_h2:'Jedno błędne zatrudnienie kosztuje miesiące i pieniądze',
@@ -668,12 +908,15 @@ const I18N={
     pricing_eyebrow:'Przejrzyste ceny',pricing_h2:'Płać za testy, a nie za abonament',pricing_sub:'Jeden test — jeden kandydat. Im większy pakiet, tym niższa cena za test.',
     grt1:'Po teście każdego rodzaju — za darmo',grt2:'Bez karty przy rejestracji',grt3:'Bez abonamentu — płacisz za testy',grt4:'Płatność Stripe, bezpiecznie',
     faq_eyebrow:'Pytania',faq_h2:'O co zwykle pytają',
-    cta_eyebrow:'Zacznij dziś',cta_h2:'Oceń pierwszego kandydata za darmo',cta_p:'Zarejestruj się i wyślij pierwszemu kandydatowi test już w minutę. Po jednym darmowym teście każdego rodzaju i dwie gotowe oferty — bez karty i zobowiązań.',cta_btn:'Załóż konto →',
+    cta_eyebrow:'Zacznij dziś',cta_h2:'Oceń pierwszego kandydata za darmo',cta_p:'Zarejestruj się i wyślij pierwszy test w minutę. Po jednym darmowym teście każdego rodzaju. Karta nie jest potrzebna.',cta_btn:'Załóż konto →',
     foot_copy:'Odkrywamy osobowość, żebyś budował silne zespoły.',foot_tagline:'© HR PRO AI · technologia, która czuje ludzi',foot_referral:'Zaproś i odbierz bonus',
+    foot_col_product:'Produkt',foot_col_method:'Metodyka',foot_col_account:'Konto',foot_method_link:'Winner / Doer / Waiter',
     sticky_cta:'Zacznij za darmo — testy w prezencie →',
-    pop_eyebrow:'Darmowy przewodnik',pop_h:'7 oznak Winnera, które widać na rozmowie',
-    pop_li1:'Jak odróżnić wynik od pozorowanej aktywności',pop_li2:'Pytania, na których „Waiter” się zdradza',pop_li3:'Checklista „produktu stanowiska” pod twoją ofertę',
-    pop_fh:'Odbierz PDF na e-mail',pop_fp:'A przy okazji — darmowy start: po teście każdego rodzaju. Bez spamu.',pop_ph:'Służbowy e-mail',pop_btn:'Odbierz przewodnik →',pop_note:'Wysyłając e-mail, zgadzasz się na otrzymanie przewodnika i wiadomości o starcie.',pop_ok:'Gotowe! Sprawdź pocztę, a tymczasem — załóż konto i zacznij za darmo.',
+    pop_eyebrow:'Darmowy przewodnik',pop_h:'Jak rekrutować na danych, nie na intuicji',
+    pop_lead:'Przewodnik PDF, 24 strony: 4 testy, czytanie profilu-spektrum i 12 błędów rekrutacji, które kosztują pensje.',
+    pop_bullets:['Checklista oceny kandydata w 10 minut','Jak odróżnić „wygodne” odpowiedzi od prawdziwych','Szablony ról wzorcowych dla 6 stanowisk'],
+    pop_ph:'Email służbowy',pop_btn:'Pobierz przewodnik →',pop_privacy:'Bez spamu. Rezygnacja jednym kliknięciem.',
+    pop_done_h:'Przewodnik już leci',pop_done_p:'Sprawdź skrzynkę — link przyjdzie w ciągu minuty. Zajrzyj do „Oferty”, jeśli go nie widzisz.',pop_done_btn:'Rozumiem',
     plan_tests:'testów',plan_hit:'Hit',plan_save:'Oszczędność',plan_per:'za test',plan_buy:'Kup',plan_currency:'€',plan_locale:'pl',
     trait_attention:'Uważność',trait_positivity:'Pozytywność',trait_composure:'Opanowanie',trait_activity:'Aktywność',trait_persistence:'Wytrwałość',trait_empathy:'Empatia',
     faq:[
@@ -690,15 +933,16 @@ const I18N={
     meta_desc:'Data-driven candidate assessment platform: 4 validated tests reveal personality, productivity, intelligence and sales skills on a single chart. AI analysis, auto-funnel, AI calls. A free start — one test of each type, no card.',
     og_title:'HR PRO AI — know the candidate before you hire',
     brand_tagline:'technology that senses people',
-    bar:'New accounts get <b>one free test of each type</b> and 2 vacancies. No card needed. <a href="/login?mode=register">Claim →</a>',
+    bar:'New accounts get <b>one free test of every type</b>. Assess a candidate in full — no card. <a href="/login?mode=register">Claim →</a>',
     nav_why:'Why',nav_tests:'Tests',nav_system:'Features',nav_pricing:'Pricing',nav_faq:'FAQ',nav_login:'Sign in',nav_start:'Start free',
     eyebrow:'Data-driven hiring · PL · UA · RU · EU',
     hero_h1:'See <span class="hl">who is in front of you</span>, before you hire',
+    hero_pill:'Real-time AI analysis',
     hero_lead:'A résumé shows who someone wants to look like. Our tests show how they actually work: whether they deliver results, and how they score on personality, thinking and sales. You see it on one chart, before the interview.',
     hero_cta_try:'Try it free →',hero_cta_how:'How it works',
     trust_tests:'validated tests',trust_min:'min',trust_time:'to first assessment',trust_gift:'tests free',
 
-    hero_name:'Anna Kowalska',hero_role:'Sales Manager · “Tools”',hero_badge:'● Winner',
+    hero_name:'Anna Kowalska',hero_role:'Sales Manager · “Tools” test',hero_badge:'Winner',
     scale_low:'Very low',scale_mid:'Average',scale_high:'Very high',
     trust_strip_h:'Your vacancies — on the boards where people look for work',
     prob_eyebrow:'The cost of a mistake',prob_h2:'One wrong hire costs you months and money',
@@ -756,12 +1000,15 @@ const I18N={
     pricing_eyebrow:'Transparent pricing',pricing_h2:'Pay for tests, not a subscription',pricing_sub:'One test — one candidate. The bigger the bundle, the lower the price per test.',
     grt1:'One test of each type — free',grt2:'No card to sign up',grt3:'No subscription — pay per test',grt4:'Stripe payments, secure',
     faq_eyebrow:'Questions',faq_h2:'What people usually ask',
-    cta_eyebrow:'Start today',cta_h2:'Assess your first candidate free',cta_p:'Sign up and send your first candidate a test within a minute. One free test of each type and two ready vacancies — no card, no commitment.',cta_btn:'Create an account →',
+    cta_eyebrow:'Start today',cta_h2:'Assess your first candidate free',cta_p:'Sign up and send your first test within a minute. One free test of every type. No card needed.',cta_btn:'Create an account →',
     foot_copy:'We reveal personality so you can build strong teams.',foot_tagline:'© HR PRO AI · technology that senses people',foot_referral:'Refer and earn a bonus',
+    foot_col_product:'Product',foot_col_method:'Method',foot_col_account:'Account',foot_method_link:'Winner / Doer / Waiter',
     sticky_cta:'Start free — tests on us →',
-    pop_eyebrow:'Free guide',pop_h:'7 signs of a Winner you can spot in an interview',
-    pop_li1:'How to tell results from busywork',pop_li2:'Questions that expose a “Waiter”',pop_li3:'A “product of the role” checklist for your vacancy',
-    pop_fh:'Get the PDF by email',pop_fp:'And with it — a free start: one test of each type. No spam.',pop_ph:'Work email',pop_btn:'Get the guide →',pop_note:'By submitting your email you agree to receive the guide and a getting-started message.',pop_ok:'Done! Check your inbox — and meanwhile, create an account and start free.',
+    pop_eyebrow:'Free guide',pop_h:'How to hire on data, not gut feeling',
+    pop_lead:'A 24-page PDF guide: the 4 tests, reading a spectrum profile, and 12 hiring mistakes that cost you salaries.',
+    pop_bullets:['A 10-minute candidate assessment checklist','How to tell rehearsed answers from real ones','Reference-role templates for 6 positions'],
+    pop_ph:'Work email',pop_btn:'Get the guide →',pop_privacy:'No spam. Unsubscribe in one click.',
+    pop_done_h:'Your guide is on the way',pop_done_p:'Check your inbox — the link arrives within a minute. Look in “Promotions” if you don’t see it.',pop_done_btn:'Got it',
     plan_tests:'tests',plan_hit:'Top pick',plan_save:'Save',plan_per:'per test',plan_buy:'Buy',plan_currency:'€',plan_locale:'en',
     trait_attention:'Attention',trait_positivity:'Positivity',trait_composure:'Composure',trait_activity:'Activity',trait_persistence:'Persistence',trait_empathy:'Empathy',
     faq:[
@@ -779,15 +1026,61 @@ let LANG=pickLang();
 const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
 let lastPlans=null,lastCurrency='eur';
 
-const zc=(v,comp)=>comp?'#ff7a5c':'#4e79da';
 function renderHeroBars(){
-  const hb=[['A. '+t('trait_attention'),50,0],['B. '+t('trait_positivity'),-18,0],['C. '+t('trait_composure'),48,0],['E. '+t('trait_activity'),94,1],['F. '+t('trait_persistence'),32,0],['I. '+t('trait_empathy'),-56,0]];
-  document.getElementById('hero-bars').innerHTML=hb.map(b=>{const pct=(b[1]+100)/2;return `<div class="hv-row">
-    <div class="hn">${b[0]}</div>
-    <div class="hbar"><span data-w="${pct}" style="background:${zc(b[1],b[2])}"></span></div>
-    <div class="hv">${b[1]}</div></div>`;}).join('');
-  setTimeout(()=>document.querySelectorAll('#hero-bars .hbar>span').forEach(s=>s.style.width=s.dataset.w+'%'),350);
+  const el=document.getElementById('hero-bars'); if(!el) return;
+  const traits=[['A',t('trait_attention'),50,0],['B',t('trait_positivity'),-18,0],['C',t('trait_composure'),48,0],['E',t('trait_activity'),94,1],['F',t('trait_persistence'),32,0],['I',t('trait_empathy'),-56,0]];
+  el.innerHTML=traits.map(tr=>{const [k,name,v,comp]=tr;const pct=(v+100)/2;const from=Math.min(50,pct),w=Math.abs(pct-50);const col=comp?'#ff8a6a':'var(--hp-a)';
+    return `<div class="hd-row">
+      <div class="hd-rn"><b style="color:${col}">${k}</b> ${name}</div>
+      <div class="hd-track"><span class="hd-fill${comp?' comp':''}" data-left="${from}" data-w="${w}"></span><span class="hd-node${comp?' comp':''}" data-pct="${pct}"></span></div>
+      <div class="hd-rv" style="color:${col}">${v>0?'+':''}${v}</div></div>`;}).join('');
+  setTimeout(()=>{el.querySelectorAll('.hd-fill').forEach(s=>{s.style.left=s.dataset.left+'%';s.style.width=s.dataset.w+'%';});
+    el.querySelectorAll('.hd-node').forEach(s=>{s.style.left=s.dataset.pct+'%';});},260);
 }
+// nav: transparent over dark hero → solid on scroll
+(function(){const nav=document.querySelector('.lp-nav'),hd=document.querySelector('.hd');
+  function ns(){if(!nav||!hd)return;nav.classList.toggle('scrolled',window.scrollY>hd.offsetHeight-70);}
+  window.addEventListener('scroll',ns,{passive:true});ns();})();
+// animated brand network reacting to the cursor (ported from the design)
+function heroNet(){
+  const cv=document.getElementById('hd-net'); if(!cv) return;
+  const host=cv.closest('.hd'); if(!host) return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const rgb=[110,120,220],acc=[150,140,255],glow=1;
+  let alive=true,gen=0,M={x:0,y:0,on:false};
+  host.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();if(!r.width)return;M.x=(e.clientX-r.left)*(cv.__W/r.width);M.y=(e.clientY-r.top)*(cv.__H/r.height);M.on=true;});
+  host.addEventListener('mouseleave',()=>{M.on=false;});
+  function start(){
+    gen++; const g=gen; const ctx=cv.getContext('2d'); const dpr=Math.min(2,window.devicePixelRatio||1);
+    const W=cv.offsetWidth||900,H=cv.offsetHeight||520; cv.__W=W; cv.__H=H; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    const C=a=>'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')', A=a=>'rgba('+acc[0]+','+acc[1]+','+acc[2]+','+a+')', rnd=(a,b)=>a+Math.random()*(b-a);
+    const hubs=12, MR=210; const G=[];
+    for(let i=0;i<hubs;i++){const sc=3+Math.floor(Math.random()*2),sats=[];for(let k=0;k<sc;k++)sats.push({ang:rnd(0,6.28),rad:rnd(20,34),spd:rnd(-.006,.006)});
+      G.push({x:rnd(46,W-46),y:rnd(46,H-46),vx:rnd(-.16,.16),vy:rnd(-.16,.16),rot:rnd(0,6.28),sats});}
+    const hex=(cx,cy,r,rot)=>{ctx.beginPath();for(let s=0;s<6;s++){const a=rot+s*Math.PI/3,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;s?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();};
+    (function loop(){ if(!alive||g!==gen) return;
+      ctx.clearRect(0,0,W,H);
+      if(M.on){const rg=ctx.createRadialGradient(M.x,M.y,0,M.x,M.y,240*glow);rg.addColorStop(0,A(.06*glow));rg.addColorStop(1,A(0));ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);}
+      for(const h of G){ if(M.on){const dx=M.x-h.x,dy=M.y-h.y,d=Math.hypot(dx,dy);if(d<230&&d>1){h.vx+=dx/d*.05;h.vy+=dy/d*.05;}}
+        h.vx*=.99;h.vy*=.99;h.x+=h.vx;h.y+=h.vy; if(h.x<34||h.x>W-34)h.vx*=-1; if(h.y<34||h.y>H-34)h.vy*=-1;
+        h.x=Math.max(34,Math.min(W-34,h.x));h.y=Math.max(34,Math.min(H-34,h.y));h.rot+=.0016; }
+      for(let i=0;i<G.length;i++)for(let j=i+1;j<G.length;j++){const a=G[i],b=G[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<270){ctx.strokeStyle=C((1-d/270)*.16);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+      for(const h of G){ const hover=M.on&&Math.hypot(h.x-M.x,h.y-M.y)<MR,em=hover?1:0;
+        ctx.strokeStyle=C(.1+em*.22);ctx.lineWidth=1.2;hex(h.x,h.y,25,h.rot);ctx.stroke();
+        for(const st of h.sats){st.ang+=st.spd;const sx=h.x+Math.cos(st.ang)*st.rad,sy=h.y+Math.sin(st.ang)*st.rad;
+          ctx.strokeStyle=C(.3+em*.4);ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(h.x,h.y);ctx.lineTo(sx,sy);ctx.stroke();
+          ctx.fillStyle=C(.68+em*.3);ctx.beginPath();ctx.arc(sx,sy,1.7,0,7);ctx.fill();}
+        if(M.on){const d=Math.hypot(h.x-M.x,h.y-M.y);if(d<MR){ctx.strokeStyle=A((1-d/MR)*.7);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(h.x,h.y);ctx.lineTo(M.x,M.y);ctx.stroke();}}
+        ctx.fillStyle=A(.9);ctx.beginPath();ctx.arc(h.x,h.y,hover?3.4:2.7,0,7);ctx.fill();
+        if(hover){const rr=15;const gg=ctx.createRadialGradient(h.x,h.y,0,h.x,h.y,rr);gg.addColorStop(0,A(.5));gg.addColorStop(1,A(0));ctx.fillStyle=gg;ctx.beginPath();ctx.arc(h.x,h.y,rr,0,7);ctx.fill();}}
+      if(M.on){const rr=24;const gg=ctx.createRadialGradient(M.x,M.y,0,M.x,M.y,rr);gg.addColorStop(0,A(.85));gg.addColorStop(1,A(0));ctx.fillStyle=gg;ctx.beginPath();ctx.arc(M.x,M.y,rr,0,7);ctx.fill();}
+      requestAnimationFrame(loop);
+    })();
+  }
+  start(); let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(start,220);});
+}
+heroNet();
 function renderPlans(){
   if(!lastPlans)return;
   const cur={eur:'€',usd:'$',pln:'zł',rub:'₽'}[lastCurrency]||t('plan_currency');
@@ -797,10 +1090,15 @@ function renderPlans(){
       <div class="qty">${p.qty}</div>
       <div class="muted" style="font-weight:600;margin-bottom:14px">${t('plan_tests')}</div>
       ${p.save?`<span class="save">${t('plan_save')} ${p.save}%</span>`:''}
+      <div class="per" style="margin-bottom:2px">${(p.price/p.qty).toFixed(1)} ${cur} ${t('plan_per')}</div>
       <div class="price">${p.price.toLocaleString(t('plan_locale'))} ${cur}</div>
-      <div class="per">${(p.price/p.qty).toFixed(1)} ${cur} ${t('plan_per')}</div>
       <a href="/login?mode=register" class="btn ${p.popular?'':'ghost'}" style="width:100%">${t('plan_buy')}</a>
     </div>`;}).join('');
+}
+function renderPopBullets(){
+  const list=(I18N[LANG]&&I18N[LANG].pop_bullets)||I18N.ru.pop_bullets||[];
+  const el=document.getElementById('pop-bullets');if(!el)return;
+  el.innerHTML=list.map(b=>`<div class="bl"><span class="c">✓</span>${b}</div>`).join('');
 }
 function renderFaq(){
   const list=I18N[LANG].faq||I18N.ru.faq;
@@ -830,8 +1128,8 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});
   document.querySelectorAll('[data-i18n-meta]').forEach(el=>{el.setAttribute('content',t(el.getAttribute('data-i18n-meta')));});
   document.title=t('page_title');
-  renderHeroBars();renderPlans();renderFaq();
-  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  renderHeroBars();renderPlans();renderFaq();renderPopBullets();
+  document.querySelectorAll('#lang-switch button,#pop-lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
 }
 document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
 
@@ -841,21 +1139,57 @@ bindReveal(document.querySelectorAll('.reveal'));
 applyLang();
 fetch('/api/plans').then(r=>r.json()).then(d=>{lastPlans=d.plans||[];lastCurrency=d.currency||'eur';renderPlans();}).catch(()=>{});
 
-// ---- lead-magnet popup: exit-intent + scroll depth, once per visitor ----
-const POP_KEY='hp_pop_seen';
-function openPop(){if(localStorage.getItem(POP_KEY))return;document.getElementById('pop').classList.add('on');localStorage.setItem(POP_KEY,'1');}
+// ---- lead-magnet popup (дизайн) : exit-intent + scroll depth, once per visitor ----
+const POP_KEY='hp_pop_seen';let popNetStarted=false;
+function openPop(){if(localStorage.getItem(POP_KEY))return;document.getElementById('pop').classList.add('on');localStorage.setItem(POP_KEY,'1');popNet();}
 function closePop(){document.getElementById('pop').classList.remove('on');}
 document.getElementById('pop-close').onclick=closePop;
+document.getElementById('pop-done-btn').onclick=closePop;
 document.getElementById('pop').addEventListener('click',e=>{if(e.target.id==='pop')closePop();});
 document.addEventListener('mouseout',e=>{if(e.clientY<=0&&!e.relatedTarget)openPop();});
 let popScrollFired=false;
 window.addEventListener('scroll',()=>{if(popScrollFired)return;const p=(scrollY+innerHeight)/document.body.scrollHeight;if(p>0.55){popScrollFired=true;openPop();}},{passive:true});
-document.getElementById('pop-submit').onclick=()=>{
+document.querySelectorAll('#pop-lang button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+document.getElementById('pop-form-el').addEventListener('submit',e=>{
+  e.preventDefault();
   const em=document.getElementById('pop-email').value.trim();
   if(!/.+@.+\..+/.test(em)){document.getElementById('pop-email').focus();return;}
-  document.getElementById('pop-form-side').innerHTML=`<div class="ok">✓ ${t('pop_ok')}</div><a href="/login?mode=register" class="btn lg" style="width:100%">${t('nav_start')} →</a>`;
   try{localStorage.setItem('hp_lead_email',em);}catch(e){}
-  setTimeout(()=>{location.href='/login?mode=register&email='+encodeURIComponent(em);},1600);
-};
+  document.getElementById('pop-form').classList.add('hidden');
+  document.getElementById('pop-done').classList.remove('hidden');
+});
+// фирменная сеть в шапке попапа (стартует при первом открытии, когда карточка видима)
+function popNet(){
+  if(popNetStarted)return;popNetStarted=true;
+  const cv=document.getElementById('neuPop');if(!cv)return;const host=cv.closest('.lpop');if(!host)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const rgb=[110,120,220],acc=[150,140,255];let M={x:0,y:0,on:false};
+  host.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();if(!r.width)return;M.x=(e.clientX-r.left)*(cv.__W/r.width);M.y=(e.clientY-r.top)*(cv.__H/r.height);M.on=true;});
+  host.addEventListener('mouseleave',()=>{M.on=false;});
+  const ctx=cv.getContext('2d');const dpr=Math.min(2,window.devicePixelRatio||1);
+  const W=cv.offsetWidth||520,H=cv.offsetHeight||190;cv.__W=W;cv.__H=H;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const C=a=>'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')',A=a=>'rgba('+acc[0]+','+acc[1]+','+acc[2]+','+a+')',rnd=(a,b)=>a+Math.random()*(b-a);
+  const hubs=5,MR=170,G=[];
+  for(let i=0;i<hubs;i++){const sc=3+Math.floor(Math.random()*2),sats=[];for(let k=0;k<sc;k++)sats.push({ang:rnd(0,6.28),rad:rnd(16,28),spd:rnd(-.006,.006)});
+    G.push({x:rnd(40,W-40),y:rnd(30,H-30),vx:rnd(-.14,.14),vy:rnd(-.14,.14),rot:rnd(0,6.28),sats});}
+  const hex=(cx,cy,r,rot)=>{ctx.beginPath();for(let s=0;s<6;s++){const a=rot+s*Math.PI/3,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;s?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();};
+  (function loop(){ if(!document.getElementById('pop').classList.contains('on')){requestAnimationFrame(loop);return;}
+    ctx.clearRect(0,0,W,H);
+    for(const h of G){if(M.on){const dx=M.x-h.x,dy=M.y-h.y,d=Math.hypot(dx,dy);if(d<180&&d>1){h.vx+=dx/d*.045;h.vy+=dy/d*.045;}}
+      h.vx*=.99;h.vy*=.99;h.x+=h.vx;h.y+=h.vy;if(h.x<30||h.x>W-30)h.vx*=-1;if(h.y<24||h.y>H-24)h.vy*=-1;
+      h.x=Math.max(30,Math.min(W-30,h.x));h.y=Math.max(24,Math.min(H-24,h.y));h.rot+=.0016;}
+    for(let i=0;i<G.length;i++)for(let j=i+1;j<G.length;j++){const a=G[i],b=G[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<230){ctx.strokeStyle=C((1-d/230)*.16);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+    for(const h of G){const hover=M.on&&Math.hypot(h.x-M.x,h.y-M.y)<MR,em=hover?1:0;
+      ctx.strokeStyle=C(.1+em*.22);ctx.lineWidth=1.2;hex(h.x,h.y,20,h.rot);ctx.stroke();
+      for(const st of h.sats){st.ang+=st.spd;const sx=h.x+Math.cos(st.ang)*st.rad,sy=h.y+Math.sin(st.ang)*st.rad;
+        ctx.strokeStyle=C(.3+em*.4);ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(h.x,h.y);ctx.lineTo(sx,sy);ctx.stroke();
+        ctx.fillStyle=C(.68+em*.3);ctx.beginPath();ctx.arc(sx,sy,1.6,0,7);ctx.fill();}
+      if(M.on){const d=Math.hypot(h.x-M.x,h.y-M.y);if(d<MR){ctx.strokeStyle=A((1-d/MR)*.7);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(h.x,h.y);ctx.lineTo(M.x,M.y);ctx.stroke();}}
+      ctx.fillStyle=A(.9);ctx.beginPath();ctx.arc(h.x,h.y,hover?3.2:2.5,0,7);ctx.fill();
+      if(hover){const rr=13;const gg=ctx.createRadialGradient(h.x,h.y,0,h.x,h.y,rr);gg.addColorStop(0,A(.5));gg.addColorStop(1,A(0));ctx.fillStyle=gg;ctx.beginPath();ctx.arc(h.x,h.y,rr,0,7);ctx.fill();}}
+    if(M.on){const rr=20;const gg=ctx.createRadialGradient(M.x,M.y,0,M.x,M.y,rr);gg.addColorStop(0,A(.85));gg.addColorStop(1,A(0));ctx.fillStyle=gg;ctx.beginPath();ctx.arc(M.x,M.y,rr,0,7);ctx.fill();}
+    requestAnimationFrame(loop);})();
+}
 </script>
 </body></html>

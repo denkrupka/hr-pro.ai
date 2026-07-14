@@ -22,10 +22,20 @@ const SALES_TEST = require('./data/sales-test.json');
 let OCA_QUESTIONS = [];
 try { OCA_QUESTIONS = require('./data/oca-questions.json'); } catch (_) { OCA_QUESTIONS = []; }
 
+const crypto = require('crypto');
 const SECRET = process.env.SECRET || 'hraipro-dev-secret-change-me';
 const PORT = process.env.PORT || 3000;
 const ENV_BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 let BASE_URL = ENV_BASE_URL; // может быть переопределён глобальной настройкой baseUrl (админка)
+
+// ---------- Отписка от писем (unsubscribe) ----------
+function unsubToken(email) { return crypto.createHmac('sha256', SECRET).update('unsub:' + String(email || '').toLowerCase()).digest('hex').slice(0, 24); }
+function unsubUrlFor(email, lang) {
+  const e = Buffer.from(String(email || '').toLowerCase()).toString('base64url');
+  return `${BASE_URL}/unsubscribe?e=${e}&t=${unsubToken(email)}&lang=${lang || 'ru'}`;
+}
+function isUnsubscribed(email) { const s = db().unsubscribes || []; return s.includes(String(email || '').toLowerCase()); }
+function addUnsubscribe(email) { const d = db(); if (!Array.isArray(d.unsubscribes)) d.unsubscribes = []; const e = String(email || '').toLowerCase(); if (e && !d.unsubscribes.includes(e)) { d.unsubscribes.push(e); save(); } }
 
 // ---------- ГЛОБАЛЬНЫЕ настройки портала (db.settings; управляются из админки) ----------
 const SETTINGS_DEFAULT = {
@@ -273,7 +283,7 @@ function defaultSettings(overrides) {
     notifySms: false, notifyComment: true, searchAllAccounts: true, askPersonalData: true,
     emailTemplates: JSON.parse(JSON.stringify(gs.defaultEmailTemplates || DEFAULT_TEMPLATES)),
     smsTemplates: JSON.parse(JSON.stringify(gs.defaultSmsTemplates || DEFAULT_SMS)),
-    anketaFields: [], testOrder: ['tools', 'result', 'logic', 'sales'],
+    anketaFields: [], testOrder: ['result', 'tools', 'logic', 'sales'],
   };
 }
 const FIELD_TYPES = ['text', 'number', 'tel', 'date', 'select'];
@@ -297,7 +307,7 @@ function ensureSettings(u) {
   if (!u.settings) u.settings = defaultSettings();
   if (!u.settings.smsTemplates) u.settings.smsTemplates = JSON.parse(JSON.stringify(portalSettings().defaultSmsTemplates || DEFAULT_SMS));
   if (!Array.isArray(u.settings.anketaFields)) u.settings.anketaFields = [];
-  if (!Array.isArray(u.settings.testOrder)) u.settings.testOrder = ['tools', 'result', 'logic', 'sales'];
+  if (!Array.isArray(u.settings.testOrder)) u.settings.testOrder = ['result', 'tools', 'logic', 'sales'];
   if (!u.settings.mailTemplates || !u.settings.mailTemplates.send) u.settings.mailTemplates = globalDefaultMail();
   if (!u.settings.reqShareCode) u.settings.reqShareCode = shortCode(10);
   return u.settings;
@@ -632,9 +642,14 @@ function notifyCandidate(user, p, test, vac, link) {
     const gs = portalSettings();
     const tpls = user.settings.emailTemplates || gs.defaultEmailTemplates || DEFAULT_TEMPLATES;
     const tpl = tpls[lang] || tpls.ru || {};
-    if (p.email && integ.isConfigured(user.settings, 'resend'))
-      integ.sendEmail(user.settings, { to: p.email, subject: fill(tpl.subject) || 'Приглашение на тестирование', html: fill(tpl.body).replace(/\n/g, '<br>') })
+    if (p.email && integ.isConfigured(user.settings, 'resend') && !isUnsubscribed(p.email)) {
+      const ctaLabel = { ru: 'Начать оценку', pl: 'Rozpocznij ocenę', en: 'Start assessment' }[lang] || 'Начать оценку';
+      const eyebrow = { ru: 'Приглашение на оценку', pl: 'Zaproszenie do oceny', en: 'Assessment invitation' }[lang] || 'Приглашение на оценку';
+      integ.sendEmail(user.settings, { to: p.email, subject: fill(tpl.subject) || 'Приглашение на тестирование',
+        lang, baseUrl: BASE_URL, unsubUrl: unsubUrlFor(p.email, lang), eyebrow, ctaLabel, ctaUrl: link,
+        bodyHtml: fill(tpl.body).replace(/\n/g, '<br>') })
         .catch(e => console.error('[resend]', e.message));
+    }
     const smsTpls = user.settings.smsTemplates || gs.defaultSmsTemplates || DEFAULT_SMS;
     const smsTpl = smsTpls[lang] || smsTpls.ru || '';
     if (p.tel && integ.isConfigured(user.settings, 'smsapi'))
@@ -826,7 +841,7 @@ app.put('/api/settings', requireAuth, (req, res) => {
   ['surname', 'employees', 'phone', 'timezone', 'uiLang', 'logo'].forEach(f => { if (b[f] != null) s[f] = b[f]; });
   if (b.linkDays != null) s.linkDays = Math.max(1, parseInt(b.linkDays, 10) || 3);
   ['notifySms', 'notifyComment', 'searchAllAccounts', 'askPersonalData'].forEach(f => { if (b[f] != null) s[f] = !!b[f]; });
-  if (Array.isArray(b.testOrder)) { const ord = b.testOrder.filter(t => TEST_TYPES[t]); ['tools', 'result', 'logic', 'sales'].forEach(t => { if (!ord.includes(t)) ord.push(t); }); s.testOrder = ord; }
+  if (Array.isArray(b.testOrder)) { const ord = b.testOrder.filter(t => TEST_TYPES[t]); ['result', 'tools', 'logic', 'sales'].forEach(t => { if (!ord.includes(t)) ord.push(t); }); s.testOrder = ord; }
   if (b.mailTemplates && typeof b.mailTemplates === 'object') { s.mailTemplates = cleanMailTemplates(b.mailTemplates, s.mailTemplates && s.mailTemplates.send ? s.mailTemplates : DEFAULT_MAIL()); }
   if (b.emailTemplates && typeof b.emailTemplates === 'object') {
     LANGS.forEach(l => { const t = b.emailTemplates[l.code]; if (t) { s.emailTemplates[l.code] = { subject: String(t.subject || ''), body: String(t.body || '') }; } });
@@ -1670,6 +1685,7 @@ app.put('/api/vacancies/:id/process', requireAuth, (req, res) => {
   const proc = processOf(v);
   const b = req.body || {};
   if (typeof b.auto === 'boolean') proc.auto = b.auto;
+  if (b.target === 'performer' || b.target === 'executor') proc.target = b.target;
   if (b.linkDays !== undefined) proc.linkDays = Math.max(1, Math.min(365, parseInt(b.linkDays, 10) || 3));
   if (Array.isArray(b.order)) {
     const def = ['result', 'tools', 'logic', 'sales', 'knowledge'];
@@ -2191,6 +2207,33 @@ app.get('/api/a/:slug/jsonld', (req, res) => {
 app.get('/req/:code', (req, res) => res.sendFile(path.join(PUB, 'req.html')));
 app.get('/new-req/:code', (req, res) => res.sendFile(path.join(PUB, 'req.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(PUB, 'login.html')));
+app.get(['/guide', '/guide/:slug'], (req, res) => res.sendFile(path.join(PUB, 'guide.html')));
+app.get('/privacy', (req, res) => res.sendFile(path.join(PUB, 'privacy.html')));
+app.get('/terms', (req, res) => res.sendFile(path.join(PUB, 'terms.html')));
+// Одно-кликовая отписка от писем
+app.get('/unsubscribe', (req, res) => {
+  const lang = ['ru', 'pl', 'en'].includes(req.query.lang) ? req.query.lang : 'ru';
+  const T = {
+    ru: { ok: 'Вы отписаны', okSub: 'Вы больше не будете получать письма о подборе на этот адрес.', bad: 'Ссылка недействительна', badSub: 'Не удалось подтвердить отписку. Возможно, ссылка устарела.', home: 'На главную' },
+    pl: { ok: 'Wypisano', okSub: 'Nie będziesz już otrzymywać wiadomości rekrutacyjnych na ten adres.', bad: 'Nieprawidłowy link', badSub: 'Nie udało się potwierdzić wypisania. Link mógł wygasnąć.', home: 'Strona główna' },
+    en: { ok: 'You are unsubscribed', okSub: 'You will no longer receive hiring emails at this address.', bad: 'Invalid link', badSub: 'We could not confirm the unsubscribe. The link may have expired.', home: 'Home' },
+  }[lang];
+  let email = '';
+  try { email = Buffer.from(String(req.query.e || ''), 'base64url').toString('utf8'); } catch (_) {}
+  const valid = email && req.query.t && req.query.t === unsubToken(email);
+  if (valid) addUnsubscribe(email);
+  const t = valid ? T : T;
+  const title = valid ? T.ok : T.bad, sub = valid ? T.okSub : T.badSub, icon = valid ? '#43e0a0' : '#e0555b';
+  res.set('Content-Type', 'text/html; charset=utf-8').send(`<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} — HR PRO AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><meta name="theme-color" content="#070813"></head>
+<body style="margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse 90% 60% at 50% -10%,#12132b,#070813 60%);font-family:Inter,system-ui,sans-serif;color:#9aa3bf">
+<div style="max-width:440px;text-align:center;padding:40px 28px">
+  <div style="width:60px;height:60px;margin:0 auto 22px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="${icon}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${valid ? '<path d="M5 12l4 4 10-11"/>' : '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>'}</svg></div>
+  <h1 style="font-family:Manrope,sans-serif;font-weight:800;font-size:24px;color:#fff;margin:0 0 10px">${title}</h1>
+  <p style="font-size:14.5px;line-height:1.6;margin:0 0 26px">${sub}</p>
+  <a href="${BASE_URL}/" style="display:inline-block;font-family:Manrope,sans-serif;font-weight:700;font-size:14px;color:#fff;padding:12px 26px;border-radius:12px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${T.home}</a>
+</div></body></html>`);
+});
 // Админ-панель: только для role=admin (не-админ → в кабинет, гость → на логин)
 app.get('/admin', (req, res) => {
   const u = currentUser(req);

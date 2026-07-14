@@ -1,0 +1,339 @@
+/* ============================================================
+   HR PRO AI — Portal skin (hi-tech dark)
+   Реализация дизайна «HR PRO AI - Portal.dc.html»: только графика.
+   Накладывается поверх styles.css. Палитра — фиолетово-синий hi-tech,
+   стеклянные карточки поверх тёмного холста #070813.
+   Активна только в тёмной теме (портал по умолчанию тёмный).
+   ============================================================ */
+
+[data-theme="dark"]{
+  /* холст и стеклянные поверхности (полупрозрачный белый поверх тёмного) */
+  --canvas:#070813; --surface:rgba(255,255,255,.035); --surface-2:rgba(255,255,255,.06); --surface-3:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.14);
+  --text:#eef1fb; --text-2:#c3cbe4; --muted:#8b93ad; --faint:#6b7492;
+  --ink:#0c0f1f; --ink-2:#c3cbe4; --ink-3:#171d38;
+
+  /* акцент — фиолет/синий */
+  --brand:#8b6cff; --brand-2:#6f97ff; --brand-ink:#6f5ae0;
+  --brand-soft:rgba(139,108,255,.14); --brand-glow:rgba(139,108,255,.32); --indigo:#b3a4ff;
+
+  /* коралл (логотип, «горячее») */
+  --coral:#ff7a5c; --coral-2:#ff8a6a; --coral-s:rgba(255,122,92,.14);
+
+  /* семантика */
+  --good:#43e0a0; --warn:#e0a83a; --bad:#e0555b;
+
+  /* спектр — диверг: низ (коралл) → нейтраль → верх (фиолет) */
+  --zb1:#5a3a33; --zb2:#3f2c2a; --zb3:#1b2340; --zb4:#2b2963; --zb5:#3d357f;
+  --zlo:#ff9d84; --zmid:#98a4bd; --zhi:#b3a4ff;
+  --z1:#e0555b; --z2:#e0a83a; --z3:#8b93ad; --z4:#6f97ff; --z5:#43e0a0;
+  --cyan:#6f97ff;
+
+  --sh:0 10px 30px rgba(0,0,0,.45); --sh-lg:0 26px 70px rgba(0,0,0,.6);
+  --sh-sm:0 2px 10px rgba(0,0,0,.4); --sh-xs:0 1px 3px rgba(0,0,0,.4);
+  --sh-brand:0 14px 34px rgba(139,108,255,.35);
+}
+
+/* фон приложения — чистый глубокий тёмный (как в дизайне) */
+[data-theme="dark"] body{background:#070813}
+[data-theme="dark"] .app{position:relative;background:#070813}
+[data-theme="dark"] .main{position:relative;z-index:1;background:#070813}
+
+/* ---------------- SIDEBAR ---------------- */
+[data-theme="dark"] .sidebar{width:250px;flex:0 0 250px;padding:20px 16px 16px;
+  background:
+    radial-gradient(135% 26% at 42% 0%,rgba(124,102,230,.16),transparent 58%),
+    linear-gradient(180deg,#13152f 0%,#0b0c1c 46%,#090a15 100%);
+  border-right:1px solid rgba(255,255,255,.06);box-shadow:none}
+/* логотип — без синей подложки, только иконка */
+[data-theme="dark"] .brand .brand-mark{background:transparent;box-shadow:none;width:40px;height:40px;min-width:40px}
+[data-theme="dark"] .brand .brand-mark::after{display:none}
+[data-theme="dark"] .brand .brand-mark svg{width:38px;height:38px}
+[data-theme="dark"] .brand-txt b{color:#fff;font-size:15.5px}
+[data-theme="dark"] .brand-txt small{color:#8b93ad}
+[data-theme="dark"] .nav-item{color:#8b93ad;padding:9px 12px;border-radius:11px;border:1px solid transparent}
+[data-theme="dark"] .nav-scroll{gap:2px}
+[data-theme="dark"] .nav-scroll .nav-div{margin:7px 11px}
+[data-theme="dark"] .nav-item svg{width:19px;height:19px}
+[data-theme="dark"] .nav-item:hover{background:rgba(255,255,255,.04);color:#eef1fb;transform:none}
+/* активная вкладка — тёмная плитка с мягкой фиолетовой подсветкой (как в макете) */
+[data-theme="dark"] .nav-item.active{color:#fff;
+  background:linear-gradient(180deg,rgba(139,108,255,.14),rgba(139,108,255,.06));
+  border:1px solid rgba(139,108,255,.30);
+  box-shadow:inset 0 0 24px rgba(139,108,255,.10),0 6px 18px rgba(139,108,255,.10)}
+[data-theme="dark"] .nav-item.active svg{color:#b3a4ff;filter:none}
+[data-theme="dark"] .nav-item.logout{color:#ff8a8a}
+[data-theme="dark"] .nav-item.logout:hover{background:rgba(224,85,91,.12);color:#ff9a9a}
+[data-theme="dark"] .nav-div{background:rgba(255,255,255,.07)}
+[data-theme="dark"] .side-user{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+[data-theme="dark"] .s-ava{background:linear-gradient(135deg,#6f6ae0,#4f78e6)}
+[data-theme="dark"] .s-theme:hover{background:rgba(255,255,255,.06);color:#eef1fb}
+
+/* ---------------- TOPBAR / eyebrow / heading ---------------- */
+[data-theme="dark"] .eyebrow{color:#8b6cff;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+[data-theme="dark"] .eyebrow::before{display:none}
+[data-theme="dark"] .page-h{color:#fff;letter-spacing:-.02em}
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3,[data-theme="dark"] h4{color:#eef1fb}
+
+/* balance chip */
+[data-theme="dark"] .balance-chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+[data-theme="dark"] .balance-chip .num{color:#eef1fb}
+[data-theme="dark"] .balance-chip .add{background:linear-gradient(135deg,#8b6cff,#6f97ff);
+  box-shadow:0 6px 16px rgba(139,108,255,.4)}
+
+/* ---------------- GLASS CARDS ---------------- */
+[data-theme="dark"] .card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+[data-theme="dark"] .dash-grid .card:hover{box-shadow:0 20px 48px rgba(0,0,0,.4)}
+[data-theme="dark"] .dash-h{border-bottom:1px solid rgba(255,255,255,.07)}
+
+/* KPI */
+[data-theme="dark"] .kpi{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);border-radius:16px}
+[data-theme="dark"] .kpi:hover{box-shadow:0 20px 40px rgba(0,0,0,.4)}
+[data-theme="dark"] .kpi-n{color:#fff}
+[data-theme="dark"] .kpi-l{color:#8b93ad}
+
+/* quick-bar (панель отправки на дашборде) */
+[data-theme="dark"] .quick-bar{background:radial-gradient(ellipse 70% 130% at 12% 0%,rgba(139,108,255,.14),rgba(255,255,255,.02) 70%);
+  border:1px solid rgba(139,108,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+[data-theme="dark"] .quick-bar .qb-ic{background:linear-gradient(135deg,#8b6cff,#6f97ff);box-shadow:0 8px 18px rgba(139,108,255,.4)}
+[data-theme="dark"] .quick-bar .field{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
+
+/* funnel / donut / bars accents */
+[data-theme="dark"] .fn-track{background:rgba(255,255,255,.05);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}
+[data-theme="dark"] .tv-bar{background:linear-gradient(90deg,#8b6cff,#6f97ff);box-shadow:0 2px 8px rgba(139,108,255,.4)}
+
+/* ---------------- TABLES ---------------- */
+[data-theme="dark"] .table-wrap{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;box-shadow:none}
+[data-theme="dark"] table thead th{color:#6b7492;font-family:'JetBrains Mono',monospace;
+  letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme="dark"] table tbody tr{border-top:1px solid rgba(255,255,255,.05)}
+[data-theme="dark"] table tbody tr:hover{background:rgba(255,255,255,.045)}
+
+/* ---------------- CHIPS / TABS ---------------- */
+[data-theme="dark"] .chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#c3cbe4}
+[data-theme="dark"] .chip:hover{border-color:rgba(139,108,255,.6);color:#eef1fb}
+[data-theme="dark"] .chip.active{background:#7c66ee;border-color:transparent;color:#fff;box-shadow:none}
+[data-theme="dark"] .chip.ghost{background:transparent;border-color:rgba(255,255,255,.14);color:#8b93ad}
+
+/* ---------------- BUTTONS (плоские, без неонового свечения) ---------------- */
+[data-theme="dark"] .btn{background:#7c66ee;box-shadow:none}
+[data-theme="dark"] .btn:hover{filter:none;background:#8b74ff;transform:none;box-shadow:none}
+[data-theme="dark"] .btn:active{transform:translateY(1px)}
+[data-theme="dark"] .btn::after{display:none}
+[data-theme="dark"] .btn:hover::after{display:none}
+[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);color:#c3cbe4;box-shadow:none}
+[data-theme="dark"] .btn.ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+[data-theme="dark"] .btn.soft{background:rgba(139,108,255,.14);color:#b3a4ff;box-shadow:none}
+[data-theme="dark"] .btn.soft:hover{background:rgba(139,108,255,.22);color:#c9bcff}
+[data-theme="dark"] .btn.danger{background:rgba(224,85,91,.16);border:1px solid rgba(224,85,91,.4);color:#ff8a8a;box-shadow:none}
+[data-theme="dark"] .btn.danger:hover{background:rgba(224,85,91,.26)}
+/* убрать свечение у прочих акцентных элементов */
+[data-theme="dark"] .balance-chip .add{box-shadow:none}
+[data-theme="dark"] .quick-bar .qb-ic{box-shadow:none}
+[data-theme="dark"] .pt-send{box-shadow:none}
+[data-theme="dark"] .s-ava{box-shadow:none}
+
+/* ---------------- INPUTS ---------------- */
+[data-theme="dark"] .field,[data-theme="dark"] input.field,[data-theme="dark"] select.field,[data-theme="dark"] textarea.field{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#eef1fb;border-radius:11px}
+[data-theme="dark"] .field::placeholder{color:#5f6885}
+[data-theme="dark"] .field:focus{border-color:rgba(139,108,255,.7);box-shadow:0 0 0 3px rgba(123,108,255,.15)}
+[data-theme="dark"] select.field{
+  background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%238b93ad' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+[data-theme="dark"] select.field option{background:#14182f;color:#eef1fb}
+
+/* ---------------- OVERLAYS (непрозрачные) ---------------- */
+[data-theme="dark"] .overlay{background:rgba(4,5,12,.62);backdrop-filter:blur(4px)}
+[data-theme="dark"] .modal{background:#14182f;border:1px solid rgba(255,255,255,.1);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+[data-theme="dark"] .cmdk{background:#14182f;border:1px solid rgba(255,255,255,.12)}
+[data-theme="dark"] .lang-menu{background:#14182f;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 50px rgba(0,0,0,.55)}
+[data-theme="dark"] .gsearch{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+[data-theme="dark"] .toast{background:#14182f;border:1px solid rgba(255,255,255,.12);color:#eef1fb}
+
+/* стеклянные вложенные блоки, использующие surface-2 как «плитку» */
+[data-theme="dark"] .tc-orow,[data-theme="dark"] .tc-seg2 .seg2,[data-theme="dark"] .cv-chip,
+[data-theme="dark"] .faq-nav,[data-theme="dark"] .faq-q{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.09)}
+[data-theme="dark"] .tc-num{background:rgba(255,255,255,.07)}
+
+/* stub / placeholder */
+[data-theme="dark"] .stub-ic{background:rgba(139,108,255,.12);box-shadow:inset 0 0 0 1px rgba(139,108,255,.24);color:#b3a4ff}
+
+/* stars off-state в тёмной теме */
+[data-theme="dark"] .stars .off{color:rgba(255,255,255,.14)}
+
+/* ============================================================
+   DASHBOARD — точная реализация макета Portal.dc.html
+   ============================================================ */
+/* топбар: заголовок · поиск · чип тестов · кнопка */
+[data-theme="dark"] .ptopbar{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+[data-theme="dark"] .ptopbar .pt-head{flex:1;min-width:150px}
+[data-theme="dark"] .ptopbar .ptitle{font-family:'Manrope',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;color:#fff;margin:2px 0 0;white-space:nowrap}
+[data-theme="dark"] .pt-search{position:relative;width:270px;flex:none}
+[data-theme="dark"] .pt-search svg{width:16px;height:16px;position:absolute;left:12px;top:50%;transform:translateY(-50%);stroke:#5f6885}
+[data-theme="dark"] .pt-search input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:11px;color:#eef1fb;font-family:inherit;font-size:13.5px;padding:10px 14px 10px 36px;outline:none;transition:border-color .2s,box-shadow .2s}
+[data-theme="dark"] .pt-search input::placeholder{color:#5f6885}
+[data-theme="dark"] .pt-search input:focus{border-color:rgba(139,108,255,.7);box-shadow:0 0 0 3px rgba(123,108,255,.15)}
+[data-theme="dark"] .tests-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:11px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);cursor:pointer;flex:none}
+[data-theme="dark"] .tests-chip svg{width:16px;height:16px}
+[data-theme="dark"] .tests-chip .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:#eef1fb}
+[data-theme="dark"] .tests-chip span{font-size:11.5px;color:#8b93ad}
+[data-theme="dark"] .pt-send{flex:none;padding:11px 18px;font-size:14px;border-radius:11px}
+
+/* баннер ИИ-ассистента (класс dash-banner — во избежание коллизии с .ai-banner из styles.css) */
+[data-theme="dark"] .dash-banner{position:relative;overflow:hidden;border-radius:20px;border:1px solid rgba(139,108,255,.24);padding:26px 30px;margin-bottom:22px;
+  background:radial-gradient(ellipse 70% 130% at 12% 0%,rgba(139,108,255,.18),rgba(255,255,255,.02) 70%);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+[data-theme="dark"] .dash-banner canvas{position:absolute;right:0;top:0;bottom:0;width:56%;height:100%;opacity:.7;pointer-events:none}
+[data-theme="dark"] .aib-in{position:relative;max-width:60%}
+[data-theme="dark"] .aib-kick{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#b7c2ec}
+[data-theme="dark"] .aib-dot{width:8px;height:8px;border-radius:50%;background:#8b6cff;box-shadow:0 0 10px #8b6cff}
+[data-theme="dark"] .aib-title{font-family:'Manrope',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.02em;color:#fff;margin:12px 0 6px}
+[data-theme="dark"] .aib-lead{font-size:14px;line-height:1.55;color:#9aa3bf;margin:0;max-width:440px}
+
+/* KPI-плитки (без иконок, крупное число) */
+[data-theme="dark"] .kpi-grid.pk{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:0 0 22px}
+[data-theme="dark"] .pkpi{min-width:0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 16px}
+[data-theme="dark"] .pkpi-l{font-size:12px;color:#8b93ad;font-weight:500;min-height:32px}
+[data-theme="dark"] .pkpi-v{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:26px;color:#fff;margin-top:8px;white-space:nowrap;letter-spacing:-.01em}
+@media(max-width:1200px){[data-theme="dark"] .kpi-grid.pk{grid-template-columns:repeat(3,1fr)}}
+
+/* воронка полосами + распределение по этапам */
+[data-theme="dark"] .dash-grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-bottom:22px}
+[data-theme="dark"] .dash-grid2 .card{padding:24px}
+[data-theme="dark"] .fbars{display:flex;flex-direction:column;gap:15px}
+[data-theme="dark"] .fbar-h{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}
+[data-theme="dark"] .fbar-h span:first-child{color:#c3cbe4;font-weight:500}
+[data-theme="dark"] .fbar-h .mono{color:#8b93ad;font-family:'JetBrains Mono',monospace;font-size:12.5px}
+[data-theme="dark"] .fbar-track{height:11px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden}
+[data-theme="dark"] .fbar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#5b6ef0,#8b6cff);box-shadow:0 2px 8px rgba(139,108,255,.3)}
+[data-theme="dark"] .stlist{display:flex;flex-direction:column;gap:15px}
+[data-theme="dark"] .stli{display:flex;align-items:center;gap:12px}
+[data-theme="dark"] .std{width:9px;height:9px;border-radius:50%;flex:none}
+[data-theme="dark"] .stl{flex:1;font-size:13.5px;color:#c3cbe4}
+[data-theme="dark"] .stv{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:#eef1fb}
+
+/* таблица «Последние кандидаты» */
+[data-theme="dark"] .recent-card{padding:0}
+[data-theme="dark"] .rtable{display:flex;flex-direction:column}
+[data-theme="dark"] .rrow{display:grid;grid-template-columns:2.4fr 1.8fr auto;align-items:center;gap:14px;padding:13px 24px;border-top:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .16s}
+[data-theme="dark"] .rrow:hover{background:rgba(255,255,255,.045)}
+[data-theme="dark"] .rc-main{display:flex;align-items:center;gap:12px;min-width:0}
+[data-theme="dark"] .rc-name{font-weight:600;font-size:13.5px;color:#eef1fb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="dark"] .rc-sub{font-size:11.5px;color:#8b93ad;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="dark"] .rc-vac{font-size:13px;color:#9aa3bf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="dark"] .rc-badge{text-align:right}
+[data-theme="dark"] .tbadge{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}
+[data-theme="dark"] .tbadge.win{color:#43e0a0;background:rgba(67,224,160,.12);border:1px solid rgba(67,224,160,.28)}
+[data-theme="dark"] .tbadge.duer{color:#b3a4ff;background:rgba(139,108,255,.12);border:1px solid rgba(139,108,255,.28)}
+
+/* модалка отправки теста */
+[data-theme="dark"] .send-modal{display:flex;flex-direction:column;gap:12px}
+[data-theme="dark"] .send-row{display:flex;gap:10px}
+[data-theme="dark"] .send-row .field:first-child{flex:1}
+
+/* иконки типов тестов в таблице — тёмные плитки вместо светлых (фикс инверсии) */
+[data-theme="dark"] .res-tools,[data-theme="dark"] .res-knowledge{background:rgba(111,151,255,.15);color:#8ba6ff}
+[data-theme="dark"] .res-result{background:rgba(67,224,160,.15);color:#43e0a0}
+[data-theme="dark"] .res-logic{background:rgba(139,108,255,.16);color:#b3a4ff}
+[data-theme="dark"] .res-sales{background:rgba(255,122,92,.15);color:#ff9d84}
+[data-theme="dark"] .res-icon{border:1px solid rgba(255,255,255,.06)}
+
+/* ============ КАРТОЧКИ ВАКАНСИЙ / ЗАЯВОК (макет 49) ============ */
+[data-theme="dark"] .vac-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+[data-theme="dark"] .vac-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:20px 22px;cursor:pointer;transition:background .16s,border-color .16s}
+[data-theme="dark"] .vac-card:hover{background:rgba(255,255,255,.055);border-color:rgba(139,108,255,.28)}
+[data-theme="dark"] .vac-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+[data-theme="dark"] .vac-name{font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;color:#eef1fb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="dark"] .vac-dept{font-size:12.5px;color:#8b93ad;margin-top:3px}
+[data-theme="dark"] .vac-badge{flex:none;font-size:11px;font-weight:700;padding:5px 11px;border-radius:999px}
+[data-theme="dark"] .vac-badge.pub{color:#43e0a0;background:rgba(67,224,160,.12);border:1px solid rgba(67,224,160,.28)}
+[data-theme="dark"] .vac-badge.draft{color:#b3a4ff;background:rgba(139,108,255,.12);border:1px solid rgba(139,108,255,.28)}
+[data-theme="dark"] .vac-stats{display:flex;gap:26px;margin-top:18px}
+[data-theme="dark"] .vac-stats b{display:block;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:20px;color:#fff}
+[data-theme="dark"] .vac-stats b.g{color:#43e0a0}
+[data-theme="dark"] .vac-stats b.a{color:#e0a83a}
+[data-theme="dark"] .vac-stats span{font-size:11.5px;color:#8b93ad;margin-top:2px;display:block}
+[data-theme="dark"] .vac-foot{display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:12.5px}
+[data-theme="dark"] .vac-foot .muted{color:#8b93ad}
+[data-theme="dark"] .vac-open{color:#b3a4ff;font-weight:600}
+[data-theme="dark"] .vac-new{display:grid;place-items:center;min-height:120px;border:1.5px dashed rgba(139,108,255,.35);background:transparent;color:#b3a4ff;font-weight:600;font-size:14px}
+[data-theme="dark"] .vac-new:hover{background:rgba(139,108,255,.06);border-color:rgba(139,108,255,.5)}
+@media(max-width:900px){[data-theme="dark"] .vac-grid{grid-template-columns:1fr}}
+
+/* ============ Процесс найма: стрелки очередности + Виннер/Дуэр ============ */
+.vp-ord{display:inline-flex;align-items:center;gap:5px;margin-right:10px;flex:none}
+.vp-ordn{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:12px;color:#8b93ad;min-width:14px;text-align:center}
+.vp-ord-b{width:26px;height:26px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);border-radius:8px;color:#c3cbe4;cursor:pointer;padding:0}
+.vp-ord-b:hover:not(:disabled){border-color:rgba(139,108,255,.5);color:#b3a4ff}
+.vp-ord-b:disabled{opacity:.3;cursor:default}
+.vp-ord-b svg{width:15px;height:15px}
+.vp-seg{display:inline-flex;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:3px;margin-right:10px;flex:none}
+.vp-seg-b{padding:6px 14px;border-radius:7px;font-weight:700;font-size:12.5px;color:#8b93ad;background:none;border:none;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.vp-seg-b.on{background:#7c66ee;color:#fff}
+.vp-seg-b:not(.on):hover{color:#c3cbe4}
+
+/* ============ Дашборд вакансии — компактно, без скролла ============ */
+[data-theme="dark"] .vk-kpis{gap:8px}
+[data-theme="dark"] .vk-kpi{padding:9px 12px;border-radius:12px}
+[data-theme="dark"] .vk-num{font-size:20px}
+[data-theme="dark"] .vk-lbl{font-size:11px;line-height:1.2;margin-top:1px}
+[data-theme="dark"] .vk-compact .fbars{gap:5px}
+[data-theme="dark"] .vk-compact .fbar-h{margin-bottom:2px;font-size:11.5px}
+[data-theme="dark"] .vk-compact .fbar-track{height:7px}
+[data-theme="dark"] .vk-compact .cfg-h{font-size:14px}
+/* компактнее заголовок страницы вакансии → больше места контенту */
+[data-theme="dark"] .main.vac-lock{padding-top:16px;padding-bottom:12px}
+[data-theme="dark"] .main.vac-lock .page-h{font-size:22px;margin:2px 0 10px}
+[data-theme="dark"] .main.vac-lock .settabs{margin-bottom:12px}
+
+/* ============ Меню пользователя (низ сайдбара) ============ */
+[data-theme="dark"] .side-account{position:relative;margin-top:6px}
+[data-theme="dark"] .side-user{width:100%;display:flex;align-items:center;gap:9px;padding:8px 10px;margin:0;
+  border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);cursor:pointer;text-align:left}
+[data-theme="dark"] .side-user:hover{background:rgba(255,255,255,.06)}
+[data-theme="dark"] .side-user .s-info{flex:1;min-width:0}
+[data-theme="dark"] .side-user .s-chev{width:16px;height:16px;color:#8b93ad;flex:none;transition:transform .2s}
+[data-theme="dark"] #user-menu-btn[aria-expanded="true"] .s-chev{transform:rotate(180deg)}
+[data-theme="dark"] .user-menu{position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:40;
+  background:#14162c;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:6px;
+  box-shadow:0 20px 50px rgba(0,0,0,.55);display:none;flex-direction:column;gap:2px}
+[data-theme="dark"] .user-menu.open{display:flex}
+[data-theme="dark"] .user-menu .nav-item{width:100%}
+[data-theme="dark"] .um-div{height:1px;background:rgba(255,255,255,.08);margin:5px 8px}
+/* язык внутри меню */
+[data-theme="dark"] .user-menu .lang-switch{position:relative;margin:0}
+[data-theme="dark"] .user-menu .lang-cur{width:100%;display:flex;align-items:center;gap:11px;padding:9px 12px;
+  border-radius:11px;background:none;border:1px solid transparent;color:#8b93ad;font-size:13.5px;font-weight:600;cursor:pointer}
+[data-theme="dark"] .user-menu .lang-cur:hover{background:rgba(255,255,255,.04);color:#eef1fb}
+[data-theme="dark"] .user-menu .lang-cur svg{width:19px;height:19px}
+[data-theme="dark"] .user-menu .lang-cur span{flex:1;text-align:left}
+[data-theme="dark"] .user-menu .lang-cur svg:last-child{width:12px;height:12px}
+[data-theme="dark"] .user-menu .lang-menu{position:absolute;left:calc(100% + 8px);right:auto;bottom:0;min-width:158px;
+  background:#14162c;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;box-shadow:0 20px 50px rgba(0,0,0,.55)}
+
+/* ============ Убрать неоновое свечение отовсюду (портал только тёмный) ============ */
+[data-theme="dark"] .tc-seg2 .seg2.on,
+[data-theme="dark"] .edu-tab.on,
+[data-theme="dark"] .tpill.active,
+[data-theme="dark"] .tcard.on,
+[data-theme="dark"] .type-card.sel,
+[data-theme="dark"] .seg-tab.on,
+[data-theme="dark"] .tpl-subtabs .seg-tab.on,
+[data-theme="dark"] .tcfg-seg .seg-btn.active,
+[data-theme="dark"] .plan.pop,
+[data-theme="dark"] .brand-mark,
+[data-theme="dark"] .tv-bar,
+[data-theme="dark"] .fbar-fill,
+[data-theme="dark"] .balance-chip .add,
+[data-theme="dark"] .quick-bar .qb-ic,
+[data-theme="dark"] .s-ava,
+[data-theme="dark"] .kpi:hover,
+[data-theme="dark"] .dash-grid .card:hover{box-shadow:none}
+/* плоские активные сегменты/табы — заливка без ореола */
+[data-theme="dark"] .tc-seg2 .seg2.on,
+[data-theme="dark"] .edu-tab.on,
+[data-theme="dark"] .tpill.active,
+[data-theme="dark"] .tpl-subtabs .seg-tab.on{background:#7c66ee;border-color:transparent;color:#fff}

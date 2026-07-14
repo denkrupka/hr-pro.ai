@@ -69,3 +69,24 @@
 body.imp-active .app{padding-top:38px}
 /* страница вакансии в режиме имперсонации: учесть высоту плашки */
 body.imp-active .main.vac-lock{height:calc(100vh - 38px)}
+
+/* ============ Тёмный скин админки (дизайн Admin.dc.html) ============ */
+/* Пилюля SUPERADMIN в сайдбаре (вместо красной полосы сверху) */
+.adm-super{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;margin:2px 6px 12px;padding:4px 10px;
+  border-radius:7px;background:rgba(255,122,92,.14);border:1px solid rgba(255,122,92,.34)}
+.adm-super-dot{width:6px;height:6px;border-radius:50%;background:#ff8a6a;box-shadow:0 0 8px #ff8a6a;flex:none}
+.adm-super span:last-child{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;letter-spacing:.1em;color:#ff9f8a}
+/* бренд-иконка — без красной подложки (гексагон на прозрачном) */
+[data-theme="dark"] .adm-mark{background:transparent!important;box-shadow:none!important}
+/* стат-карточки и пагинация — стеклянные */
+[data-theme="dark"] .adm-stat{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);border-radius:14px}
+[data-theme="dark"] .adm-stat b{color:#fff}
+[data-theme="dark"] .adm-pager button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#c3cbe4}
+[data-theme="dark"] .adm-pager button.on{background:#7c66ee;border-color:transparent;color:#fff}
+[data-theme="dark"] .adm-pager button:hover:not(:disabled):not(.on){border-color:rgba(139,108,255,.5)}
+/* HTML-редактор писем */
+[data-theme="dark"] .rte-box{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09)}
+[data-theme="dark"] .rte-bar{background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.08)}
+[data-theme="dark"] .rte-bar button.on{background:#7c66ee;color:#fff}
+[data-theme="dark"] .adm-json{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+[data-theme="dark"] .adm-md{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#eef1fb}

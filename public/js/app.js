@@ -34,14 +34,16 @@ function vidLang() { return LANG === 'pl' ? 'pl' : 'ru'; } // видео ест�
 let eduTab = 'info';
 const I18N = {
   ru: {
-    nav_vacancies: 'Рекрутация', rec_applications: 'Заявки', rec_vacancies: 'Вакансии', nav_anketas: 'Анкеты', nav_candidates: 'Кандидаты', nav_tests: 'Тесты', nav_education: 'Обучение', nav_integrations: 'Интеграции', nav_balance: 'Баланс', nav_faq: 'FAQ', nav_settings: 'Настройки', nav_logout: 'Выйти',
-    brand_tag: 'Технология, которая<br>чувствует людей', role_admin: 'Администратор',
+    nav_vacancies: 'Рекрутация', rec_applications: 'Заявки', rec_vacancies: 'Вакансии', nav_anketas: 'Анкеты', nav_candidates: 'Кандидаты', nav_tests: 'Тесты', nav_education: 'Обучение', nav_integrations: 'Интеграции', nav_balance: 'Баланс', nav_faq: 'FAQ', nav_settings: 'Настройки', nav_logout: 'Выйти', nav_theme: 'Тема',
+    brand_tag: 'чувствует людей', role_admin: 'Администратор',
     edu: 'Обучение', edu_kb: 'База знаний', edu_soon: 'Материалы готовятся.', loading: 'Загрузка…',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
     kpi_candidates: 'Кандидатов', kpi_done: 'Тестов пройдено', kpi_pending: 'В ожидании', kpi_apps: 'Откликов с анкет', kpi_vacancies: 'Вакансий', kpi_conversion: 'Конверсия в найм',
     funnel_title: 'Воронка найма', funnel_sub: 'кандидат → найм', stages_title: 'Распределение по этапам', types_title: 'Тесты по типам', newcands_title: 'Новые кандидаты · 14 дней', recent_title: 'Последние кандидаты', all_link: 'Все →', topvac_title: 'Топ вакансий',
+    nav_dashboard: 'Дашборд', dash_ai_kick: 'ИИ-ассистент', dash_ai_wait: 'ждут решения', dash_ai_lead: 'ИИ уже собрал спектр-профили. Откройте карточку — сильные и слабые стороны с рекомендацией видны сразу.',
+    send_test: 'Отправить тест', search_cand_ph: 'Поиск кандидата…', tests_word: 'тестов', cand_word_1: 'кандидат', cand_word_2: 'кандидата', cand_word_5: 'кандидатов',
     quick_ph: 'Email или телефон — отправить тест мгновенно', send_btn: 'Отправить', without_vacancy: 'Без вакансии', no_candidates: 'Пока нет кандидатов.', no_vacancies: 'Нет вакансий.', pick_tests: 'Выберите тесты', topup: 'Пополнить',
     total_word: 'всего', no_data: 'Нет данных',
     home_title: 'Отправьте тест кандидату', send_ph: 'Email или телефон — несколько через запятую', all_sections: 'Все разделы', no_section: 'Без раздела', add_btn: '＋ Добавить', all_vacancies: 'Все вакансии', add_vacancy: '＋ Вакансия', edit_btn: '✎ Изменить',
@@ -75,14 +77,16 @@ const I18N = {
     ae_edit_title: 'Редактирование анкеты', ae_create_title: 'Создание анкеты', ae_name: 'Название анкеты', ae_name_ph: 'Введите название', ae_pick_vac: 'Выберите вакансию', ae_slug: 'Короткая ссылка', ae_slug_ph: 'напр. sales-manager', ae_btntext: 'Текст кнопки отклика', ae_ptitle: 'Заголовок страницы', ae_ptitle_ph: 'Напр. Отклик на вакансию', ae_nocaptcha: 'Отключить капчу', ae_sendemail: 'Отправлять e-mail кандидату', ae_msgapply: 'Сообщение после отклика (без тестов)', ae_msgdone: 'Сообщение после завершения тестов', ae_tests: 'Тесты, которые получит кандидат', ae_desc: 'Описание (текст мини-сайта)', ae_save_create: 'Создать анкету', ae_preview: 'Предпросмотр',
   },
   pl: {
-    nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj',
-    brand_tag: 'Technologia, która<br>czuje ludzi', role_admin: 'Administrator',
+    nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj', nav_theme: 'Motyw',
+    brand_tag: 'czuje ludzi', role_admin: 'Administrator',
     edu: 'Szkolenia', edu_kb: 'Baza wiedzy', edu_soon: 'Materiały w przygotowaniu.', loading: 'Ładowanie…',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
     kpi_candidates: 'Kandydaci', kpi_done: 'Testy ukończone', kpi_pending: 'Oczekujące', kpi_apps: 'Zgłoszenia z ankiet', kpi_vacancies: 'Wakaty', kpi_conversion: 'Konwersja na zatrudnienie',
     funnel_title: 'Lejek rekrutacji', funnel_sub: 'kandydat → zatrudnienie', stages_title: 'Rozkład wg etapów', types_title: 'Testy wg typu', newcands_title: 'Nowi kandydaci · 14 dni', recent_title: 'Ostatni kandydaci', all_link: 'Wszyscy →', topvac_title: 'Najczęstsze wakaty',
+    nav_dashboard: 'Pulpit', dash_ai_kick: 'Asystent AI', dash_ai_wait: 'czeka na decyzję', dash_ai_lead: 'AI zebrało już profile-spektrum. Otwórz kartę — mocne i słabe strony wraz z rekomendacją widać od razu.',
+    send_test: 'Wyślij test', search_cand_ph: 'Szukaj kandydata…', tests_word: 'testów', cand_word_1: 'kandydat', cand_word_2: 'kandydatów', cand_word_5: 'kandydatów',
     quick_ph: 'E-mail lub telefon — wyślij test natychmiast', send_btn: 'Wyślij', without_vacancy: 'Bez wakatu', no_candidates: 'Brak kandydatów.', no_vacancies: 'Brak wakatów.', pick_tests: 'Wybierz testy', topup: 'Doładuj',
     total_word: 'razem', no_data: 'Brak danych',
     home_title: 'Wyślij test kandydatowi', send_ph: 'E-mail lub telefon — kilka po przecinku', all_sections: 'Wszystkie działy', no_section: 'Bez działu', add_btn: '＋ Dodaj', all_vacancies: 'Wszystkie wakaty', add_vacancy: '＋ Wakat', edit_btn: '✎ Edytuj',
@@ -116,14 +120,16 @@ const I18N = {
     ae_edit_title: 'Edycja ankiety', ae_create_title: 'Tworzenie ankiety', ae_name: 'Nazwa ankiety', ae_name_ph: 'Wpisz nazwę', ae_pick_vac: 'Wybierz wakat', ae_slug: 'Krótki link', ae_slug_ph: 'np. sales-manager', ae_btntext: 'Tekst przycisku zgłoszenia', ae_ptitle: 'Nagłówek strony', ae_ptitle_ph: 'Np. Zgłoszenie na wakat', ae_nocaptcha: 'Wyłącz captcha', ae_sendemail: 'Wysyłać e-mail do kandydata', ae_msgapply: 'Wiadomość po zgłoszeniu (bez testów)', ae_msgdone: 'Wiadomość po ukończeniu testów', ae_tests: 'Testy, które otrzyma kandydat', ae_desc: 'Opis (tekst mini-strony)', ae_save_create: 'Utwórz ankietę', ae_preview: 'Podgląd',
   },
   en: {
-    nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out',
-    brand_tag: 'Technology that<br>feels people', role_admin: 'Administrator',
+    nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out', nav_theme: 'Theme',
+    brand_tag: 'feels people', role_admin: 'Administrator',
     edu: 'Learning', edu_kb: 'Knowledge base', edu_soon: 'Materials are being prepared.', loading: 'Loading…',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
     dash_overview: 'Overview', dash_title: 'Dashboard', balance: 'Balance',
     kpi_candidates: 'Candidates', kpi_done: 'Tests completed', kpi_pending: 'Pending', kpi_apps: 'Form applications', kpi_vacancies: 'Vacancies', kpi_conversion: 'Hiring conversion',
     funnel_title: 'Hiring funnel', funnel_sub: 'candidate → hire', stages_title: 'Distribution by stage', types_title: 'Tests by type', newcands_title: 'New candidates · 14 days', recent_title: 'Recent candidates', all_link: 'All →', topvac_title: 'Top vacancies',
+    nav_dashboard: 'Dashboard', dash_ai_kick: 'AI assistant', dash_ai_wait: 'awaiting your decision', dash_ai_lead: 'AI has already built the spectrum profiles. Open a card — strengths, weaknesses and a recommendation are visible at once.',
+    send_test: 'Send test', search_cand_ph: 'Search candidate…', tests_word: 'tests', cand_word_1: 'candidate', cand_word_2: 'candidates', cand_word_5: 'candidates',
     quick_ph: 'Email or phone — send a test instantly', send_btn: 'Send', without_vacancy: 'No vacancy', no_candidates: 'No candidates yet.', no_vacancies: 'No vacancies.', pick_tests: 'Select tests', topup: 'Top up',
     total_word: 'total', no_data: 'No data',
     home_title: 'Send a test to a candidate', send_ph: 'Email or phone — several, comma-separated', all_sections: 'All departments', no_section: 'No department', add_btn: '＋ Add', all_vacancies: 'All vacancies', add_vacancy: '＋ Vacancy', edit_btn: '✎ Edit',
@@ -190,7 +196,7 @@ function renderLangSwitch() {
   $$('#lang-menu [data-lang]').forEach(b => b.onclick = () => { menu.classList.remove('open'); setLang(b.dataset.lang); });
   document.addEventListener('click', () => menu.classList.remove('open'), { once: true });
 }
-const TEST_LABEL = { tools: 'Тулс', result: 'Резалт', logic: 'Логис', sales: 'Сэйлс' };
+const TEST_LABEL = { result: 'Резалт', tools: 'Тулс', logic: 'Логис', sales: 'Сэйлс' };
 const _svg = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 const TEST_SVG = {
   tools: _svg('<path d="M4 7h16M4 12h16M4 17h16"/><circle cx="14.5" cy="7" r="2.1"/><circle cx="8" cy="12" r="2.1"/><circle cx="16.5" cy="17" r="2.1"/><circle cx="8" cy="12" r="1" fill="currentColor" stroke="none"/>'),
@@ -240,13 +246,25 @@ const avColor = s => AV_COLORS[[...String(s)].reduce((a, c) => a + c.charCodeAt(
 const initials = (n, e) => { const t = (n || '').trim(); return (t ? t.split(/\s+/).map(w => w[0]).slice(0, 2).join('') : (e || '?')[0]).toUpperCase(); };
 
 // theme
-if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-$('#theme-toggle').onclick = () => {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
-  localStorage.setItem('theme', dark ? 'light' : 'dark');
-};
+// Портал — только тёмный hi-tech дизайн (светлой темы нет)
+document.documentElement.setAttribute('data-theme', 'dark');
 $('#logout').onclick = async () => { await api('/api/logout', { method: 'POST' }); location.href = '/'; };
+
+// ---- выпадающее меню пользователя (FAQ / Настройки / язык / тема / Админка / Выход) ----
+(function initUserMenu() {
+  const btn = $('#user-menu-btn'), menu = $('#user-menu');
+  if (!btn || !menu) return;
+  const close = () => { menu.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); };
+  const open = () => { menu.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); };
+  btn.onclick = e => { e.stopPropagation(); menu.classList.contains('open') ? close() : open(); };
+  // Закрытие по клику вне меню/кнопки
+  document.addEventListener('click', e => { if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) close(); });
+  // Пункты, которые уводят/меняют вид — закрывают меню (язык и тема остаются)
+  menu.addEventListener('click', e => {
+    const item = e.target.closest('[data-view],.logout,#nav-admin');
+    if (item) close();
+  });
+})();
 
 // ---- global search palette (Ctrl+K) ----
 const gs = document.getElementById('gsearch');
@@ -308,6 +326,7 @@ const RI18N = {
     vac_target_boss_hint: 'Руководящая должность — всегда ищем Виннера',
     vac_stages: 'Этапы отбора', vac_knowledge: 'Проверка знаний', vac_motivation: 'Оценка мотивации',
     vac_publish: 'Опубликовать (создать анкету)', vac_published: 'Опубликована', vac_apply_link: 'Ссылка на анкету',
+    vac_stat_cands: 'Кандидатов', vac_stat_done: 'Пройдено', vac_stat_wait: 'Ожидание', vac_draft: 'Черновик', vac_new_card: 'Новая вакансия',
     vac_save: 'Сохранить настройки',
     kn_builder: 'Конструктор проверки знаний', kn_add: 'Добавить вопрос', kn_q: 'Текст вопроса',
     kn_opt: 'Вариант ответа', kn_add_opt: 'Добавить вариант', kn_correct: 'верный', kn_type: 'Тип',
@@ -404,6 +423,7 @@ const RI18N = {
     vac_target_boss_hint: 'Stanowisko kierownicze — zawsze szukamy Winnera',
     vac_stages: 'Etapy selekcji', vac_knowledge: 'Sprawdzenie wiedzy', vac_motivation: 'Ocena motywacji',
     vac_publish: 'Opublikuj (utwórz ankietę)', vac_published: 'Opublikowany', vac_apply_link: 'Link do ankiety',
+    vac_stat_cands: 'Kandydaci', vac_stat_done: 'Ukończone', vac_stat_wait: 'Oczekuje', vac_draft: 'Szkic', vac_new_card: 'Nowy wakat',
     vac_save: 'Zapisz ustawienia',
     kn_builder: 'Kreator sprawdzenia wiedzy', kn_add: 'Dodaj pytanie', kn_q: 'Treść pytania',
     kn_opt: 'Wariant odpowiedzi', kn_add_opt: 'Dodaj wariant', kn_correct: 'poprawny', kn_type: 'Typ',
@@ -500,6 +520,7 @@ const RI18N = {
     vac_target_boss_hint: 'Leadership role — we always look for a Winner',
     vac_stages: 'Selection stages', vac_knowledge: 'Knowledge check', vac_motivation: 'Motivation assessment',
     vac_publish: 'Publish (create form)', vac_published: 'Published', vac_apply_link: 'Application form link',
+    vac_stat_cands: 'Candidates', vac_stat_done: 'Completed', vac_stat_wait: 'Pending', vac_draft: 'Draft', vac_new_card: 'New vacancy',
     vac_save: 'Save settings',
     kn_builder: 'Knowledge test builder', kn_add: 'Add question', kn_q: 'Question text',
     kn_opt: 'Answer option', kn_add_opt: 'Add option', kn_correct: 'correct', kn_type: 'Type',
@@ -644,12 +665,14 @@ async function renderReqTab() {
       .filter(r => !q || JSON.stringify(r).toLowerCase().includes(q));
     const rows = list.map(r => {
       const cls = REQ_STATUS_CLS[r.status] || 'st-draft';
-      return `<div class="rec-item rec-click" data-req="${r.id}"><div class="rec-main"><b>${esc(r.position || '—')}</b>
-          <span class="muted" style="font-size:12.5px">${r.createdBy === 'manager' ? rt('req_by_manager') + ' · ' : ''}${fmtDate(r.createdAt)}${r.vacancyId ? ' · ' + rt('req_has_vac') : ''}</span></div>
-        <span class="req-badge ${cls}">${rt('req_st_' + r.status)}</span>
-        <button class="btn ghost sm" data-reqbtn="${r.id}">${rt('req_open')}</button></div>`;
+      return `<div class="vac-card rec-click" data-req="${r.id}">
+        <div class="vac-top"><div style="min-width:0"><div class="vac-name">${esc(r.position || '—')}</div>
+          <div class="vac-dept">${r.createdBy === 'manager' ? rt('req_by_manager') + ' · ' : ''}${fmtDate(r.createdAt)}</div></div>
+          <span class="req-badge ${cls}">${rt('req_st_' + r.status)}</span></div>
+        <div class="vac-foot"><span class="muted">${r.vacancyId ? rt('req_has_vac') : ''}</span><span class="vac-open">${rt('req_open')} →</span></div>
+      </div>`;
     }).join('');
-    $('#req-list-box').innerHTML = rows ? `<div class="rec-list">${rows}</div>` : `<div class="card stub-card"><p class="muted" style="max-width:460px;text-align:center">${rt('req_empty')}</p></div>`;
+    $('#req-list-box').innerHTML = rows ? `<div class="vac-grid">${rows}</div>` : `<div class="card stub-card"><p class="muted" style="max-width:460px;text-align:center">${rt('req_empty')}</p></div>`;
     $$('[data-req]').forEach(b => b.onclick = () => openReqForm(b.dataset.req));
   };
   const stOpts = [['active', rt('req_f_active')], ['all', rt('req_f_all')], ['draft', rt('req_st_draft')], ['submitted', rt('req_st_submitted')], ['approved', rt('req_st_approved')], ['rejected', rt('req_st_rejected')]]
@@ -846,16 +869,18 @@ async function openReqForm(id, unlock) {
 // ---------- Вкладка «Вакансии» ----------
 async function renderVacTab() {
   const { vacancies } = await api('/api/vacancies?sectionId=all');
+  await loadParticipants();
   const withReq = vacancies.filter(v => v.requisitionId);
-  const rows = withReq.map(v => `<div class="rec-item rec-click" data-vac="${v.id}"><div class="rec-main"><b>${esc(v.name)}</b>
-      <span class="muted" style="font-size:12.5px">${langName(v.lang)}</span></div>
-      ${v.published ? `<span class="req-badge st-appr">${rt('vac_published')}</span>` : ''}
-      <span class="rec-arrow">${_svg('<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>')}</span></div>`).join('');
-  $('#rec-body').innerHTML = `<div class="row" style="gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-      <p class="muted" style="flex:1;min-width:260px;margin:0;font-size:12.5px;line-height:1.5">${rt('vac_quick_hint')}</p>
-      <button class="btn" id="vac-quick-new" style="white-space:nowrap">+ ${rt('vac_quick_create')}</button></div>
-    ${withReq.length ? `<div class="rec-list">${rows}</div>`
-    : `<div class="card stub-card"><p class="muted" style="max-width:460px;text-align:center">${rt('vac_empty')}</p></div>`}`;
+  const statOf = vid => { const ps = state.participants.filter(p => p.vacancyId === vid);
+    return { c: ps.length, done: ps.filter(p => p.tests.some(t => t.status === 'done')).length, wait: ps.filter(p => p.tests.some(t => t.status !== 'done')).length }; };
+  const cards = withReq.map(v => { const s = statOf(v.id);
+    return `<div class="vac-card rec-click" data-vac="${v.id}">
+      <div class="vac-top"><div style="min-width:0"><div class="vac-name">${esc(v.name)}</div><div class="vac-dept">${esc(langName(v.lang))}</div></div>
+        <span class="vac-badge ${v.published ? 'pub' : 'draft'}">${v.published ? rt('vac_published') : rt('vac_draft')}</span></div>
+      <div class="vac-stats"><div><b>${s.c}</b><span>${rt('vac_stat_cands')}</span></div><div><b class="g">${s.done}</b><span>${rt('vac_stat_done')}</span></div><div><b class="a">${s.wait}</b><span>${rt('vac_stat_wait')}</span></div></div>
+    </div>`; }).join('');
+  $('#rec-body').innerHTML = `<p class="muted" style="margin:0 0 14px;max-width:860px;font-size:13px;line-height:1.55">${rt('vac_quick_hint')}</p>
+    <div class="vac-grid">${cards}<div class="vac-card vac-new" id="vac-quick-new">＋ ${rt('vac_new_card')}</div></div>`;
   $$('[data-vac]').forEach(b => b.onclick = () => openVacancyPage(b.dataset.vac));
   $('#vac-quick-new').onclick = () => {
     openModal(`<h2 style="margin:0 0 8px">${rt('vac_quick_create')}</h2>
@@ -965,6 +990,15 @@ async function renderVacProcess(body, id) {
   const st = proc.stages || {}, op = proc.optional || {}, ac = proc.aiCalls || {}, cr = proc.critical || {};
   const kts = vacancy.knowledgeTests || [];
   const sw = (path, on) => `<span class="switch ${on ? 'on' : ''}" data-vp="${path}" role="switch" tabindex="0" aria-checked="${on}"><i></i></span>`;
+  const order = (proc.order || ['result', 'tools', 'logic', 'sales', 'knowledge']).slice();
+  // Стрелки очередности прямо в «Шагах процесса»
+  const ordArrows = key => { const i = order.indexOf(key); if (i < 0) return '';
+    return `<span class="vp-ord"><span class="vp-ordn">${i + 1}</span>
+      <button class="vp-ord-b" data-vpord-up="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Раньше">${_svg('<path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/>')}</button>
+      <button class="vp-ord-b" data-vpord-dn="${i}" ${i === order.length - 1 ? 'disabled' : ''} aria-label="Позже">${_svg('<path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>')}</button></span>`; };
+  // Переключатель Виннер/Дуэр (тип цели вакансии) на этапе «Резалт»
+  const targetSeg = () => { const cur = proc.target === 'executor' ? 'executor' : 'performer';
+    return `<span class="vp-seg"><button class="vp-seg-b ${cur === 'performer' ? 'on' : ''}" data-vptarget="performer">Виннер</button><button class="vp-seg-b ${cur === 'executor' ? 'on' : ''}" data-vptarget="executor">Дуэр</button></span>`; };
   const stRow = (icon, iconCls, title, hint, swHtml, o) => `<div class="vp-row${o && o.ai ? ' vp-ai' : ''}${o && o.off ? ' off' : ''}">
       <span class="cstep-ic ${iconCls || ''}"${o && o.style ? ` style="${o.style}"` : ''}>${icon}</span>
       <div class="vp-t"><b>${title}</b>${hint ? `<span>${hint}</span>` : ''}</div>
@@ -998,33 +1032,27 @@ async function renderVacProcess(body, id) {
       <p class="muted" style="margin:0 0 12px;font-size:12.5px">${rt('vp_stages_hint')}</p>
       <div class="vp-list">
         ${aiRow('first')}
-        ${stRow(TEST_ICON.result, 'res-result', rt('vp_st_result'), '', sw('stages.result', st.result !== false), { off: st.result === false })}
+        ${stRow(TEST_ICON.result, 'res-result', rt('vp_st_result'), '', ordArrows('result') + sw('stages.result', st.result !== false), { off: st.result === false })}
         ${st.result !== false ? aiRow('afterResult') : ''}
         ${stRow(ICON_PHONE, '', rt('vp_st_references'), rt('vp_ref_hint'), sw('stages.references', st.references !== false), { off: st.references === false, style: 'background:#e4f6ec;color:#1f9d6b' })}
-        ${stRow(TEST_ICON.tools, 'res-tools', rt('vp_st_tools'), '', sw('stages.tools', st.tools !== false), { off: st.tools === false })}
+        ${stRow(TEST_ICON.tools, 'res-tools', rt('vp_st_tools'), '', ordArrows('tools') + sw('stages.tools', st.tools !== false), { off: st.tools === false })}
         ${st.tools !== false ? aiRow('afterTools') : ''}
-        ${stRow(TEST_ICON.logic, 'res-logic', rt('vp_st_logic'), '', sw('optional.logic', !!op.logic), { off: !op.logic })}
-        ${stRow(TEST_ICON.sales, 'res-sales', rt('vp_st_sales'), '', sw('optional.sales', !!op.sales), { off: !op.sales })}
+        ${stRow(TEST_ICON.logic, 'res-logic', rt('vp_st_logic'), '', ordArrows('logic') + sw('optional.logic', !!op.logic), { off: !op.logic })}
+        ${stRow(TEST_ICON.sales, 'res-sales', rt('vp_st_sales'), '', ordArrows('sales') + sw('optional.sales', !!op.sales), { off: !op.sales })}
         ${stRow(ICON_FLAME, '', rt('vp_st_motivation'), '', sw('stages.motivation', st.motivation !== false), { off: st.motivation === false, style: 'background:#fff0e6;color:#d3641e' })}
         ${st.motivation !== false ? aiRow('motivation') : ''}
-        ${stRow(ICON_KNOWLEDGE, 'res-knowledge', rt('vp_st_knowledge'), '', sw('stages.knowledge', st.knowledge !== false), { off: st.knowledge === false })}
+        ${stRow(ICON_KNOWLEDGE, 'res-knowledge', rt('vp_st_knowledge'), '', ordArrows('knowledge') + sw('stages.knowledge', st.knowledge !== false), { off: st.knowledge === false })}
         ${st.knowledge !== false ? knList : ''}
       </div></div>
-    <div class="card" style="margin-top:14px"><div class="cfg-h">${rt('vp_order_h')}</div>
-      <p class="muted" style="margin:0 0 12px;font-size:12.5px">${rt('vp_order_hint')}</p>
-      <div class="vp-list">${(proc.order || ['result', 'tools', 'logic', 'sales', 'knowledge']).map((k, i, arr) => `
-        <div class="vp-row">
-          <span class="wf-num" style="width:26px;height:26px;font-size:13px;flex:none">${i + 1}</span>
-          <span class="cstep-ic ${k === 'knowledge' ? 'res-knowledge' : 'res-' + k}">${k === 'knowledge' ? ICON_KNOWLEDGE : TEST_ICON[k]}</span>
-          <div class="vp-t"><b>${rt('vp_st_' + k)}</b></div>
-          <span class="tc-omove" style="display:flex;gap:4px">
-            <button class="btn ghost xs" data-vpord-up="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Выше">${_svg('<path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/>')}</button>
-            <button class="btn ghost xs" data-vpord-dn="${i}" ${i === arr.length - 1 ? 'disabled' : ''} aria-label="Ниже">${_svg('<path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>')}</button></span>
-        </div>`).join('')}</div></div>
     <div class="card" style="margin-top:14px"><div class="cfg-h">${rt('vp_crit_h')}</div>
       <p class="muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.5">${rt('vp_crit_hint')}</p>
       <div class="vp-list">
-        ${st.result !== false ? critRow('result', TEST_ICON.result, 'res-result', '') : ''}
+        ${st.result !== false ? `<div class="vp-row">
+          <span class="cstep-ic res-result">${TEST_ICON.result}</span>
+          <div class="vp-t"><b>${rt('vp_st_result')}</b><span>${rt('vp_crit_result')}</span></div>
+          ${targetSeg()}
+          <span class="vp-crit-lbl ${cr.result === false ? 'soft' : 'hard'}">${cr.result === false ? rt('vp_crit_off') : rt('vp_crit_on')}</span>
+          ${sw('critical.result', cr.result !== false)}</div>` : ''}
         ${st.references !== false ? critRow('references', ICON_PHONE, '', 'background:#e4f6ec;color:#1f9d6b') : ''}
         ${st.tools !== false ? critRow('tools', TEST_ICON.tools, 'res-tools', '') : ''}
         ${st.motivation !== false ? critRow('motivation', ICON_FLAME, '', 'background:#fff0e6;color:#d3641e') : ''}
@@ -1057,6 +1085,12 @@ async function renderVacProcess(body, id) {
   };
   $$('[data-vpord-up]', body).forEach(b => b.onclick = () => moveOrder(+b.dataset.vpordUp, -1));
   $$('[data-vpord-dn]', body).forEach(b => b.onclick = () => moveOrder(+b.dataset.vpordDn, 1));
+  // Виннер/Дуэр — цель вакансии
+  $$('[data-vptarget]', body).forEach(b => b.onclick = async () => {
+    if (b.classList.contains('on')) return;
+    await api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify({ target: b.dataset.vptarget }) });
+    toast(rt('common_saved')); refresh();
+  });
   const ka = $('#vp-kn-add'); if (ka) ka.onclick = async () => {
     await api('/api/vacancies/' + id + '/knowledge', { method: 'PUT', body: JSON.stringify({ name: rt('vp_kn_blank') + ' ' + (kts.length + 1), questions: [], passScore: 60 }) });
     toast(rt('common_saved')); refresh();
@@ -1102,12 +1136,11 @@ function renderVacDashboard(body, b) {
   const hired = b.cards.filter(c => c.column === 'hired').length;
   const cnt = k => b.cards.filter(c => stagePassed(c, k)).length;
   const kpi = (n, l) => `<div class="vk-kpi"><div class="vk-num">${n}</div><div class="vk-lbl">${esc(l)}</div></div>`;
-  // Классическая воронка-трапеция (общий рендер funnelTrap)
-  const funnelHtml = funnelTrap(b.funnel.map(row => ({ label: row.label, count: row.count,
-    pct: row.key !== 'found' ? (found ? Math.round(row.count / found * 100) : 0) : null })));
+  // Компактная воронка горизонтальными полосами — умещается без скролла
+  const funnelHtml = funnelBars(b.funnel.map(row => ({ label: row.label, value: row.count })));
   body.innerHTML = `<div class="vk-kpis">
       ${kpi(found, rt('kpi7_cands'))}${kpi(started, rt('kpi7_started'))}${kpi(cnt('result'), rt('kpi7_result'))}${kpi(cnt('tools'), rt('kpi7_tools'))}${kpi(cnt('motivation'), rt('kpi7_motiv'))}${kpi(cnt('knowledge'), rt('kpi7_knowledge'))}${kpi(hired, rt('kpi7_hired'))}</div>
-    <div class="card" style="margin-top:16px"><div class="cfg-h">${rt('funnel_title')}</div>${funnelHtml}</div>`;
+    <div class="card vk-compact" style="margin-top:12px;padding:16px 20px"><div class="cfg-h" style="margin-bottom:10px">${rt('funnel_title')}</div>${funnelHtml}</div>`;
 }
 // Канбан кандидатов
 function renderVacKanban(body, b) {
@@ -1763,36 +1796,133 @@ async function renderDashboard() {
   const vacOptions = vacsD.vacancies.map(v => `<option value="${v.id}">${esc(v.name)}</option>`).join('');
   const recent = d.recent.length ? d.recent.map(p => `<div class="dash-recent-row" data-pid="${p.id}"><span class="avatar" style="width:30px;height:30px;background:${avColor(p.name)}">${esc(initials(p.name, p.email))}</span><div class="rr-main"><b>${esc(p.name)}</b><span class="muted">${esc(p.vacancyName || p.email)}</span></div>${stagePill(p.stage)}</div>`).join('') : `<p class="muted">${t('no_candidates')}</p>`;
   const topVac = d.vacCounts.length ? d.vacCounts.map(v => { const max = Math.max(1, d.vacCounts[0].count); return `<div class="tv-row"><span class="tv-name">${esc(v.name)}</span><div class="tv-track"><div class="tv-bar" style="width:${Math.max(6, v.count / max * 100)}%"></div></div><b>${v.count}</b></div>`; }).join('') : `<p class="muted">${t('no_vacancies')}</p>`;
-  $('#main').innerHTML = `<div class="topbar reveal"><div><div class="eyebrow">${t('dash_overview')}</div><h1 class="page-h" style="margin-top:8px">${t('dash_title')}</h1></div>
-      <div class="balance-chip"><span class="muted" style="font-weight:600">${t('balance')}</span><span class="num">${tot.balance}</span><button class="add" onclick="setView('balance')" title="${t('topup')}" aria-label="${t('topup')}">＋</button></div></div>
-    <div class="quick-bar reveal"><span class="qb-ic">${_svg('<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" stroke-linejoin="round"/>')}</span>
-      <input class="field" id="emails" placeholder="${t('quick_ph')}">
-      <select class="field" id="vac-select"><option value="">${t('without_vacancy')}</option>${vacOptions}</select>
-      <button type="button" class="field type-field" id="type-field"><span id="type-field-txt">${sendTypesText()}</span>${_svg('<path d="M6 9l6 6 6-6" stroke-linecap="round"/>')}</button>
-      ${sendLangSelect()}
-      <button class="btn" id="dash-send">${t('send_btn')}</button></div>
-    <div class="kpi-grid reveal d1">
-      ${kpiCard(tot.candidates, t('kpi_candidates'), '#3d6cd1', _svg('<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M16 11a3 3 0 1 0-1-5.8M21 20a5 5 0 0 0-6-4.9"/>'))}
-      ${kpiCard(tot.testsDone, t('kpi_done'), '#1f9d6b', _svg('<path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>'))}
-      ${kpiCard(tot.testsPending, t('kpi_pending'), '#c98a1e', _svg('<circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/>'))}
-      ${kpiCard(tot.applications, t('kpi_apps'), '#7b52c9', _svg('<path d="M4 6h16v12H4z"/><path d="M4 8l8 5 8-5"/>'))}
-      ${kpiCard(tot.vacancies, t('kpi_vacancies'), '#e0982a', _svg('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/>'))}
-      ${kpiCard(tot.conversion + '%', t('kpi_conversion'), '#e8553b', _svg('<path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/>'))}
+  const awaiting = (d.byStage['Собеседование'] || 0) + (d.byStage['Резерв'] || 0) || tot.testsDone || d.recent.length;
+  const recentRows = d.recent.length ? d.recent.map(p => `<div class="rrow prow" data-pid="${p.id}">
+      <div class="rc-main"><span class="avatar" style="width:36px;height:36px;background:${avColor(p.name)}">${esc(initials(p.name, p.email))}</span><div style="min-width:0"><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${esc(p.email || '')}</div></div></div>
+      <div class="rc-vac">${esc(p.vacancyName || '—')}</div>
+      <div class="rc-badge">${stagePill(p.stage)}</div>
+    </div>`).join('') : `<div style="padding:20px 24px"><p class="muted">${t('no_candidates')}</p></div>`;
+  $('#main').innerHTML = `
+    <div class="ptopbar reveal">
+      <div class="pt-head"><div class="eyebrow">${t('dash_overview')}</div><h1 class="ptitle">${t('dash_title')}</h1></div>
+      <div class="pt-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg><input id="dash-search" placeholder="${t('search_cand_ph')}"></div>
+      <button class="tests-chip" onclick="setView('balance')" title="${t('balance')}"><svg viewBox="0 0 24 24" fill="none" stroke="#43e0a0" stroke-width="1.9"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18" stroke-linecap="round"/></svg><b class="num">${tot.balance}</b><span>${t('tests_word')}</span></button>
+      <button class="btn pt-send" id="dash-open-send">＋ ${t('send_test')}</button>
     </div>
-    <div class="dash-grid reveal d2">
-      <div class="card dash-col-2"><div class="dash-h"><h3>${t('funnel_title')}</h3><span class="muted">${t('funnel_sub')}</span></div>${funnelChart(d.funnel)}</div>
-      <div class="card"><div class="dash-h"><h3>${t('stages_title')}</h3></div>${stageDonut(d.byStage)}</div>
-      <div class="card"><div class="dash-h"><h3>${t('types_title')}</h3></div>${typeBars(d.byType)}</div>
-      <div class="card dash-col-2"><div class="dash-h"><h3>${t('newcands_title')}</h3><b style="color:var(--brand)">${d.days.reduce((a, x) => a + x.count, 0)}</b></div>${sparkArea(d.days)}</div>
+    <div class="dash-banner reveal"><canvas id="neuPortal"></canvas>
+      <div class="aib-in">
+        <div class="aib-kick"><span class="aib-dot"></span>${t('dash_ai_kick')}</div>
+        <h2 class="aib-title">${awaiting} ${candWord(awaiting)} ${t('dash_ai_wait')}</h2>
+        <p class="aib-lead">${t('dash_ai_lead')}</p>
+      </div>
     </div>
-    <div class="dash-grid reveal d3">
-      <div class="card dash-col-2"><div class="dash-h"><h3>${t('recent_title')}</h3><a href="#" onclick="setView('home');return false" class="muted" style="font-size:13px">${t('all_link')}</a></div><div class="dash-recent">${recent}</div></div>
-      <div class="card"><div class="dash-h"><h3>${t('topvac_title')}</h3></div><div class="topvac">${topVac}</div></div>
+    <div class="kpi-grid pk reveal d1">
+      ${pkpi(t('kpi_candidates'), tot.candidates)}
+      ${pkpi(t('kpi_done'), tot.testsDone)}
+      ${pkpi(t('kpi_pending'), tot.testsPending)}
+      ${pkpi(t('kpi_apps'), tot.applications)}
+      ${pkpi(t('kpi_vacancies'), tot.vacancies)}
+      ${pkpi(t('kpi_conversion'), tot.conversion + '%')}
+    </div>
+    <div class="dash-grid2 reveal d2">
+      <div class="card"><div class="dash-h"><h3>${t('funnel_title')}</h3><span class="muted">${t('funnel_sub')}</span></div>${funnelBars(d.funnel)}</div>
+      <div class="card"><div class="dash-h"><h3>${t('stages_title')}</h3></div>${stageList(d.byStage)}</div>
+    </div>
+    <div class="card flush recent-card reveal d3">
+      <div class="dash-h" style="padding:20px 24px 14px;margin:0;border:0"><h3>${t('recent_title')}</h3><a href="#" onclick="setView('candidates');return false" style="font-size:13px">${t('all_link')}</a></div>
+      <div class="rtable">${recentRows}</div>
     </div>`;
+  portalNet('neuPortal');
+  $('#dash-open-send').onclick = () => openSendModal(vacsD.vacancies, vacOptions);
+  $$('.rrow[data-pid]').forEach(r => r.onclick = () => openParticipant(r.dataset.pid));
+}
+// плюрализация «кандидат» по числу
+function candWord(n) { n = Math.abs(n) % 100; const n1 = n % 10; if (n > 10 && n < 20) return t('cand_word_5'); if (n1 > 1 && n1 < 5) return t('cand_word_2'); if (n1 === 1) return t('cand_word_1'); return t('cand_word_5'); }
+// KPI-плитка в стиле дизайна: подпись сверху, крупное число, без иконки
+function pkpi(label, value) { return `<div class="pkpi"><div class="pkpi-l">${label}</div><div class="pkpi-v">${value}</div></div>`; }
+// Воронка полосами (фиолетовый градиент) — как в дизайне портала
+function funnelBars(fn) {
+  const top = Math.max(1, fn[0].value);
+  return `<div class="fbars">${fn.map((f, i) => { const pct = Math.round(100 * f.value / top); const rel = i ? Math.round(100 * f.value / (fn[0].value || 1)) : null;
+    return `<div class="fbar"><div class="fbar-h"><span>${esc(tr(f.label))}</span><span class="mono">${f.value}${rel != null ? ` · ${rel}%` : ''}</span></div><div class="fbar-track"><div class="fbar-fill" style="width:${Math.max(4, pct)}%"></div></div></div>`;
+  }).join('')}</div>`;
+}
+// Распределение по этапам — список с цветными точками (как в дизайне)
+function stageList(byStage) {
+  const entries = STAGES.map(s => ({ label: s.id, value: byStage[s.id] || 0, color: s.color || '#8b93ad' })).filter(e => e.value > 0);
+  return `<div class="stlist">${entries.map(e => `<div class="stli"><span class="std" style="background:${e.color};box-shadow:0 0 8px ${e.color}"></span><span class="stl">${esc(tr(e.label))}</span><span class="stv mono">${e.value}</span></div>`).join('') || `<span class="muted">${t('no_data')}</span>`}</div>`;
+}
+// Бейдж «Виннер/Дуэр» (тип цели вакансии); пусто, если не задан
+function targetBadge(target) {
+  if (target === 'performer' || target === 'boss') return `<span class="tbadge win">${t('vac_target_performer') ? 'Виннер' : 'Виннер'}</span>`;
+  if (target === 'executor') return `<span class="tbadge duer">Дуэр</span>`;
+  return '';
+}
+// Модалка отправки теста (кнопка «Отправить тест» в топбаре)
+function openSendModal(vacs, vacOptions) {
+  openModal(`<h2 style="margin:0 0 4px">${t('send_test')}</h2>
+    <p class="muted" style="margin:0 0 18px">${t('quick_ph')}</p>
+    <div class="send-modal">
+      <input class="field" id="emails" placeholder="${t('quick_ph')}">
+      <div class="send-row">
+        <select class="field" id="vac-select"><option value="">${t('without_vacancy')}</option>${vacOptions}</select>
+        ${sendLangSelect()}
+      </div>
+      <button type="button" class="field type-field" id="type-field" style="text-align:left;justify-content:space-between"><span id="type-field-txt">${sendTypesText()}</span>${_svg('<path d="M6 9l6 6 6-6" stroke-linecap="round"/>')}</button>
+      <button class="btn" id="dash-send" style="width:100%">${t('send_btn')}</button>
+    </div>`, true);
   $('#type-field').onclick = openTestPicker;
-  $('#dash-send').onclick = dashSend;
-  wireSendLang(vacsD.vacancies);
-  $$('.dash-recent-row[data-pid]').forEach(r => r.onclick = () => openParticipant(r.dataset.pid));
+  $('#dash-send').onclick = () => dashSend(true);
+  wireSendLang(vacs);
+}
+// Анимация «нейросети» в баннере: гексагональные узлы + спутники, магнитная реакция на курсор
+function portalNet(id) {
+  const cv = document.getElementById(id); if (!cv) return;
+  const ctx = cv.getContext('2d'); let raf, t = 0, W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1);
+  const nodes = [], links = []; const mouse = { x: -999, y: -999, on: false };
+  function build() {
+    const r = cv.getBoundingClientRect(); W = r.width; H = r.height; if (!W || !H) return;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    nodes.length = 0; links.length = 0;
+    const n = Math.max(5, Math.round(W / 110));
+    for (let i = 0; i < n; i++) { const bx = W * (0.14 + 0.82 * Math.random()), by = H * (0.14 + 0.72 * Math.random());
+      nodes.push({ bx, by, x: bx, y: by, ph: Math.random() * 6.28, sz: 3 + Math.random() * 3, hub: Math.random() < 0.5 }); }
+    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+      if (Math.hypot(nodes[i].bx - nodes[j].bx, nodes[i].by - nodes[j].by) < W * 0.34) links.push([i, j]);
+    }
+  }
+  // гексагон вокруг узла
+  function hexPath(x, y, s) { ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3, px = x + Math.cos(a) * s, py = y + Math.sin(a) * s; k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); }
+  function draw() {
+    t += 1; if (!W) { build(); }
+    ctx.clearRect(0, 0, W, H);
+    // магнитное смещение узлов к курсору + лёгкое дыхание
+    nodes.forEach(nd => {
+      const fx = nd.bx + Math.sin(t * 0.012 + nd.ph) * 5, fy = nd.by + Math.cos(t * 0.014 + nd.ph) * 5;
+      let tx = fx, ty = fy;
+      if (mouse.on) { const dx = mouse.x - fx, dy = mouse.y - fy, d = Math.hypot(dx, dy);
+        if (d < 130) { const pull = (1 - d / 130) * 26; tx = fx + dx / (d || 1) * pull; ty = fy + dy / (d || 1) * pull; } }
+      nd.x += (tx - nd.x) * 0.08; nd.y += (ty - nd.y) * 0.08;
+    });
+    // связи
+    links.forEach(([i, j]) => { const a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      ctx.strokeStyle = `rgba(139,108,255,${Math.max(0, 0.16 * (1 - d / (W * 0.4)))})`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); });
+    // узлы: хабы — гексагоны, прочие — точки
+    nodes.forEach(nd => { const p = 0.7 + 0.3 * Math.sin(t * 0.03 + nd.ph);
+      if (nd.hub) { ctx.strokeStyle = `rgba(179,164,255,${0.55 * p})`; ctx.lineWidth = 1.3; hexPath(nd.x, nd.y, nd.sz + 2); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,138,106,.9)'; ctx.beginPath(); ctx.arc(nd.x, nd.y, 1.8, 0, 6.28); ctx.fill(); }
+      else { ctx.fillStyle = `rgba(111,151,255,${0.55 * p})`; ctx.beginPath(); ctx.arc(nd.x, nd.y, 1.8, 0, 6.28); ctx.fill(); } });
+    raf = requestAnimationFrame(draw);
+  }
+  const onMove = e => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.on = true; };
+  const onLeave = () => { mouse.on = false; };
+  const host = cv.parentElement || cv;
+  host.addEventListener('mousemove', onMove); host.addEventListener('mouseleave', onLeave);
+  build(); draw();
+  const ro = new ResizeObserver(build); ro.observe(cv);
+  const stop = () => { if (!document.getElementById(id)) { cancelAnimationFrame(raf); ro.disconnect(); host.removeEventListener('mousemove', onMove); host.removeEventListener('mouseleave', onLeave); } else requestAnimationFrame(stop); };
+  requestAnimationFrame(stop);
 }
 // Выбор языка отправляемого теста; по умолчанию подставляется язык вакансии из заявки
 function sendLangSelect(cur) {
@@ -1865,8 +1995,8 @@ async function openTestsConfig() {
   try { s = (await api('/api/settings')).user.settings; } catch (e) { s = (state.user && state.user.settings) || {}; }
   const langs = (state.langs && state.langs.length) ? state.langs : [{ code: 'ru', name: 'Русский' }];
   const mt = (s.mailTemplates && s.mailTemplates.send) ? JSON.parse(JSON.stringify(s.mailTemplates)) : emptyMail();
-  let order = (Array.isArray(s.testOrder) && s.testOrder.length ? s.testOrder : ['tools', 'result', 'logic', 'sales']).filter(t => TEST_LABEL[t]);
-  ['tools', 'result', 'logic', 'sales'].forEach(t => { if (!order.includes(t)) order.push(t); });
+  let order = (Array.isArray(s.testOrder) && s.testOrder.length ? s.testOrder : ['result', 'tools', 'logic', 'sales']).filter(t => TEST_LABEL[t]);
+  ['result', 'tools', 'logic', 'sales'].forEach(t => { if (!order.includes(t)) order.push(t); });
   let tab = 'mail', mcat = 'send', mitem = 'result', curLang = (s.uiLang && langs.find(l => l.code === s.uiLang)) ? s.uiLang : langs[0].code;
 
   openModal(`<h2 style="margin:0 0 2px">Настройка для всех вакансий</h2>
@@ -1886,7 +2016,7 @@ async function openTestsConfig() {
     $('#tcfg-body').innerHTML = `
       <div class="tc-seg2"><button class="seg2 ${mcat === 'send' ? 'on' : ''}" data-mcat="send">При отправке тестов</button><button class="seg2 ${mcat === 'status' ? 'on' : ''}" data-mcat="status">При изменении статуса</button></div>
       <div class="tc-items">${Object.keys(labels).map(k => `<button class="chip sm ${k === mitem ? 'active' : ''}" data-mitem="${k}">${esc(labels[k])}</button>`).join('')}</div>
-      <div class="tc-langs" style="margin-top:10px">${langs.map(l => `<button class="chip sm ${l.code === curLang ? 'active' : ''}" data-tl="${l.code}">${esc(langName(l.code))}</button>`).join('')}</div>
+      <div class="tc-langs" style="margin-top:10px">${langs.map(l => `<button class="chip sm ${l.code === curLang ? 'active' : ''}" data-tl="${l.code}">${l.code.toUpperCase()}</button>`).join('')}</div>
       <label class="lbl" style="margin-top:12px">Тема письма</label>
       <input class="field" id="tc-subject" value="${esc(t.subject || '')}" placeholder="Тема письма">
       <label class="lbl" style="margin-top:12px">Текст письма</label>
@@ -1949,7 +2079,7 @@ async function renderHome() {
     </div>
     <div class="list-div reveal d3"></div>
     <div class="filterbar reveal d3">
-      <select class="field sm" id="f-test" aria-label="Тип теста"><option value="">${t('f_all_tests')}</option><option value="tools">${testTitle(`tools`)}</option><option value="result">${testTitle(`result`)}</option><option value="logic">${testTitle(`logic`)}</option><option value="sales">${testTitle(`sales`)}</option></select>
+      <select class="field sm" id="f-test" aria-label="Тип теста"><option value="">${t('f_all_tests')}</option><option value="result">${testTitle(`result`)}</option><option value="tools">${testTitle(`tools`)}</option><option value="logic">${testTitle(`logic`)}</option><option value="sales">${testTitle(`sales`)}</option></select>
       <select class="field sm" id="f-stage" aria-label="Этап"><option value="">${t('f_all_stages')}</option>${STAGES.map(s => `<option value="${s.id}">${tr(s.id)}</option>`).join('')}</select>
       <select class="field sm" id="f-status" aria-label="Статус"><option value="">${t('f_any_status')}</option><option value="done">${t('f_done')}</option><option value="pending">${t('f_pending')}</option></select>
       <select class="field sm" id="f-sort" aria-label="Сортировка"><option value="date">${t('sort_new')}</option><option value="name">${t('sort_name')}</option></select>
@@ -1973,7 +2103,7 @@ async function renderHome() {
   renderRows();
 }
 // ---- test-type picker (cards modal) ----
-let sendTypes = ['tools'];
+let sendTypes = ['result'];
 const TEST_META = {
   tools: { title: 'Тулс', desc: 'Тест на оценку характера и личностных качеств по 10 показателям', q: 200, min: 35 },
   result: { title: 'Резалт', desc: 'Сценарный тест для оценки продуктивности соискателя на предыдущей работе', q: 18, min: 15 },
@@ -2390,7 +2520,7 @@ async function refreshCandidateCard() {
 function sendMoreBlock() {
   return `<div class="send-more"><div class="lbl" style="margin-bottom:7px">${t('pm_send_more')}</div>
     <div class="row" style="gap:8px"><select class="field sm" id="more-type" style="flex:1" aria-label="Тип теста">
-      <option value="tools">${t('pm_opt_tools')}</option><option value="result">${t('pm_opt_result')}</option>
+      <option value="result">${t('pm_opt_result')}</option><option value="tools">${t('pm_opt_tools')}</option>
       <option value="logic">${t('pm_opt_logic')}</option><option value="sales">${t('pm_opt_sales')}</option></select>
       <button class="btn soft sm" id="more-send">${t('send_btn')}</button></div></div>`;
 }
@@ -2913,13 +3043,13 @@ function settingsBody(u) {
     const sms = s.smsTemplates || {};
     const itemLabel = k => mtCat === 'send' ? testTitle(k) : t('st_' + k);
     const smsPanes = `<div class="sms-editor">${langs.map(l => `<div class="rte-pane ${l.code === tplLang ? '' : 'hidden'}" data-pane="${l.code}">
-          <label class="lbl">${t('sms_label')} (${esc(langName(l.code))})</label>
+          <label class="lbl">${t('sms_label')} (${l.code.toUpperCase()})</label>
           <textarea class="field sms-text" data-tpl-sms="${l.code}" maxlength="360" spellcheck="false">${esc(sms[l.code] || '')}</textarea>
           <div class="muted" style="font-size:12px;margin-top:5px">${t('sms_hint')}</div></div>`).join('')}</div>`;
     const emailEditor = `
       <div class="tc-seg2"><button class="seg2 ${mtCat === 'send' ? 'on' : ''}" data-mcat="send">${t('mail_cat_send')}</button><button class="seg2 ${mtCat === 'status' ? 'on' : ''}" data-mcat="status">${t('mail_cat_status')}</button></div>
       <div class="tc-items" style="margin-bottom:10px">${Object.keys(items).map(k => `<button class="chip sm ${k === mtItem ? 'active' : ''}" data-mitem="${k}">${esc(itemLabel(k))}</button>`).join('')}</div>
-      <div class="tpl-subtabs">${langs.map(l => `<button class="seg-tab sm ${l.code === tplLang ? 'on' : ''}" data-tlang="${l.code}">${esc(langName(l.code))}</button>`).join('')}</div>
+      <div class="tpl-subtabs">${langs.map(l => `<button class="seg-tab sm ${l.code === tplLang ? 'on' : ''}" data-tlang="${l.code}">${l.code.toUpperCase()}</button>`).join('')}</div>
       <div class="rte">${tb}
         <div class="rte-pane" data-pane="${tplLang}">
           <label class="lbl">${t('tpl_subject')}</label><input class="field" id="mt-subject" value="${esc(cur.subject)}">
@@ -2929,7 +3059,7 @@ function settingsBody(u) {
     box.innerHTML = `<div class="card"><h2 style="margin:0 0 6px;font-size:19px">${t('tpl_title')}</h2>
       <div class="seg" style="max-width:240px;margin:6px 0 12px"><button class="${tplMode === 'email' ? 'on' : ''}" data-tmode="email">E-mail</button><button class="${tplMode === 'sms' ? 'on' : ''}" data-tmode="sms">SMS</button></div>
       <p class="muted" style="margin:0 0 14px">${t('mail_vars')}: <code>$vac$</code> <code>$name$</code> <code>$company$</code> <code>$client$</code> <code>$link$</code> <code>$button_link$</code> <code>$phone$</code> <code>$date_interview$</code>. ${t('tpl_hint')}</p>
-      ${tplMode === 'sms' ? `<div class="tpl-subtabs">${langs.map(l => `<button class="seg-tab sm ${l.code === tplLang ? 'on' : ''}" data-tlang="${l.code}">${esc(langName(l.code))}</button>`).join('')}</div>${smsPanes}` : emailEditor}
+      ${tplMode === 'sms' ? `<div class="tpl-subtabs">${langs.map(l => `<button class="seg-tab sm ${l.code === tplLang ? 'on' : ''}" data-tlang="${l.code}">${l.code.toUpperCase()}</button>`).join('')}</div>${smsPanes}` : emailEditor}
       <button class="btn" style="margin-top:16px" id="st-save">${t('tpl_save_btn')}</button></div>`;
     function stashMail() {
       const pane = $('.rte-pane'); if (pane) { const src = pane.querySelector('.rte-html-src'); if (src && !src.classList.contains('hidden')) pane.querySelector('.rte-body').innerHTML = src.value; }

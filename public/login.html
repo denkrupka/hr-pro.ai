@@ -1,233 +1,340 @@
 <!doctype html>
-<html lang="ru"><head>
+<html lang="ru" data-theme="dark"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title data-i18n="page_title">HR PRO AI — Вход</title>
-<meta name="description" content="Войдите в HR PRO AI или создайте аккаунт: по бесплатному тесту каждого вида, без карты. Психометрическая платформа найма.">
+<meta name="description" content="Вход в HR PRO AI или регистрация: по бесплатному тесту каждого вида, без карты.">
 <meta name="robots" content="noindex,follow">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233d6cd1'/%3E%3Cpath d='M32 12 50 22 50 42 32 52 14 42 14 22Z' stroke='white' stroke-width='2.4' fill='none'/%3E%3Ccircle cx='32' cy='31' r='4' fill='%23ff7a5c'/%3E%3C/svg%3E">
 <style>
-.lang-switch{position:absolute;top:20px;right:22px;z-index:5;display:flex;gap:4px}
-.lang-switch button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font:600 12px/1 Inter,sans-serif;padding:6px 9px;border-radius:7px;cursor:pointer;opacity:.75}
-.lang-switch button.on{opacity:1;background:rgba(255,255,255,.28)}
-.lp-logo .m{background:none!important;box-shadow:none!important;width:38px;height:38px}
-.lp-logo .m svg{width:38px;height:38px}
+:root{--a:#6f6ae0;--b:#4f78e6;--sh:60,90,200;--dot:#8b6cff;--mid:#c3b8ff;--end:#6f97ff;--glow:123,108,255;--specA:#4d7cff;--specB:#8b6cff;--blob:139,108,255}
+*{box-sizing:border-box}
+body{margin:0;background:#070813;color:#e8ecf8;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#8b6cff;text-decoration:none}a:hover{color:#b3a4ff}
+h1,h2{font-family:Manrope,Inter,sans-serif;margin:0}
+.auth-grid{position:relative;min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:radial-gradient(ellipse 80% 70% at 20% 0%,#111634,#070813 70%);overflow:hidden}
+/* brand side */
+.auth-brand{position:relative;overflow:hidden;padding:40px 48px;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.06)}
+.auth-brand .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(120,140,220,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,220,.05) 1px,transparent 1px);background-size:52px 52px}
+.auth-brand .blob{position:absolute;top:-160px;left:-60px;width:620px;height:520px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(var(--blob),.3),transparent 65%);filter:blur(30px);animation:glowPulseA 7s ease-in-out infinite;pointer-events:none}
+#neuAuth{position:absolute;inset:0;width:100%;height:100%;opacity:.72;pointer-events:none}
+.auth-brand .inner{position:relative;z-index:3;display:flex;flex-direction:column;height:100%}
+.brand-logo{display:flex;align-items:center;gap:12px;align-self:flex-start}
+.brand-logo svg{width:46px;height:46px}
+.brand-logo b{font-family:Manrope;font-weight:800;font-size:18px;color:#fff;display:block;line-height:1.05}
+.brand-logo span{font-size:10.5px;color:#8b93ad;font-weight:600}
+.brand-mid{margin:auto 0;max-width:440px}
+.eyebrow-pill{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border:1px solid rgba(139,150,255,.28);color:#b7c2ec;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:7px 15px;border-radius:999px}
+.eyebrow-pill .d{width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 10px var(--dot);animation:pulseDotA 1.6s infinite}
+.brand-h1{font-weight:800;letter-spacing:-.03em;line-height:1.06;font-size:clamp(30px,3.6vw,40px);margin:18px 0 0;background:linear-gradient(120deg,#fff,var(--mid) 55%,var(--end));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-lead{font-size:15.5px;line-height:1.6;color:#9aa3bf;margin:18px 0 26px;max-width:400px}
+.brand-trust{display:flex;gap:30px;margin-top:26px;flex-wrap:wrap}
+.brand-trust .n{font-family:JetBrains Mono,monospace;font-weight:800;font-size:24px;background:linear-gradient(135deg,#fff,var(--mid) 60%,var(--end));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-trust .l{font-size:12px;color:#8b93ad;margin-top:3px}
+/* spectrum card */
+.spec{position:relative;background:rgba(255,255,255,.04);border:1px solid rgba(var(--glow),.28);border-radius:20px;padding:20px 22px;box-shadow:0 0 50px rgba(var(--glow),.2),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden;backdrop-filter:blur(10px);max-width:410px}
+.spec .scan{position:absolute;left:0;right:0;top:0;height:70px;pointer-events:none;background:linear-gradient(180deg,rgba(var(--glow),0),rgba(var(--glow),.16) 60%,rgba(var(--glow),0));animation:scanA 3.6s cubic-bezier(.4,0,.6,1) infinite}
+.spec .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative}
+.spec .nm{font-family:Manrope;font-weight:800;font-size:15px;color:#eef1fb}
+.spec .rl{font-size:12px;color:#8b93ad;margin-top:2px}
+.spec .badge{display:inline-flex;align-items:center;gap:7px;background:rgba(67,224,160,.12);color:#43e0a0;font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:999px;border:1px solid rgba(67,224,160,.3)}
+.spec .badge .b{width:7px;height:7px;border-radius:50%;background:#43e0a0;box-shadow:0 0 8px #43e0a0}
+.srow{display:grid;grid-template-columns:118px 1fr 42px;align-items:center;gap:10px;margin:9px 0}
+.srow .sn{font-size:12px;font-weight:600;color:#c3cbe4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow .sn b{font-family:JetBrains Mono,monospace;margin-right:5px}
+.strack{position:relative;height:20px}
+.strack .bg{position:absolute;inset:6px 0;border-radius:6px;background:linear-gradient(90deg,rgba(255,122,92,.4) 0 16%,rgba(255,122,92,.16) 16% 34%,rgba(255,255,255,.05) 34% 66%,rgba(var(--glow),.24) 66% 84%,rgba(var(--glow),.46) 84% 100%)}
+.strack .mid{position:absolute;left:50%;top:2px;bottom:2px;width:1.5px;background:rgba(255,255,255,.28)}
+.strack .fill{position:absolute;top:6px;height:8px;border-radius:6px;left:50%;width:0;background:linear-gradient(90deg,var(--specA),var(--specB));box-shadow:0 0 12px rgba(var(--glow),.75);transition:width .9s cubic-bezier(.22,.68,.24,1),left .9s cubic-bezier(.22,.68,.24,1)}
+.strack .fill.comp{background:linear-gradient(90deg,#ff7a5c,#ffab8f);box-shadow:0 0 12px rgba(255,122,92,.7)}
+.strack .node{position:absolute;top:4px;left:50%;width:12px;height:12px;border-radius:50%;background:#0a0c18;border:3px solid var(--specA);transform:translateX(-6px);transition:left .9s cubic-bezier(.22,.68,.24,1);box-shadow:0 0 10px rgba(var(--glow),.8)}
+.strack .node.comp{border-color:#ff8a6a;box-shadow:0 0 10px rgba(255,122,92,.8)}
+.srow .sv{font-family:JetBrains Mono,monospace;font-weight:700;font-size:13px;text-align:right}
+/* form side */
+.auth-form{position:relative;z-index:3;display:flex;flex-direction:column;padding:34px 44px}
+.form-top{display:flex;justify-content:flex-end;align-items:center;gap:14px}
+.lang-switch{display:inline-flex;gap:3px;align-items:center}
+.lang-switch button{font:700 11px/1 JetBrains Mono,monospace;padding:6px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8b93ad;cursor:pointer}
+.lang-switch button.on{border-color:#6f97ff;background:rgba(77,124,255,.85);color:#fff;box-shadow:0 0 14px rgba(77,124,255,.5)}
+.form-mid{margin:auto;width:100%;max-width:404px}
+.form-mid h2{font-weight:800;font-size:30px;letter-spacing:-.02em;color:#eef1fb}
+.form-mid .sub{font-size:14.5px;line-height:1.55;color:#9aa3bf;margin:10px 0 26px}
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:5px;margin-bottom:24px}
+.tabs button{flex:1;padding:10px;border-radius:9px;font-size:13.5px;font-weight:650;font-family:Inter,sans-serif;background:transparent;color:#8b93ad;border:1px solid transparent;cursor:pointer;transition:.16s}
+.tabs button.on{background:rgba(255,255,255,.09);color:#fff;border-color:rgba(255,255,255,.12)}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:12px;color:#e8ecf8;font-weight:600;font-size:14px;padding:12px;cursor:pointer;transition:border-color .2s,background .2s,transform .16s}
+.gbtn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+.divider{display:flex;align-items:center;gap:14px;margin:20px 0}
+.divider .ln{flex:1;height:1px;background:rgba(255,255,255,.1)}
+.divider .tx{font-size:11.5px;color:#6b7492;font-weight:500}
+form{display:flex;flex-direction:column;gap:15px}
+.fld{display:flex;flex-direction:column;gap:7px}
+.fld label{font-size:12.5px;font-weight:600;color:#c3cbe4}
+.fld .wrap{position:relative}
+.afield{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#eef1fb;font-family:Inter,sans-serif;font-size:14.5px;padding:13px 15px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.afield::placeholder{color:#5f6885}
+.afield:focus{border-color:rgba(139,108,255,.7);box-shadow:0 0 0 3px rgba(123,108,255,.16);background:rgba(255,255,255,.06)}
+.pw-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:#8b93ad;font:600 11px/1 JetBrains Mono,monospace;padding:6px 8px;border-radius:7px;cursor:pointer}
+.row-lr{display:flex;align-items:center;justify-content:space-between;margin-top:-3px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:#9aa3bf;cursor:pointer}
+.chk input{width:15px;height:15px;accent-color:#7b6cff}
+.terms{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.5;color:#9aa3bf;cursor:pointer;margin-top:-2px}
+.terms input{width:15px;height:15px;margin-top:1px;flex:none;accent-color:#7b6cff}
+.submit{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;font-weight:650;font-size:15px;padding:14px;border-radius:12px;box-shadow:0 8px 20px rgba(var(--sh),.32);margin-top:4px;border:none;cursor:pointer;transition:transform .16s cubic-bezier(.22,.68,.24,1),box-shadow .28s,filter .28s}
+.submit:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.switch-line{text-align:center;font-size:13.5px;color:#9aa3bf;margin-top:22px}
+.switch-line a{font-weight:600}
+.form-foot{text-align:center;font-size:11.5px;color:#5f6885;margin-top:20px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:rgba(20,24,44,.96);border:1px solid rgba(255,255,255,.12);color:#eef1fb;font-size:14px;padding:12px 20px;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index:80;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes scanA{0%{transform:translateY(-90px)}100%{transform:translateY(520px)}}
+@keyframes pulseDotA{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@keyframes glowPulseA{0%,100%{opacity:.55}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+@media(max-width:880px){.auth-grid{grid-template-columns:1fr}.auth-brand{display:none}.auth-form{min-height:100vh;justify-content:center}}
 </style>
 </head><body>
-<div class="auth-wrap">
-  <div class="auth-visual">
-    <a href="/" class="lp-logo" style="color:#fff">
-      <span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
-      <span style="display:flex;flex-direction:column;line-height:1.15"><b style="font-family:Manrope;font-weight:800;letter-spacing:.04em;font-size:17px">HR PRO AI</b><span style="font-size:11.5px;opacity:.8" data-i18n="brand_tagline">технология, которая чувствует людей</span></span>
-    </a>
-    <div class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
-    <div style="position:relative;z-index:1">
-      <h1 style="color:#fff;font-size:38px;margin:0 0 14px;line-height:1.1" data-i18n="visual_h1">Узнайте, кто перед вами,<br>до того как нанять</h1>
-      <p style="color:rgba(255,255,255,.72);font-size:16px;max-width:400px;line-height:1.6" data-i18n="visual_p">Четыре теста — личность, продуктивность, интеллект и продажи — раскрывают кандидата на одном графике.</p>
-      <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);margin-top:34px;max-width:420px;backdrop-filter:blur(8px)">
-        <div style="display:flex;justify-content:space-between;color:#fff;font-weight:700;margin-bottom:14px"><span data-i18n="candidate_profile">Профиль кандидата</span> <span class="mono" style="color:#7fe3bf" data-i18n="winner">Виннер</span></div>
-        <div id="demo-bars"></div>
+<div class="auth-grid">
+  <!-- BRAND SIDE -->
+  <div class="auth-brand" id="auth-brand">
+    <div class="grid"></div>
+    <div class="blob"></div>
+    <canvas id="neuAuth"></canvas>
+    <div class="inner">
+      <a href="/" class="brand-logo">
+        <svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>
+        <span style="line-height:1.05"><b>HR&nbsp;PRO&nbsp;AI</b><span data-i18n="tagline">технология, которая чувствует людей</span></span>
+      </a>
+      <div class="brand-mid">
+        <div class="eyebrow-pill"><span class="d"></span><span data-i18n="brandEyebrow">ИИ-анализ кандидатов</span></div>
+        <h1 class="brand-h1" data-i18n="brandTitle">Один вход — весь портрет команды</h1>
+        <p class="brand-lead" data-i18n="brandLead">Резюме показывает, кем человек хочет казаться. Наш ИИ читает четыре теста и собирает настоящий профиль.</p>
+        <div id="auth-spec"></div>
+        <div class="brand-trust" id="brand-trust"></div>
       </div>
     </div>
-    <div style="color:rgba(255,255,255,.62);font-size:14px;font-weight:600;position:relative;z-index:1" data-i18n="brand_footer">Мы раскрываем личность, чтобы вы создавали сильные команды.</div>
   </div>
-  <div class="auth-form-side">
-    <div class="auth-card">
-      <h1 id="title">С возвращением</h1>
-      <p class="muted" id="sub" style="margin:0 0 22px">Войдите, чтобы продолжить работу</p>
-      <div class="seg">
-        <button class="on" id="tab-login" data-i18n="tab_login">Вход</button>
-        <button id="tab-reg" data-i18n="tab_register">Регистрация</button>
-      </div>
-      <div id="reg-benefits" class="hidden" style="background:var(--brand-soft);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--text-2)">
-          <li style="display:flex;gap:9px;align-items:center"><span style="color:var(--good);font-weight:800">✓</span><span data-i18n="ben1">По тесту каждого вида + 2 вакансии — бесплатно</span></li>
-          <li style="display:flex;gap:9px;align-items:center"><span style="color:var(--good);font-weight:800">✓</span><span data-i18n="ben2">Первый профиль кандидата — через 10 минут</span></li>
-          <li style="display:flex;gap:9px;align-items:center"><span style="color:var(--good);font-weight:800">✓</span><span data-i18n="ben3">Без карты и подписки — платите только за тесты</span></li>
-        </ul>
-      </div>
-      <div id="reg-fields" class="hidden">
-        <input class="field" id="name" placeholder="Ваше имя" data-i18n-ph="ph_name">
-        <input class="field" id="company" placeholder="Компания" data-i18n-ph="ph_company">
-      </div>
-      <input class="field" id="email" type="email" placeholder="Рабочий email" autocomplete="username" data-i18n-ph="ph_email">
-      <input class="field" id="password" type="password" placeholder="Пароль" autocomplete="current-password" data-i18n-ph="ph_password">
-      <div id="err" class="hidden" style="color:var(--bad);margin-bottom:12px;font-size:14px"></div>
-      <button class="btn lg" id="submit">Войти</button>
-      <p class="muted" style="text-align:center;margin-top:18px;font-size:13px" data-i18n="gift_note">Новым аккаунтам — <b style="color:var(--brand)">по тесту каждого вида</b> бесплатно</p>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
-        <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:600"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="badge_sec">PBKDF2 · шифрование</span></span>
-        <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:600"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg><span data-i18n="badge_gdpr">GDPR / RODO</span></span>
-        <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:600"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg><span data-i18n="badge_stripe">Оплата через Stripe</span></span>
-      </div>
+  <!-- FORM SIDE -->
+  <div class="auth-form">
+    <div class="form-top">
+      <div class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
     </div>
+    <div class="form-mid">
+      <h2 id="a-title">С возвращением</h2>
+      <p class="sub" id="a-sub">Войдите, чтобы продолжить оценку кандидатов.</p>
+      <div class="tabs">
+        <button id="tab-login" class="on">Вход</button>
+        <button id="tab-reg">Регистрация</button>
+      </div>
+      <button class="gbtn" id="g-btn" type="button">
+        <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5 43.5 34.8 43.5 24c0-1.2-.1-2.3-.3-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4.5 24 4.5 16.3 4.5 9.7 8.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 43.5c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 34.5 26.7 35.5 24 35.5c-5.3 0-9.7-3.1-11.3-7.5l-6.5 5C9.6 39.1 16.2 43.5 24 43.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.1-2.1 4-3.9 5.3l6.3 5.3C41.7 35.6 43.5 30.3 43.5 24c0-1.2-.1-2.3-.3-3.5z"/></svg>
+        <span data-i18n="googleLabel">Продолжить с Google</span>
+      </button>
+      <div class="divider"><div class="ln"></div><div class="tx" data-i18n="orText">или по email</div><div class="ln"></div></div>
+      <form id="auth-form" autocomplete="on">
+        <div id="form-fields"></div>
+        <div id="a-extra"></div>
+        <button type="submit" class="submit" id="a-submit">Войти →</button>
+      </form>
+      <div class="switch-line"><span id="a-switch-prompt">Нет аккаунта?</span> <a href="#" id="a-switch-link">Зарегистрируйтесь</a></div>
+    </div>
+    <div class="form-foot" data-i18n="footerRights">© 2026 HR PRO AI. Все права защищены.</div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const $=id=>document.getElementById(id);
-if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
-
+const $=s=>document.querySelector(s);
 const I18N={
-  ru:{
-    page_title:'HR PRO AI — Вход',
-    brand_tagline:'технология, которая чувствует людей',
-    eyebrow:'Наём по данным',
-    visual_h1:'Узнайте, кто перед вами,<br>до того как нанять',
-    visual_p:'Четыре теста — личность, продуктивность, интеллект и продажи — раскрывают кандидата на одном графике.',
-    candidate_profile:'Профиль кандидата',
-    winner:'Виннер',
-    brand_footer:'Мы раскрываем личность, чтобы вы создавали сильные команды.',
-    tab_login:'Вход',
-    tab_register:'Регистрация',
-    ph_name:'Ваше имя',
-    ph_company:'Компания',
-    ph_email:'Рабочий email',
-    ph_password:'Пароль',
-    gift_note:'Новым аккаунтам — <b style="color:var(--brand)">по тесту каждого вида</b> бесплатно',
-    ben1:'По тесту каждого вида + 2 вакансии — бесплатно',ben2:'Первый профиль кандидата — через 10 минут',ben3:'Без карты и подписки — платите только за тесты',
-    badge_sec:'PBKDF2 · шифрование',badge_gdpr:'GDPR / RODO',badge_stripe:'Оплата через Stripe',
-    title_login:'С возвращением',
-    title_register:'Создать аккаунт',
-    sub_login:'Войдите, чтобы продолжить работу',
-    sub_register:'Начните оценивать кандидатов за минуты',
-    submit_login:'Войти',
-    submit_register:'Создать аккаунт',
-    submitting:'Минуту…',
-    err_generic:'Ошибка',
-    err_network:'Нет связи с сервером',
-    bar_attention:'Внимательность',
-    bar_activity:'Активность',
-    bar_confidence:'Уверенность',
-    bar_persistence:'Настойчивость',
-    bar_objectivity:'Объективность'
-  },
-  pl:{
-    page_title:'HR PRO AI — Logowanie',
-    brand_tagline:'technologia, która czuje ludzi',
-    eyebrow:'Rekrutacja na podstawie danych',
-    visual_h1:'Poznaj, kto jest przed tobą,<br>zanim go zatrudnisz',
-    visual_p:'Cztery testy — osobowość, produktywność, inteligencja i sprzedaż — ukazują kandydata na jednym wykresie.',
-    candidate_profile:'Profil kandydata',
-    winner:'Winner',
-    brand_footer:'HR PRO AI · technologia, która czuje ludzi',
-    tab_login:'Logowanie',
-    tab_register:'Rejestracja',
-    ph_name:'Twoje imię',
-    ph_company:'Firma',
-    ph_email:'Służbowy e-mail',
-    ph_password:'Hasło',
-    gift_note:'Nowe konta — <b style="color:var(--brand)">po teście każdego rodzaju</b> za darmo',
-    ben1:'Po teście każdego rodzaju + 2 oferty — za darmo',ben2:'Pierwszy profil kandydata — w 10 minut',ben3:'Bez karty i abonamentu — płacisz tylko za testy',
-    badge_sec:'PBKDF2 · szyfrowanie',badge_gdpr:'GDPR / RODO',badge_stripe:'Płatność przez Stripe',
-    title_login:'Witaj ponownie',
-    title_register:'Załóż konto',
-    sub_login:'Zaloguj się, aby kontynuować pracę',
-    sub_register:'Zacznij oceniać kandydatów w kilka minut',
-    submit_login:'Zaloguj się',
-    submit_register:'Załóż konto',
-    submitting:'Chwileczkę…',
-    err_generic:'Błąd',
-    err_network:'Brak połączenia z serwerem',
-    bar_attention:'Uważność',
-    bar_activity:'Aktywność',
-    bar_confidence:'Pewność siebie',
-    bar_persistence:'Wytrwałość',
-    bar_objectivity:'Obiektywność'
-  },
-  en:{
-    page_title:'HR PRO AI — Sign in',
-    brand_tagline:'technology that senses people',
-    eyebrow:'Data-driven hiring',
-    visual_h1:'See who is in front of you,<br>before you hire',
-    visual_p:'Four tests — personality, productivity, intelligence and sales — reveal a candidate on a single chart.',
-    candidate_profile:'Candidate profile',
-    winner:'Winner',
-    brand_footer:'HR PRO AI · technology that senses people',
-    tab_login:'Sign in',
-    tab_register:'Sign up',
-    ph_name:'Your name',
-    ph_company:'Company',
-    ph_email:'Work email',
-    ph_password:'Password',
-    gift_note:'New accounts get <b style="color:var(--brand)">one test of each type</b> free',
-    ben1:'One test of each type + 2 vacancies — free',ben2:'The first candidate profile — in 10 minutes',ben3:'No card, no subscription — pay only for tests',
-    badge_sec:'PBKDF2 · encryption',badge_gdpr:'GDPR / RODO',badge_stripe:'Payments via Stripe',
-    title_login:'Welcome back',
-    title_register:'Create an account',
-    sub_login:'Sign in to continue working',
-    sub_register:'Start assessing candidates in minutes',
-    submit_login:'Sign in',
-    submit_register:'Create an account',
-    submitting:'One moment…',
-    err_generic:'Error',
-    err_network:'No connection to server',
-    bar_attention:'Attention',
-    bar_activity:'Activity',
-    bar_confidence:'Confidence',
-    bar_persistence:'Persistence',
-    bar_objectivity:'Objectivity'
-  }
+  ru:{page_title:'HR PRO AI — Вход',tagline:'технология, которая чувствует людей',brandEyebrow:'ИИ-анализ кандидатов',
+    brandTitle:'Один вход — весь портрет команды',
+    brandLead:'Резюме показывает, кем человек хочет казаться. Наш ИИ читает четыре теста и собирает настоящий профиль.',
+    trust:[{n:'4',l:'валидных теста'},{n:'10 мин',l:'на оценку'},{n:'5',l:'тестов в подарок'}],
+    name:'Анна Ковальская',role:'Менеджер по продажам',badge:'Виннер',scaleLo:'низкий',scaleMid:'средний',scaleHi:'высокий',
+    trait_A:'Внимательность',trait_C:'Самоконтроль',trait_E:'Активность',trait_I:'Чуткость',
+    loginTitle:'С возвращением',loginSub:'Войдите, чтобы продолжить оценку кандидатов.',
+    regTitle:'Создайте аккаунт',regSub:'По одному бесплатному тесту каждого вида. Без карты, без обязательств.',
+    tabLoginLabel:'Вход',tabRegLabel:'Регистрация',
+    googleLabel:'Продолжить с Google',orText:'или по email',
+    fName:'Имя и фамилия',phName:'Анна Ковальская',fCompany:'Компания',phCompany:'Название компании',
+    fEmail:'Рабочий email',phEmail:'you@company.com',fPass:'Пароль',phPassLogin:'Ваш пароль',phPassReg:'Минимум 6 символов',
+    remember:'Запомнить меня',forgot:'Забыли пароль?',loginBtn:'Войти',regBtn:'Создать аккаунт',
+    switchToReg:'Нет аккаунта?',switchToRegLink:'Зарегистрируйтесь',switchToLogin:'Уже есть аккаунт?',switchToLoginLink:'Войдите',
+    termsPre:'Я принимаю ',termsLink:'условия',termsMid:' и ',privacyLink:'политику конфиденциальности',termsPost:'.',
+    show:'ПОКАЗАТЬ',hide:'СКРЫТЬ',submitting:'Минуту…',termsRequired:'Примите условия и политику конфиденциальности.',
+    errGeneric:'Ошибка. Проверьте данные.',errNetwork:'Нет связи с сервером.',googleSoon:'Вход через Google подключим позже.',forgotSoon:'Восстановление пароля скоро будет доступно.',
+    footerRights:'© 2026 HR PRO AI. Все права защищены.'},
+  pl:{page_title:'HR PRO AI — Logowanie',tagline:'technologia, która czuje ludzi',brandEyebrow:'Analiza kandydatów AI',
+    brandTitle:'Jedno logowanie — cały portret zespołu',
+    brandLead:'CV pokazuje, kim ktoś chce się wydawać. Nasze AI czyta cztery testy i tworzy prawdziwy profil.',
+    trust:[{n:'4',l:'rzetelne testy'},{n:'10 min',l:'na ocenę'},{n:'5',l:'testów gratis'}],
+    name:'Anna Kowalska',role:'Menedżer sprzedaży',badge:'Winner',scaleLo:'niski',scaleMid:'średni',scaleHi:'wysoki',
+    trait_A:'Uważność',trait_C:'Samokontrola',trait_E:'Aktywność',trait_I:'Empatia',
+    loginTitle:'Witaj ponownie',loginSub:'Zaloguj się, aby kontynuować ocenę kandydatów.',
+    regTitle:'Załóż konto',regSub:'Po jednym darmowym teście każdego rodzaju. Bez karty, bez zobowiązań.',
+    tabLoginLabel:'Logowanie',tabRegLabel:'Rejestracja',
+    googleLabel:'Kontynuuj z Google',orText:'lub przez email',
+    fName:'Imię i nazwisko',phName:'Anna Kowalska',fCompany:'Firma',phCompany:'Nazwa firmy',
+    fEmail:'Email służbowy',phEmail:'you@company.com',fPass:'Hasło',phPassLogin:'Twoje hasło',phPassReg:'Minimum 6 znaków',
+    remember:'Zapamiętaj mnie',forgot:'Nie pamiętasz hasła?',loginBtn:'Zaloguj się',regBtn:'Załóż konto',
+    switchToReg:'Nie masz konta?',switchToRegLink:'Zarejestruj się',switchToLogin:'Masz już konto?',switchToLoginLink:'Zaloguj się',
+    termsPre:'Akceptuję ',termsLink:'regulamin',termsMid:' i ',privacyLink:'politykę prywatności',termsPost:'.',
+    show:'POKAŻ',hide:'UKRYJ',submitting:'Chwileczkę…',termsRequired:'Zaakceptuj regulamin i politykę prywatności.',
+    errGeneric:'Błąd. Sprawdź dane.',errNetwork:'Brak połączenia z serwerem.',googleSoon:'Logowanie przez Google wkrótce.',forgotSoon:'Odzyskiwanie hasła będzie wkrótce dostępne.',
+    footerRights:'© 2026 HR PRO AI. Wszelkie prawa zastrzeżone.'},
+  en:{page_title:'HR PRO AI — Sign in',tagline:'technology that senses people',brandEyebrow:'AI candidate analysis',
+    brandTitle:'One sign-in — the whole team portrait',
+    brandLead:'A résumé shows who someone wants to seem. Our AI reads four tests and builds the real profile.',
+    trust:[{n:'4',l:'validated tests'},{n:'10 min',l:'to assess'},{n:'5',l:'tests free'}],
+    name:'Anna Kowalska',role:'Sales Manager',badge:'Winner',scaleLo:'low',scaleMid:'average',scaleHi:'high',
+    trait_A:'Attention',trait_C:'Self-control',trait_E:'Activity',trait_I:'Empathy',
+    loginTitle:'Welcome back',loginSub:'Sign in to continue assessing candidates.',
+    regTitle:'Create your account',regSub:'One free test of each type. No card, no commitment.',
+    tabLoginLabel:'Sign in',tabRegLabel:'Sign up',
+    googleLabel:'Continue with Google',orText:'or with email',
+    fName:'Full name',phName:'Anna Kowalska',fCompany:'Company',phCompany:'Company name',
+    fEmail:'Work email',phEmail:'you@company.com',fPass:'Password',phPassLogin:'Your password',phPassReg:'At least 6 characters',
+    remember:'Remember me',forgot:'Forgot password?',loginBtn:'Sign in',regBtn:'Create account',
+    switchToReg:'No account yet?',switchToRegLink:'Sign up',switchToLogin:'Already have an account?',switchToLoginLink:'Sign in',
+    termsPre:'I accept the ',termsLink:'terms',termsMid:' and ',privacyLink:'privacy policy',termsPost:'.',
+    show:'SHOW',hide:'HIDE',submitting:'One moment…',termsRequired:'Please accept the terms and privacy policy.',
+    errGeneric:'Error. Check your details.',errNetwork:'No connection to server.',googleSoon:'Google sign-in is coming soon.',forgotSoon:'Password recovery is coming soon.',
+    footerRights:'© 2026 HR PRO AI. All rights reserved.'}
 };
-function pickLang(){const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
-let LANG=pickLang();
-const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
+function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(['ru','pl','en'].includes(q)){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(['ru','pl','en'].includes(s))return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('en'))return'en';return'ru';}
+let LANG=pickLang(),MODE='login',SHOWPW=false;
+const t=k=>{const v=I18N[LANG]&&I18N[LANG][k];return v==null?(I18N.ru[k]!=null?I18N.ru[k]:k):v;};
+const P={net:[110,120,220],acc:[150,140,255]};
+const TRAITS=[['A',50,0],['C',-18,0],['E',94,1],['I',-56,0]];
+const params=new URLSearchParams(location.search);
+const preEmail=params.get('email')||(function(){try{return localStorage.getItem('hp_lead_email')||'';}catch(e){return'';}})();
 
-let mode='login';
-function renderDemoBars(){
-  const bars=[[t('bar_attention'),82,'#5c86e0'],[t('bar_activity'),94,'#ff7a5c'],[t('bar_confidence'),68,'#5c86e0'],[t('bar_persistence'),44,'#5c86e0'],[t('bar_objectivity'),28,'#5c86e0']];
-  $('demo-bars').innerHTML=bars.map(b=>`<div class="hv-row" style="grid-template-columns:110px 1fr 30px">
-    <div class="hn" style="color:rgba(255,255,255,.8)">${b[0]}</div>
-    <div class="hbar" style="background:rgba(255,255,255,.1)"><span data-w="${b[1]}" style="background:${b[2]}"></span></div>
-    <div class="hv" style="color:#fff">${b[1]}</div></div>`).join('');
-  setTimeout(()=>document.querySelectorAll('#demo-bars .hbar>span').forEach(s=>s.style.width=s.dataset.w+'%'),200);
+let toastT;
+function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),3200);}
+
+function renderSpectrum(){
+  const rows=TRAITS.map(([k,v,comp])=>{const pct=(v+100)/2,from=Math.min(50,pct),w=Math.abs(pct-50),col=comp?'#ff8a6a':'var(--specA)';
+    return `<div class="srow"><div class="sn"><b style="color:${col}">${k}</b> ${t('trait_'+k)}</div>
+      <div class="strack"><div class="bg"></div><div class="mid"></div><span class="fill${comp?' comp':''}" data-left="${from}" data-w="${w}"></span><span class="node${comp?' comp':''}" data-pct="${pct}"></span></div>
+      <div class="sv" style="color:${col}">${v>0?'+':''}${v}</div></div>`;}).join('');
+  $('#auth-spec').innerHTML=`<div class="spec"><div class="scan"></div>
+    <div class="head"><div><div class="nm">${t('name')}</div><div class="rl">${t('role')}</div></div>
+      <span class="badge"><span class="b"></span>${t('badge')}</span></div>${rows}</div>`;
+  setTimeout(()=>{document.querySelectorAll('#auth-spec .fill').forEach(s=>{s.style.left=s.dataset.left+'%';s.style.width=s.dataset.w+'%';});
+    document.querySelectorAll('#auth-spec .node').forEach(s=>{s.style.left=s.dataset.pct+'%';});},220);
+}
+function renderTrust(){$('#brand-trust').innerHTML=(t('trust')||[]).map(x=>`<div><div class="n">${x.n}</div><div class="l">${x.l}</div></div>`).join('');}
+
+function fieldHTML(k,isLogin){
+  const meta={
+    name:{label:'fName',type:'text',ph:'phName',ac:'name'},
+    company:{label:'fCompany',type:'text',ph:'phCompany',ac:'organization'},
+    email:{label:'fEmail',type:'email',ph:'phEmail',ac:'email'},
+    pass:{label:'fPass',type:SHOWPW?'text':'password',ph:isLogin?'phPassLogin':'phPassReg',ac:isLogin?'current-password':'new-password'}
+  }[k];
+  const toggle=k==='pass'?`<button type="button" class="pw-toggle" id="pw-toggle">${SHOWPW?t('hide'):t('show')}</button>`:'';
+  return `<div class="fld"><label>${t(meta.label)}</label><div class="wrap"><input class="afield" id="f-${k==='pass'?'pass':k}" type="${meta.type}" placeholder="${t(meta.ph)}" autocomplete="${meta.ac}">${toggle}</div></div>`;
+}
+function renderForm(){
+  const isLogin=MODE==='login';
+  $('#tab-login').classList.toggle('on',isLogin);$('#tab-reg').classList.toggle('on',!isLogin);
+  $('#a-title').textContent=isLogin?t('loginTitle'):t('regTitle');
+  $('#a-sub').textContent=isLogin?t('loginSub'):t('regSub');
+  const keys=isLogin?['email','pass']:['name','company','email','pass'];
+  $('#form-fields').innerHTML=keys.map(k=>fieldHTML(k,isLogin)).join('');
+  $('#a-extra').innerHTML=isLogin
+    ? `<div class="row-lr"><label class="chk"><input type="checkbox" checked>${t('remember')}</label><a href="#" id="forgot-link">${t('forgot')}</a></div>`
+    : `<label class="terms"><input type="checkbox" id="f-terms"><span>${t('termsPre')}<a href="#">${t('termsLink')}</a>${t('termsMid')}<a href="#">${t('privacyLink')}</a>${t('termsPost')}</span></label>`;
+  $('#a-submit').innerHTML=(isLogin?t('loginBtn'):t('regBtn'))+' →';
+  $('#a-switch-prompt').textContent=isLogin?t('switchToReg'):t('switchToLogin');
+  $('#a-switch-link').textContent=isLogin?t('switchToRegLink'):t('switchToLoginLink');
+  const pw=$('#pw-toggle');if(pw)pw.onclick=()=>{SHOWPW=!SHOWPW;const inp=$('#f-pass');if(inp)inp.type=SHOWPW?'text':'password';pw.textContent=SHOWPW?t('hide'):t('show');};
+  const fl=$('#forgot-link');if(fl)fl.onclick=e=>{e.preventDefault();toast(t('forgotSoon'));};
+  const em=$('#f-email');if(em&&preEmail)em.value=preEmail;
+  $('#f-pass')&&$('#f-pass').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submit();}});
 }
 function applyLang(){
-  LANG=pickLang();
-  document.documentElement.lang=LANG;
-  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(v==null)return;if(/<[a-z][\s\S]*>/i.test(v))el.innerHTML=v;else el.textContent=v;});
-  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});
-  document.title=t('page_title');
-  setModeLabels();
-  renderDemoBars();
+  LANG=pickLang();document.documentElement.lang=LANG;document.title=t('page_title');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'));});
   document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  renderSpectrum();renderTrust();renderForm();
 }
-function setModeLabels(){const reg=mode==='register';
-  $('title').textContent=reg?t('title_register'):t('title_login');
-  $('sub').textContent=reg?t('sub_register'):t('sub_login');
-  $('submit').textContent=reg?t('submit_register'):t('submit_login');}
-function setMode(m){mode=m;const reg=m==='register';
-  $('reg-fields').classList.toggle('hidden',!reg);
-  $('reg-benefits').classList.toggle('hidden',!reg);
-  $('tab-login').classList.toggle('on',!reg);$('tab-reg').classList.toggle('on',reg);
-  setModeLabels();}
-$('tab-login').onclick=()=>setMode('login');$('tab-reg').onclick=()=>setMode('register');
+function setMode(m){MODE=m;renderForm();}
+
 document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
-$('submit').onclick=async()=>{
-  $('err').classList.add('hidden');
-  const body={email:$('email').value.trim(),password:$('password').value};
-  if(mode==='register'){body.name=$('name').value.trim();body.company=$('company').value.trim();
-    // язык интерфейса и часовой пояс определяем автоматически из браузера
+$('#tab-login').onclick=()=>setMode('login');
+$('#tab-reg').onclick=()=>setMode('register');
+$('#a-switch-link').onclick=e=>{e.preventDefault();setMode(MODE==='login'?'register':'login');};
+$('#g-btn').onclick=()=>toast(t('googleSoon')); // Google OAuth — подключим позже (кнопка готова)
+
+async function submit(e){
+  e&&e.preventDefault();
+  const isLogin=MODE==='login';
+  const email=($('#f-email')||{}).value?.trim()||'';
+  const password=($('#f-pass')||{}).value||'';
+  if(!email||!password){toast(t('errGeneric'));return;}
+  const body={email,password};
+  if(!isLogin){
+    body.name=($('#f-name')||{}).value?.trim()||'';
+    body.company=($('#f-company')||{}).value?.trim()||'';
     body.uiLang=(navigator.language||'').slice(0,2).toLowerCase();
-    try{body.timezone=Intl.DateTimeFormat().resolvedOptions().timeZone;}catch(e){}}
-  const btn=$('submit');btn.disabled=true;btn.textContent=t('submitting');
+    try{body.timezone=Intl.DateTimeFormat().resolvedOptions().timeZone;}catch(e){}
+    const terms=$('#f-terms');if(terms&&!terms.checked){toast(t('termsRequired'));return;}
+  }
+  const btn=$('#a-submit');const orig=btn.innerHTML;btn.disabled=true;btn.textContent=t('submitting');
   try{
-    const r=await fetch('/api/'+mode,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const r=await fetch('/api/'+MODE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await r.json();
-    if(!r.ok){$('err').textContent=d.error||t('err_generic');$('err').classList.remove('hidden');btn.disabled=false;setMode(mode);return;}
-    location.href=new URLSearchParams(location.search).get('next')||'/app';
-  }catch(e){$('err').textContent=t('err_network');$('err').classList.remove('hidden');btn.disabled=false;setMode(mode);}
-};
-$('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('submit').click();});
-const p=new URLSearchParams(location.search);if(p.get('mode')==='register')setMode('register');
-// предзаполнение email из лид-магнита лендинга (?email=...)
-const preEmail=p.get('email')||(function(){try{return localStorage.getItem('hp_lead_email')||'';}catch(e){return '';}})();
-if(preEmail){$('email').value=preEmail;if(p.get('mode')!=='register')setMode('register');}
-// Регистрация может быть закрыта администратором портала
-fetch('/api/meta').then(r=>r.json()).then(m=>{
-  if(m&&m.registrationOpen===false){$('tab-reg').style.display='none';if(mode==='register')setMode('login');}
-}).catch(()=>{});
+    if(!r.ok){toast(d.error||t('errGeneric'));btn.disabled=false;btn.innerHTML=orig;return;}
+    location.href=params.get('next')||'/app';
+  }catch(err){toast(t('errNetwork'));btn.disabled=false;btn.innerHTML=orig;}
+}
+$('#auth-form').addEventListener('submit',submit);
+
+// анимированная фирменная сеть на брендовой стороне
+function neural(){
+  const cv=$('#neuAuth');if(!cv)return;const host=$('#auth-brand');
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  let alive=true,gen=0,M={x:0,y:0,on:false};
+  host.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();if(!r.width)return;M.x=(e.clientX-r.left)*(cv.__W/r.width);M.y=(e.clientY-r.top)*(cv.__H/r.height);M.on=true;});
+  host.addEventListener('mouseleave',()=>{M.on=false;});
+  function start(){
+    gen++;const g=gen;const ctx=cv.getContext('2d');const dpr=Math.min(2,window.devicePixelRatio||1);
+    const W=cv.offsetWidth||600,H=cv.offsetHeight||760;cv.__W=W;cv.__H=H;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const C=a=>'rgba('+P.net[0]+','+P.net[1]+','+P.net[2]+','+a+')',A=a=>'rgba('+P.acc[0]+','+P.acc[1]+','+P.acc[2]+','+a+')',rnd=(a,b)=>a+Math.random()*(b-a);
+    const hubs=7,MR=210,G=[];
+    for(let i=0;i<hubs;i++){const sc=3+Math.floor(Math.random()*2),sats=[];for(let k=0;k<sc;k++)sats.push({ang:rnd(0,6.28),rad:rnd(20,34),spd:rnd(-.006,.006)});
+      G.push({x:rnd(46,W-46),y:rnd(46,H-46),vx:rnd(-.16,.16),vy:rnd(-.16,.16),rot:rnd(0,6.28),sats});}
+    const hex=(cx,cy,r,rot)=>{ctx.beginPath();for(let s=0;s<6;s++){const a=rot+s*Math.PI/3,x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;s?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();};
+    (function loop(){if(!alive||g!==gen)return;
+      ctx.clearRect(0,0,W,H);
+      if(M.on){const rg=ctx.createRadialGradient(M.x,M.y,0,M.x,M.y,240);rg.addColorStop(0,A(.06));rg.addColorStop(1,A(0));ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);}
+      for(const h of G){if(M.on){const dx=M.x-h.x,dy=M.y-h.y,d=Math.hypot(dx,dy);if(d<230&&d>1){h.vx+=dx/d*.05;h.vy+=dy/d*.05;}}
+        h.vx*=.99;h.vy*=.99;h.x+=h.vx;h.y+=h.vy;if(h.x<34||h.x>W-34)h.vx*=-1;if(h.y<34||h.y>H-34)h.vy*=-1;
+        h.x=Math.max(34,Math.min(W-34,h.x));h.y=Math.max(34,Math.min(H-34,h.y));h.rot+=.0016;}
+      for(let i=0;i<G.length;i++)for(let j=i+1;j<G.length;j++){const a=G[i],b=G[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<270){ctx.strokeStyle=C((1-d/270)*.16);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+      for(const h of G){const hover=M.on&&Math.hypot(h.x-M.x,h.y-M.y)<MR,em=hover?1:0;
+        ctx.strokeStyle=C(.1+em*.22);ctx.lineWidth=1.2;hex(h.x,h.y,25,h.rot);ctx.stroke();
+        for(const st of h.sats){st.ang+=st.spd;const sx=h.x+Math.cos(st.ang)*st.rad,sy=h.y+Math.sin(st.ang)*st.rad;
+          ctx.strokeStyle=C(.3+em*.4);ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(h.x,h.y);ctx.lineTo(sx,sy);ctx.stroke();
+          ctx.fillStyle=C(.68+em*.3);ctx.beginPath();ctx.arc(sx,sy,1.7,0,7);ctx.fill();}
+        if(M.on){const d=Math.hypot(h.x-M.x,h.y-M.y);if(d<MR){ctx.strokeStyle=A((1-d/MR)*.7);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(h.x,h.y);ctx.lineTo(M.x,M.y);ctx.stroke();}}
+        ctx.fillStyle=A(.9);ctx.beginPath();ctx.arc(h.x,h.y,hover?3.4:2.7,0,7);ctx.fill();
+        if(hover){const rr=15;const gg=ctx.createRadialGradient(h.x,h.y,0,h.x,h.y,rr);gg.addColorStop(0,A(.5));gg.addColorStop(1,A(0));ctx.fillStyle=gg;ctx.beginPath();ctx.arc(h.x,h.y,rr,0,7);ctx.fill();}}
+      if(M.on){const rr=24;const gg=ctx.createRadialGradient(M.x,M.y,0,M.x,M.y,rr);gg.addColorStop(0,A(.85));gg.addColorStop(1,A(0));ctx.fillStyle=gg;ctx.beginPath();ctx.arc(M.x,M.y,rr,0,7);ctx.fill();}
+      requestAnimationFrame(loop);})();
+  }
+  start();let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(start,220);});
+}
+
+// старт
+if(params.get('mode')==='register')MODE='register';
+if(preEmail&&params.get('mode')!=='register')MODE='register';
 applyLang();
+neural();
+// регистрация может быть закрыта админом портала
+fetch('/api/meta').then(r=>r.json()).then(m=>{if(m&&m.registrationOpen===false){$('#tab-reg').style.display='none';if(MODE==='register')setMode('login');}}).catch(()=>{});
 </script>
 </body></html>

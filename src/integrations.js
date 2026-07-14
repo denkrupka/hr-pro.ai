@@ -100,11 +100,66 @@ async function http(url, opts) {
 }
 
 // ---------- Resend: e-mail ----------
-async function sendEmail(settings, { to, subject, html, text }) {
+// ---------- Дизайн-обёртка письма (единый шаблон HR PRO AI для всех писем) ----------
+const EMAIL_I18N = {
+  ru: { eyebrow: 'Уведомление', tagline: 'чувствует людей', help: 'Помощь', privacy: 'Конфиденциальность', terms: 'Условия', unsub: 'Отписаться',
+    legal: 'Вы получили это письмо, потому что участвуете в подборе через платформу HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
+  pl: { eyebrow: 'Powiadomienie', tagline: 'czuje ludzi', help: 'Pomoc', privacy: 'Prywatność', terms: 'Regulamin', unsub: 'Wypisz się',
+    legal: 'Otrzymujesz tę wiadomość, ponieważ bierzesz udział w rekrutacji przez platformę HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
+  en: { eyebrow: 'Notification', tagline: 'reads people', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe',
+    legal: 'You received this email because you are part of a hiring process on the HR PRO AI platform. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warsaw, Poland.' },
+};
+const LOGO_SVG = (stroke, w) => `<svg viewBox="0 0 64 64" fill="none" style="width:${w}px;height:${w}px;vertical-align:middle"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="${stroke}" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="${stroke}" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.2" stroke="${stroke}" stroke-width="1.8"/><circle cx="41" cy="21" r="3.4" stroke="${stroke}" stroke-width="1.8"/><circle cx="46" cy="35" r="3" stroke="${stroke}" stroke-width="1.8"/><circle cx="29" cy="45" r="2.8" stroke="${stroke}" stroke-width="1.8"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>`;
+function wrapEmailHtml(opts) {
+  const o = opts || {};
+  const L = EMAIL_I18N[o.lang] || EMAIL_I18N.ru;
+  const base = (o.baseUrl || '').replace(/\/+$/, '');
+  const headline = o.headline || o.subject || '';
+  const eyebrow = o.eyebrow || L.eyebrow;
+  const helpUrl = 'mailto:help@hr-pro.ai';
+  const privacyUrl = base + '/privacy?lang=' + (o.lang || 'ru');
+  const termsUrl = base + '/terms?lang=' + (o.lang || 'ru');
+  const unsubUrl = o.unsubUrl || (base + '/unsubscribe');
+  const neural = `<svg viewBox="0 0 320 120" preserveAspectRatio="none" style="position:absolute;right:0;top:0;height:100%;width:60%;opacity:.5"><g stroke="rgba(150,140,255,.5)" stroke-width="1" fill="none"><line x1="60" y1="30" x2="150" y2="60"/><line x1="150" y1="60" x2="240" y2="28"/><line x1="150" y1="60" x2="210" y2="100"/><line x1="150" y1="60" x2="90" y2="98"/><line x1="240" y1="28" x2="300" y2="66"/></g><g fill="rgba(180,170,255,.75)"><circle cx="60" cy="30" r="3"/><circle cx="240" cy="28" r="3.4"/><circle cx="210" cy="100" r="2.8"/><circle cx="90" cy="98" r="2.6"/><circle cx="300" cy="66" r="3"/></g><circle cx="150" cy="60" r="5" fill="#FF7A5C"/></svg>`;
+  const cta = o.ctaLabel && o.ctaUrl ? `<div style="text-align:center;margin:6px 0 26px"><a href="${o.ctaUrl}" style="display:inline-block;font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;padding:15px 40px;border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${o.ctaLabel}</a>${o.ctaNote ? `<div style="font-size:12px;color:#6b7492;margin-top:12px">${o.ctaNote}</div>` : ''}</div>` : '';
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"></head>
+<body style="margin:0;background:#05060d;font-family:Inter,Arial,system-ui,sans-serif">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#05060d;padding:28px 12px"><tr><td align="center">
+<table role="presentation" cellpadding="0" cellspacing="0" style="max-width:660px;width:100%;border-collapse:collapse;background:#0d1024;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden">
+  <tr><td style="position:relative;overflow:hidden;padding:34px 40px 30px;background:radial-gradient(ellipse 80% 130% at 78% 0%,rgba(139,108,255,.28),transparent 62%),linear-gradient(160deg,#141634,#0a0b1c)">
+    ${neural}
+    <div style="position:relative;display:inline-block">${LOGO_SVG('#fff', 30)} <span style="font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:16px;color:#fff;letter-spacing:-.01em;vertical-align:middle">HR&nbsp;PRO&nbsp;AI</span></div>
+    <div style="position:relative;margin-top:22px">
+      <span style="display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff">${eyebrow}</span>
+      <div style="font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:24px;line-height:1.25;letter-spacing:-.02em;color:#fff;margin:10px 0 0;max-width:440px">${headline}</div>
+    </div>
+  </td></tr>
+  <tr><td style="padding:30px 40px 6px;font-size:14.5px;line-height:1.62;color:#c3cbe4">
+    ${o.bodyHtml || ''}
+    ${cta}
+  </td></tr>
+  <tr><td style="padding:22px 40px 30px;background:rgba(0,0,0,.22);border-top:1px solid rgba(255,255,255,.06)">
+    <div style="margin-bottom:12px">${LOGO_SVG('#8b93ad', 20)} <span style="font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:13px;color:#c3cbe4;vertical-align:middle">HR PRO AI</span> <span style="font-size:12px;color:#6b7492">· ${L.tagline}</span></div>
+    <p style="font-size:11.5px;line-height:1.6;color:#6b7492;margin:0 0 10px;max-width:460px">${L.legal}</p>
+    <div style="font-size:11.5px">
+      <a href="${helpUrl}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.help}</a>
+      <a href="${privacyUrl}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.privacy}</a>
+      <a href="${termsUrl}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.terms}</a>
+      <a href="${unsubUrl}" style="color:#8b93ad;text-decoration:none">${L.unsub}</a>
+    </div>
+  </td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+async function sendEmail(settings, { to, subject, html, text, lang, baseUrl, unsubUrl, eyebrow, headline, ctaLabel, ctaUrl, ctaNote, raw }) {
   const c = cfgOf(settings, 'resend');
   if (!c.apiKey) return { skipped: true, reason: 'Resend не настроен' };
   const body = { from: c.from || 'onboarding@resend.dev', to: Array.isArray(to) ? to : [to], subject: subject || '' };
-  if (html) body.html = html; else body.text = text || '';
+  // Оборачиваем содержимое в единый дизайн письма HR PRO AI (если не raw)
+  if (!raw) {
+    const bodyHtml = html || (text ? String(text).replace(/\n/g, '<br>') : '');
+    body.html = wrapEmailHtml({ lang, baseUrl, unsubUrl, subject, eyebrow, headline, ctaLabel, ctaUrl, ctaNote, bodyHtml });
+  } else if (html) body.html = html; else body.text = text || '';
   const d = await http('https://api.resend.com/emails', {
     method: 'POST', headers: { Authorization: 'Bearer ' + c.apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -189,4 +244,4 @@ async function zadarmaBalance(settings) {
   return { ok: true, balance: d.balance, currency: d.currency };
 }
 
-module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, sendSms, listVoices, startCall, vapiPing, zadarmaBalance, zadarmaRequest };
+module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, vapiPing, zadarmaBalance, zadarmaRequest };

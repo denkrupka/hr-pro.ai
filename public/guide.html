@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR PRO AI — Как нанимать сильных: методика Виннер/Дуэр</title>
+<meta name="description" content="Практический гайд по найму на результат: тесты Резалт и Тулс, типы Виннер и Дуэр, 6 шагов процесса и автоворонка HR PRO AI.">
+<meta name="theme-color" content="#070813">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;padding:0}
+body{background:#070813;font-family:'Inter',system-ui,sans-serif;color:#9aa3bf}
+img{max-width:100%;width:100%;display:block;mix-blend-mode:multiply}
+strong{color:#eef1fb;font-weight:600}
+em{color:#b7a8ff;font-style:normal;font-weight:500}
+a{color:#b7a8ff;text-decoration:none}a:hover{color:#d3c9ff}
+ul{list-style:none;padding:0;margin:16px 0;display:flex;flex-direction:column;gap:10px}
+li{padding-left:24px;position:relative;color:#c3cbe4;font-size:15px;line-height:1.55}
+li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,#8b6cff,#6f97ff)}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7b8299;font-weight:500;text-align:left;padding:0 14px 10px;border-bottom:1px solid rgba(255,255,255,.1)}
+td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06);color:#9aa3bf;vertical-align:top;line-height:1.5}
+td:first-child{color:#ffb3a0;font-weight:500}
+td:last-child{color:#c3cbe4}
+tr:last-child td{border-bottom:none}
+html{scroll-behavior:smooth}
+@keyframes floatIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head><body>
+<!-- STICKY NAV -->
+<div style="position:sticky;top:0;z-index:50;background:rgba(9,11,20,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)">
+  <div style="max-width:900px;margin:0 auto;padding:12px 44px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <div style="display:flex;align-items:center;gap:11px">
+      <svg viewBox="0 0 64 64" fill="none" style="width:28px;height:30px;mix-blend-mode:normal"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.2" stroke="#fff" stroke-width="1.8"/><circle cx="41" cy="21" r="3.4" stroke="#fff" stroke-width="1.8"/><circle cx="46" cy="35" r="3" stroke="#fff" stroke-width="1.8"/><circle cx="29" cy="45" r="2.8" stroke="#fff" stroke-width="1.8"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>
+      <span style="font-family:'Manrope';font-weight:800;font-size:16px;letter-spacing:-.02em;color:#eef1fb">HR&nbsp;PRO&nbsp;AI</span>
+      <span style="width:1px;height:16px;background:rgba(255,255,255,.18)"></span>
+      <span style="font-family:'Inter';font-size:12.5px;color:#aab2cf;letter-spacing:.01em">Технология, которая чувствует людей</span>
+    </div>
+    <a href="/login?tab=register" style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:11px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-weight:700;font-size:14px;font-family:'Manrope';letter-spacing:-.01em;box-shadow:0 8px 22px rgba(123,108,255,.34);white-space:nowrap">Попробовать бесплатно</a>
+  </div>
+</div>
+
+<div class="gwrap" style="background:radial-gradient(ellipse 90% 30% at 30% 0,#111634,rgba(7,8,19,0) 68%),linear-gradient(rgba(120,140,220,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(120,140,220,.04) 1px,transparent 1px);background-size:auto,52px 52px,52px 52px;padding:0 16px 46px;min-height:100%">
+<div style="max-width:900px;width:100%;margin:0 auto;padding:0 44px;box-sizing:border-box">
+
+  <!-- HERO -->
+  <section class="gsec" style="padding:8px 0 46px;position:relative">
+    <svg viewBox="0 0 400 200" preserveAspectRatio="none" style="position:absolute;right:-20px;top:-10px;width:56%;height:auto;opacity:.32;pointer-events:none;mix-blend-mode:normal"><g stroke="rgba(150,140,255,.55)" stroke-width="1" fill="none"><line x1="70" y1="40" x2="180" y2="90"/><line x1="180" y1="90" x2="300" y2="36"/><line x1="180" y1="90" x2="260" y2="150"/><line x1="180" y1="90" x2="100" y2="150"/><line x1="300" y1="36" x2="370" y2="96"/></g><g fill="rgba(185,175,255,.8)"><circle cx="70" cy="40" r="3.2"/><circle cx="300" cy="36" r="3.6"/><circle cx="260" cy="150" r="3"/><circle cx="100" cy="150" r="2.8"/><circle cx="370" cy="96" r="3.2"/></g><circle cx="180" cy="90" r="6" fill="#FF7A5C"/></svg>
+    <div style="position:relative">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff;display:flex;align-items:center;gap:10px;margin-bottom:20px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Бесплатный гайд для тех, кто нанимает</div>
+      <h1 style="font-family:'Manrope';font-weight:800;font-size:50px;line-height:1.04;letter-spacing:-.035em;margin:0 0 20px;background:linear-gradient(116deg,#f4f6ff 16%,#c3b8ff 56%,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;max-width:640px">7 признаков Виннера,<br>которые видно на собеседовании</h1>
+      <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0;max-width:600px">Как за 15 минут отличить человека с результатами от имитатора бурной деятельности — и перестать платить за красивые слова.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:30px">
+        <a href="/login?tab=register" style="display:inline-flex;align-items:center;gap:9px;padding:16px 34px;border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-weight:700;font-size:16px;font-family:'Manrope';letter-spacing:-.01em;box-shadow:0 14px 34px rgba(123,108,255,.4)">Проверить кандидата бесплатно →</a>
+        <a href="#how" style="display:inline-flex;align-items:center;gap:8px;padding:16px 26px;border-radius:13px;border:1px solid rgba(255,255,255,.14);color:#c3cbe4;font-weight:600;font-size:15px;font-family:'Manrope'">Как это работает</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-family:'Inter';font-size:13px;color:#7b8299">
+        <span style="display:inline-flex;align-items:center;gap:7px"><span style="color:#43e0a0;font-weight:700">✓</span> Бесплатный старт без карты</span>
+        <span style="display:inline-flex;align-items:center;gap:7px"><span style="color:#43e0a0;font-weight:700">✓</span> Первый отчёт за 15 минут</span>
+        <span style="display:inline-flex;align-items:center;gap:7px"><span style="color:#43e0a0;font-weight:700">✓</span> RU · PL · EN</span>
+      </div>
+    </div>
+    <div style="margin:32px 0 12px">
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Один из них принесёт вам результат. Второй — отчёт о том, как он старался.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 26px;margin-top:24px">
+      <div style="font-size:14px;color:#c3cbe4;padding:11px 0 11px 34px;position:relative;border-top:1px solid rgba(255,255,255,.06)"><span style="position:absolute;left:0;top:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;font-weight:500">01</span>Три типа людей, которые приходят к вам на собеседование</div>
+      <div style="font-size:14px;color:#c3cbe4;padding:11px 0 11px 34px;position:relative;border-top:1px solid rgba(255,255,255,.06)"><span style="position:absolute;left:0;top:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;font-weight:500">02</span>Одно слово, которое превращает собеседование в рентген</div>
+      <div style="font-size:14px;color:#c3cbe4;padding:11px 0 11px 34px;position:relative;border-top:1px solid rgba(255,255,255,.06)"><span style="position:absolute;left:0;top:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;font-weight:500">03</span>7 признаков человека, который даёт результат</div>
+      <div style="font-size:14px;color:#c3cbe4;padding:11px 0 11px 34px;position:relative;border-top:1px solid rgba(255,255,255,.06)"><span style="position:absolute;left:0;top:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;font-weight:500">04</span>Формула: результат против имитации</div>
+      <div style="font-size:14px;color:#c3cbe4;padding:11px 0 11px 34px;position:relative;border-top:1px solid rgba(255,255,255,.06)"><span style="position:absolute;left:0;top:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;font-weight:500">05</span>9 вопросов, на которых Вейтер выдаёт себя</div>
+      <div style="font-size:14px;color:#c3cbe4;padding:11px 0 11px 34px;position:relative;border-top:1px solid rgba(255,255,255,.06)"><span style="position:absolute;left:0;top:11px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;font-weight:500">06</span>Чек-лист «Продукт должности» под вашу вакансию</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 0">
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px 20px;text-align:center"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#eef1fb;letter-spacing:-.02em">11 мин</b><span style="font-size:12px;color:#6b7492">на чтение</span></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px 20px;text-align:center"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:#eef1fb;letter-spacing:-.02em">9</b><span style="font-size:12px;color:#6b7492">готовых вопросов</span></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px 20px;text-align:center"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:#eef1fb;letter-spacing:-.02em">1</b><span style="font-size:12px;color:#6b7492">чек-лист под вашу вакансию</span></div>
+    </div>
+  </section>
+
+  <!-- БОЛЬ -->
+  <section class="gsec" style="padding:50px 0;border-top:1px solid rgba(255,255,255,.07)">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Начнём с неприятного</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Посчитайте, во сколько вам обошлась последняя ошибка найма</h2>
+    <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 13px">Оклад × 4 месяца, пока вы надеялись, что он «раскачается». Плюс налоги. Плюс время руководителя. Плюс сорванные сроки. Плюс два хороших сотрудника, которые тащили его работу и устали. Плюс ещё два месяца на новый поиск.</p>
+    <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 13px">Но самое дорогое здесь — не деньги. Самое дорогое — <strong>полгода из жизни вашей компании</strong>, которые вы уже не вернёте.</p>
+    <div style="font-family:'Manrope';font-weight:800;font-size:27px;line-height:1.25;letter-spacing:-.025em;background:linear-gradient(120deg,#fff,#ff9a80 55%,#ff7a5c);-webkit-background-clip:text;background-clip:text;color:transparent;padding:22px 0 22px 24px;border-left:2px solid #ff7a5c;margin:26px 0 0">И самое обидное: на собеседовании он вам понравился.<br>Он всем нравится. Он потому и дошёл до вас.</div>
+  </section>
+
+  <!-- ДВЕ ИСТОРИИ -->
+  <section class="gsec" style="padding:50px 0;border-top:1px solid rgba(255,255,255,.07)">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Две истории, которые повторяются в каждой компании</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Через две минуты один из них перестаёт для вас существовать</h2>
+    <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13);margin:26px 0 0"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Слева — воздух. Справа — деталь.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin-top:34px">
+      <div style="background:linear-gradient(90deg,rgba(255,122,92,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #ff7a5c;border-radius:18px;padding:22px 24px">
+        <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">История первая</h4>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Костюм, часы, кожаная папка, безупречная речь. Резюме с логотипами компаний, которые вы знаете. Он произносит слова «стратегия», «выстраивание системы», «оптимизация процессов». Хочется встать, когда он входит.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Вы задаёте четыре простых вопроса — и через две минуты он <strong>просто исчезает</strong>. За красивыми словами не оказывается ни одного законченного дела.</p>
+      </div>
+      <div style="background:linear-gradient(90deg,rgba(67,224,160,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #43e0a0;border-radius:18px;padding:22px 24px">
+        <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">История вторая</h4>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Мятая одежда, резюме на полстранички, говорит скупо. Вы уже мысленно попрощались. Вы спрашиваете: «Что было результатом вашей работы токарем?»</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Он отвечает мгновенно, одним словом: <strong>«Деталь»</strong>. Готовая, по чертежу, принятая контролем, без брака. Ещё три вопроса — и <strong>вам хочется встать перед ним</strong>.</p>
+      </div>
+    </div>
+    <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:26px 0 0">Парадокс? Нет. Вы просто впервые за долгое время увидели человека, а не его упаковку. Разница между этими двумя — вся суть этого гайда.</p>
+  </section>
+
+  <!-- РАЗДЕЛ 01 -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Раздел 01</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Три типа людей, которые приходят к вам на собеседование</h2>
+    <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0 0 34px">Забудьте на минуту про должности, дипломы и опыт. Есть более важное деление — и оно решает всё.</p>
+
+    <div style="display:grid;grid-template-columns:38% 1fr;gap:30px;align-items:center;margin-bottom:30px">
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(67,224,160,.28);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(67,224,160,.12)"></div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Виннер · от англ. winner</div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Производит результат</h3>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Не деятельность, не занятость, не отчёты — результат. Не ждёт идеальных условий, полного бюджета и подробной инструкции. Ему дают задачу — он приносит сделанное. Не дают — всё равно приносит, потому что видит, что нужно.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Он оставляет след везде: на работе, в спорте, в гараже, в семье. <strong>Таких единицы из десятков — и их регулярно не замечают</strong>, потому что многие из них плохо продают себя на собеседовании. Они привыкли делать, а не рассказывать.</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center;margin-bottom:30px">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Делатель · «дуер», от англ. doer</div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Делает то, что сказали</h3>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Честный исполнитель. Не берёт на себя лишнего, но и своё не бросает. <strong>Это не плохой человек.</strong> На делателях держится любая компания: производство, бухгалтерия, поддержка, склад. Их большинство.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Им нужны понятные правила, поставленная задача и руководитель рядом. В этих условиях они дают отличный результат. Проблема начинается, когда делателя ставят туда, где нужен виннер: вы ждёте инициативы — а он ждёт указаний. <em>Виноват тот, кто ставил.</em></p>
+      </div>
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:38% 1fr;gap:30px;align-items:center">
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(255,122,92,.3);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(255,122,92,.13)"></div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вейтер · от англ. wait — ждать</div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Это делатель, который перестал делать</h3>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Он ждёт. Задачу. Инструкцию. Бюджет. «Нормальные условия», «адекватное руководство», понедельника, окончания кризиса.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">При этом он <strong>очень занят</strong>. Он в чатах. Он на совещаниях. У него открыто сорок вкладок. Он готовит отчёт о том, как готовит отчёты. Со стороны — кипучая деятельность. На выходе — ноль.</p>
+      </div>
+    </div>
+
+    <div style="font-family:'Manrope';font-weight:800;font-size:27px;line-height:1.25;letter-spacing:-.025em;background:linear-gradient(120deg,#fff,#ff9a80 55%,#ff7a5c);-webkit-background-clip:text;background-clip:text;color:transparent;padding:22px 0 22px 24px;border-left:2px solid #ff7a5c;margin:26px 0">Вейтер — самый дорогой человек в вашей компании. Он занимает ставку, время руководителя и место, на котором мог бы стоять тот, кто даёт результат.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center;margin-top:10px">
+      <div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Имитация бурной деятельности</h3>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Он не жулик и не лентяй. Он искренне уверен, что работает. Просто в его картине мира результат не связан с его усилиями — результат зависит от рынка, начальства, коллег и обстоятельств.</p>
+        <div style="padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Плохая новость</b>На собеседовании вейтер выглядит лучше всех. У него было больше времени на подготовку. Он прошёл сорок интервью и точно знает, что вы хотите услышать. Слово «результат» он произносит чаще всех в комнате. Просто у него его нет.</div>
+        <div style="background:linear-gradient(90deg,rgba(67,224,160,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #43e0a0;border-radius:14px;padding:16px 18px;margin-top:14px;font-size:14.5px;line-height:1.55;color:#c3cbe4"><strong>Хорошая новость:</strong> он выдаёт себя за две минуты. Если знать, куда смотреть.</div>
+      </div>
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(255,122,92,.3);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(255,122,92,.13)"></div>
+    </div>
+  </section>
+
+  <!-- РАЗДЕЛ 02 -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Раздел 02</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Одно слово, которое всё меняет: продукт</h2>
+    <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0">Договоримся про одно слово. Оно превратит ваше собеседование из беседы в рентген.</p>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:26px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin:28px 0">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Определение</div>
+      <h3 style="font-family:'Manrope';font-weight:700;font-size:24px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 14px">Продукт — это законченный результат, который имеет ценность для другого человека и который можно передать из рук в руки.</h3>
+      <ul style="margin:0">
+        <li><strong>Он закончен.</strong> Не «занимался», а «сделано».</li>
+        <li><strong>Он нужен кому-то другому.</strong> Его «покупают»: клиент, руководитель, соседний отдел.</li>
+        <li><strong>Его можно передать.</strong> Как деталь. Как оплаченный счёт. Как отремонтированную машину.</li>
+      </ul>
+    </div>
+
+    <table>
+      <tr><th>Должность</th><th>Процесс — так говорит вейтер</th><th>Продукт — так говорит виннер</th></tr>
+      <tr><td style="color:#eef1fb">Токарь</td><td>«Работал на станке»</td><td>Готовая деталь, принятая контролем, без брака</td></tr>
+      <tr><td style="color:#eef1fb">Продавец</td><td>«Вёл клиентов, делал звонки»</td><td>Оплаченный счёт и клиент, который вернулся</td></tr>
+      <tr><td style="color:#eef1fb">Маркетолог</td><td>«Повышал узнаваемость»</td><td>Поток заявок нужного качества по нужной цене</td></tr>
+      <tr><td style="color:#eef1fb">Бухгалтер</td><td>«Вела учёт»</td><td>Сданная в срок отчётность без штрафов</td></tr>
+      <tr><td style="color:#eef1fb">HR</td><td>«Проводил собеседования»</td><td>Сотрудник, который вышел, прошёл испытательный и даёт результат</td></tr>
+      <tr><td style="color:#eef1fb">Руководитель</td><td>«Управлял отделом»</td><td>Результаты отдела и люди, которые выросли</td></tr>
+    </table>
+
+    <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13);margin:28px 0 0"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Слева — движение. Справа — результат.</div>
+
+    <div style="font-family:'Manrope';font-weight:800;font-size:27px;line-height:1.25;letter-spacing:-.025em;background:linear-gradient(116deg,#f4f6ff,#c3b8ff 60%,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;padding:22px 0 22px 24px;border-left:2px solid #8b6cff;margin:26px 0 0">Вейтер живёт слева. Виннер живёт справа.<br>Всё, что вам нужно на собеседовании, — понять, где живёт человек напротив.</div>
+  </section>
+
+  <!-- РАЗДЕЛ 03 · 7 признаков -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Раздел 03 · главное</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 12px">7 признаков Виннера</h2>
+    <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0">Никаких сложных методик. Просто слушайте, чем человек меряет свою работу: процессом или продуктом.</p>
+
+    <div style="padding:32px 0;margin-top:8px;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center">
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">01</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Он говорит продуктами, а не обязанностями</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Слушайте глаголы — это самый быстрый детектор.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px"><span style="color:#ffb3a0">Процесс:</span> «отвечал за», «занимался», «участвовал», «вёл», «курировал».<br><span style="color:#43e0a0">Продукт:</span> «сделал», «запустил», «поднял», «сдал», «продал», «построил».</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Виннер отвечает на вопрос «чем вы занимались?» так, будто вы спросили «что вы сделали?». Он просто <strong>не умеет иначе</strong> — он так думает.</p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>Десять минут рассказа о работе — и ни одного законченного дела. Только зоны ответственности и описание процессов.</div>
+        </div>
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+      </div>
+    </div>
+
+    <div style="padding:32px 0;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:38% 1fr;gap:30px;align-items:center">
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">02</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Он конкретен без вашей помощи</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Цифры, сроки, названия, имена, детали появляются сами. Не потому, что он готовился к собеседованию, — а потому, что <strong>это его жизнь, и он её помнит</strong>.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Имитатор конкретизируется только под давлением. И вот главный маркер: чем больше уточняющих вопросов вы задаёте, тем <strong>более размытыми</strong> становятся его ответы. «Ну, примерно…», «где-то на треть», «точных цифр не помню».</p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>Конкретика падает по мере углубления в вопрос. У человека с результатом — наоборот: он ныряет в детали с удовольствием, его не остановить.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:32px 0;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center">
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">03</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Он говорит «я» о результатах и «мы» о команде</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Виннер легко отделяет свой вклад: <em>«Мы построили отдел. Лично я написал скрипты и обучил трёх продавцов — вот их цифры».</em></p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Вейтер делает наоборот. Он прячется за <strong>«мы»</strong> на результатах («мы вывели компанию в лидеры») и за <strong>«они»</strong> на провалах («мне не дали бюджет», «рынок упал»).</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Один вопрос ставит всё на место: <strong>«Что из этого сделали лично вы, своими руками?»</strong></p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>Он не может отделить свой вклад от чужого. Потому что вклада не было.</div>
+        </div>
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+      </div>
+    </div>
+
+    <div style="padding:32px 0;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:38% 1fr;gap:30px;align-items:center">
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">04</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">У него есть результаты и вне работы</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Вот мысль, которая переворачивает найм: <strong>продуктивность — это свойство человека, а не должности.</strong></p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Если человек производит результат, он производит его везде: в институте, в спорте, в гараже, в подработке, в семье, в двенадцать лет на школьном дворе.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Спросите: «Что вы сделали своими руками вне работы?» Виннер загорается: построил, восстановил, организовал, пробежал, собрал команду. У вейтера коллекции нет — его биография звучит как <strong>список мест, где он находился</strong>.</p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>«Да как-то жизнь так сложилась».</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:32px 0;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center">
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">05</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Он показывает «до → после»</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Настоящий результат всегда виден как изменение. Было — стало.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Вопрос-скальпель: <strong>«Что было в компании до вас и что стало после? Чего бы не случилось, если бы вас там не было?»</strong></p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Виннер отвечает почти сразу: было восемь отгрузок в день — стало четырнадцать. Была текучка 60% — стала 20%. Не было отдела — есть отдел. Вейтер в этом месте начинает объяснять, <em>как всё было сложно и как ему мешали</em>.</p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>После человека не осталось ничего, кроме факта его присутствия.</div>
+        </div>
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+      </div>
+    </div>
+
+    <div style="padding:32px 0;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:38% 1fr;gap:30px;align-items:center">
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">06</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Он оживает, когда говорит о сделанном</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Самый честный признак — его невозможно подделать, потому что он телесный.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Спросите виннера о его результатах — меняется темп речи, распрямляется спина, включается энергия. <strong>Ему приятно вспоминать.</strong> Это его гордость, и он редко находит слушателя.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Спросите о результатах вейтера — он тускнеет. Уходит в теорию, в философию, в критику бывших работодателей, в рассказ о своих дипломах и потенциале. <strong>Он не врёт — он искренне не понимает, чего вы от него хотите.</strong></p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>Энергия падает на вопросах о результате и резко растёт на вопросах о зарплате и условиях.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:32px 0;border-top:1px solid rgba(255,255,255,.06)">
+      <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center">
+        <div>
+          <div style="font-family:'Manrope';font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#c3b8ff,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px">07</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Он приходит с целью, а не за условиями</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Спросите: «Какая ваша цель?» — и просто послушайте.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px"><strong>Виннер</strong> говорит о том, чего хочет <em>добиться</em>. И сам начинает спрашивать: за какой результат отвечает должность? Как вы поймёте, что я справился? Какие цифры? Ему нужно видеть поле и ворота.</p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0"><strong>Вейтер</strong> говорит о том, что хочет <em>получить</em>: стабильность, соцпакет, «расти и развиваться». Он спрашивает про график, обед и отпуск.</p>
+          <div style="margin-top:16px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>За сорок минут собеседования — ни одного вопроса о результате, за который он будет отвечать.</div>
+        </div>
+        <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:26px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin-top:34px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Запомните главное</div>
+      <h3 style="font-family:'Manrope';font-weight:700;font-size:23px;line-height:1.3;letter-spacing:-.02em;color:#eef1fb;margin:0">Виннер — это не про харизму, диплом, возраст, костюм и грамотную речь. Это про след, который человек оставляет за собой.</h3>
+      <p style="margin:10px 0 0;color:#ff9a80;font-weight:500;font-size:15px;line-height:1.55">Красивый и приятный вейтер — самая дорогая покупка в вашей жизни.</p>
+    </div>
+  </section>
+
+  <!-- MID CTA -->
+  <section class="gsec" style="padding:14px 0 34px">
+    <div style="border-radius:22px;padding:32px 36px;background:linear-gradient(120deg,rgba(139,108,255,.16),rgba(111,151,255,.07));border:1px solid rgba(139,150,255,.24);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px;box-shadow:0 0 50px rgba(123,108,255,.12)">
+      <div style="max-width:560px">
+        <h3 style="font-family:'Manrope';font-weight:800;font-size:24px;letter-spacing:-.025em;color:#eef1fb;margin:0 0 8px">Не запоминайте 7 признаков — автоматизируйте их</h3>
+        <p style="font-size:15px;line-height:1.55;color:#c3cbe4;margin:0">HR PRO AI задаёт эти вопросы за вас и присылает готовый отчёт: виннер, делатель или вейтер. До собеседования.</p>
+      </div>
+      <a href="/login?tab=register" style="display:inline-flex;align-items:center;gap:9px;padding:16px 30px;border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-weight:700;font-size:15px;font-family:'Manrope';letter-spacing:-.01em;box-shadow:0 14px 34px rgba(123,108,255,.4);white-space:nowrap">Попробовать бесплатно →</a>
+    </div>
+  </section>
+
+  <!-- РАЗДЕЛ 04 · формула -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Раздел 04</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Как отличить результат от имитации</h2>
+    <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0">Простой фильтр. Прогоняйте через него каждое утверждение кандидата.</p>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:28px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin:26px 0;text-align:center">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:15px;line-height:2.2;letter-spacing:.02em;color:#eef1fb"><span style="color:#43e0a0;font-weight:700">РЕЗУЛЬТАТ</span> = что сделано <span style="color:#6b7492">(законченное)</span> <span style="color:#8b6cff">+</span> кем принято <span style="color:#8b6cff">+</span> чем измерено <span style="color:#8b6cff">+</span> что изменилось</div>
+      <p style="font-size:13px;color:#7b8299;margin:12px 0 0;line-height:1.5">Уберите любой из четырёх элементов — и вы получите имитацию.</p>
+    </div>
+
+    <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:34px 0 0">Таблица-переводчик</h3>
+    <table>
+      <tr><th>Он говорит</th><th>Что это на самом деле</th><th>Что спросить немедленно</th></tr>
+      <tr><td>«Занимался развитием направления»</td><td>Процесс без продукта</td><td>«Что появилось в компании благодаря вам, чего не было до вас?»</td></tr>
+      <tr><td>«Мы увеличили продажи»</td><td>Чужой результат</td><td>«Что сделали лично вы? С какой цифры до какой и за какой срок?»</td></tr>
+      <tr><td>«Оптимизировал процессы»</td><td>Слова</td><td>«Какой процесс? Сколько времени и денег он съедал до и после?»</td></tr>
+      <tr><td>«Внедрял CRM»</td><td>Деятельность</td><td>«CRM работает сейчас? Кто ей пользуется? Что изменилось в цифрах?»</td></tr>
+      <tr><td>«Отвечал за команду из 12 человек»</td><td>Размер, а не результат</td><td>«Какой результат давала команда до вас и какой при вас?»</td></tr>
+      <tr><td>«У меня большой опыт в сфере»</td><td>Стаж ≠ результат</td><td>«Назовите три самых сильных результата за этот опыт»</td></tr>
+      <tr><td>«Результат зависел не от меня»</td><td>Картина мира вейтера</td><td>«Приведите пример, когда вы получили результат в плохих условиях»</td></tr>
+    </table>
+
+    <div style="font-family:'Manrope';font-weight:800;font-size:27px;line-height:1.25;letter-spacing:-.025em;background:linear-gradient(116deg,#f4f6ff,#c3b8ff 60%,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;padding:22px 0 22px 24px;border-left:2px solid #8b6cff;margin:26px 0">Опыт — это не годы. Опыт — это количество законченных результатов.</div>
+    <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Человек может десять лет ходить на работу и не иметь ни одного продукта. И это не редкость. <strong>Это норма рынка.</strong></p>
+  </section>
+
+  <!-- РАЗДЕЛ 05 · 9 вопросов -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Раздел 05</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Вопросы, на которых Вейтер выдаёт себя</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center;margin:28px 0">
+      <div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Сначала — пять правил. Без них вопросы не сработают</h3>
+        <ul style="margin:0">
+          <li><strong>Предупредите</strong>, что интервью будет коротким и вопросы непривычными. Это убирает заготовленные речи.</li>
+          <li><strong>Не подсказывайте. Никогда.</strong> Задали вопрос — молчите. Пауза — ваш главный инструмент.</li>
+          <li><strong>Не формулируйте за него.</strong> Это ошибка №1: HR влюбляется и начинает додумывать. Именно так вейтеры попадают в компании.</li>
+          <li><strong>Не спорьте и не хвалите.</strong> Вы собираете факты, а не проводите экзамен.</li>
+          <li><strong>Слушайте не ответ, а способ отвечать.</strong> Скорость. Конкретику. Энергию. Куда он сворачивает.</li>
+        </ul>
+      </div>
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+    </div>
+
+    <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13);margin:34px 0 0"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Один вопрос про продукт — и упаковка перестаёт работать</div>
+
+    <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:38px 0 0">9 вопросов</h3>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:16px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 01</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Что было продуктом вашей работы?»</h4>
+      <p style="font-size:13px;color:#7b8299;margin:0;line-height:1.5">Сначала объясните слово: «Продукт — это законченный результат, который можно передать другому».</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Называет продукт существительным. Мгновенно. «Деталь». «Оплаченный счёт». «Запущенный цех».</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Перечисляет обязанности. Или философствует: «Мой продукт — это моя энергия и вовлечённость».</p></div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 02</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Назовите три ваших конкретных результата на этой должности»</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Называет три. Потом ещё пять, если его не остановить.</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">С трудом выдавливает один — и тот общий.</p></div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 03</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Что стало лучше благодаря лично вам? Чего бы не произошло, если бы вас там не было?»</h4>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Это тест на <strong>след</strong>. Самый безжалостный вопрос в списке.</p>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 04</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Какой ваш самый большой результат в жизни — не обязательно на работе?»</h4>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Тест на продуктивность как черту характера. Тут спрятаться уже негде: работу можно приукрасить, жизнь — нет.</p>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 05</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Расскажите случай, когда вы получили результат в плохих условиях: не было денег, людей, поддержки»</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">У него таких историй десятки. Это его любимые истории.</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Объясняет, почему в плохих условиях результат невозможен. Слушайте внимательно — вы слушаете его картину мира. Так он будет объяснять вам свои провалы.</p></div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 06</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Почему вы ушли с прошлого места?»</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Упёрся в потолок результата, хочет большего масштаба. О людях — спокойно.</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Обвиняет. Начальник, коллектив, интриги, «не оценили», «не дали».</p></div>
+      </div>
+      <div style="margin-top:14px;padding:12px 16px;border-radius:10px;border-left:2px solid #ff7a5c;background:rgba(255,122,92,.07);font-size:14px;line-height:1.5;color:#c3cbe4"><b style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:5px;font-weight:500">Красный флаг</b>Три обвинения за одно собеседование — и вы четвёртый в этом списке. Просто вы пока об этом не знаете.</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 07</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Кто может подтвердить ваши результаты? Можно с ним связаться?»</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Называет имя и телефон без паузы. Часто — с гордостью.</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Мнётся и объясняет, почему связаться нельзя.</p></div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 08</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Какая ваша цель? Чего вы хотите добиться за ближайшие два года?»</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Цель звучит как результат.</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Цель звучит как условия.</p></div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 24px;margin-top:14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Вопрос 09</div>
+      <h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">«Что вы хотите узнать о должности?»</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;margin-top:14px">
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(67,224,160,.08),rgba(67,224,160,.02));border-right:1px solid rgba(255,255,255,.09)"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;margin-bottom:7px;font-weight:500">Виннер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Спрашивает про результат, цифры, полномочия, ресурсы.</p></div>
+        <div style="padding:16px 18px;background:linear-gradient(180deg,rgba(255,122,92,.08),rgba(255,122,92,.02))"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;margin-bottom:7px;font-weight:500">Вейтер</div><p style="font-size:14px;color:#c3cbe4;margin:0;line-height:1.5">Спрашивает про график, отпуск, обязанности и испытательный срок.</p></div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:26px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin-top:30px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Как посчитать результат интервью</div>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Если после этих вопросов у вас на руках <strong>три и больше конкретных, проверяемых, законченных результата</strong> — перед вами человек, который производит результат.</p>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Если хотя бы один результат вам пришлось <strong>вытаскивать клещами</strong> — вы уже знаете ответ. Просто вам не хочется его признавать, потому что человек-то приятный.</p>
+      <p style="color:#ff9a80;font-weight:500;margin:12px 0 0;font-size:15px;line-height:1.55">Ваша жалость — самая дорогая эмоция в найме.</p>
+    </div>
+  </section>
+
+  <!-- РАЗДЕЛ 06 · чек-лист -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Раздел 06 · рабочий инструмент</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Чек-лист «Продукт должности»</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center;margin:26px 0 10px">
+      <div>
+        <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0 0 14px">Половина ошибок найма совершается <strong>до</strong> собеседования — в тот момент, когда вакансию описали как список обязанностей.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 13px">Потому что если вы сами не знаете, за каким результатом зовёте человека, — никакое интервью вас не спасёт. Вы наймёте того, кто лучше говорит.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Возьмите свою текущую вакансию и заполните. <strong>10 минут</strong> — и ваша воронка найма изменится навсегда.</p>
+      </div>
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:8px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin-top:24px">
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">01</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Должность</h4><dc-import name="ChecklistField" question="Должность" criteria="Указана конкретная должность или роль (например «менеджер по продажам», «токарь»). Не общие слова вроде «специалист»." placeholder="Например: руководитель отдела продаж" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">02</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Один законченный результат, который должен появляться в компании благодаря этому человеку</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">Существительным, а не глаголом. <span style="color:#ff9a80">✗ «работа с клиентами»</span> &nbsp;·&nbsp; <span style="color:#43e0a0">✓ «оплаченные счета от новых клиентов»</span></div><dc-import name="ChecklistField" question="Один законченный результат должности" criteria="Продукт должен быть выражен существительным (результат), а не процессом или глаголом. Хорошо: «оплаченные счета от новых клиентов». Плохо: «работа с клиентами», «занимался продажами», «ведение переговоров»." placeholder="Существительным: что появляется благодаря этому человеку" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">03</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Кто «покупает» этот продукт внутри компании? Кому он передаётся из рук в руки?</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">Если продукт никому не нужен — это не продукт, а занятость.</div><dc-import name="ChecklistField" question="Кто «покупает» этот продукт внутри компании?" criteria="Назван конкретный получатель продукта (клиент, руководитель, соседний отдел), которому результат передаётся из рук в руки. Если получателя нет — это занятость, а не продукт." placeholder="Кому передаётся результат" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">04</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">По каким 2–3 цифрам вы поймёте, что продукт есть?</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">Если цифр нет — либо продукта нет, либо вы его не додумали. Не идите дальше, пока не появятся цифры.</div><dc-import name="ChecklistField" question="По каким 2–3 цифрам вы поймёте, что продукт есть?" criteria="Приведены 2-3 конкретные измеримые метрики или цифры (штуки, деньги, сроки, проценты), по которым видно наличие продукта. Общие слова без чисел не подходят." placeholder="2–3 конкретные метрики с числами" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">05</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Как выглядит продукт через 3 месяца?</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">Испытательный срок — это не «адаптация». Это <strong>первая поставка продукта</strong>.</div><dc-import name="ChecklistField" question="Как выглядит продукт через 3 месяца?" criteria="Описан конкретный измеримый результат к концу испытательного срока (первая поставка продукта), а не «адаптация», «вхождение в должность» или «знакомство с командой»." placeholder="Конкретный результат к концу испытательного срока" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">06</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Что НЕ является продуктом этой должности?</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">Выпишите 3–5 процессов-ловушек: отчёты, совещания, «активность в CRM», «присутствие на объекте».</div><dc-import name="ChecklistField" question="Что НЕ является продуктом этой должности?" criteria="Перечислены 3-5 процессов-ловушек, которые НЕ являются продуктом (отчёты, совещания, активность в CRM, присутствие на объекте, звонки без результата)." placeholder="3–5 процессов-ловушек" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">07</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Финальная проверка: «Если завтра этот человек не выйдет на работу — чего в компании не будет?»</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">Если честный ответ «ничего не изменится» — вам не нужен этот сотрудник. Вам нужна другая должность.</div><dc-import name="ChecklistField" question="Если завтра человек не выйдет — чего в компании не будет?" criteria="Назван конкретный результат, который исчезнет без этого человека. Если честный ответ «ничего не изменится» — должность не нужна, и это надо признать." placeholder="Какой результат исчезнет без этого человека" hint-size="100%,96px"></dc-import></div>
+      <div style="padding:18px 0"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b6cff;letter-spacing:.1em;margin-bottom:6px">08</div><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0">Соберите в одну строку</h4><div style="font-size:13.5px;color:#7b8299;margin:6px 0 0;line-height:1.5">«Продукт должности ___ — это ___, который принимает ___, и мы измеряем его в ___».</div><dc-import name="ChecklistField" question="Соберите продукт должности в одну строку" criteria="Формула заполнена целиком и конкретно: «Продукт должности [должность] — это [продукт-существительное], который принимает [получатель], и мы измеряем его в [метрика]». Все четыре части должны быть заполнены и конкретны." placeholder="Продукт должности … — это …, который принимает …, и мы измеряем его в …" hint-size="100%,112px"></dc-import></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:26px">
+      <div style="background:linear-gradient(90deg,rgba(67,224,160,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #43e0a0;border-radius:18px;padding:20px 22px"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Реакция виннера</div><p style="font-size:15px;line-height:1.55;color:#c3cbe4;margin:0">Кивнёт и начнёт спрашивать про цифры и ресурсы.</p></div>
+      <div style="background:linear-gradient(90deg,rgba(255,122,92,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #ff7a5c;border-radius:18px;padding:20px 22px"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Реакция вейтера</div><p style="font-size:15px;line-height:1.55;color:#c3cbe4;margin:0">Начнёт объяснять, почему это зависит не только от него.</p></div>
+    </div>
+    <p style="font-size:13px;color:#7b8299;margin:14px 0 0;text-align:center;line-height:1.5">Произнесите эту строку вслух кандидату — и получите ответ за пятнадцать секунд.<br>Сохраните эту фразу и используйте в найме при подборе кандидатов на эту должность.</p>
+  </section>
+
+  <!-- ПЛОХАЯ НОВОСТЬ -->
+  <section class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#ff7a5c;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Теперь главная плохая новость</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Почему завтра утром это не сработает</h2>
+    <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0">Всё, что вы прочитали, работает. Но есть три причины, по которым у 9 из 10 руководителей это не сработает. Давайте честно.</p>
+
+    <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(255,122,92,.3);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(255,122,92,.13);margin:28px 0 0"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Вторник, 9 утра. 87 откликов. Два совещания. Найм — между ними.</div>
+
+    <div style="display:flex;flex-direction:column;gap:18px;margin-top:30px">
+      <div style="background:linear-gradient(90deg,rgba(255,122,92,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #ff7a5c;border-radius:18px;padding:22px 24px"><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">1. Вы влюбляетесь</h4><p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Живой человек напротив — это симпатия, жалость, обаяние, общие знакомые. Вы прочитали семь признаков, вы всё поняли — а он вам просто <strong>понравился</strong>. И вы начали помогать ему формулировать ответы. Так делают все. Против этого нужен факт, полученный <strong>до</strong> встречи.</p></div>
+      <div style="background:linear-gradient(90deg,rgba(255,122,92,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #ff7a5c;border-radius:18px;padding:22px 24px"><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">2. Он готовился дольше вас</h4><p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Он прошёл сорок собеседований за год. Вы проводите четыре. Он знает, что вы хотите услышать слово «результат», — и он его скажет. С правильной интонацией.</p></div>
+      <div style="background:linear-gradient(90deg,rgba(255,122,92,.07),rgba(255,255,255,.03) 40%);border:1px solid rgba(255,255,255,.09);border-left:2px solid #ff7a5c;border-radius:18px;padding:22px 24px"><h4 style="font-family:'Manrope';font-weight:700;font-size:17px;letter-spacing:-.01em;color:#eef1fb;margin:0 0 8px">3. У вас физически нет времени</h4><p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">На одну вакансию приходит 60–200 откликов. Провести с каждым честное тридцатиминутное интервью <strong>невозможно</strong>. Поэтому вы читаете резюме — то есть документ, который кандидат <strong>написал сам о себе</strong>. Это как выбирать хирурга по его рассказу о том, какой он хирург.</p></div>
+    </div>
+
+    <div style="font-family:'Manrope';font-weight:800;font-size:27px;line-height:1.25;letter-spacing:-.025em;background:linear-gradient(116deg,#f4f6ff,#c3b8ff 60%,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent;padding:22px 0 22px 24px;border-left:2px solid #8b6cff;margin:26px 0">Интервью — это скальпель. Но скальпелем нельзя пилить лес.</div>
+    <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Сначала нужен фильтр, который отсеет тех, кому просто нечего рассказать. И только потом — интервью, на котором вы включаете все семь признаков.</p>
+  </section>
+
+  <!-- СИСТЕМА -->
+  <section id="how" class="gsec gpb" style="padding:52px 0;border-top:1px solid rgba(255,255,255,.07);break-before:page;scroll-margin-top:80px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff;display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Решение</div>
+    <h2 style="font-family:'Manrope';font-weight:800;font-size:32px;line-height:1.15;letter-spacing:-.03em;color:#eef1fb;margin:0 0 16px">Как это делаем мы: HR-PRO.AI</h2>
+    <p style="font-size:18px;line-height:1.55;color:#c3cbe4;margin:0">Портал, который делает ровно то, чего вам не хватает во вторник в 9 утра.</p>
+
+    <div style="margin:34px 0 10px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Шаг 1 · тест Result</div>
+      <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Есть ли у человека результаты</h3>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Вы одним нажатием отправляете ссылку <strong>всем откликнувшимся</strong>. Кандидат отвечает на вопросы у себя дома — ваше время: ноль минут.</p>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Система показывает главное: <strong>этот человек производит результаты или имитирует деятельность.</strong> Виннер, делатель или вейтер. Есть ли за ним след — в работе и в жизни.</p>
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(67,224,160,.28);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(67,224,160,.12);margin:22px 0 0"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Из 87 откликов остаётся не 30 собеседований, а 6</div>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:18px 0 0">И на этих шести вам <strong>есть о чём говорить</strong> — потому что человеку есть что рассказать.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center;margin-top:40px">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Шаг 2 · тест Tools</div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Какими инструментами он это делает</h3>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Второй тест вы отправляете <strong>только тем, кого уже позвали на интервью</strong>.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Он показывает личные качества человека — его рабочие инструменты: как он общается, как принимает решения, как ведёт себя под давлением, что им движет, где он силён, где ему будет тяжело, как им управлять и как он приживётся в команде.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Отчёт приходит <strong>до</strong> собеседования. Вы садитесь напротив кандидата, уже зная, о чём его спрашивать. Никаких «расскажите о себе» — сразу по существу.</p>
+      </div>
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+    </div>
+
+    <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:48px 0 0">Два правила, в которых спрятан весь метод</h3>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:26px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin-top:18px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Правило 01</div>
+      <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Никогда не меняйте порядок. Сначала Result, потом Tools</h3>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Личные качества <strong>в отрыве от результата не значат ничего</strong>. Если человеку нечего рассказать о своих результатах — неважно, какой он коммуникабельный, стрессоустойчивый и обаятельный. Вы с ним не сработаетесь.</p>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Сначала — <strong>есть ли результат</strong>. Потом — какой он человек. Все остальные порядки — это найм по симпатии.</p>
+      <div style="border-radius:20px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 12px 30px rgba(0,0,0,.35);margin-top:20px"></div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:26px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin-top:20px">
+      <div style="display:grid;grid-template-columns:1fr 38%;gap:30px;align-items:center">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Правило 02</div>
+          <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Не отсекайте результативных из-за «неидеального» Tools</h3>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Эту ошибку совершают почти все новички. Видят в отчёте «низкая настойчивость» — и говорят: «в продажи не годится». <strong>Так делать нельзя.</strong></p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Если у человека <strong>есть</strong> результаты в этой сфере — значит, его инструменты позволяют ему их получать. Пусть они странные. Пусть не такие, как у вас. <em>Результат уже доказал, что они работают.</em></p>
+          <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Tools нужен не для того, чтобы отсеивать людей. Он нужен, чтобы <strong>понимать, как с человеком работать</strong>.</p>
+        </div>
+        <div style="border-radius:20px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 12px 30px rgba(0,0,0,.35)"></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:38% 1fr;gap:30px;align-items:center;margin-top:34px">
+      <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#6b7492;display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>И ещё одно · человеческое</div>
+        <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:0 0 10px">Отвечайте кандидатам сразу</h3>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Человек потратил на вас своё время и честно ответил на ваши вопросы. Оставить его без ответа — самое дорогое, что вы можете сделать со своей репутацией на рынке труда.</p>
+        <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">А хорошим людям нужно отвечать <strong>быстро</strong>. Их и так забирают быстро.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Manrope';font-weight:700;font-size:22px;line-height:1.28;letter-spacing:-.02em;color:#eef1fb;margin:48px 0 0">Что вы получаете</h3>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+      <div style="display:flex;gap:13px;align-items:flex-start"><span style="color:#43e0a0;font-weight:700;font-size:15px;flex:none;line-height:1.55">✓</span><span style="font-size:15px;line-height:1.55;color:#c3cbe4">Вместо 30 собеседований — 6. Освободившиеся часы возвращаются в бизнес.</span></div>
+      <div style="display:flex;gap:13px;align-items:flex-start"><span style="color:#43e0a0;font-weight:700;font-size:15px;flex:none;line-height:1.55">✓</span><span style="font-size:15px;line-height:1.55;color:#c3cbe4">Решение по фактам, а не по симпатии, настроению и обаянию.</span></div>
+      <div style="display:flex;gap:13px;align-items:flex-start"><span style="color:#43e0a0;font-weight:700;font-size:15px;flex:none;line-height:1.55">✓</span><span style="font-size:15px;line-height:1.55;color:#c3cbe4">Единый стандарт: <strong>любой</strong> руководитель нанимает одинаково хорошо — а не «как чувствует».</span></div>
+      <div style="display:flex;gap:13px;align-items:flex-start"><span style="color:#43e0a0;font-weight:700;font-size:15px;flex:none;line-height:1.55">✓</span><span style="font-size:15px;line-height:1.55;color:#c3cbe4">Вы перестаёте платить зарплату за имитацию бурной деятельности.</span></div>
+      <div style="display:flex;gap:13px;align-items:flex-start"><span style="color:#43e0a0;font-weight:700;font-size:15px;flex:none;line-height:1.55">✓</span><span style="font-size:15px;line-height:1.55;color:#c3cbe4">Вы начинаете <strong>видеть виннеров</strong> — включая тех, кто плохо продаёт себя на собеседовании. Их много. Их никто не берёт. <strong>Забирайте.</strong></span></div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(139,150,255,.22);border-radius:22px;padding:26px 30px;box-shadow:0 0 50px rgba(123,108,255,.12),inset 0 1px 0 rgba(255,255,255,.07);margin-top:30px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#43e0a0;display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Самый быстрый способ проверить нас — не поверить нам</div>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0 0 12px">Отправьте <strong>Result</strong> двум своим действующим сотрудникам. Тому, кто у вас звезда, и тому, в ком вы давно сомневаетесь, но всё откладываете разговор.</p>
+      <p style="font-size:15px;line-height:1.62;color:#9aa3bf;margin:0">Через несколько минут вы получите два отчёта — и увидите, совпадает ли система с тем, что вы и так знали в глубине души. <strong>Обычно после этого вопросов больше не остаётся.</strong></p>
+    </div>
+  </section>
+
+  <!-- CTA / SIGNUP -->
+  <section id="signup" class="gsec" style="padding:44px 0 20px;scroll-margin-top:80px">
+    <div style="border-radius:24px;overflow:hidden;border:1px solid rgba(139,150,255,.22);background:linear-gradient(180deg,#eef2ff,#e3e9fb);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 50px rgba(123,108,255,.13)"></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492;margin-top:11px;text-align:center">Он ответил одним словом: «Деталь»</div>
+
+    <div style="text-align:center;padding:44px 34px;border-radius:24px;margin-top:34px;background:radial-gradient(ellipse 80% 100% at 50% 0,#1a1440,#0b0d18 75%);border:1px solid rgba(139,150,255,.22);box-shadow:0 0 60px rgba(123,108,255,.16),inset 0 1px 0 rgba(255,255,255,.07);position:relative;overflow:hidden">
+      <svg viewBox="0 0 400 160" preserveAspectRatio="none" style="position:absolute;left:50%;top:14px;transform:translateX(-50%);width:70%;height:auto;opacity:.28;pointer-events:none;mix-blend-mode:normal"><g stroke="rgba(150,140,255,.5)" stroke-width="1" fill="none"><line x1="60" y1="46" x2="180" y2="86"/><line x1="180" y1="86" x2="320" y2="40"/><line x1="180" y1="86" x2="250" y2="140"/><line x1="180" y1="86" x2="90" y2="132"/></g><g fill="rgba(185,175,255,.8)"><circle cx="60" cy="46" r="3"/><circle cx="320" cy="40" r="3.4"/><circle cx="250" cy="140" r="2.8"/><circle cx="90" cy="132" r="2.6"/></g><circle cx="180" cy="86" r="5.5" fill="#FF7A5C"/></svg>
+      <div style="position:relative">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff;display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:14px"><span style="width:22px;height:1px;background:currentColor;display:inline-block;flex:none"></span>Что сделать прямо сейчас</div>
+        <h2 style="font-family:'Manrope';font-weight:800;font-size:30px;line-height:1.15;letter-spacing:-.03em;margin:0 0 6px;background:linear-gradient(116deg,#f4f6ff,#c3b8ff 60%,#8b6cff);-webkit-background-clip:text;background-clip:text;color:transparent">Перестаньте угадывать</h2>
+        <p style="max-width:520px;margin:0 auto 8px;font-size:16px;line-height:1.55;color:#c3cbe4">Одно собеседование стоит вам час жизни. Одна ошибка найма — полгода.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin:22px auto;text-align:left;max-width:560px">
+          <div style="padding:14px 18px 14px 52px;position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:14.5px;line-height:1.5;color:#c3cbe4"><span style="position:absolute;left:18px;top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b6cff;font-weight:700">01</span>Зайдите на <a href="/login?tab=register" style="font-family:'Manrope';font-weight:800;font-size:17px;letter-spacing:-.01em;color:#a89bff;text-decoration:none">HR-PRO.AI</a> и создайте аккаунт — это пара минут.</div>
+          <div style="padding:14px 18px 14px 52px;position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:14.5px;line-height:1.5;color:#c3cbe4"><span style="position:absolute;left:18px;top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b6cff;font-weight:700">02</span>Заполните чек-лист «Продукт должности» под свою текущую вакансию.</div>
+          <div style="padding:14px 18px 14px 52px;position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:14.5px;line-height:1.5;color:#c3cbe4"><span style="position:absolute;left:18px;top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b6cff;font-weight:700">03</span>Отправьте <strong>Result</strong> первым десяти кандидатам, которые уже лежат у вас в почте. Сравните отчёты с тем, что вы думали о них по резюме.</div>
+          <div style="padding:14px 18px 14px 52px;position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:12px;font-size:14.5px;line-height:1.5;color:#c3cbe4"><span style="position:absolute;left:18px;top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b6cff;font-weight:700">04</span>Позовите на интервью только тех, у кого есть результат. И проведите его по девяти вопросам из этого гайда.</div>
+        </div>
+        <div style="max-width:440px;margin:6px auto 0">
+          <a href="/login?tab=register" style="display:block;width:100%;box-sizing:border-box;padding:16px;border-radius:12px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-weight:700;font-size:16px;font-family:'Manrope';letter-spacing:-.01em;box-shadow:0 12px 30px rgba(123,108,255,.4);text-align:center;text-decoration:none">Начать в HR PRO AI →</a>
+          <div style="font-size:12px;color:#6b7492;text-align:center;line-height:1.5;margin-top:10px">Бесплатно · без карты · отписка в один клик</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;color:#7b8299;line-height:1.6;padding-top:22px;margin-top:26px;border-top:1px solid rgba(255,255,255,.06)">
+      <p style="margin:0 0 12px"><b style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#6b7492;text-transform:uppercase">P.S.</b><br>Помните того токаря, который на вопрос о продукте ответил одним словом: «Деталь»? Он сейчас где-то работает. Возможно, у вашего конкурента — потому что тот не побоялся посмотреть на результат, а не на упаковку. А может быть, его резюме прямо сейчас лежит у вас в почте на 43-й строчке. Сразу под тем красивым парнем в костюме.</p>
+      <p style="margin:0"><b style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#6b7492;text-transform:uppercase">P.P.S.</b><br>Самый интересный отчёт вы получите про себя самого. Многие руководители начинают именно с этого.</p>
+    </div>
+
+    <div style="padding:30px 0 0;margin-top:26px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6b7492">
+      <span>HR PRO AI · Мы раскрываем личность, чтобы вы создавали сильные команды</span>
+      <span>hr-pro.ai</span>
+    </div>
+  </section>
+
+  
+    <a href="/login?tab=register" style="position:fixed;right:20px;bottom:20px;z-index:60;display:inline-flex;align-items:center;gap:7px;padding:12px 20px;border-radius:12px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-weight:700;font-size:14px;font-family:'Manrope';letter-spacing:-.01em;box-shadow:0 12px 32px rgba(123,108,255,.45);animation:floatIn .35s ease;white-space:nowrap">Попробовать →</a>
+  
+
+</div>
+</div>
+</body></html>
