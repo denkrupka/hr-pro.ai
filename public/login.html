@@ -245,7 +245,7 @@ function renderForm(){
   $('#form-fields').innerHTML=keys.map(k=>fieldHTML(k,isLogin)).join('');
   $('#a-extra').innerHTML=isLogin
     ? `<div class="row-lr"><label class="chk"><input type="checkbox" checked>${t('remember')}</label><a href="#" id="forgot-link">${t('forgot')}</a></div>`
-    : `<label class="terms"><input type="checkbox" id="f-terms"><span>${t('termsPre')}<a href="#">${t('termsLink')}</a>${t('termsMid')}<a href="#">${t('privacyLink')}</a>${t('termsPost')}</span></label>`;
+    : `<label class="terms"><input type="checkbox" id="f-terms"><span>${t('termsPre')}<a href="/terms?lang=${LANG}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t('termsLink')}</a>${t('termsMid')}<a href="/privacy?lang=${LANG}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t('privacyLink')}</a>${t('termsPost')}</span></label>`;
   $('#a-submit').innerHTML=(isLogin?t('loginBtn'):t('regBtn'))+' →';
   $('#a-switch-prompt').textContent=isLogin?t('switchToReg'):t('switchToLogin');
   $('#a-switch-link').textContent=isLogin?t('switchToRegLink'):t('switchToLoginLink');
