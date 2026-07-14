@@ -2,6 +2,8 @@
 // Первый рабочий срез (auth + конфиг); маршруты наращиваются итеративно, переиспользуя
 // чистые модули портала (scoring/ai/recruitment) по мере портирования.
 import { hashPassword, verifyPassword } from './auth-edge.js';
+import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
+import { notifyCandidate } from './notify-edge.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -331,6 +333,168 @@ async function api(req, env, url) {
     me.password = await hashPassword(body.next);
     await saveUser(me);
     return j({ ok: true });
+  }
+
+  // ── ОТПРАВКА ТЕСТОВ ──
+  const shortCode = (n = 10) => { const a = 'abcdefghijkmnpqrstuvwxyz23456789'; const b = new Uint8Array(n); crypto.getRandomValues(b);
+    return Array.from(b, x => a[x % a.length]).join(''); };
+  const findByCode = async (code) => { const r = await S.select('tests', `code=eq.${encodeURIComponent(code)}&select=data`); return r[0] ? r[0].data : null; };
+  const logBalance = async (u, delta, kind, extra) => S.upsert('balance_log', { id: uid(12),
+    data: { id: uid(12), userId: u.id, delta, kind, comment: '', adminId: null, purchaseId: null, testId: null,
+      balanceAfter: u.balanceTotal, createdAt: new Date().toISOString(), ...(extra || {}) } });
+  const processOf = (vac) => (vac && vac.process) || {};
+  const orderTypes = (types, u, vac) => {
+    const ord = vac ? (processOf(vac).order || ['tools', 'result', 'logic', 'sales'])
+      : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['tools', 'result', 'logic', 'sales']);
+    return types.slice().sort((a, b) => { const ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+  };
+
+  if (p === '/api/tests/send' && m === 'POST') {
+    if (!me) return needAuth();
+    const reqLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : null;
+    let types = Array.isArray(body.types) ? body.types : (body.type ? [body.type] : []);
+    types = types.filter(t => ['tools', 'result', 'logic', 'sales'].includes(t));
+    if (!types.length) return j({ error: 'Выберите хотя бы один тип теста' }, 400);
+    const list = String(body.emails || '').split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+    if (!list.length) return j({ error: 'Укажите email или телефон кандидата' }, 400);
+    const isPhone = s => !/@/.test(s) && /^[+]?[\d][\d\s()\-]{5,}$/.test(s);
+    const available = (me.balanceTotal || 0) - (me.balancePending || 0);
+    const needed = list.length * types.length;
+    if (needed > available) return j({ error: `Недостаточно тестов на балансе (нужно ${needed}, доступно ${available})` }, 400);
+    const vac = body.vacancyId ? await S.one('vacancies', body.vacancyId) : null;
+    if (vac && vac.userId !== me.id) return j({ error: 'Вакансия не найдена' }, 404);
+    types = orderTypes(types, me, vac);
+    const normMail = s => String(s || '').toLowerCase().trim();
+    const normTel = s => String(s || '').replace(/\D/g, '');
+    const existing = (await S.select('participants', `user_id=eq.${me.id}&select=data`)).map(r => r.data);
+    const created = [];
+    for (const rcpt of list) {
+      const phone = isPhone(rcpt);
+      let part = existing.find(x => phone ? (x.tel && normTel(x.tel) === normTel(rcpt)) : (x.email && normMail(x.email) === normMail(rcpt)));
+      if (!part) {
+        part = { id: uid(12), userId: me.id, vacancyId: vac ? vac.id : (body.vacancyId || null),
+          name: '', surname: '', email: phone ? '' : rcpt, sex: '', age: null, tel: phone ? rcpt : '', city: '', stage: 'Без этапа',
+          comment: '', color: '#FFFFFF', starred: false, createdAt: new Date().toISOString() };
+        existing.push(part);
+      } else if (vac && !part.vacancyId) part.vacancyId = vac.id;
+      await S.upsert('participants', { id: part.id, data: part });
+      for (const type of types) {
+        const code = shortCode(10);
+        const test = { id: uid(12), participantId: part.id, userId: me.id, type, status: 'sent',
+          code, lang: reqLang || (vac ? (vac.lang || 'ru') : 'ru'), sentAt: new Date().toISOString(),
+          startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
+        await S.upsert('tests', { id: test.id, data: test });
+        me.balancePending = (me.balancePending || 0) + 1;
+        const link = `${BASE}/t/${code}`;
+        const delivery = await notifyCandidate(env, me, part, test, vac, link, testTitleOf(type));
+        created.push({ email: rcpt, channel: phone ? 'sms' : 'email', type, title: testTitleOf(type), testId: test.id, participantId: part.id, link, delivery });
+      }
+    }
+    await saveUser(me);
+    return j({ created, balance: publicUser(me) });
+  }
+
+  // ── ПРОХОЖДЕНИЕ ТЕСТА (публичное, по коду) ──
+  const testLinkExpired = (t, vac) => {
+    if (t.startedAt || t.status === 'done') return false;
+    const days = (vac && processOf(vac).linkDays) || (me && me.settings && me.settings.linkDays) || 3;
+    if (!t.sentAt) return false;
+    return (Date.now() - new Date(t.sentAt).getTime()) > days * 864e5;
+  };
+  let mTake = p.match(/^\/api\/take\/([\w-]+)$/);
+  if (mTake && m === 'GET') {
+    const test = await findByCode(mTake[1]);
+    if (!test) return j({ error: 'Тест не найден' }, 404);
+    const owner = await S.one('users', test.userId);
+    if (owner && owner.blocked === true) return j({ error: 'Ссылка недоступна' }, 404);
+    if (testLinkExpired(test, null)) return j({ error: 'Срок действия ссылки истёк. Попросите рекрутёра отправить тест повторно.' }, 410);
+    const part = await S.one('participants', test.participantId);
+    const tlang = ['ru', 'pl', 'en'].includes(test.lang) ? test.lang : 'ru';
+    const extra = { brand: { company: (owner && owner.company) || '', logo: (owner && owner.settings && owner.settings.logo) || '' },
+      lockEmail: !!(part && part.email), lockTel: !!(part && part.tel) };
+    const partView = part ? { name: part.name, surname: part.surname, email: part.email, sex: part.sex, age: part.age, tel: part.tel, city: part.city } : null;
+    if (test.type === 'knowledge') {
+      const kq = ((test.knowledge && test.knowledge.questions) || []).map(q => ({ id: q.id, text: q.text, image: q.image || null, video: q.video || null, type: q.type, options: q.options.map(o => o.text) }));
+      return j({ type: 'knowledge', lang: tlang, title: (test.knowledge && test.knowledge.name) || testTitleOf('knowledge'), intro: '',
+        status: test.status, timeLimitSec: null, scaleOptions: null, needProfile: !(part && part.name), questions: kq, ...extra, participant: partView });
+    }
+    const content = testQuestionsFor(test.type, tlang);
+    let questions = content.questions;
+    if (test.type === 'logic') questions = questions.map(q => ({ id: q.id, text: q.text, options: q.options, image: q.image || null, optionImages: q.optionImages || null }));
+    return j({ type: test.type, lang: tlang, title: content.title || testTitleOf(test.type), intro: content.intro || '',
+      status: test.status, timeLimitSec: content.timeLimitSec || null, scaleOptions: content.options || null,
+      needProfile: !(part && part.name), questions, ...extra, participant: partView });
+  }
+  let mStart = p.match(/^\/api\/take\/([\w-]+)\/start$/);
+  if (mStart && m === 'POST') {
+    const test = await findByCode(mStart[1]);
+    if (!test) return j({ error: 'Тест не найден' }, 404);
+    const part = await S.one('participants', test.participantId);
+    if (part) {
+      ['name', 'surname', 'sex', 'age', 'city'].forEach(f => { if (body[f] != null && body[f] !== '') part[f] = body[f]; });
+      if (body.tel && !part.tel) part.tel = String(body.tel).trim();
+      if (body.email && !part.email && /.+@.+\..+/.test(String(body.email))) part.email = String(body.email).trim();
+      await S.upsert('participants', { id: part.id, data: part });
+    }
+    if (!test.startedAt) { test.startedAt = new Date().toISOString(); test.status = 'in_progress'; await S.upsert('tests', { id: test.id, data: test }); }
+    return j({ ok: true });
+  }
+  let mSub = p.match(/^\/api\/take\/([\w-]+)\/submit$/);
+  if (mSub && m === 'POST') {
+    const test = await findByCode(mSub[1]);
+    if (!test) return j({ error: 'Тест не найден' }, 404);
+    if (test.status === 'done') return j({ ok: true, already: true });
+    test.answers = body.answers || {};
+    test.times = body.times || {};
+    test.finishedAt = new Date().toISOString();
+    if (test.startedAt) test.durationSec = Math.round((new Date(test.finishedAt) - new Date(test.startedAt)) / 1000);
+    test.status = 'done';
+    const owner = await S.one('users', test.userId);
+    if (owner && test.balancePending !== true) {
+      owner.balancePending = Math.max(0, (owner.balancePending || 0) - 1);
+      owner.balanceTotal = Math.max(0, (owner.balanceTotal || 0) - 1);
+      test.balancePending = true;
+      await S.upsert('users', { id: owner.id, data: owner });
+      await logBalance(owner, -1, 'test_spend', { testId: test.id, comment: `Пройден тест «${testTitleOf(test.type)}»` });
+    }
+    await S.upsert('tests', { id: test.id, data: test });
+    return j({ ok: true });
+  }
+
+  // ── ОТЧЁТ / СКОРИНГ ──
+  const lang = ['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru';
+  let mRes = p.match(/^\/api\/tests\/([\w-]+)\/result$/);
+  if (mRes && m === 'GET') {
+    if (!me) return needAuth();
+    const test = await S.one('tests', mRes[1]);
+    if (!test || test.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const part = await S.one('participants', test.participantId);
+    const result = localizeResult(computeResult(test, part), test.type, lang);
+    let hint = null;
+    try { hint = resultHintFor(test, result, lang); } catch (e) { hint = null; }
+    return j({ test: { id: test.id, type: test.type, title: testTitleOf(test.type), status: test.status,
+        knName: (test.knowledge && test.knowledge.name) || null, passScore: (test.knowledge && test.knowledge.passScore) || null,
+        startedAt: test.startedAt, finishedAt: test.finishedAt, durationSec: test.durationSec, publicShare: test.publicShare, code: test.code },
+      participant: part ? await participantView(part) : null, result, hint });
+  }
+  let mRate = p.match(/^\/api\/tests\/([\w-]+)\/rate$/);
+  if (mRate && m === 'POST') {
+    if (!me) return needAuth();
+    const test = await S.one('tests', mRate[1]);
+    if (!test || test.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (body.overall != null) test.overallRate = body.overall;
+    if (body.questionId != null) { test.ratings = test.ratings || {}; test.ratings[body.questionId] = body.stars; }
+    await S.upsert('tests', { id: test.id, data: test });
+    return j({ ok: true, ratings: test.ratings, overallRate: test.overallRate });
+  }
+  let mShare = p.match(/^\/api\/tests\/([\w-]+)\/share$/);
+  if (mShare && m === 'POST') {
+    if (!me) return needAuth();
+    const test = await S.one('tests', mShare[1]);
+    if (!test || test.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    test.publicShare = !!body.enabled;
+    await S.upsert('tests', { id: test.id, data: test });
+    return j({ publicShare: test.publicShare, url: `${BASE}/r/${test.id}` });
   }
 
   // маршрут ещё не портирован на edge
