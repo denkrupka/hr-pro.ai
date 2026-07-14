@@ -340,6 +340,115 @@ async function api(req, env, url) {
     if (m === 'DELETE') { await S.del('tests', `participant_id=eq.${cur.id}`); await S.del('participants', `id=eq.${cur.id}`); return j({ ok: true }); }
   }
 
+  // ── АНКЕТЫ (мини-сайт отклика) ──
+  const TRANSLIT = { а: 'a', б: 'b', в: 'v', г: 'g', ґ: 'g', д: 'd', е: 'e', ё: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'i', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'iu', я: 'ia' };
+  const slugify = s => String(s || '').toLowerCase().trim().replace(/[а-яёіїєґ]/g, ch => TRANSLIT[ch] != null ? TRANSLIT[ch] : ch).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48);
+  const companyPrefix = u => slugify(String((u && u.company) || '').trim().split(/\s+/)[0] || '').slice(0, 20);
+  const anketaView = async (a, vacs, parts) => {
+    const vac = (vacs || []).find(v => v.id === a.vacancyId) || (a.vacancyId ? await S.one('vacancies', a.vacancyId) : null);
+    const applied = parts ? parts.filter(x => x.anketaId === a.id).length : (await S.select('participants', `data->>anketaId=eq.${a.id}&select=id`)).length;
+    return { ...a, vacancyName: vac ? vac.name : '', url: `${BASE}/a/${a.slug}`, applied };
+  };
+  const applyAnketaFields = (a, b) => {
+    if (b.title != null) a.title = String(b.title);
+    if (b.vacancyId !== undefined) a.vacancyId = b.vacancyId || null;
+    if (Array.isArray(b.tests)) a.tests = b.tests.filter(t => ['tools', 'result', 'logic', 'sales'].includes(t));
+    ['btnText', 'pageTitle', 'msgApply', 'msgDone', 'description'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
+    ['noCaptcha', 'sendEmail'].forEach(f => { if (b[f] != null) a[f] = !!b[f]; });
+  };
+  const uniqueSlug = async (base, exceptId) => {
+    const existing = (await S.select('anketas', `select=data`)).map(r => r.data);
+    let slug = slugify(base) || ('anketa-' + shortCode(5).toLowerCase()); let s = slug, i = 1;
+    while (existing.find(a => a.slug === s && a.id !== exceptId)) s = slug + '-' + (++i);
+    return s;
+  };
+  const prefixedSlug = async (u, base, exceptId) => {
+    const pfx = companyPrefix(u); let raw = slugify(base) || 'anketa';
+    if (pfx && raw !== pfx && !raw.startsWith(pfx + '-')) raw = pfx + '-' + raw;
+    return uniqueSlug(raw, exceptId);
+  };
+  if (p === '/api/anketas' && m === 'GET') {
+    if (!me) return needAuth();
+    const [ar, vr, pr] = await Promise.all([
+      S.select('anketas', `user_id=eq.${me.id}&select=data`),
+      S.select('vacancies', `user_id=eq.${me.id}&select=data`),
+      S.select('participants', `user_id=eq.${me.id}&select=data`),
+    ]);
+    const vacs = vr.map(r => r.data), parts = pr.map(r => r.data);
+    const list = ar.map(r => r.data).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    return j({ anketas: await Promise.all(list.map(a => anketaView(a, vacs, parts))), prefix: companyPrefix(me) });
+  }
+  if (p === '/api/anketas' && m === 'POST') {
+    if (!me) return needAuth();
+    if (body.vacancyId) {
+      const ex = (await S.select('anketas', `user_id=eq.${me.id}&data->>vacancyId=eq.${body.vacancyId}&select=data`)).map(r => r.data)[0];
+      if (ex) { applyAnketaFields(ex, body); await S.upsert('anketas', { id: ex.id, data: ex }); return j({ anketa: await anketaView(ex) }); }
+    }
+    const slug = await prefixedSlug(me, body.slug || body.title || 'anketa');
+    const a = { id: uid(12), userId: me.id, slug, title: body.title || 'Новая анкета', vacancyId: null, tests: [],
+      btnText: 'Откликнуться', pageTitle: '', msgApply: 'Спасибо! Ваш отклик получен.',
+      msgDone: 'Отлично! Вы ответили на все вопросы. HR-менеджер свяжется с вами после рассмотрения результатов.',
+      noCaptcha: false, sendEmail: true, description: '', createdAt: new Date().toISOString() };
+    applyAnketaFields(a, body);
+    await S.upsert('anketas', { id: a.id, data: a });
+    return j({ anketa: await anketaView(a) });
+  }
+  let mAnk = p.match(/^\/api\/anketas\/([\w-]+)$/);
+  if (mAnk && me) {
+    const a = await S.one('anketas', mAnk[1]);
+    if (!a || a.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (m === 'GET') return j({ anketa: await anketaView(a) });
+    if (m === 'PUT') {
+      if (body.slug != null && slugify(body.slug) && (await prefixedSlug(me, body.slug, a.id)) !== a.slug) a.slug = await prefixedSlug(me, body.slug, a.id);
+      applyAnketaFields(a, body); await S.upsert('anketas', { id: a.id, data: a });
+      return j({ anketa: await anketaView(a) });
+    }
+    if (m === 'DELETE') { await S.del('anketas', `id=eq.${a.id}`); return j({ ok: true }); }
+  }
+  // Публичная анкета + отклик
+  let mAPub = p.match(/^\/api\/a\/([\w-]+)$/);
+  if (mAPub && m === 'GET') {
+    const a = (await S.select('anketas', `data->>slug=eq.${encodeURIComponent(mAPub[1])}&select=data`)).map(r => r.data)[0];
+    if (!a) return j({ error: 'Анкета не найдена' }, 404);
+    const owner = await S.one('users', a.userId);
+    if (owner && owner.blocked === true) return j({ error: 'Ссылка недоступна' }, 404);
+    const avac = a.vacancyId ? await S.one('vacancies', a.vacancyId) : null;
+    const alang = avac && ['ru', 'pl', 'en'].includes(avac.lang) ? avac.lang : 'ru';
+    return j({ anketa: { slug: a.slug, title: a.title, pageTitle: a.pageTitle || a.title, btnText: a.btnText || 'Откликнуться',
+      description: a.description || '', noCaptcha: a.noCaptcha, hasTests: (a.tests || []).length > 0, lang: alang,
+      company: owner ? owner.company : '', logo: owner && owner.settings ? owner.settings.logo : '' } });
+  }
+  let mApply = p.match(/^\/api\/a\/([\w-]+)\/apply$/);
+  if (mApply && m === 'POST') {
+    const a = (await S.select('anketas', `data->>slug=eq.${encodeURIComponent(mApply[1])}&select=data`)).map(r => r.data)[0];
+    if (!a) return j({ error: 'Анкета не найдена' }, 404);
+    const owner = await S.one('users', a.userId);
+    if (owner && owner.blocked === true) return j({ error: 'Ссылка недоступна' }, 404);
+    const email = String(body.email || '').trim();
+    if (!email || !/.+@.+\..+/.test(email)) return j({ error: 'Укажите корректный email' }, 400);
+    const avac = a.vacancyId ? await S.one('vacancies', a.vacancyId) : null;
+    const part = { id: uid(12), userId: a.userId, vacancyId: a.vacancyId || null, anketaId: a.id, src: String(body.src || '').slice(0, 60),
+      name: String(body.name || '').trim(), surname: String(body.surname || '').trim(), email,
+      sex: body.sex || '', age: body.age ? parseInt(body.age, 10) : null, tel: String(body.tel || '').trim(), city: String(body.city || '').trim(),
+      stage: 'Новый', comment: 'Отклик через анкету «' + a.title + '»', color: '#FFFFFF', starred: false, cv: null, createdAt: new Date().toISOString() };
+    await S.upsert('participants', { id: part.id, data: part });
+    const links = [];
+    const alang = avac ? (avac.lang || 'ru') : 'ru';
+    const wantTypes = orderTypes((a.tests || []).filter(t => ['tools', 'result', 'logic', 'sales'].includes(t)), owner || me, avac);
+    for (const type of wantTypes) {
+      const available = owner ? (owner.balanceTotal || 0) - (owner.balancePending || 0) : 0;
+      if (owner && available < 1) continue;
+      const code = shortCode(10);
+      const test = { id: uid(12), participantId: part.id, userId: a.userId, type, status: 'sent', code, lang: alang,
+        sentAt: new Date().toISOString(), startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
+      await S.upsert('tests', { id: test.id, data: test });
+      if (owner) owner.balancePending = (owner.balancePending || 0) + 1;
+      links.push({ type, title: testTitleOf(type), link: `${BASE}/t/${code}` });
+    }
+    if (owner) await S.upsert('users', { id: owner.id, data: owner });
+    return j({ ok: true, links, msgApply: a.msgApply, msgDone: a.msgDone });
+  }
+
   // ── УПРАВЛЕНИЕ ТЕСТАМИ (по кандидату / по тесту) ──
   let mSendT = p.match(/^\/api\/participants\/([\w-]+)\/send-test$/);
   if (mSendT && m === 'POST') {
