@@ -148,9 +148,12 @@ async function api(req, env, url) {
       const gs = await settings();
       if (gs.registrationOpen === false) return redir('/login?err=reg_closed');
       const bonus = Math.max(0, parseInt(gs.signupBonus, 10) || 0);
+      const parts = String(prof.name || '').trim().split(/\s+/);
+      const gname = prof.given_name || parts[0] || email.split('@')[0];
+      const gsurname = prof.family_name || parts.slice(1).join(' ') || '';
       u = { id: uid(12), email, password: '', googleId: prof.sub, avatar: prof.picture || '',
-        name: prof.name || email.split('@')[0], company: '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
-        settings: { uiLang: 'ru' }, role: 'user', blocked: false, adminNote: '', provider: 'google',
+        name: gname, company: '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
+        settings: { uiLang: 'ru', surname: gsurname }, role: 'user', blocked: false, adminNote: '', provider: 'google',
         createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
       if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
       await S.upsert('users', { id: u.id, data: u });
