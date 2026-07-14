@@ -1893,7 +1893,7 @@ function portalNet(id) {
     for (let i = 0; i < hubs; i++) { const sc = 3 + Math.floor(Math.random() * 2), sats = []; for (let k = 0; k < sc; k++) sats.push({ ang: rnd(0, 6.28), rad: rnd(18, 30), spd: rnd(-.006, .006) });
       G.push({ x: rnd(34, W - 34), y: rnd(28, H - 28), vx: rnd(-.16, .16), vy: rnd(-.16, .16), rot: rnd(0, 6.28), sats }); }
     const hex = (cx, cy, r, rot) => { ctx.beginPath(); for (let s = 0; s < 6; s++) { const a = rot + s * Math.PI / 3, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.closePath(); };
-    (function loop() { if (g !== gen || !document.getElementById(id)) return;
+    (function loop() { if (g !== gen || !cv.isConnected) return;
       ctx.clearRect(0, 0, W, H);
       if (M.on) { const rg = ctx.createRadialGradient(M.x, M.y, 0, M.x, M.y, 220); rg.addColorStop(0, A(.06)); rg.addColorStop(1, A(0)); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H); }
       for (const h of G) { if (M.on) { const dx = M.x - h.x, dy = M.y - h.y, d = Math.hypot(dx, dy); if (d < 210 && d > 1) { h.vx += dx / d * .05; h.vy += dy / d * .05; } }
@@ -1913,7 +1913,7 @@ function portalNet(id) {
       requestAnimationFrame(loop);
     })();
   }
-  start(); let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(start, 220); });
+  start(); let rt; const onResize = () => { if (!cv.isConnected) { window.removeEventListener('resize', onResize); return; } clearTimeout(rt); rt = setTimeout(start, 220); }; window.addEventListener('resize', onResize);
 }
 
 // Выбор языка отправляемого теста; по умолчанию подставляется язык вакансии из заявки
