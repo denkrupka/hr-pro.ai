@@ -319,6 +319,80 @@ async function api(req, env, url) {
     const tests = tr.map(r => r.data);
     return j(buildBoard(v, parts, tests, lang));
   }
+  let mVConf = p.match(/^\/api\/vacancies\/([\w-]+)\/config$/);
+  if (mVConf && m === 'PUT') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVConf[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (body.adText != null) v.adText = String(body.adText).slice(0, 40000);
+    if (body.adMode && ['ai', 'manual'].includes(body.adMode)) v.adMode = body.adMode;
+    if (typeof body.published === 'boolean') v.published = body.published;
+    if (Array.isArray(body.workflow)) v.workflow = body.workflow.filter(k => recruit.STAGE_KEYS.includes(k));
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ vacancy: vacFull(v) });
+  }
+  const cleanKnowledge = (input) => {
+    const passScore = Math.max(0, Math.min(100, parseInt(input && input.passScore, 10) || 60));
+    const questions = (Array.isArray(input && input.questions) ? input.questions : []).slice(0, 100).map(q => {
+      const type = q && q.type === 'multi' ? 'multi' : 'single';
+      const options = (Array.isArray(q && q.options) ? q.options : []).slice(0, 12).map(o => ({ text: String((o && o.text) || '').slice(0, 500), correct: !!(o && o.correct) }));
+      return { id: String((q && q.id) || uid(6)).slice(0, 24), text: String((q && q.text) || '').slice(0, 2000),
+        image: String((q && q.image) || '').slice(0, 100000), video: String((q && q.video) || '').slice(0, 2000), type, options };
+    }).filter(q => q.text && q.options.length);
+    return { questions, passScore };
+  };
+  let mVKn = p.match(/^\/api\/vacancies\/([\w-]+)\/knowledge$/);
+  if (mVKn && m === 'PUT') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVKn[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const kts = knowledgeTestsOf(v);
+    const clean = cleanKnowledge(body);
+    const name = String(body.name || '').slice(0, 120);
+    let kt = body.ktId ? kts.find(k => k.id === body.ktId) : null;
+    if (!kt) { kt = { id: uid(8), name: name || ('Тест ' + (kts.length + 1)), questions: [], passScore: 60 }; kts.push(kt); }
+    if (name) kt.name = name;
+    kt.questions = clean.questions; kt.passScore = clean.passScore;
+    v.knowledge = kts[0] ? { questions: kts[0].questions, passScore: kts[0].passScore } : { questions: [], passScore: 60 };
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ knowledgeTests: kts, ktId: kt.id });
+  }
+  let mVKnAi = p.match(/^\/api\/vacancies\/([\w-]+)\/knowledge-ai$/);
+  if (mVKnAi && m === 'POST') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVKnAi[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const r = v.requisitionId ? await S.one('requisitions', v.requisitionId) : null;
+    const questions = air.generateKnowledgeTest((r && r.form) || { position: v.name }, v.adText || '', v.lang || 'ru');
+    if (!questions.length) return j({ error: 'Недостаточно данных в заявке — заполните продукт, обязанности и компетенции' }, 400);
+    const kts = knowledgeTestsOf(v);
+    let kt = body.ktId ? kts.find(k => k.id === body.ktId) : null;
+    if (!kt) { kt = { id: uid(8), name: 'Тест по вакансии (ИИ)', questions: [], passScore: 60 }; kts.push(kt); }
+    kt.questions = questions;
+    v.knowledge = kts[0] ? { questions: kts[0].questions, passScore: kts[0].passScore } : v.knowledge;
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ knowledgeTests: kts, ktId: kt.id });
+  }
+  let mVKnDel = p.match(/^\/api\/vacancies\/([\w-]+)\/knowledge\/([\w-]+)$/);
+  if (mVKnDel && m === 'DELETE') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVKnDel[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    v.knowledgeTests = knowledgeTestsOf(v).filter(k => k.id !== mVKnDel[2]);
+    v.knowledge = v.knowledgeTests[0] ? { questions: v.knowledgeTests[0].questions, passScore: v.knowledgeTests[0].passScore } : { questions: [], passScore: 60 };
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ knowledgeTests: v.knowledgeTests });
+  }
+  let mVMot = p.match(/^\/api\/vacancies\/([\w-]+)\/motivation$/);
+  if (mVMot && m === 'PUT') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVMot[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    v.motivationQuestions = (Array.isArray(body.questions) ? body.questions : []).slice(0, 20)
+      .map(q => ({ id: String((q && q.id) || uid(6)).slice(0, 24), text: String((q && q.text) || '').slice(0, 1000) })).filter(q => q.text);
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ motivationQuestions: v.motivationQuestions });
+  }
 
   // ── PARTICIPANTS ──
   if (p === '/api/participants' && m === 'POST') {
@@ -641,12 +715,10 @@ async function api(req, env, url) {
     if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     part.workflow = part.workflow || {};
     const level = body.level;
-    if (recruit.MOTIVATION_LEVELS.some(x => x.key === level)) {
-      part.workflow.motivation = { level, at: new Date().toISOString() };
-      await S.upsert('participants', { id: part.id, data: part });
-      return j({ ok: true, analysis: recruit.MOTIVATION_LEVELS.find(x => x.key === level) });
-    }
-    return j({ error: 'Неверный уровень мотивации' }, 400);
+    part.workflow.motivation = { level: recruit.MOTIVATION_LEVELS.some(x => x.key === level) ? level : null,
+      answers: body.answers || {}, notes: String(body.notes || '').slice(0, 4000), at: new Date().toISOString() };
+    await S.upsert('participants', { id: part.id, data: part });
+    return j({ ok: true, motivation: part.workflow.motivation });
   }
   let mRef = p.match(/^\/api\/participants\/([\w-]+)\/references$/);
   if (mRef && m === 'POST') {
@@ -654,14 +726,16 @@ async function api(req, env, url) {
     const part = await S.one('participants', mRef[1]);
     if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     part.workflow = part.workflow || {}; part.workflow.references = part.workflow.references || {};
-    if (body.index != null && body.answers) {
+    const idx = body.refIndex;
+    if (idx != null && idx !== '') {
       part.workflow.references.multi = part.workflow.references.multi || {};
-      part.workflow.references.multi[body.index] = { answers: body.answers, at: new Date().toISOString() };
-    } else if (body.answers) {
-      part.workflow.references.answers = body.answers;
+      part.workflow.references.multi[idx] = { answers: body.answers || {}, at: new Date().toISOString() };
+    } else {
+      part.workflow.references.answers = body.answers || {};
+      part.workflow.references.at = new Date().toISOString();
     }
     await S.upsert('participants', { id: part.id, data: part });
-    return j({ ok: true });
+    return j({ ok: true, references: part.workflow.references });
   }
   let mInt = p.match(/^\/api\/participants\/([\w-]+)\/interviews$/);
   if (mInt && m === 'POST') {
@@ -669,10 +743,41 @@ async function api(req, env, url) {
     const part = await S.one('participants', mInt[1]);
     if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     part.workflow = part.workflow || {}; part.workflow.interviews = part.workflow.interviews || [];
-    const iv = { id: uid(8), at: body.at || '', note: String(body.note || ''), createdAt: new Date().toISOString() };
+    const iv = { id: uid(8), createdAt: new Date().toISOString(), date: '', participants: '', impressions: '', scores: '', questions: '', notes: '' };
     part.workflow.interviews.push(iv);
+    part.stage = 'Собеседование';
     await S.upsert('participants', { id: part.id, data: part });
-    return j({ ok: true, interview: iv, interviews: part.workflow.interviews });
+    return j({ interview: iv });
+  }
+  let mIntE = p.match(/^\/api\/participants\/([\w-]+)\/interviews\/([\w-]+)$/);
+  if (mIntE && m === 'PUT') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mIntE[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const iv = ((part.workflow && part.workflow.interviews) || []).find(i => i.id === mIntE[2]);
+    if (!iv) return j({ error: 'Собеседование не найдено' }, 404);
+    ['date', 'participants', 'impressions', 'scores', 'questions', 'notes'].forEach(f => { if (body[f] != null) iv[f] = String(body[f]).slice(0, 4000); });
+    await S.upsert('participants', { id: part.id, data: part });
+    return j({ interview: iv });
+  }
+  let mSendKn = p.match(/^\/api\/participants\/([\w-]+)\/send-knowledge$/);
+  if (mSendKn && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mSendKn[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Кандидат не найден' }, 404);
+    const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    const kts = vac ? knowledgeTestsOf(vac).filter(k => k.questions.length) : [];
+    if (!kts.length) return j({ error: 'Для вакансии не настроена проверка знаний' }, 400);
+    const kt = kts.find(k => k.id === body.ktId) || kts[0];
+    const code = shortCode(10);
+    const test = { id: uid(12), participantId: part.id, userId: me.id, type: 'knowledge', status: 'sent', code,
+      lang: vac ? (vac.lang || 'ru') : 'ru', sentAt: new Date().toISOString(), startedAt: null, finishedAt: null, durationSec: null,
+      answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false,
+      knowledge: { ktId: kt.id, name: kt.name, questions: kt.questions, passScore: kt.passScore }, balancePending: true };
+    await S.upsert('tests', { id: test.id, data: test });
+    const link = `${BASE}/t/${code}`;
+    const delivery = await notifyCandidate(env, me, part, test, vac, link, 'Проверка знаний');
+    return j({ test: { id: test.id, type: 'knowledge', status: 'sent', code }, link, delivery });
   }
 
   // ── CANDIDATES (глобальный список) ──
@@ -867,6 +972,46 @@ async function api(req, env, url) {
     test.publicShare = !!body.enabled;
     await S.upsert('tests', { id: test.id, data: test });
     return j({ publicShare: test.publicShare, url: `${BASE}/r/${test.id}` });
+  }
+
+  // ── СПРАВОЧНИК методики (для конструктора процесса) ──
+  if (p === '/api/recruit/meta' && m === 'GET') {
+    return j({ stages: recruit.WORKFLOW_STAGES.map(s => ({ key: s.key, kind: s.kind, title: recruit.stageTitle(s.key, lang) })),
+      traits: recruit.traitsFor(lang), motivationLevels: recruit.motivationLevelsFor(lang),
+      motivationQuestions: recruit.motivationQuestionsFor(lang), referenceQuestions: recruit.referenceQuestionsFor(lang),
+      fields: recruit.REQUISITION_FIELDS });
+  }
+  // ── СТАТИСТИКА по вакансиям ──
+  if (p === '/api/stats/vacancies' && m === 'GET') {
+    if (!me) return needAuth();
+    const [vr, pr, tr] = await Promise.all([
+      S.select('vacancies', `user_id=eq.${me.id}&select=data`),
+      S.select('participants', `user_id=eq.${me.id}&select=data`),
+      S.select('tests', `user_id=eq.${me.id}&select=data`),
+    ]);
+    const vacs = vr.map(r => r.data), parts = pr.map(r => r.data), tests = tr.map(r => r.data);
+    const rowFor = (vId) => {
+      const ps = parts.filter(x => (vId === null ? !x.vacancyId : x.vacancyId === vId));
+      const pids = new Set(ps.map(x => x.id));
+      const ts = tests.filter(t => pids.has(t.participantId));
+      const byStage = {}; ps.forEach(x => { const st = x.stage || 'Без этапа'; byStage[st] = (byStage[st] || 0) + 1; });
+      return { candidates: ps.length, testsSent: ts.length, testsDone: ts.filter(t => t.status === 'done').length,
+        testsPending: ts.filter(t => t.status !== 'done').length, byStage };
+    };
+    return j({ vacancies: vacs.map(v => ({ id: v.id, name: v.name, lang: v.lang || 'ru', ...rowFor(v.id) })), noVacancy: rowFor(null) });
+  }
+  // ── ПУБЛИЧНЫЙ отчёт по share-ссылке ──
+  let mRPub = p.match(/^\/api\/r\/([\w-]+)$/);
+  if (mRPub && m === 'GET') {
+    const test = await S.one('tests', mRPub[1]);
+    if (!test || !test.publicShare) return j({ error: 'Недоступно' }, 404);
+    const owner = await S.one('users', test.userId);
+    if (owner && owner.blocked === true) return j({ error: 'Ссылка недоступна' }, 404);
+    const part = await S.one('participants', test.participantId);
+    const result = localizeResult(computeResult(test, part), test.type, lang);
+    let hint = null; try { hint = resultHintFor(test, result, lang); } catch (e) {}
+    return j({ test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec },
+      participant: part ? { name: part.name, surname: part.surname, age: part.age } : null, result, hint });
   }
 
   // ── STRIPE: оплата пакетов тестов ──
