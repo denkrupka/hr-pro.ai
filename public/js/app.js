@@ -1889,7 +1889,7 @@ function portalNet(id) {
     gen++; const g = gen; const ctx = cv.getContext('2d'); const dpr = Math.min(2, window.devicePixelRatio || 1);
     const W = cv.offsetWidth || 520, H = cv.offsetHeight || 190; cv.__W = W; cv.__H = H; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const C = a => 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + a + ')', A = a => 'rgba(' + acc[0] + ',' + acc[1] + ',' + acc[2] + ',' + a + ')', rnd = (a, b) => a + Math.random() * (b - a);
-    const hubs = Math.max(6, Math.round(W / 70)), MR = 180; const G = [];
+    const hubs = Math.max(4, Math.round(W / 105)), MR = 180; const G = [];
     for (let i = 0; i < hubs; i++) { const sc = 3 + Math.floor(Math.random() * 2), sats = []; for (let k = 0; k < sc; k++) sats.push({ ang: rnd(0, 6.28), rad: rnd(18, 30), spd: rnd(-.006, .006) });
       G.push({ x: rnd(34, W - 34), y: rnd(28, H - 28), vx: rnd(-.16, .16), vy: rnd(-.16, .16), rot: rnd(0, 6.28), sats }); }
     const hex = (cx, cy, r, rot) => { ctx.beginPath(); for (let s = 0; s < 6; s++) { const a = rot + s * Math.PI / 3, x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.closePath(); };
@@ -2060,7 +2060,7 @@ async function renderHome() {
     <div class="tabs reveal">${vacTabs}</div>
     <div class="topbar reveal d1">
       <div><h1 class="page-h">${t('home_title')}</h1></div>
-      <div class="balance-chip"><span class="muted" style="font-weight:600">${t('balance')}</span><span class="num" id="bal-num">${avail}</span><button class="add" id="add-bal" title="${t('topup')}" aria-label="${t('topup')}">＋</button></div>
+      <button class="tests-chip" id="add-bal" onclick="setView('balance')" title="${t('topup')}"><svg viewBox="0 0 24 24" fill="none" stroke="#43e0a0" stroke-width="1.9"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18" stroke-linecap="round"/></svg><b class="num" id="bal-num">${avail}</b><span>${t('tests_word')}</span></button>
     </div>
     <div class="send-card reveal d2">
       <input class="field" id="emails" autocomplete="off" aria-label="Email" placeholder="${t('send_ph')}">
