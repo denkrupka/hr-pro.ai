@@ -124,6 +124,80 @@ async function api(req, env, url) {
     return j({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
   }
 
+  // ── дальше — только для авторизованных ──
+  const me = await currentUser(env, req);
+  const needAuth = () => j({ error: 'Не авторизован' }, 401);
+
+  if (p === '/api/settings' && m === 'GET') {
+    if (!me) return needAuth();
+    return j({ user: publicUser(me), langs: [{ code: 'ru', name: 'Русский' }, { code: 'uk', name: 'Украи́нский' }, { code: 'pl', name: 'Польский' }, { code: 'en', name: 'Английский' }] });
+  }
+
+  if (p === '/api/balance' && m === 'GET') {
+    if (!me) return needAuth();
+    return j({ balance: publicUser(me) });
+  }
+
+  if (p === '/api/sections' && m === 'GET') {
+    if (!me) return needAuth();
+    const rows = await S.select('sections', `user_id=eq.${me.id}&select=data`);
+    return j({ sections: rows.map(r => r.data).sort((a, b) => (a.order || 0) - (b.order || 0)) });
+  }
+
+  if (p === '/api/vacancies' && m === 'GET') {
+    if (!me) return needAuth();
+    const rows = await S.select('vacancies', `user_id=eq.${me.id}&select=data`);
+    let list = rows.map(r => r.data);
+    const sec = url.searchParams.get('sectionId');
+    if (sec && sec !== 'all') list = list.filter(v => (v.sectionId || '') === sec);
+    list.sort((a, b) => (a.order || 0) - (b.order || 0));
+    return j({ vacancies: list });
+  }
+
+  if (p === '/api/purchases' && m === 'GET') {
+    if (!me) return needAuth();
+    const rows = await S.select('purchases', `user_id=eq.${me.id}&select=data`);
+    return j({ purchases: rows.map(r => r.data).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')) });
+  }
+
+  if (p === '/api/dashboard' && m === 'GET') {
+    if (!me) return needAuth();
+    const [pr, tr, vr, ar] = await Promise.all([
+      S.select('participants', `user_id=eq.${me.id}&select=data`),
+      S.select('tests', `user_id=eq.${me.id}&select=data`),
+      S.select('vacancies', `user_id=eq.${me.id}&select=data`),
+      S.select('anketas', `user_id=eq.${me.id}&select=data`),
+    ]);
+    const parts = pr.map(r => r.data), tests = tr.map(r => r.data), vacs = vr.map(r => r.data), anketas = ar.map(r => r.data);
+    const done = tests.filter(t => t.status === 'done');
+    const byStage = {}; parts.forEach(x => { const s = x.stage || 'Без этапа'; byStage[s] = (byStage[s] || 0) + 1; });
+    const byType = { tools: 0, result: 0, logic: 0, sales: 0 }; tests.forEach(t => { if (byType[t.type] != null) byType[t.type]++; });
+    const doneByType = { tools: 0, result: 0, logic: 0, sales: 0 }; done.forEach(t => { if (doneByType[t.type] != null) doneByType[t.type]++; });
+    const applied = parts.length, tested = new Set(done.map(t => t.participantId)).size;
+    const funnel = [
+      { key: 'applied', label: 'Кандидаты', value: applied },
+      { key: 'tested', label: 'Прошли тест', value: tested },
+      { key: 'interview', label: 'Собеседование', value: byStage['Собеседование'] || 0 },
+      { key: 'reserve', label: 'Резерв', value: byStage['Резерв'] || 0 },
+      { key: 'hired', label: 'Приняты', value: byStage['Принят'] || 0 },
+    ];
+    const days = []; const now = new Date();
+    for (let i = 13; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate() - i); days.push({ date: d.toISOString().slice(0, 10), count: 0 }); }
+    parts.forEach(x => { const day = days.find(d => d.date === (x.createdAt || '').slice(0, 10)); if (day) day.count++; });
+    const vacCounts = vacs.map(v => ({ name: v.name, count: parts.filter(x => x.vacancyId === v.id).length })).sort((a, b) => b.count - a.count).slice(0, 5);
+    const recent = parts.slice().sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')).slice(0, 6).map(x => {
+      const vac = vacs.find(v => v.id === x.vacancyId);
+      return { id: x.id, name: ((x.name || '') + ' ' + (x.surname || '')).trim() || x.email, email: x.email, stage: x.stage || 'Без этапа', createdAt: x.createdAt, vacancyName: vac ? vac.name : '' };
+    });
+    return j({
+      totals: { candidates: parts.length, testsSent: tests.length, testsDone: done.length, testsPending: tests.length - done.length,
+        balance: (me.balanceTotal || 0) - (me.balancePending || 0), vacancies: vacs.length, anketas: anketas.length,
+        applications: parts.filter(x => x.anketaId).length,
+        conversion: applied ? Math.round(100 * (byStage['Принят'] || 0) / applied) : 0 },
+      byStage, byType, doneByType, funnel, days, vacCounts, recent,
+    });
+  }
+
   // маршрут ещё не портирован на edge
   return j({ error: 'edge: маршрут в разработке', path: p }, 501);
 }
