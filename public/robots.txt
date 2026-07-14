@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /app
+Disallow: /admin
+Disallow: /login
+Disallow: /take
+Disallow: /t/
+Disallow: /a/
+Disallow: /r/
+Disallow: /req
+Disallow: /unsubscribe
+
+Sitemap: https://hr-pro.ai/sitemap.xml
