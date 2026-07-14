@@ -244,6 +244,23 @@ async function api(req, env, url) {
       : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['tools', 'result', 'logic', 'sales']);
     return types.slice().sort((a, b) => { const ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
   };
+  // Загрузка файла (base64 dataUrl) в Supabase Storage (bucket media, публичный)
+  const storeMedia = async (dataUrl, name, maxMb = 40) => {
+    const mm = /^data:([^;]+);base64,(.+)$/.exec(String(dataUrl || ''));
+    if (!mm) return null;
+    const bin = atob(mm[2]);
+    if (bin.length > maxMb * 1024 * 1024) return null;
+    const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const extMap = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp', 'video/mp4': 'mp4', 'video/webm': 'webm',
+      'application/pdf': 'pdf', 'application/msword': 'doc', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx' };
+    const ext = extMap[mm[1]] || (String(name || '').split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'bin';
+    const path2 = 'uploads/' + uid(16) + '.' + ext;
+    const base = env.SUPABASE_URL.replace(/\/$/, ''); const key = env.SUPABASE_SECRET_KEY;
+    const r = await fetch(`${base}/storage/v1/object/media/${path2}`, { method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': mm[1], 'x-upsert': 'true' }, body: bytes });
+    if (!r.ok) return null;
+    return `${base}/storage/v1/object/public/media/${path2}`;
+  };
   async function participantView(x) {
     const tr = await S.select('tests', `participant_id=eq.${x.id}&select=data`);
     const tests = tr.map(r => r.data).map(t => ({ id: t.id, type: t.type, title: testTitleOf(t.type), status: t.status,
@@ -514,10 +531,12 @@ async function api(req, env, url) {
     const email = String(body.email || '').trim();
     if (!email || !/.+@.+\..+/.test(email)) return j({ error: 'Укажите корректный email' }, 400);
     const avac = a.vacancyId ? await S.one('vacancies', a.vacancyId) : null;
+    let cv = null;
+    if (body.cvData) { const cvUrl = await storeMedia(body.cvData, body.cvName, 12); if (cvUrl) cv = { name: String(body.cvName || 'resume').slice(0, 120), url: cvUrl }; }
     const part = { id: uid(12), userId: a.userId, vacancyId: a.vacancyId || null, anketaId: a.id, src: String(body.src || '').slice(0, 60),
       name: String(body.name || '').trim(), surname: String(body.surname || '').trim(), email,
       sex: body.sex || '', age: body.age ? parseInt(body.age, 10) : null, tel: String(body.tel || '').trim(), city: String(body.city || '').trim(),
-      stage: 'Новый', comment: 'Отклик через анкету «' + a.title + '»', color: '#FFFFFF', starred: false, cv: null, createdAt: new Date().toISOString() };
+      stage: 'Новый', comment: 'Отклик через анкету «' + a.title + '»', color: '#FFFFFF', starred: false, cv, createdAt: new Date().toISOString() };
     await S.upsert('participants', { id: part.id, data: part });
     const links = [];
     const alang = avac ? (avac.lang || 'ru') : 'ru';
@@ -925,6 +944,7 @@ async function api(req, env, url) {
       ['name', 'surname', 'sex', 'age', 'city'].forEach(f => { if (body[f] != null && body[f] !== '') part[f] = body[f]; });
       if (body.tel && !part.tel) part.tel = String(body.tel).trim();
       if (body.email && !part.email && /.+@.+\..+/.test(String(body.email))) part.email = String(body.email).trim();
+      if (body.cvData) { const cvUrl = await storeMedia(body.cvData, body.cvName, 12); if (cvUrl) part.cv = { name: String(body.cvName || 'resume').slice(0, 120), url: cvUrl }; }
       await S.upsert('participants', { id: part.id, data: part });
     }
     if (!test.startedAt) { test.startedAt = new Date().toISOString(); test.status = 'in_progress'; await S.upsert('tests', { id: test.id, data: test }); }
@@ -986,6 +1006,43 @@ async function api(req, env, url) {
     await S.upsert('tests', { id: test.id, data: test });
     return j({ publicShare: test.publicShare, url: `${BASE}/r/${test.id}` });
   }
+
+  if (p === '/api/upload' && m === 'POST') {
+    if (!me) return needAuth();
+    const u = await storeMedia(body.dataUrl, body.name);
+    if (!u) return j({ error: 'Не удалось сохранить файл (проверьте формат/размер ≤ 40 МБ)' }, 400);
+    return j({ url: u });
+  }
+
+  // ── ПУБЛИЧНАЯ ссылка на заявку компании (руководитель создаёт заявку) ──
+  if (p === '/api/company/req-link' && m === 'GET') {
+    if (!me) return needAuth();
+    me.settings = me.settings || {};
+    if (!me.settings.reqShareCode) { me.settings.reqShareCode = shortCode(10); await saveUser(me); }
+    return j({ code: me.settings.reqShareCode, link: `${BASE}/new-req/${me.settings.reqShareCode}` });
+  }
+  let mCoMeta = p.match(/^\/api\/company\/([\w-]+)\/meta$/);
+  if (mCoMeta && m === 'GET') {
+    const owner = (await S.select('users', `data->settings->>reqShareCode=eq.${encodeURIComponent(mCoMeta[1])}&select=data`)).map(r => r.data)[0];
+    if (!owner) return j({ error: 'Ссылка недействительна' }, 404);
+    return j({ company: owner.company || '', logo: (owner.settings && owner.settings.logo) || '' });
+  }
+  let mCoReq = p.match(/^\/api\/company\/([\w-]+)\/requisition$/);
+  if (mCoReq && m === 'POST') {
+    const owner = (await S.select('users', `data->settings->>reqShareCode=eq.${encodeURIComponent(mCoReq[1])}&select=data`)).map(r => r.data)[0];
+    if (!owner) return j({ error: 'Ссылка недействительна' }, 404);
+    const rlang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : 'ru';
+    const r = { id: uid(10), userId: owner.id, code: shortCode(10), status: 'submitted', lang: rlang,
+      form: (typeof body.form === 'object' && body.form) ? body.form : {}, vacancyId: null,
+      createdBy: 'manager', createdAt: new Date().toISOString(), submittedAt: new Date().toISOString(), approvedAt: null };
+    await S.upsert('requisitions', { id: r.id, data: r });
+    return j({ ok: true });
+  }
+
+  // ── Заглушки удалённых/отложенных экранов (чтобы фронт не падал) ──
+  if (p === '/api/education' && m === 'GET') return j({ topics: [] });
+  if (p === '/api/job-portals' && m === 'GET') { if (!me) return needAuth();
+    return j({ feedUrl: '', portals: [] }); }
 
   // ── СПРАВОЧНИК методики (для конструктора процесса) ──
   if (p === '/api/recruit/meta' && m === 'GET') {
