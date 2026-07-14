@@ -189,7 +189,9 @@
 [data-theme="dark"] .dash-banner canvas{position:absolute;right:0;top:0;bottom:0;width:56%;height:100%;opacity:.7;pointer-events:none}
 [data-theme="dark"] .aib-in{position:relative;max-width:60%}
 [data-theme="dark"] .aib-kick{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#b7c2ec}
-[data-theme="dark"] .aib-dot{width:8px;height:8px;border-radius:50%;background:#8b6cff;box-shadow:0 0 10px #8b6cff}
+[data-theme="dark"] .aib-dot{width:8px;height:8px;border-radius:50%;background:#8b6cff;box-shadow:0 0 10px #8b6cff;animation:aibOnline 2.4s ease-in-out infinite}
+@keyframes aibOnline{0%,100%{opacity:.45;box-shadow:0 0 4px rgba(139,108,255,.5)}50%{opacity:1;box-shadow:0 0 12px #8b6cff,0 0 20px rgba(139,108,255,.6)}}
+@media (prefers-reduced-motion:reduce){[data-theme="dark"] .aib-dot{animation:none}}
 [data-theme="dark"] .aib-title{font-family:'Manrope',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.02em;color:#fff;margin:12px 0 6px}
 [data-theme="dark"] .aib-lead{font-size:14px;line-height:1.55;color:#9aa3bf;margin:0;max-width:440px}
 
