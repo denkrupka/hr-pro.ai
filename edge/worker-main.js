@@ -1004,16 +1004,21 @@ async function api(req, env, url) {
         existing.push(part);
       } else if (vac && !part.vacancyId) part.vacancyId = vac.id;
       await S.upsert('participants', { id: part.id, data: part });
+      // Последовательная отправка: летит только первый тест, остальные — в очередь
+      // (следующий уходит автоматически после прохождения предыдущего — см. /submit).
+      let seq = 0;
       for (const type of types) {
         const code = shortCode(10);
-        const test = { id: uid(12), participantId: part.id, userId: me.id, type, status: 'sent',
-          code, lang: reqLang || (vac ? (vac.lang || 'ru') : 'ru'), sentAt: new Date().toISOString(),
+        const isFirst = seq === 0;
+        const test = { id: uid(12), participantId: part.id, userId: me.id, type, status: isFirst ? 'sent' : 'queued', queueOrder: seq,
+          code, lang: reqLang || (vac ? (vac.lang || 'ru') : 'ru'), sentAt: isFirst ? new Date().toISOString() : null,
           startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
         await S.upsert('tests', { id: test.id, data: test });
         me.balancePending = (me.balancePending || 0) + 1;
         const link = `${BASE}/t/${code}`;
-        const delivery = await notifyCandidate(env, me, part, test, vac, link, testTitleOf(type));
-        created.push({ email: rcpt, channel: phone ? 'sms' : 'email', type, title: testTitleOf(type), testId: test.id, participantId: part.id, link, delivery });
+        const delivery = isFirst ? await notifyCandidate(env, me, part, test, vac, link, testTitleOf(type)) : null;
+        created.push({ email: rcpt, channel: phone ? 'sms' : 'email', type, title: testTitleOf(type), testId: test.id, participantId: part.id, link, delivery, queued: !isFirst });
+        seq++;
       }
     }
     await saveUser(me);
@@ -1087,6 +1092,20 @@ async function api(req, env, url) {
       await logBalance(owner, -1, 'test_spend', { testId: test.id, comment: `Пройден тест «${testTitleOf(test.type)}»` });
     }
     await S.upsert('tests', { id: test.id, data: test });
+    // Последовательная отправка: запустить следующий тест из очереди этого кандидата
+    try {
+      const rows = await S.select('tests', `participant_id=eq.${test.participantId}&select=data`);
+      const queued = rows.map(r => r.data).filter(t => t.status === 'queued').sort((a, b) => (a.queueOrder || 0) - (b.queueOrder || 0));
+      const next = queued[0];
+      if (next && owner && owner.blocked !== true) {
+        const part = await S.one('participants', next.participantId);
+        const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+        next.status = 'sent'; next.sentAt = new Date().toISOString();
+        await S.upsert('tests', { id: next.id, data: next });
+        const link = `${BASE}/t/${next.code}`;
+        await notifyCandidate(env, owner, part, next, vac, link, testTitleOf(next.type));
+      }
+    } catch (e) {}
     return j({ ok: true });
   }
 
