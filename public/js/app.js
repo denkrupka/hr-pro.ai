@@ -1878,41 +1878,57 @@ function openSendModal(vacs, vacOptions) {
 // Анимация «нейросети» в баннере: гексагональные узлы + спутники, магнитная реакция на курсор
 function portalNet(id) {
   const cv = document.getElementById(id); if (!cv) return;
-  const ctx = cv.getContext('2d'); let raf, t = 0, W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1);
-  const nodes = [], links = []; const mouse = { x: -999, y: -999, on: false };
+  const ctx = cv.getContext('2d'); let raf, tk = 0, W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1);
+  const nodes = [], links = []; const mouse = { x: -999, y: -999, on: false }; const orb = { x: 0, y: 0 };
   function build() {
     const r = cv.getBoundingClientRect(); W = r.width; H = r.height; if (!W || !H) return;
     cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     nodes.length = 0; links.length = 0;
-    const n = Math.max(5, Math.round(W / 110));
-    for (let i = 0; i < n; i++) { const bx = W * (0.14 + 0.82 * Math.random()), by = H * (0.14 + 0.72 * Math.random());
-      nodes.push({ bx, by, x: bx, y: by, ph: Math.random() * 6.28, sz: 3 + Math.random() * 3, hub: Math.random() < 0.5 }); }
-    for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
-      if (Math.hypot(nodes[i].bx - nodes[j].bx, nodes[i].by - nodes[j].by) < W * 0.34) links.push([i, j]);
+    const n = Math.max(14, Math.round(W / 46));
+    for (let i = 0; i < n; i++) {
+      const bx = W * (0.05 + 0.92 * Math.random()), by = H * (0.08 + 0.84 * Math.random());
+      nodes.push({ bx, by, x: bx, y: by, ph: Math.random() * 6.28, spin: (Math.random() - 0.5) * 0.004,
+        hex: Math.random() < 0.42, sz: 6 + Math.random() * 15, dot: 1.1 + Math.random() * 1.7, accent: Math.random() < 0.16 });
     }
+    // соединяем каждый узел с 2-3 ближайшими соседями (органичная сеть)
+    for (let i = 0; i < nodes.length; i++) {
+      const near = nodes.map((b, j) => [j, Math.hypot(nodes[i].bx - b.bx, nodes[i].by - b.by)])
+        .filter(([j]) => j !== i).sort((a, b) => a[1] - b[1]).slice(0, 3);
+      near.forEach(([j, d]) => { if (d < W * 0.32 && !links.some(l => (l[0] === j && l[1] === i) || (l[0] === i && l[1] === j))) links.push([i, j]); });
+    }
+    orb.x = W * 0.5; orb.y = H * 0.52;
   }
-  // гексагон вокруг узла
-  function hexPath(x, y, s) { ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3, px = x + Math.cos(a) * s, py = y + Math.sin(a) * s; k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); }
+  function hexPath(x, y, s, rot) { ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = rot + Math.PI / 6 + k * Math.PI / 3, px = x + Math.cos(a) * s, py = y + Math.sin(a) * s; k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); }
   function draw() {
-    t += 1; if (!W) { build(); }
+    tk += 1; if (!W) { build(); if (!W) { raf = requestAnimationFrame(draw); return; } }
     ctx.clearRect(0, 0, W, H);
-    // магнитное смещение узлов к курсору + лёгкое дыхание
+    // магнитное дыхание узлов + реакция на курсор
     nodes.forEach(nd => {
-      const fx = nd.bx + Math.sin(t * 0.012 + nd.ph) * 5, fy = nd.by + Math.cos(t * 0.014 + nd.ph) * 5;
+      const fx = nd.bx + Math.sin(tk * 0.008 + nd.ph) * 7, fy = nd.by + Math.cos(tk * 0.01 + nd.ph) * 7;
       let tx = fx, ty = fy;
       if (mouse.on) { const dx = mouse.x - fx, dy = mouse.y - fy, d = Math.hypot(dx, dy);
-        if (d < 130) { const pull = (1 - d / 130) * 26; tx = fx + dx / (d || 1) * pull; ty = fy + dy / (d || 1) * pull; } }
-      nd.x += (tx - nd.x) * 0.08; nd.y += (ty - nd.y) * 0.08;
+        if (d < 150) { const pull = (1 - d / 150) * 30; tx = fx + dx / (d || 1) * pull; ty = fy + dy / (d || 1) * pull; } }
+      nd.x += (tx - nd.x) * 0.07; nd.y += (ty - nd.y) * 0.07;
     });
+    // светящееся ядро
+    const orbP = 0.55 + 0.45 * Math.sin(tk * 0.02);
+    const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, 64);
+    g.addColorStop(0, `rgba(170,150,255,${0.44 * orbP})`); g.addColorStop(0.4, `rgba(139,108,255,${0.16 * orbP})`); g.addColorStop(1, 'rgba(139,108,255,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(orb.x, orb.y, 64, 0, 6.28); ctx.fill();
     // связи
     links.forEach(([i, j]) => { const a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-      ctx.strokeStyle = `rgba(139,108,255,${Math.max(0, 0.16 * (1 - d / (W * 0.4)))})`; ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(139,108,255,${Math.max(0, 0.24 * (1 - d / (W * 0.34)))})`; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); });
-    // узлы: хабы — гексагоны, прочие — точки
-    nodes.forEach(nd => { const p = 0.7 + 0.3 * Math.sin(t * 0.03 + nd.ph);
-      if (nd.hub) { ctx.strokeStyle = `rgba(179,164,255,${0.55 * p})`; ctx.lineWidth = 1.3; hexPath(nd.x, nd.y, nd.sz + 2); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,138,106,.9)'; ctx.beginPath(); ctx.arc(nd.x, nd.y, 1.8, 0, 6.28); ctx.fill(); }
-      else { ctx.fillStyle = `rgba(111,151,255,${0.55 * p})`; ctx.beginPath(); ctx.arc(nd.x, nd.y, 1.8, 0, 6.28); ctx.fill(); } });
+    // узлы: гексагоны с вершинными точками + центральные точки (акцент — оранжевый)
+    nodes.forEach(nd => { const p = 0.65 + 0.35 * Math.sin(tk * 0.025 + nd.ph); const rot = tk * nd.spin + nd.ph;
+      if (nd.hex) {
+        ctx.strokeStyle = `rgba(179,164,255,${0.5 * p})`; ctx.lineWidth = 1.2; hexPath(nd.x, nd.y, nd.sz, rot); ctx.stroke();
+        ctx.fillStyle = `rgba(150,140,255,${0.5 * p})`;
+        for (let k = 0; k < 6; k++) { const a = rot + Math.PI / 6 + k * Math.PI / 3; ctx.beginPath(); ctx.arc(nd.x + Math.cos(a) * nd.sz, nd.y + Math.sin(a) * nd.sz, 1.1, 0, 6.28); ctx.fill(); }
+      }
+      if (nd.accent) { ctx.fillStyle = `rgba(255,138,106,${0.9 * p})`; ctx.shadowColor = 'rgba(255,138,106,.7)'; ctx.shadowBlur = 6; ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.dot + 0.7, 0, 6.28); ctx.fill(); ctx.shadowBlur = 0; }
+      else { ctx.fillStyle = `rgba(150,170,255,${0.72 * p})`; ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.dot, 0, 6.28); ctx.fill(); }
+    });
     raf = requestAnimationFrame(draw);
   }
   const onMove = e => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.on = true; };
@@ -1924,6 +1940,7 @@ function portalNet(id) {
   const stop = () => { if (!document.getElementById(id)) { cancelAnimationFrame(raf); ro.disconnect(); host.removeEventListener('mousemove', onMove); host.removeEventListener('mouseleave', onLeave); } else requestAnimationFrame(stop); };
   requestAnimationFrame(stop);
 }
+
 // Выбор языка отправляемого теста; по умолчанию подставляется язык вакансии из заявки
 function sendLangSelect(cur) {
   return `<select class="field" id="send-lang" aria-label="Язык теста" title="Язык теста" style="width:76px;flex:none">
