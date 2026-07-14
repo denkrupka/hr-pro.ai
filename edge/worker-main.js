@@ -499,6 +499,17 @@ async function api(req, env, url) {
   }
 
   // ── PARTICIPANTS ──
+  if (p === '/api/participants' && m === 'GET') {
+    if (!me) return needAuth();
+    const vId = url.searchParams.get('vacancyId');
+    let filter = `data->>userId=eq.${me.id}`;
+    if (vId && vId !== 'all') filter += `&data->>vacancyId=eq.${encodeURIComponent(vId)}`;
+    const rows = await S.select('participants', `${filter}&select=data`);
+    const list = rows.map(r => r.data).sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    const parts = [];
+    for (const x of list) parts.push(await participantView(x));
+    return j({ participants: parts });
+  }
   if (p === '/api/participants' && m === 'POST') {
     if (!me) return needAuth();
     const x = { id: uid(12), userId: me.id, vacancyId: body.vacancyId || null,
