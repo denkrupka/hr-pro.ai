@@ -6,6 +6,7 @@ import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from '
 import { notifyCandidate } from './notify-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
+import { handleAdmin } from './admin-edge.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -146,6 +147,18 @@ async function api(req, env, url) {
   // ── дальше — только для авторизованных ──
   const me = await currentUser(env, req);
   const needAuth = () => j({ error: 'Не авторизован' }, 401);
+
+  // ── АДМИН-API ──
+  if (p.startsWith('/api/admin/')) {
+    if (!me) return needAuth();
+    if (me.role !== 'admin') return j({ error: 'Доступ запрещён' }, 403);
+    const gsAdmin = await settings();
+    const res = await handleAdmin(p, m, { S, j, url, body, me, uid, publicUser, hashPassword,
+      gs: gsAdmin, saveSettings: (s) => S.upsert('settings', { id: 'portal', data: s }),
+      testTitleOf, env, makeStripe, signCookie: (v) => signCookie(env, v) });
+    if (res) return res;
+    return j({ error: 'edge: admin маршрут в разработке', path: p }, 501);
+  }
 
   if (p === '/api/settings' && m === 'GET') {
     if (!me) return needAuth();
