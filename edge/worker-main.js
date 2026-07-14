@@ -7,6 +7,7 @@ import { notifyCandidate } from './notify-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
+import { guideCheck } from './guide-check.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -103,6 +104,12 @@ async function api(req, env, url) {
   async function settings() { const r = await S.select('settings', 'id=eq.portal&select=data'); return (r[0] && r[0].data) || {}; }
 
   if (p === '/api/health') return j({ ok: true, edge: true, ts: Date.now() });
+
+  // Публичная ИИ-проверка чек-листа гайда (без авторизации)
+  if (p === '/api/guide-check' && m === 'POST') {
+    try { return j(await guideCheck(env, body)); }
+    catch (e) { return j({ error: 'server' }, 500); }
+  }
 
   if (p === '/api/meta') {
     const gs = await settings();

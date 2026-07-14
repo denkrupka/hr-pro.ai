@@ -1,0 +1,71 @@
+<style>
+@keyframes gfspin{to{transform:rotate(360deg)}}
+@keyframes gfshimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.gf-check:hover{background:rgba(139,108,255,.24)!important}
+.gf-check:disabled{opacity:.6;cursor:default}
+#gf-8{color:#eef1fb!important}
+</style>
+<script>
+(function(){
+  var API='/api/guide-check', TOTAL=7, okState={}, assembling=false;
+  function ctx(){var c={};for(var i=1;i<=7;i++){var el=document.getElementById('gf-'+i);if(el)c[i]=el.value;}return c;}
+  function badge(n,ok,txt){
+    var b=document.querySelector('.gf-badge[data-field="'+n+'"]');if(!b)return;
+    b.style.display='inline-flex';b.style.alignItems='center';b.textContent=(ok?'✓ ':'✗ ')+txt;
+    b.style.background=ok?'rgba(67,224,160,.14)':'rgba(255,120,90,.14)';
+    b.style.color=ok?'#43e0a0':'#ff9a80';b.style.border='1px solid '+(ok?'rgba(67,224,160,.4)':'rgba(255,120,90,.4)');
+  }
+  function hint(n,ok,txt){
+    var h=document.querySelector('.gf-hint[data-field="'+n+'"]');if(!h)return;
+    if(!txt){h.style.display='none';return;}
+    h.style.display='block';h.textContent=txt;
+    h.style.background=ok?'rgba(67,224,160,.06)':'rgba(255,120,90,.06)';
+    h.style.borderLeftColor=ok?'#43e0a0':'#ff9a80';h.style.color=ok?'#a9e8cd':'#e9c4ba';
+  }
+  function setLoading(btn,on){
+    var sp=btn.querySelector('.gf-spin'),tx=btn.querySelector('.gf-btn-txt');
+    btn.disabled=on;sp.style.display=on?'inline-block':'none';
+    tx.textContent=on?'Проверяю…':(okState[btn.dataset.field]?'Проверить снова':'Проверить ответ');
+  }
+  async function post(body){
+    var r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    return r.json();
+  }
+  async function check(n){
+    var ta=document.getElementById('gf-'+n),btn=document.querySelector('.gf-check[data-field="'+n+'"]');
+    if(!ta.value.trim()){badge(n,false,'Пусто');hint(n,false,'Впишите ваш вариант — и я проверю.');return;}
+    setLoading(btn,true);hint(n,false,'');
+    try{
+      var res=await post({field:n,answer:ta.value,context:ctx()});
+      if(res.error){badge(n,false,'Ошибка');hint(n,false,'ИИ временно недоступен, попробуйте ещё раз через пару секунд.');return;}
+      okState[n]=!!res.ok;
+      badge(n,res.ok,res.verdict||(res.ok?'Верно':'Неточно'));
+      hint(n,res.ok,res.hint||'');
+      ta.style.borderColor=res.ok?'rgba(67,224,160,.5)':'rgba(255,120,90,.5)';
+      maybeAssemble();
+    }catch(e){badge(n,false,'Ошибка сети');hint(n,false,'Проверьте соединение и попробуйте снова.');}
+    finally{setLoading(btn,false);}
+  }
+  function allOk(){for(var i=1;i<=TOTAL;i++)if(!okState[i])return false;return true;}
+  async function maybeAssemble(){
+    if(assembling||!allOk())return;
+    var out=document.getElementById('gf-8'),wrap=document.getElementById('gf8-wrap'),st=document.getElementById('gf8-status');
+    if(out.value.trim())return;
+    assembling=true;wrap.style.opacity='1';
+    out.style.background='linear-gradient(90deg,rgba(255,255,255,.03),rgba(139,108,255,.1),rgba(255,255,255,.03))';
+    out.style.backgroundSize='800px 100%';out.style.animation='gfshimmer 1.2s linear infinite';
+    st.innerHTML='<span style="display:inline-flex;align-items:center;gap:8px;color:#c3b8ff"><span style="width:13px;height:13px;border:2px solid rgba(195,184,255,.35);border-top-color:#c3b8ff;border-radius:50%;display:inline-block;animation:gfspin .7s linear infinite"></span>ИИ собирает формулу продукта…</span>';
+    try{
+      var res=await post({field:8,context:ctx()});
+      out.style.animation='';out.style.background='rgba(139,108,255,.06)';
+      if(res.formula){
+        var f=res.formula,i=0;out.value='';
+        (function type(){ if(i<=f.length){out.value=f.slice(0,i);i+=Math.max(1,Math.round(f.length/60));out.style.height='auto';out.style.height=out.scrollHeight+'px';setTimeout(type,16);} else {out.value=f;} })();
+        st.innerHTML='<span style="color:#43e0a0;font-weight:700">✓ Готово.</span> Формула собрана ИИ на основе ваших ответов — при желании отредактируйте.';
+      } else { st.innerHTML='<span style="color:#ff9a80">Не удалось собрать формулу. Перепроверьте пункты.</span>';assembling=false; }
+    }catch(e){out.style.animation='';st.innerHTML='<span style="color:#ff9a80">Ошибка сети при сборке формулы.</span>';assembling=false;}
+  }
+  document.addEventListener('click',function(e){var b=e.target.closest('.gf-check');if(b)check(+b.dataset.field);});
+  for(var i=1;i<=7;i++){(function(n){var el=document.getElementById('gf-'+n);if(el)el.addEventListener('input',function(){if(okState[n]){okState[n]=false;var bd=document.querySelector('.gf-badge[data-field="'+n+'"]');if(bd)bd.style.display='none';el.style.borderColor='rgba(255,255,255,.1)';}});})(i);}
+})();
+</script>
