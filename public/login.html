@@ -163,7 +163,7 @@ const I18N={
     switchToReg:'Нет аккаунта?',switchToRegLink:'Зарегистрируйтесь',switchToLogin:'Уже есть аккаунт?',switchToLoginLink:'Войдите',
     termsPre:'Я принимаю ',termsLink:'условия',termsMid:' и ',privacyLink:'политику конфиденциальности',termsPost:'.',
     show:'ПОКАЗАТЬ',hide:'СКРЫТЬ',submitting:'Минуту…',termsRequired:'Примите условия и политику конфиденциальности.',
-    errGeneric:'Ошибка. Проверьте данные.',errNetwork:'Нет связи с сервером.',googleSoon:'Вход через Google подключим позже.',forgotSoon:'Восстановление пароля скоро будет доступно.',
+    errGeneric:'Ошибка. Проверьте данные.',errNetwork:'Нет связи с сервером.',googleSoon:'Вход через Google подключим позже.',googleErr:'Не удалось войти через Google. Попробуйте ещё раз.',blockedErr:'Аккаунт заблокирован. Свяжитесь с поддержкой.',regClosedErr:'Регистрация временно закрыта.',forgotSoon:'Восстановление пароля скоро будет доступно.',
     footerRights:'© 2026 HR PRO AI. Все права защищены.'},
   pl:{page_title:'HR PRO AI — Logowanie',tagline:'technologia, która czuje ludzi',brandEyebrow:'Analiza kandydatów AI',
     brandTitle:'Jedno logowanie — cały portret zespołu',
@@ -181,7 +181,7 @@ const I18N={
     switchToReg:'Nie masz konta?',switchToRegLink:'Zarejestruj się',switchToLogin:'Masz już konto?',switchToLoginLink:'Zaloguj się',
     termsPre:'Akceptuję ',termsLink:'regulamin',termsMid:' i ',privacyLink:'politykę prywatności',termsPost:'.',
     show:'POKAŻ',hide:'UKRYJ',submitting:'Chwileczkę…',termsRequired:'Zaakceptuj regulamin i politykę prywatności.',
-    errGeneric:'Błąd. Sprawdź dane.',errNetwork:'Brak połączenia z serwerem.',googleSoon:'Logowanie przez Google wkrótce.',forgotSoon:'Odzyskiwanie hasła będzie wkrótce dostępne.',
+    errGeneric:'Błąd. Sprawdź dane.',errNetwork:'Brak połączenia z serwerem.',googleSoon:'Logowanie przez Google wkrótce.',googleErr:'Nie udało się zalogować przez Google. Spróbuj ponownie.',blockedErr:'Konto zablokowane. Skontaktuj się z pomocą.',regClosedErr:'Rejestracja jest chwilowo zamknięta.',forgotSoon:'Odzyskiwanie hasła będzie wkrótce dostępne.',
     footerRights:'© 2026 HR PRO AI. Wszelkie prawa zastrzeżone.'},
   en:{page_title:'HR PRO AI — Sign in',tagline:'technology that senses people',brandEyebrow:'AI candidate analysis',
     brandTitle:'One sign-in — the whole team portrait',
@@ -199,7 +199,7 @@ const I18N={
     switchToReg:'No account yet?',switchToRegLink:'Sign up',switchToLogin:'Already have an account?',switchToLoginLink:'Sign in',
     termsPre:'I accept the ',termsLink:'terms',termsMid:' and ',privacyLink:'privacy policy',termsPost:'.',
     show:'SHOW',hide:'HIDE',submitting:'One moment…',termsRequired:'Please accept the terms and privacy policy.',
-    errGeneric:'Error. Check your details.',errNetwork:'No connection to server.',googleSoon:'Google sign-in is coming soon.',forgotSoon:'Password recovery is coming soon.',
+    errGeneric:'Error. Check your details.',errNetwork:'No connection to server.',googleSoon:'Google sign-in is coming soon.',googleErr:'Could not sign in with Google. Please try again.',blockedErr:'Account is blocked. Contact support.',regClosedErr:'Registration is temporarily closed.',forgotSoon:'Password recovery is coming soon.',
     footerRights:'© 2026 HR PRO AI. All rights reserved.'}
 };
 function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(['ru','pl','en'].includes(q)){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(['ru','pl','en'].includes(s))return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('en'))return'en';return'ru';}
@@ -266,7 +266,11 @@ document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{local
 $('#tab-login').onclick=()=>setMode('login');
 $('#tab-reg').onclick=()=>setMode('register');
 $('#a-switch-link').onclick=e=>{e.preventDefault();setMode(MODE==='login'?'register':'login');};
-$('#g-btn').onclick=()=>toast(t('googleSoon')); // Google OAuth — подключим позже (кнопка готова)
+$('#g-btn').onclick=()=>{const next=new URLSearchParams(location.search).get('next')||'/app';location.href='/api/auth/google?next='+encodeURIComponent(next);};
+(function(){const err=new URLSearchParams(location.search).get('err');if(!err)return;
+  const msg=err==='blocked'?t('blockedErr'):err==='reg_closed'?t('regClosedErr'):err==='google_cancel'?null:t('googleErr');
+  if(msg)setTimeout(()=>toast(msg),300);
+  history.replaceState(null,'',location.pathname+(location.search.replace(/[?&]err=[^&]*/,'').replace(/^&/,'?')||''));})();
 
 async function submit(e){
   e&&e.preventDefault();

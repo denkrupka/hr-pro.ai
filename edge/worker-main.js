@@ -8,6 +8,7 @@ import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanban
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
 import { guideCheck } from './guide-check.js';
+import * as goog from './google-oauth.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -109,6 +110,56 @@ async function api(req, env, url) {
   if (p === '/api/guide-check' && m === 'POST') {
     try { return j(await guideCheck(env, body)); }
     catch (e) { return j({ error: 'server' }, 500); }
+  }
+
+  // ── Google OAuth (Authorization Code, server-side) ──
+  const redir = (to) => new Response(null, { status: 302, headers: { Location: url.origin + to } });
+  if (p === '/api/auth/google' && m === 'GET') {
+    const clientId = env.GOOGLE_CLIENT_ID;
+    if (!clientId) return redir('/login?err=google_off');
+    const next = url.searchParams.get('next') || '/app';
+    const state = await goog.makeState(env.SECRET, next);
+    const cUrl = goog.consentUrl({ clientId, redirectUri: url.origin + '/api/auth/google/callback', state });
+    return new Response(null, { status: 302, headers: { Location: cUrl,
+      'set-cookie': `goauth=${encodeURIComponent(state)}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600` } });
+  }
+  if (p === '/api/auth/google/callback' && m === 'GET') {
+    if (url.searchParams.get('error')) return redir('/login?err=google_cancel');
+    const code = url.searchParams.get('code'), state = url.searchParams.get('state');
+    const st = await goog.readState(env.SECRET, state);
+    const cookies = parseCookies(req.headers.get('cookie'));
+    if (!code || !st || cookies.goauth !== state) return redir('/login?err=google_state');
+    const ex = await goog.exchangeCode({ clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET,
+      code, redirectUri: url.origin + '/api/auth/google/callback' });
+    if (ex.error || !ex.token || !ex.token.access_token) return redir('/login?err=google_token');
+    const pr = await goog.fetchProfile(ex.token.access_token);
+    if (pr.error || !pr.profile || !pr.profile.email) return redir('/login?err=google_profile');
+    const prof = pr.profile;
+    if (prof.email_verified === false) return redir('/login?err=google_unverified');
+    const email = String(prof.email).trim();
+    const rows = await S.select('users', `email=eq.${encodeURIComponent(email.toLowerCase())}&select=data`);
+    let u = rows[0] && rows[0].data;
+    if (u) {
+      if (u.blocked === true) return redir('/login?err=blocked');
+      u.googleId = prof.sub; if (!u.avatar && prof.picture) u.avatar = prof.picture;
+      u.lastLoginAt = new Date().toISOString();
+      await S.upsert('users', { id: u.id, data: u });
+    } else {
+      const gs = await settings();
+      if (gs.registrationOpen === false) return redir('/login?err=reg_closed');
+      const bonus = Math.max(0, parseInt(gs.signupBonus, 10) || 0);
+      u = { id: uid(12), email, password: '', googleId: prof.sub, avatar: prof.picture || '',
+        name: prof.name || email.split('@')[0], company: '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
+        settings: { uiLang: 'ru' }, role: 'user', blocked: false, adminNote: '', provider: 'google',
+        createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
+      if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
+      await S.upsert('users', { id: u.id, data: u });
+    }
+    const dest = st.next && st.next.startsWith('/') ? st.next : '/app';
+    const headers = new Headers({ Location: url.origin + dest });
+    headers.append('set-cookie', `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`);
+    headers.append('set-cookie', 'goauth=; Path=/; Max-Age=0');
+    return new Response(null, { status: 302, headers });
   }
 
   if (p === '/api/meta') {
