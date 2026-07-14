@@ -79,10 +79,18 @@ function publicUser(u) {
   return { id: u.id, email: u.email, name: u.name, surname: s.surname || '', company: u.company,
     role: u.role === 'admin' ? 'admin' : 'user',
     balanceTotal: u.balanceTotal, balancePending: u.balancePending,
-    balanceAvailable: (u.balanceTotal || 0) - (u.balancePending || 0), settings: s };
+    balanceAvailable: (u.balanceTotal || 0) - (u.balancePending || 0), balanceExpiresAt: balanceExpiresAt(u), settings: s };
 }
 const uid = (n = 12) => { const b = new Uint8Array(16); crypto.getRandomValues(b);
   return btoa(String.fromCharCode(...b)).replace(/[+/=]/g, '').slice(0, n); };
+// Срок действия тестов — ровно 1 год с момента пополнения (лоты + FIFO-списание).
+const BALANCE_TTL_DAYS = 365;
+function _ensureLots(u) { if (Array.isArray(u.balanceLots)) return; u.balanceLots = [];
+  if ((u.balanceTotal || 0) > 0) u.balanceLots.push({ id: uid(10), qty: u.balanceTotal, remaining: u.balanceTotal, source: 'legacy', createdAt: u.createdAt || new Date().toISOString(), expiresAt: new Date(Date.now() + BALANCE_TTL_DAYS * 864e5).toISOString() }); }
+function addBalanceLot(u, qty, source) { if (!(qty > 0)) return; _ensureLots(u); u.balanceLots.push({ id: uid(10), qty, remaining: qty, source: source || 'credit', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + BALANCE_TTL_DAYS * 864e5).toISOString() }); }
+function spendLots(u, n) { _ensureLots(u); let need = n; const now = Date.now(); u.balanceLots.slice().sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || '')).forEach(l => { if (need <= 0) return; if (new Date(l.expiresAt).getTime() < now) return; const take = Math.min(l.remaining || 0, need); l.remaining = (l.remaining || 0) - take; need -= take; }); }
+function expireBalance(u) { _ensureLots(u); const now = Date.now(); let expired = 0; u.balanceLots.forEach(l => { if ((l.remaining || 0) > 0 && new Date(l.expiresAt).getTime() < now) { expired += l.remaining; l.remaining = 0; } }); if (expired > 0) { u.balanceTotal = Math.max(0, (u.balanceTotal || 0) - expired); if ((u.balancePending || 0) > u.balanceTotal) u.balancePending = u.balanceTotal; } return expired; }
+function balanceExpiresAt(u) { if (!Array.isArray(u.balanceLots)) return null; const act = u.balanceLots.filter(l => (l.remaining || 0) > 0).map(l => l.expiresAt).filter(Boolean).sort(); return act[0] || null; }
 
 // ── API-роутер ──────────────────────────────────────────────────────────────────
 async function api(req, env, url) {
@@ -125,6 +133,7 @@ async function api(req, env, url) {
   if (p === '/api/me') {
     const u = await currentUser(env, req);
     if (!u) return j({ error: 'Не авторизован' }, 401);
+    if (expireBalance(u) > 0) await S.upsert('users', { id: u.id, data: u });
     return j({ user: publicUser(u) });
   }
 
@@ -137,8 +146,9 @@ async function api(req, env, url) {
     if (exists.length) return j({ error: 'Пользователь с таким email уже существует' }, 409);
     const bonus = Math.max(0, parseInt(gs.signupBonus, 10) || 0);
     const u = { id: uid(12), email, password: await hashPassword(body.password), name: body.name || email.split('@')[0],
-      company: body.company || '', balanceTotal: bonus, balancePending: 0,
+      company: body.company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
       settings: { uiLang: 'ru' }, role: 'user', blocked: false, adminNote: '', createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
+    if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
     await S.upsert('users', { id: u.id, data: u });
     const cookie = `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`;
     return j({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
@@ -167,7 +177,8 @@ async function api(req, env, url) {
 
   if (p === '/api/balance' && m === 'GET') {
     if (!me) return needAuth();
-    return j({ balance: publicUser(me) });
+    if (expireBalance(me) > 0) await S.upsert('users', { id: me.id, data: me });
+    return j({ balance: publicUser(me), ttlDays: BALANCE_TTL_DAYS });
   }
 
   if (p === '/api/sections' && m === 'GET') {
@@ -194,6 +205,7 @@ async function api(req, env, url) {
 
   if (p === '/api/dashboard' && m === 'GET') {
     if (!me) return needAuth();
+    if (expireBalance(me) > 0) await S.upsert('users', { id: me.id, data: me });
     const [pr, tr, vr, ar] = await Promise.all([
       S.select('participants', `user_id=eq.${me.id}&select=data`),
       S.select('tests', `user_id=eq.${me.id}&select=data`),
@@ -962,8 +974,10 @@ async function api(req, env, url) {
     test.status = 'done';
     const owner = await S.one('users', test.userId);
     if (owner && test.balancePending !== true) {
+      _ensureLots(owner);
       owner.balancePending = Math.max(0, (owner.balancePending || 0) - 1);
       owner.balanceTotal = Math.max(0, (owner.balanceTotal || 0) - 1);
+      spendLots(owner, 1);
       test.balancePending = true;
       await S.upsert('users', { id: owner.id, data: owner });
       await logBalance(owner, -1, 'test_spend', { testId: test.id, comment: `Пройден тест «${testTitleOf(test.type)}»` });
@@ -1091,7 +1105,9 @@ async function api(req, env, url) {
   const stripe = stripeKey ? makeStripe(stripeKey) : null;
   const creditPurchase = async (user, plan, method, sessionId) => {
     if (sessionId) { const dup = await S.select('purchases', `data->>sessionId=eq.${encodeURIComponent(sessionId)}&select=id`); if (dup.length) return null; }
+    _ensureLots(user); // зафиксировать прежний баланс лотом (старые аккаунты) до пополнения
     user.balanceTotal = (user.balanceTotal || 0) + plan.qty;
+    addBalanceLot(user, plan.qty, 'purchase');
     const purchase = { id: uid(12), userId: user.id, planId: plan.id, qty: plan.qty, amount: plan.price,
       method, status: 'paid', sessionId: sessionId || null, createdAt: new Date().toISOString() };
     await S.upsert('purchases', { id: purchase.id, data: purchase });

@@ -325,6 +325,50 @@ function logBalance(userId, delta, kind, extra) {
     comment: '', adminId: null, purchaseId: null, testId: null,
     balanceAfter: u ? u.balanceTotal : null, createdAt: nowISO() }, extra || {}));
 }
+
+// ---------- Срок действия тестов: ровно 1 год с момента пополнения ----------
+// Каждое пополнение (бонус/покупка/начисление админом) создаёт «лот» с датой сгорания.
+// Списание идёт FIFO — с самого старого действующего лота. Просроченные лоты сгорают.
+const BALANCE_TTL_DAYS = 365;
+function _ensureLots(u) {
+  if (Array.isArray(u.balanceLots)) return; // уже отслеживается лотами
+  u.balanceLots = [];
+  // миграция старых аккаунтов (поля лотов ещё не было): весь текущий баланс — один лот со свежим годом
+  if ((u.balanceTotal || 0) > 0) {
+    u.balanceLots.push({ id: uid(10), qty: u.balanceTotal, remaining: u.balanceTotal, source: 'legacy',
+      createdAt: u.createdAt || nowISO(), expiresAt: new Date(Date.now() + BALANCE_TTL_DAYS * 864e5).toISOString() });
+  }
+}
+function addBalanceLot(u, qty, source) {
+  if (!(qty > 0)) return;
+  _ensureLots(u);
+  u.balanceLots.push({ id: uid(10), qty, remaining: qty, source: source || 'credit',
+    createdAt: nowISO(), expiresAt: new Date(Date.now() + BALANCE_TTL_DAYS * 864e5).toISOString() });
+}
+function spendLots(u, n) { // списываем n тестов с самых старых действующих лотов
+  _ensureLots(u);
+  let need = n; const now = Date.now();
+  u.balanceLots.slice().sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''))
+    .forEach(l => { if (need <= 0) return; if (new Date(l.expiresAt).getTime() < now) return;
+      const take = Math.min(l.remaining || 0, need); l.remaining = (l.remaining || 0) - take; need -= take; });
+}
+function expireBalance(u) { // сжигаем просроченные лоты, синхронизируем balanceTotal
+  _ensureLots(u);
+  const now = Date.now(); let expired = 0;
+  u.balanceLots.forEach(l => { if ((l.remaining || 0) > 0 && new Date(l.expiresAt).getTime() < now) { expired += l.remaining; l.remaining = 0; } });
+  if (expired > 0) {
+    u.balanceTotal = Math.max(0, (u.balanceTotal || 0) - expired);
+    if ((u.balancePending || 0) > u.balanceTotal) u.balancePending = u.balanceTotal;
+    logBalance(u.id, -expired, 'balance_expired', { comment: 'Истёк срок действия тестов (1 год с пополнения)' });
+  }
+  return expired;
+}
+function balanceExpiresAt(u) { // ближайшая дата сгорания действующих тестов — для кабинета
+  if (!Array.isArray(u.balanceLots)) return null;
+  const act = u.balanceLots.filter(l => (l.remaining || 0) > 0).map(l => l.expiresAt).filter(Boolean).sort();
+  return act[0] || null;
+}
+function sweepExpiries() { const d = db(); let any = false; d.users.forEach(u => { if (expireBalance(u) > 0) any = true; }); if (any) save(); }
 // Журнал действий администраторов — пишется при каждой мутации из админки
 function logAdmin(req, action, targetType, targetId, details) {
   db().adminLog.push({ id: uid(12), adminId: (req.adminUser || req.user).id, action,
@@ -364,7 +408,7 @@ function publicUser(u) {
   return { id: u.id, email: u.email, name: u.name, surname: u.settings.surname || '', company: u.company,
     role: u.role === 'admin' ? 'admin' : 'user',
     balanceTotal: u.balanceTotal, balancePending: u.balancePending,
-    balanceAvailable: u.balanceTotal - u.balancePending, settings: u.settings };
+    balanceAvailable: u.balanceTotal - u.balancePending, balanceExpiresAt: balanceExpiresAt(u), settings: u.settings };
 }
 function demoFor(p) {
   if (!p) return 'women';
@@ -413,10 +457,10 @@ app.post('/api/register', (req, res) => {
   const auto = { uiLang: (req.body && req.body.uiLang) || (['ru', 'pl', 'en'].includes(accLang) ? accLang : ''),
     timezone: (req.body && req.body.timezone) || '' };
   const user = { id: uid(12), email, password: hashPassword(password), name: name || email.split('@')[0],
-    company: company || '', balanceTotal: bonus, balancePending: 0, settings: defaultSettings(auto),
+    company: company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [], settings: defaultSettings(auto),
     role: 'user', blocked: false, adminNote: '', lastLoginAt: nowISO(), createdAt: nowISO() };
   data.users.push(user);
-  if (bonus > 0) logBalance(user.id, bonus, 'signup_bonus', { comment: 'Бонус при регистрации' });
+  if (bonus > 0) { logBalance(user.id, bonus, 'signup_bonus', { comment: 'Бонус при регистрации' }); addBalanceLot(user, bonus, 'signup_bonus'); }
   // стартовые вакансии
   ['HR', 'ДЕМО'].forEach((n, i) => {
     data.vacancies.push({ id: uid(10), userId: user.id, sectionId: null, name: n, lang: 'ru', order: i, createdAt: nowISO() });
@@ -438,8 +482,8 @@ app.post('/api/login', (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => { res.clearCookie('uid'); res.clearCookie('impersonate_uid'); res.json({ ok: true }); });
-app.get('/api/me', requireAuth, (req, res) => res.json({ user: publicUser(req.user),
-  impersonatedBy: req.adminUser ? req.adminUser.email : undefined }));
+app.get('/api/me', requireAuth, (req, res) => { if (expireBalance(req.user) > 0) save(); res.json({ user: publicUser(req.user),
+  impersonatedBy: req.adminUser ? req.adminUser.email : undefined }); });
 
 // справочники (языки + публичные флаги портала)
 app.get('/api/meta', (req, res) => {
@@ -765,7 +809,7 @@ app.delete('/api/tests/:id', requireAuth, (req, res) => {
 });
 
 // ---------- BALANCE ----------
-app.get('/api/balance', requireAuth, (req, res) => res.json({ balance: publicUser(req.user) }));
+app.get('/api/balance', requireAuth, (req, res) => { if (expireBalance(req.user) > 0) save(); res.json({ balance: publicUser(req.user), ttlDays: BALANCE_TTL_DAYS }); });
 // POST /api/balance/add удалён: баланс начисляет только администратор (/api/admin/users/:id/balance)
 
 // ---------- SETTINGS ----------
@@ -824,6 +868,7 @@ app.get('/api/stats/vacancies', requireAuth, (req, res) => {
 
 // ---------- DASHBOARD (aggregated metrics) ----------
 app.get('/api/dashboard', requireAuth, (req, res) => {
+  if (expireBalance(req.user) > 0) save();
   const data = db();
   const parts = data.participants.filter(p => p.userId === req.user.id);
   const tests = data.tests.filter(t => t.userId === req.user.id);
@@ -1103,7 +1148,9 @@ app.get('/api/purchases', requireAuth, (req, res) => {
 function creditPurchase(user, plan, method, sessionId) {
   const data = db();
   if (sessionId && data.purchases.find(p => p.sessionId === sessionId)) return null; // idempotent
+  _ensureLots(user); // зафиксировать прежний баланс как лот (для старых аккаунтов) до пополнения
   user.balanceTotal += plan.qty;
+  addBalanceLot(user, plan.qty, 'purchase');
   const purchase = { id: uid(12), userId: user.id, planId: plan.id, qty: plan.qty, amount: plan.price,
     method, status: 'paid', sessionId: sessionId || null, createdAt: nowISO() };
   data.purchases.push(purchase);
@@ -1372,7 +1419,7 @@ app.post('/api/take/:code/submit', (req, res) => {
   // перевести баланс из pending в списанный
   const u = db().users.find(x => x.id === test.userId);
   if (u && test.balancePending !== true) {
-    u.balancePending = Math.max(0, u.balancePending - 1); u.balanceTotal = Math.max(0, u.balanceTotal - 1); test.balancePending = true;
+    _ensureLots(u); u.balancePending = Math.max(0, u.balancePending - 1); u.balanceTotal = Math.max(0, u.balanceTotal - 1); spendLots(u, 1); test.balancePending = true;
     logBalance(u.id, -1, 'test_spend', { testId: test.id, comment: `Пройден тест «${testTitleOf(test.type)}»` });
   }
   // автоворонка: звонки ИИ на настроенных шагах + отправка следующего теста процесса
@@ -2159,7 +2206,7 @@ app.get(['/app', '/app/*', '/dashboard', '/home', '/vacancies', '/balance', '/se
 require('./src/admin')(app, {
   db, save, uid, nowISO, requireAuth, requireAdmin, publicUser, ensureSettings, defaultSettings,
   portalSettings, applyPortalEnv, portalPlans, activePlans, initStripe, getStripe: () => stripe, stripeKey,
-  logAdmin, logBalance, hashPassword, integ, recruit,
+  logAdmin, logBalance, _ensureLots, addBalanceLot, spendLots, expireBalance, hashPassword, integ, recruit,
   DEFAULT_TEMPLATES, DEFAULT_SMS, DEFAULT_MAIL, cleanMailTemplates,
   MAIL_SEND_ITEMS, MAIL_STATUS_ITEMS, MAIL_LANGS, TEST_NAMES, LANGS, TEST_TYPES, testTitleOf,
   getBaseUrl: () => BASE_URL, SECRET, PORT, ENV_BASE_URL,
@@ -2175,4 +2222,7 @@ if (process.env.ADMIN_EMAIL) {
 app.listen(PORT, () => {
   console.log(`\n  HR AI Pro запущен: ${BASE_URL}`);
   console.log(`  Вопросов Тулс загружено: ${OCA_QUESTIONS.length}/200\n`);
+  try { sweepExpiries(); } catch (_) {}
 });
+// ежедневно сжигаем просроченные тесты (срок 1 год с пополнения)
+setInterval(() => { try { sweepExpiries(); } catch (_) {} }, 24 * 3600e3);

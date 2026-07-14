@@ -10,7 +10,7 @@ const EDU_DIR = path.join(__dirname, '..', 'data', 'education');
 module.exports = function adminApi(app, ctx) {
   const { db, save, uid, nowISO, requireAuth, requireAdmin, publicUser, ensureSettings,
     portalSettings, applyPortalEnv, portalPlans, activePlans, initStripe, getStripe, stripeKey,
-    logAdmin, logBalance, hashPassword, integ,
+    logAdmin, logBalance, _ensureLots, addBalanceLot, spendLots, expireBalance, hashPassword, integ,
     DEFAULT_TEMPLATES, DEFAULT_SMS, DEFAULT_MAIL, cleanMailTemplates,
     MAIL_SEND_ITEMS, MAIL_STATUS_ITEMS, MAIL_LANGS, TEST_NAMES, LANGS, testTitleOf, getBaseUrl, SECRET } = ctx;
 
@@ -190,7 +190,9 @@ module.exports = function adminApi(app, ctx) {
     if (comment.length < 3 || comment.length > 500) return res.status(400).json({ error: 'Комментарий обязателен (3–500 символов)' });
     const next = (u.balanceTotal || 0) + delta;
     if (next < (u.balancePending || 0)) return res.status(400).json({ error: `Баланс не может стать меньше брони (${u.balancePending})` });
+    _ensureLots(u); // зафиксировать прежний баланс лотом до изменения (срок 1 год)
     u.balanceTotal = next;
+    if (delta > 0) addBalanceLot(u, delta, 'admin_add'); else spendLots(u, -delta);
     logBalance(u.id, delta, delta > 0 ? 'admin_add' : 'admin_sub', { comment, adminId: req.adminUser.id });
     logAdmin(req, delta > 0 ? 'balance_add' : 'balance_sub', 'user', u.id, { delta, comment });
     save(); res.json({ ok: true, balanceTotal: u.balanceTotal, balancePending: u.balancePending });
@@ -310,8 +312,10 @@ module.exports = function adminApi(app, ctx) {
     if (comment.length < 3 || comment.length > 500) return res.status(400).json({ error: 'Комментарий обязателен (3–500 символов)' });
     const u = findUser(p.userId);
     if (u) {
+      _ensureLots(u); // зафиксировать прежний баланс лотом до возврата
       const before = u.balanceTotal || 0;
       u.balanceTotal = Math.max(u.balancePending || 0, before - (p.qty || 0)); // не ниже брони
+      spendLots(u, before - u.balanceTotal);
       logBalance(u.id, u.balanceTotal - before, 'refund', { purchaseId: p.id, comment, adminId: req.adminUser.id });
     }
     p.status = 'refunded'; p.refundedAt = nowISO();

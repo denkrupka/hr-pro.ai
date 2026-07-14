@@ -2,6 +2,8 @@
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title data-i18n="page_title">HR PRO AI — Вход</title>
+<meta name="description" content="Войдите в HR PRO AI или создайте аккаунт: по бесплатному тесту каждого вида, без карты. Психометрическая платформа найма.">
+<meta name="robots" content="noindex,follow">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
@@ -9,6 +11,8 @@
 .lang-switch{position:absolute;top:20px;right:22px;z-index:5;display:flex;gap:4px}
 .lang-switch button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font:600 12px/1 Inter,sans-serif;padding:6px 9px;border-radius:7px;cursor:pointer;opacity:.75}
 .lang-switch button.on{opacity:1;background:rgba(255,255,255,.28)}
+.lp-logo .m{background:none!important;box-shadow:none!important;width:38px;height:38px}
+.lp-logo .m svg{width:38px;height:38px}
 </style>
 </head><body>
 <div class="auth-wrap">
@@ -19,15 +23,14 @@
     </a>
     <div class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
     <div style="position:relative;z-index:1">
-      <div class="eyebrow" style="color:#fff;opacity:.85" data-i18n="eyebrow">Психометрика найма</div>
-      <h1 style="color:#fff;font-size:38px;margin:16px 0 14px;line-height:1.1" data-i18n="visual_h1">Узнайте, кто перед вами,<br>до того как нанять</h1>
+      <h1 style="color:#fff;font-size:38px;margin:0 0 14px;line-height:1.1" data-i18n="visual_h1">Узнайте, кто перед вами,<br>до того как нанять</h1>
       <p style="color:rgba(255,255,255,.72);font-size:16px;max-width:400px;line-height:1.6" data-i18n="visual_p">Четыре теста — личность, продуктивность, интеллект и продажи — раскрывают кандидата на одном графике.</p>
       <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);margin-top:34px;max-width:420px;backdrop-filter:blur(8px)">
         <div style="display:flex;justify-content:space-between;color:#fff;font-weight:700;margin-bottom:14px"><span data-i18n="candidate_profile">Профиль кандидата</span> <span class="mono" style="color:#7fe3bf" data-i18n="winner">Виннер</span></div>
         <div id="demo-bars"></div>
       </div>
     </div>
-    <div style="color:rgba(255,255,255,.5);font-size:13px;position:relative;z-index:1" data-i18n="brand_footer">HR PRO AI · технология, которая чувствует людей</div>
+    <div style="color:rgba(255,255,255,.62);font-size:14px;font-weight:600;position:relative;z-index:1" data-i18n="brand_footer">Мы раскрываем личность, чтобы вы создавали сильные команды.</div>
   </div>
   <div class="auth-form-side">
     <div class="auth-card">
@@ -37,6 +40,13 @@
         <button class="on" id="tab-login" data-i18n="tab_login">Вход</button>
         <button id="tab-reg" data-i18n="tab_register">Регистрация</button>
       </div>
+      <div id="reg-benefits" class="hidden" style="background:var(--brand-soft);border-radius:12px;padding:14px 16px;margin-bottom:16px">
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--text-2)">
+          <li style="display:flex;gap:9px;align-items:center"><span style="color:var(--good);font-weight:800">✓</span><span data-i18n="ben1">По тесту каждого вида + 2 вакансии — бесплатно</span></li>
+          <li style="display:flex;gap:9px;align-items:center"><span style="color:var(--good);font-weight:800">✓</span><span data-i18n="ben2">Первый профиль кандидата — через 10 минут</span></li>
+          <li style="display:flex;gap:9px;align-items:center"><span style="color:var(--good);font-weight:800">✓</span><span data-i18n="ben3">Без карты и подписки — платите только за тесты</span></li>
+        </ul>
+      </div>
       <div id="reg-fields" class="hidden">
         <input class="field" id="name" placeholder="Ваше имя" data-i18n-ph="ph_name">
         <input class="field" id="company" placeholder="Компания" data-i18n-ph="ph_company">
@@ -45,7 +55,12 @@
       <input class="field" id="password" type="password" placeholder="Пароль" autocomplete="current-password" data-i18n-ph="ph_password">
       <div id="err" class="hidden" style="color:var(--bad);margin-bottom:12px;font-size:14px"></div>
       <button class="btn lg" id="submit">Войти</button>
-      <p class="muted" style="text-align:center;margin-top:18px;font-size:13px" data-i18n="gift_note">Новым аккаунтам — <b style="color:var(--brand)">200 тестов</b> в подарок</p>
+      <p class="muted" style="text-align:center;margin-top:18px;font-size:13px" data-i18n="gift_note">Новым аккаунтам — <b style="color:var(--brand)">по тесту каждого вида</b> бесплатно</p>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
+        <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:600"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="badge_sec">PBKDF2 · шифрование</span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:600"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg><span data-i18n="badge_gdpr">GDPR / RODO</span></span>
+        <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:11.5px;font-weight:600"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg><span data-i18n="badge_stripe">Оплата через Stripe</span></span>
+      </div>
     </div>
   </div>
 </div>
@@ -58,19 +73,21 @@ const I18N={
   ru:{
     page_title:'HR PRO AI — Вход',
     brand_tagline:'технология, которая чувствует людей',
-    eyebrow:'Психометрика найма',
+    eyebrow:'Наём по данным',
     visual_h1:'Узнайте, кто перед вами,<br>до того как нанять',
     visual_p:'Четыре теста — личность, продуктивность, интеллект и продажи — раскрывают кандидата на одном графике.',
     candidate_profile:'Профиль кандидата',
     winner:'Виннер',
-    brand_footer:'HR PRO AI · технология, которая чувствует людей',
+    brand_footer:'Мы раскрываем личность, чтобы вы создавали сильные команды.',
     tab_login:'Вход',
     tab_register:'Регистрация',
     ph_name:'Ваше имя',
     ph_company:'Компания',
     ph_email:'Рабочий email',
     ph_password:'Пароль',
-    gift_note:'Новым аккаунтам — <b style="color:var(--brand)">200 тестов</b> в подарок',
+    gift_note:'Новым аккаунтам — <b style="color:var(--brand)">по тесту каждого вида</b> бесплатно',
+    ben1:'По тесту каждого вида + 2 вакансии — бесплатно',ben2:'Первый профиль кандидата — через 10 минут',ben3:'Без карты и подписки — платите только за тесты',
+    badge_sec:'PBKDF2 · шифрование',badge_gdpr:'GDPR / RODO',badge_stripe:'Оплата через Stripe',
     title_login:'С возвращением',
     title_register:'Создать аккаунт',
     sub_login:'Войдите, чтобы продолжить работу',
@@ -89,7 +106,7 @@ const I18N={
   pl:{
     page_title:'HR PRO AI — Logowanie',
     brand_tagline:'technologia, która czuje ludzi',
-    eyebrow:'Psychometria rekrutacji',
+    eyebrow:'Rekrutacja na podstawie danych',
     visual_h1:'Poznaj, kto jest przed tobą,<br>zanim go zatrudnisz',
     visual_p:'Cztery testy — osobowość, produktywność, inteligencja i sprzedaż — ukazują kandydata na jednym wykresie.',
     candidate_profile:'Profil kandydata',
@@ -101,7 +118,9 @@ const I18N={
     ph_company:'Firma',
     ph_email:'Służbowy e-mail',
     ph_password:'Hasło',
-    gift_note:'Nowe konta otrzymują <b style="color:var(--brand)">200 testów</b> w prezencie',
+    gift_note:'Nowe konta — <b style="color:var(--brand)">po teście każdego rodzaju</b> za darmo',
+    ben1:'Po teście każdego rodzaju + 2 oferty — za darmo',ben2:'Pierwszy profil kandydata — w 10 minut',ben3:'Bez karty i abonamentu — płacisz tylko za testy',
+    badge_sec:'PBKDF2 · szyfrowanie',badge_gdpr:'GDPR / RODO',badge_stripe:'Płatność przez Stripe',
     title_login:'Witaj ponownie',
     title_register:'Załóż konto',
     sub_login:'Zaloguj się, aby kontynuować pracę',
@@ -120,7 +139,7 @@ const I18N={
   en:{
     page_title:'HR PRO AI — Sign in',
     brand_tagline:'technology that senses people',
-    eyebrow:'Hiring psychometrics',
+    eyebrow:'Data-driven hiring',
     visual_h1:'See who is in front of you,<br>before you hire',
     visual_p:'Four tests — personality, productivity, intelligence and sales — reveal a candidate on a single chart.',
     candidate_profile:'Candidate profile',
@@ -132,7 +151,9 @@ const I18N={
     ph_company:'Company',
     ph_email:'Work email',
     ph_password:'Password',
-    gift_note:'New accounts get <b style="color:var(--brand)">200 tests</b> free',
+    gift_note:'New accounts get <b style="color:var(--brand)">one test of each type</b> free',
+    ben1:'One test of each type + 2 vacancies — free',ben2:'The first candidate profile — in 10 minutes',ben3:'No card, no subscription — pay only for tests',
+    badge_sec:'PBKDF2 · encryption',badge_gdpr:'GDPR / RODO',badge_stripe:'Payments via Stripe',
     title_login:'Welcome back',
     title_register:'Create an account',
     sub_login:'Sign in to continue working',
@@ -178,6 +199,7 @@ function setModeLabels(){const reg=mode==='register';
   $('submit').textContent=reg?t('submit_register'):t('submit_login');}
 function setMode(m){mode=m;const reg=m==='register';
   $('reg-fields').classList.toggle('hidden',!reg);
+  $('reg-benefits').classList.toggle('hidden',!reg);
   $('tab-login').classList.toggle('on',!reg);$('tab-reg').classList.toggle('on',reg);
   setModeLabels();}
 $('tab-login').onclick=()=>setMode('login');$('tab-reg').onclick=()=>setMode('register');
@@ -199,6 +221,9 @@ $('submit').onclick=async()=>{
 };
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')$('submit').click();});
 const p=new URLSearchParams(location.search);if(p.get('mode')==='register')setMode('register');
+// предзаполнение email из лид-магнита лендинга (?email=...)
+const preEmail=p.get('email')||(function(){try{return localStorage.getItem('hp_lead_email')||'';}catch(e){return '';}})();
+if(preEmail){$('email').value=preEmail;if(p.get('mode')!=='register')setMode('register');}
 // Регистрация может быть закрыта администратором портала
 fetch('/api/meta').then(r=>r.json()).then(m=>{
   if(m&&m.registrationOpen===false){$('tab-reg').style.display='none';if(mode==='register')setMode('login');}

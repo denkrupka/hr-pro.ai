@@ -1,26 +1,213 @@
 <!doctype html>
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title data-i18n="page_title">HR PRO AI — узнайте кандидата до найма</title>
-<meta name="description" content="Психометрическая платформа для найма: 4 теста раскрывают личность, продуктивность, интеллект и навыки продаж на одном графике.">
+<title data-i18n="page_title">HR PRO AI — узнайте, кто перед вами, до того как нанять</title>
+<meta name="description" data-i18n-meta="meta_desc" content="Платформа оценки кандидатов по данным: 4 валидных теста раскрывают личность, продуктивность, интеллект и навыки продаж на одном графике. ИИ-анализ, автоворонка, ИИ-звонки. Старт бесплатно — по тесту каждого вида, без карты.">
+<meta name="keywords" content="оценка персонала, оценка кандидатов, тесты для кандидатов, HR тесты, оценка продуктивности, тест личности, IQ тест, оценка продавцов, рекрутинг, ATS, подбор персонала, найм по данным">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="author" content="HR PRO AI">
 <meta name="theme-color" content="#3d6cd1">
+<link rel="canonical" href="https://hr-pro.ai/">
+<link rel="alternate" hreflang="ru" href="https://hr-pro.ai/?lang=ru">
+<link rel="alternate" hreflang="pl" href="https://hr-pro.ai/?lang=pl">
+<link rel="alternate" hreflang="en" href="https://hr-pro.ai/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://hr-pro.ai/">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HR PRO AI">
+<meta property="og:url" content="https://hr-pro.ai/">
+<meta property="og:title" data-i18n-meta="og_title" content="HR PRO AI — узнайте, кто перед вами, до того как нанять">
+<meta property="og:description" data-i18n-meta="meta_desc" content="4 теста раскрывают кандидата на одном графике. ИИ-анализ, автоворонка найма. Старт бесплатно — по тесту каждого вида.">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:image" content="https://hr-pro.ai/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" data-i18n-meta="og_title" content="HR PRO AI — узнайте, кто перед вами, до того как нанять">
+<meta name="twitter:description" data-i18n-meta="meta_desc" content="4 теста раскрывают кандидата на одном графике. Старт бесплатно — по тесту каждого вида.">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233d6cd1'/%3E%3Cpath d='M32 12 50 22 50 42 32 52 14 42 14 22Z' stroke='white' stroke-width='2.4' fill='none'/%3E%3Ccircle cx='32' cy='31' r='4' fill='%23ff7a5c'/%3E%3C/svg%3E">
+<!-- JSON-LD: Organization -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"HR PRO AI","url":"https://hr-pro.ai/","logo":"https://hr-pro.ai/img/logo.png","description":"Платформа оценки кандидатов по данным: узнайте человека ещё до собеседования.","sameAs":[]}</script>
+<!-- JSON-LD: SoftwareApplication + Offers -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HR PRO AI","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"4 валидных теста раскрывают личность, продуктивность, интеллект и навыки продаж кандидата. ИИ-анализ, автоворонка найма, ИИ-звонки.","offers":[{"@type":"Offer","name":"Starter","price":"249","priceCurrency":"EUR","description":"25 тестов"},{"@type":"Offer","name":"Standard","price":"499","priceCurrency":"EUR","description":"60 тестов"},{"@type":"Offer","name":"Pro","price":"999","priceCurrency":"EUR","description":"160 тестов"},{"@type":"Offer","name":"Business","price":"1499","priceCurrency":"EUR","description":"300 тестов"}]}</script>
 <style>
+/* --- landing-only components --- */
 .lang-switch{display:inline-flex;gap:3px;align-items:center}
 .lang-switch button{background:transparent;border:1px solid var(--line);color:var(--muted);font:700 11px/1 Inter,sans-serif;padding:5px 7px;border-radius:6px;cursor:pointer}
 .lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+/* logo — icon only, no background plate */
+.lp-logo .m{background:none;box-shadow:none;width:36px;height:36px}
+.lp-logo .m svg{width:36px;height:36px}
+.lp-logo .m svg path,.lp-logo .m svg line,.lp-logo .m svg circle{stroke:var(--brand)}
+/* announcement bar */
+.lp-bar{background:linear-gradient(90deg,var(--brand-ink),var(--brand),var(--brand-2));color:#fff;text-align:center;font-size:13.5px;font-weight:600;padding:9px 16px;letter-spacing:.01em}
+.lp-bar a{color:#fff;text-decoration:underline;text-underline-offset:2px;font-weight:800}
+.lp-bar b{color:#ffe08a}
+/* trust logos strip */
+.trust-strip{max-width:var(--maxw);margin:0 auto;padding:8px 40px 4px;text-align:center}
+.trust-strip .tl{color:var(--muted);font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+.trust-logos{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 30px;align-items:center}
+.trust-logos .tlg{display:inline-flex;align-items:center;gap:8px;color:var(--text-2);font-weight:700;font-size:14.5px;opacity:.82}
+.trust-logos .tlg .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
+/* problem / pain cards */
+.pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:38px}
+.pain{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--coral);border-radius:var(--r-lg);padding:24px 24px 22px}
+.pain .pn{font-family:'JetBrains Mono';font-size:26px;font-weight:800;color:var(--coral);margin-bottom:8px}
+.pain h3{font-size:17px;margin-bottom:8px}.pain p{color:var(--text-2);font-size:14.5px;margin:0;line-height:1.55}
+/* methodology cards */
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+.mcard{border-radius:var(--r-lg);padding:26px;border:1.5px solid var(--line);background:var(--surface);position:relative;overflow:hidden}
+.mcard .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:var(--pill);margin-bottom:14px}
+.mcard.win{border-color:#bfe0cf}.mcard.win .tag{background:#e7f6ef;color:#1f7a54}
+.mcard.doer{border-color:var(--line-2)}.mcard.doer .tag{background:var(--surface-2);color:var(--text-2)}
+.mcard.wait{border-color:#f2cdc2}.mcard.wait .tag{background:#fff0ec;color:#c0472f}
+.mcard h3{font-size:20px;margin-bottom:10px}.mcard p{color:var(--text-2);font-size:14.5px;margin:0;line-height:1.55}
+[data-theme="dark"] .mcard.win{background:#0f2118}[data-theme="dark"] .mcard.wait{background:#22140f}
+/* system features */
+.sys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:40px}
+.sys{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:26px;transition:all var(--d2) var(--ease)}
+.sys:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);border-color:var(--brand)}
+.sys .si{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:15px;background:var(--brand-soft);color:var(--brand-ink)}
+.sys .si svg{width:24px;height:24px}
+.sys h3{font-size:17.5px;margin-bottom:8px}.sys p{color:var(--text-2);font-size:14px;line-height:1.55;margin:0}
+/* comparison */
+.cmp{max-width:920px;margin:40px auto 0;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--surface)}
+.cmp-row{display:grid;grid-template-columns:1.3fr 1fr 1fr;border-top:1px solid var(--line)}
+.cmp-row:first-child{border-top:0}
+.cmp-row>div{padding:16px 20px;font-size:14.5px;display:flex;align-items:center}
+.cmp-row .ch{font-weight:700;background:var(--surface-2)}
+.cmp-row .cf{color:var(--text-2)}
+.cmp-row .old{color:var(--muted)}
+.cmp-row .new{font-weight:650;color:var(--text);background:var(--brand-soft)}
+.cmp-head>div{font-family:'Manrope';font-weight:800;font-size:15px;background:var(--surface-2)}
+.cmp-head .new{background:var(--brand);color:#fff}
+.cmp .ic{width:20px;height:20px;flex:0 0 auto;margin-right:9px}
+/* stats band */
+.stats-band{max-width:var(--maxw);margin:0 auto;padding:0 40px}
+.stats-inner{background:linear-gradient(140deg,var(--ink),var(--ink-2));border-radius:var(--r-xl);padding:48px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stats-inner .st .n{font-family:'JetBrains Mono';font-size:clamp(30px,4vw,46px);font-weight:800;color:#fff;line-height:1}
+.stats-inner .st .l{color:rgba(255,255,255,.72);font-size:14px;margin-top:10px}
+/* proof / authority band */
+.proof{max-width:var(--maxw);margin:0 auto;padding:70px 40px}
+.proof-inner{background:linear-gradient(140deg,var(--ink),var(--ink-2));border-radius:var(--r-xl);padding:52px 48px;color:#fff;display:grid;grid-template-columns:minmax(180px,240px) 1fr;gap:44px;align-items:center;position:relative;overflow:hidden}
+.proof-inner::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--coral),var(--brand),var(--brand-2))}
+.proof .big{text-align:center}
+.proof .big .n{font-family:'JetBrains Mono';font-size:clamp(52px,7vw,76px);font-weight:800;line-height:1;background:linear-gradient(120deg,#fff,#9dbdfb);-webkit-background-clip:text;background-clip:text;color:transparent}
+.proof .big .l{color:rgba(255,255,255,.82);font-size:14.5px;margin-top:12px;line-height:1.45}
+.proof .big .src{color:rgba(255,255,255,.5);font-size:11.5px;margin-top:12px;letter-spacing:.04em}
+.proof .qt .lead2{color:rgba(255,255,255,.7);font-size:16px;margin-bottom:16px}
+.proof .qt blockquote{margin:0;font-family:'Manrope';font-size:clamp(19px,2.4vw,25px);font-weight:700;line-height:1.32;letter-spacing:-.01em}
+.proof .qt .au{color:rgba(255,255,255,.6);font-size:14px;margin-top:18px}
+.proof .qt .au b{color:#fff}
+@media(max-width:760px){.proof-inner{grid-template-columns:1fr;gap:24px;padding:36px 26px;text-align:center}.proof .big .n{font-size:60px}}
+/* testimonials */
+.tst-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:40px}
+.tst{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:28px;display:flex;flex-direction:column;gap:16px}
+.tst .stars{color:#f5a623;font-size:15px;letter-spacing:2px}
+.tst .q{font-size:15.5px;line-height:1.6;color:var(--text);flex:1}
+.tst .who{display:flex;align-items:center;gap:12px}
+.tst .who .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(140deg,var(--brand),var(--brand-2));color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px}
+.tst .who b{display:block;font-size:14.5px}.tst .who span{color:var(--muted);font-size:13px}
+/* faq */
+.faq-wrap{max-width:800px;margin:40px auto 0}
+.faq-item{border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;background:var(--surface);overflow:hidden}
+.faq-q{width:100%;text-align:left;padding:20px 22px;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:16px;color:var(--text)}
+.faq-q .pl{flex:0 0 auto;width:22px;height:22px;position:relative;transition:transform var(--d2)}
+.faq-q .pl::before,.faq-q .pl::after{content:"";position:absolute;background:var(--brand);border-radius:2px}
+.faq-q .pl::before{left:0;right:0;top:10px;height:2px}
+.faq-q .pl::after{top:0;bottom:0;left:10px;width:2px;transition:opacity var(--d2)}
+.faq-item.open .faq-q .pl::after{opacity:0}
+.faq-a{max-height:0;overflow:hidden;transition:max-height var(--d3) var(--ease)}
+.faq-a .inner{padding:0 22px 22px;color:var(--text-2);font-size:14.5px;line-height:1.6}
+/* guarantee row under pricing */
+.guarantee{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 26px;margin-top:30px}
+.guarantee .g{display:inline-flex;align-items:center;gap:9px;color:var(--text-2);font-size:14px;font-weight:600}
+.guarantee .g svg{width:20px;height:20px;color:var(--good);flex:0 0 auto}
+/* section intro centered */
+.si-center{text-align:center;max-width:720px;margin:0 auto}
+.si-center .eyebrow{justify-content:center;display:inline-flex}
+.si-center .sub{margin:14px auto 0}
+/* sticky mobile cta */
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;padding:12px 16px;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(30,22,60,.1)}
+.sticky-cta .btn{width:100%}
+/* lead-magnet popup */
+.pop-ov{position:fixed;inset:0;z-index:100;background:rgba(16,20,36,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;animation:fade .25s ease}
+.pop-ov.on{display:flex}
+.lmp{background:var(--surface);border-radius:var(--r-xl);max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;box-shadow:var(--sh-lg);position:relative}
+.pop-close{position:absolute;top:14px;right:16px;width:34px;height:34px;border-radius:50%;background:var(--surface-2);color:var(--text-2);font-size:20px;line-height:1;display:grid;place-items:center;z-index:2}
+.lmp .l{background:linear-gradient(150deg,var(--ink),var(--ink-2));color:#fff;padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+.lmp .l .eyebrow{color:#fff}
+.lmp .l h3{color:#fff;font-size:26px;margin:14px 0 12px;line-height:1.15}
+.lmp .l ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:10px}
+.lmp .l li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:rgba(255,255,255,.85)}
+.lmp .l li::before{content:"✓";color:#7fe3bf;font-weight:800}
+.lmp .r{padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+.lmp .r h4{font-size:20px;margin-bottom:8px}
+.lmp .r p{color:var(--muted);font-size:14px;margin:0 0 18px}
+.lmp .r .field{margin-bottom:12px}
+.lmp .r .ok{color:var(--good);font-weight:700;text-align:center;padding:20px 0}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+/* test sequence badge */
+.feat .fic{position:relative;overflow:visible}
+.step-no{position:absolute;top:-9px;left:-9px;width:23px;height:23px;border-radius:50%;background:var(--brand);color:#fff;font:800 12px/23px 'JetBrains Mono',monospace;text-align:center;box-shadow:var(--sh-sm)}
+/* pareto callout */
+.pareto{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center;margin-top:36px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:30px 34px}
+.pareto-n{font-family:'JetBrains Mono';font-size:clamp(38px,5vw,56px);font-weight:800;line-height:1;letter-spacing:-.02em;background:linear-gradient(120deg,var(--coral),var(--brand));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.pareto-t h3{font-size:20px;margin-bottom:8px}
+.pareto-t p{color:var(--text-2);font-size:15px;line-height:1.6;margin:0}
+/* cost breakdown */
+.cost{max-width:760px;margin:44px auto 0;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh)}
+.cost-head{padding:26px 28px 4px}
+.cost-head h3{font-size:21px;margin-bottom:6px}
+.cost-head p{color:var(--muted);font-size:14px;margin:0}
+.cost-list{padding:14px 28px 8px}
+.cost-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:13px 0;border-bottom:1px dashed var(--line)}
+.cost-row .cl{color:var(--text-2);font-size:14.5px}
+.cost-row .cv{font-family:'JetBrains Mono';font-weight:700;font-size:16px;white-space:nowrap}
+.cost-row.total{border-bottom:0;border-top:2px solid var(--line-2);margin-top:4px;padding-top:16px}
+.cost-row.total .cl{color:var(--text);font-weight:800;font-size:16px}
+.cost-row.total .cv{color:var(--coral);font-size:24px}
+.cost-note{margin:0;padding:16px 28px 24px;color:var(--text-2);font-size:14px;line-height:1.6;background:var(--coral-s)}
+/* auto-funnel chain */
+.chain{display:flex;align-items:stretch;gap:8px;margin-top:40px}
+.chain .cnode{flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:22px 18px;min-width:0}
+.chain .cnode.last{border-color:#bfe0cf;background:#f2fbf6}
+[data-theme="dark"] .chain .cnode.last{background:#0f2118}
+.chain .cn{width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font:800 15px/34px 'JetBrains Mono';text-align:center;margin-bottom:13px}
+.chain .cnode.last .cn{background:var(--good)}
+.chain .cnode h3{font-size:16px;margin-bottom:7px}
+.chain .cnode p{color:var(--text-2);font-size:13px;line-height:1.5;margin:0}
+.chain .carrow{align-self:center;color:var(--brand);font-size:22px;font-weight:800;flex:0 0 auto}
+/* time savings band */
+.time-save{max-width:820px;margin:34px auto 0;background:linear-gradient(140deg,var(--ink),var(--ink-2));border-radius:var(--r-lg);padding:30px 36px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;color:#fff}
+.time-save .ts-n{font-family:'JetBrains Mono';font-size:clamp(30px,4vw,42px);font-weight:800;line-height:1;white-space:nowrap}
+.time-save .ts-n span{font-size:14px;font-weight:600;color:rgba(255,255,255,.7);display:block;margin-top:6px}
+.time-save .ts-l{color:rgba(255,255,255,.85);font-size:15px;line-height:1.55}
+.cmp-row.total-time .ch{font-weight:800}
+.cmp-row.total-time .new{background:var(--brand);color:#fff;font-weight:700}
+.cmp-row.total-time .old{color:var(--coral);font-weight:600}
+/* system features one row */
+.sys-grid{grid-template-columns:repeat(6,1fr)}
+.sys-grid .sys{padding:22px 18px}
+.sys-grid .sys h3{font-size:15.5px}
+.sys-grid .sys p{font-size:12.5px}
+@media(max-width:1100px){.sys-grid{grid-template-columns:repeat(3,1fr)}.chain{flex-wrap:wrap}.chain .carrow{display:none}.chain .cnode{flex:1 1 40%}}
+@media(max-width:860px){.method-grid{grid-template-columns:1fr}.stats-inner{grid-template-columns:repeat(2,1fr)}.lmp{grid-template-columns:1fr}.lmp .l{display:none}.pareto{grid-template-columns:1fr;gap:14px;text-align:center}.time-save{grid-template-columns:1fr;gap:12px;text-align:center}.sys-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.cmp-row{grid-template-columns:1.2fr .9fr .9fr}.cmp-row>div{padding:13px 12px;font-size:13px}.sticky-cta{display:block}.chain .cnode{flex:1 1 100%}}
 </style>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233d6cd1'/%3E%3Cpath d='M32 12 50 22 50 42 32 52 14 42 14 22Z' stroke='white' stroke-width='2.4' fill='none'/%3E%3Ccircle cx='32' cy='31' r='4' fill='%23ff7a5c'/%3E%3C/svg%3E">
 </head><body class="lp">
 
+<div class="lp-bar" id="lp-bar" data-i18n="bar">Новым аккаунтам — по <b>бесплатному тесту каждого вида</b> и 2 вакансии. Карта не нужна. <a href="/login?mode=register">Забрать →</a></div>
+
 <nav class="lp-nav">
-  <a href="/" class="lp-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><span style="display:flex;flex-direction:column;line-height:1.05"><b>HR PRO AI</b><span style="font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.02em" data-i18n="brand_tagline">чувствует людей</span></span></a>
+  <a href="/" class="lp-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><span style="display:flex;flex-direction:column;line-height:1.05"><b>HR PRO AI</b><span style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.01em;max-width:150px" data-i18n="brand_tagline">технология, которая чувствует людей</span></span></a>
   <div class="lp-links">
-    <a href="#how" data-i18n="nav_how">Как это работает</a>
+    <a href="#problem" data-i18n="nav_why">Зачем</a>
     <a href="#tests" data-i18n="nav_tests">Тесты</a>
+    <a href="#system" data-i18n="nav_system">Возможности</a>
     <a href="#pricing" data-i18n="nav_pricing">Цены</a>
+    <a href="#faq" data-i18n="nav_faq">FAQ</a>
     <span class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></span>
     <a href="/login" class="btn ghost sm" data-i18n="nav_login">Войти</a>
     <a href="/login?mode=register" class="btn sm" data-i18n="nav_start">Начать бесплатно</a>
@@ -29,17 +216,17 @@
 
 <header class="hero">
   <div class="hero-copy reveal">
-    <div class="eyebrow" data-i18n="eyebrow">Психометрика найма</div>
+    <div class="eyebrow" data-i18n="eyebrow">Наём по данным · PL · UA · RU · EU</div>
     <h1 style="margin-top:18px" data-i18n="hero_h1">Узнайте, <span class="hl">кто перед вами</span>, до того как нанять</h1>
-    <p class="lead" data-i18n="hero_lead">Резюме говорит, кем человек хочет казаться. Наши четыре теста показывают, кто он на самом деле — личность, продуктивность, интеллект и навыки продаж. Один график вместо сотни собеседований.</p>
+    <p class="lead" data-i18n="hero_lead">В резюме человек описывает себя таким, каким хочет выглядеть. Наши тесты показывают, как он работает на самом деле: даёт ли результат, что у него с характером, головой и продажами. Всё это видно на одном графике ещё до встречи.</p>
     <div class="hero-cta">
       <a href="/login?mode=register" class="btn lg" data-i18n="hero_cta_try">Попробовать бесплатно →</a>
       <a href="#how" class="btn ghost lg" data-i18n="hero_cta_how">Как это работает</a>
     </div>
     <div class="hero-trust">
       <div class="t"><div class="n">4</div><div class="l" data-i18n="trust_tests">валидных теста</div></div>
-      <div class="t"><div class="n">10&nbsp;мин</div><div class="l" data-i18n="trust_time">на оценку</div></div>
-      <div class="t"><div class="n">200</div><div class="l" data-i18n="trust_gift">тестов в подарок</div></div>
+      <div class="t"><div class="n">10&nbsp;<span data-i18n="trust_min">мин</span></div><div class="l" data-i18n="trust_time">на первую оценку</div></div>
+      <div class="t"><div class="n">5</div><div class="l" data-i18n="trust_gift">теста в подарок</div></div>
     </div>
   </div>
   <div class="hero-visual reveal d2">
@@ -54,252 +241,544 @@
   </div>
 </header>
 
-<section class="lp-section" id="tests">
-  <div class="eyebrow" data-i18n="tests_eyebrow">Четыре измерения</div>
-  <h2 style="margin-top:14px" data-i18n="tests_h2">Каждый тест отвечает на свой вопрос найма</h2>
-  <p class="sub" data-i18n="tests_sub">Вместе они складываются в объёмный портрет кандидата — без догадок и интуиции.</p>
+<section class="trust-strip reveal">
+  <div class="tl" data-i18n="trust_strip_h">Ваши вакансии — на площадках, где ищут работу</div>
+  <div class="trust-logos">
+    <span class="tlg"><span class="dot"></span>Google for Jobs</span>
+    <span class="tlg"><span class="dot"></span>Indeed</span>
+    <span class="tlg"><span class="dot"></span>Adzuna</span>
+    <span class="tlg"><span class="dot"></span>Pracuj.pl</span>
+    <span class="tlg"><span class="dot"></span>OLX Praca</span>
+    <span class="tlg"><span class="dot"></span>Praca.pl</span>
+    <span class="tlg"><span class="dot"></span>GoWork.pl</span>
+    <span class="tlg"><span class="dot"></span>Jooble</span>
+  </div>
+</section>
+
+<!-- PROBLEM / AGITATION -->
+<section class="lp-section" id="problem">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="prob_eyebrow">Цена ошибки</div>
+    <h2 style="margin-top:14px" data-i18n="prob_h2">Один неверный найм стоит вам месяцев и денег</h2>
+    <p class="sub" data-i18n="prob_sub">Собеседование показывает, как человек умеет проходить собеседования. А не как он будет работать. Интуиция ошибается — и платите за это вы.</p>
+  </div>
+  <div class="pain-grid">
+    <div class="pain reveal"><div class="pn">×6</div><h3 data-i18n="pain1_h">Провальный найм = до 6 окладов</h3><p data-i18n="pain1_p">Поиск, адаптация, недополученный результат и повторный подбор. Одна ошибка съедает бюджет целого полугодия.</p></div>
+    <div class="pain reveal d1"><div class="pn">70%</div><h3 data-i18n="pain2_h">Решают по первому впечатлению</h3><p data-i18n="pain2_p">Обаяние на интервью ≠ результат в работе. «Вейтеры» умеют нравиться — и именно они проходят классический отбор.</p></div>
+    <div class="pain reveal d2"><div class="pn">⏳</div><h3 data-i18n="pain3_h">Правда всплывает через 3 месяца</h3><p data-i18n="pain3_p">Когда испытательный срок уже оплачен, команда перегружена, а результата нет. Мы показываем это до оффера.</p></div>
+  </div>
+
+  <div class="cost reveal">
+    <div class="cost-head">
+      <h3 data-i18n="cost_h">Посчитаем на одном человеке</h3>
+      <p data-i18n="cost_sub">Оклад — 1500 €. Ошибка вскрылась на третий месяц. Вот из чего складывается счёт.</p>
+    </div>
+    <div class="cost-list">
+      <div class="cost-row"><span class="cl" data-i18n="cost1_l">Зарплата сотрудника за 3 месяца впустую</span><span class="cv">4 500 €</span></div>
+      <div class="cost-row"><span class="cl" data-i18n="cost2_l">Работа рекрутера: поиск, звонки, отбор</span><span class="cv">1 500 €</span></div>
+      <div class="cost-row"><span class="cl" data-i18n="cost3_l">Время руководителя на ввод в должность</span><span class="cv">2 000 €</span></div>
+      <div class="cost-row"><span class="cl" data-i18n="cost4_l">Упущенная прибыль: человек не принёс денег</span><span class="cv">6 000 €</span></div>
+      <div class="cost-row"><span class="cl" data-i18n="cost5_l">Новый круг найма по той же технологии</span><span class="cv">4 500 €</span></div>
+      <div class="cost-row total"><span class="cl" data-i18n="cost_total_l">Одна ошибка найма обходится в</span><span class="cv">18 500 €</span></div>
+    </div>
+    <p class="cost-note" data-i18n="cost_note">Это 12 окладов. И счёт придёт снова на следующем кандидате — пока вы нанимаете по резюме и интуиции, а не по данным.</p>
+  </div>
+</section>
+
+<!-- TESTS -->
+<section class="lp-section" id="tests" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="tests_eyebrow">Четыре измерения</div>
+    <h2 style="margin-top:14px" data-i18n="tests_h2">Каждый тест отвечает на свой вопрос найма</h2>
+    <p class="sub" data-i18n="tests_sub">Вместе они складываются в объёмный портрет кандидата — без догадок и интуиции. Плюс проверка мотивации, референсов и знаний под вашу вакансию.</p>
+  </div>
   <div class="feat-grid">
-    <div class="feat reveal"><div class="fic fic-tools" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.2"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.2"/></svg></div><h3 data-i18n="feat_tools_h">Тулс — личность</h3><p data-i18n="feat_tools_p">Оксфордский анализ: 200 вопросов, 10 черт характера от внимательности до общительности. График с зонами и синдромами.</p></div>
-    <div class="feat reveal d1"><div class="fic fic-result" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div><h3 data-i18n="feat_result_h">Резалт — продуктивность</h3><p data-i18n="feat_result_p">Оценка результатов на прошлой работе. Кто перед вами — Виннер, Дуэр или Вейтер. Главный фактор найма.</p></div>
-    <div class="feat reveal d2"><div class="fic fic-logic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.7 10.7c.6.5.9 1 .9 1.8v.5h5.6v-.5c0-.8.3-1.3.9-1.8A6 6 0 0 0 12 3Z"/></svg></div><h3 data-i18n="feat_logic_h">Логис — интеллект</h3><p data-i18n="feat_logic_p">Тест на IQ: скорость мышления и способность принимать решения. Балл и уровень с интерпретацией.</p></div>
-    <div class="feat reveal d3"><div class="fic fic-sales" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/></svg></div><h3 data-i18n="feat_sales_h">Сэйлс — продажи</h3><p data-i18n="feat_sales_p">12 показателей продавца: настойчивость, экспертность, привлечение и удержание клиентов на одном графике.</p></div>
+    <div class="feat reveal"><div class="fic fic-result" aria-hidden="true"><span class="step-no">1</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg></div><h3 data-i18n="feat_result_h">Резалт — продуктивность</h3><p data-i18n="feat_result_p">Как человек давал результат на прошлой работе. ИИ определяет: Виннер, Дуэр или Вейтер. Главный фильтр найма и проверка референсов.</p></div>
+    <div class="feat reveal d1"><div class="fic fic-tools" aria-hidden="true"><span class="step-no">2</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"/><circle cx="9" cy="8" r="2.2"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="15" cy="16" r="2.2"/></svg></div><h3 data-i18n="feat_tools_h">Тулс — личность</h3><p data-i18n="feat_tools_p">200 вопросов, 10 черт характера от внимательности до общительности. График с зонами, 28 синдромов и детектор недостоверности. Нормировка по полу и возрасту.</p></div>
+    <div class="feat reveal d2"><div class="fic fic-logic" aria-hidden="true"><span class="step-no">3</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.7 10.7c.6.5.9 1 .9 1.8v.5h5.6v-.5c0-.8.3-1.3.9-1.8A6 6 0 0 0 12 3Z"/></svg></div><h3 data-i18n="feat_logic_h">Логис — интеллект</h3><p data-i18n="feat_logic_p">80 вопросов на логику. IQ-балл 75–155 с интерпретацией и рекомендацией по пригодности к руководящим должностям.</p></div>
+    <div class="feat reveal d3"><div class="fic fic-sales" aria-hidden="true"><span class="step-no">4</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/></svg></div><h3 data-i18n="feat_sales_h">Сэйлс — продажи</h3><p data-i18n="feat_sales_p">120 утверждений, 12 показателей продавца: настойчивость, экспертность, деловая хватка, привлечение и удержание клиентов на одном графике.</p></div>
   </div>
 </section>
 
+<!-- METHODOLOGY -->
+<section class="lp-section" id="method">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="method_eyebrow">Авторская методика</div>
+    <h2 style="margin-top:14px" data-i18n="method_h2">Виннер, Дуэр или Вейтер — кто в вашей команде?</h2>
+    <p class="sub" data-i18n="method_sub">Всё держится на «продукте должности» — конкретном измеримом результате работы. Мы делим людей по тому, как они с ним обращаются.</p>
+  </div>
+  <div class="method-grid">
+    <div class="mcard win reveal"><span class="tag" data-i18n="m_win_tag">Нанимать</span><h3 data-i18n="m_win_h">Виннер</h3><p data-i18n="m_win_p">Даёт результат и формулирует продукт своей должности. Ориентирован на итог, а не на процесс. Тот, ради кого работает вся воронка.</p></div>
+    <div class="mcard doer reveal d1"><span class="tag" data-i18n="m_doer_tag">Зависит от роли</span><h3 data-i18n="m_doer_h">Дуэр</h3><p data-i18n="m_doer_p">Исполнитель: делает свою работу, но результат назвать не может. Хорош там, где нужна стабильность, а не прорыв.</p></div>
+    <div class="mcard wait reveal d2"><span class="tag" data-i18n="m_wait_tag">Осторожно</span><h3 data-i18n="m_wait_h">Вейтер</h3><p data-i18n="m_wait_p">«Отсиживает» время, продукт назвать не может. Чаще всего именно он лучше всех проходит классическое собеседование.</p></div>
+  </div>
+  <div class="pareto reveal">
+    <div class="pareto-n">80 / 20</div>
+    <div class="pareto-t">
+      <h3 data-i18n="pareto_h">Принцип Парето в найме</h3>
+      <p data-i18n="pareto_p">Примерно 20% сотрудников приносят около 80% результата. Это Виннеры. Проблема в том, что на собеседовании они выглядят так же, как остальные, — а иногда и проигрывают обаятельным Вейтерам. Мы находим эти 20% по данным, ещё до того как вы потратите на человека время и деньги.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF / AUTHORITY -->
+<section class="proof reveal">
+  <div class="proof-inner">
+    <div class="big">
+      <div class="n">85%</div>
+      <div class="l" data-i18n="proof_stat_l">успеха на работе дают soft skills, а не только компетенции</div>
+      <div class="src" data-i18n="proof_stat_src">Гарвард · Фонд Карнеги · Стэнфорд</div>
+    </div>
+    <div class="qt">
+      <div class="lead2" data-i18n="proof_lead">Поэтому мы измеряем не диплом, а человека — по продуктивности, личности, интеллекту и продажам.</div>
+      <blockquote data-i18n="proof_quote">«Ни одна компания не растёт быстрее, чем растёт её способность нанимать нужных людей.»</blockquote>
+      <div class="au"><b data-i18n="proof_author">Дэвид Паккард</b> — <span data-i18n="proof_role">сооснователь Hewlett-Packard</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTO-FUNNEL CHAIN -->
 <section class="lp-section" id="how" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
-  <div class="eyebrow" data-i18n="how_eyebrow">Три шага</div>
-  <h2 style="margin-top:14px" data-i18n="how_h2">От ссылки до решения о найме</h2>
-  <div class="steps">
-    <div class="step reveal"><div class="line"></div><h3 data-i18n="step1_h">Отправьте тест</h3><p data-i18n="step1_p">Введите email кандидата и выберите тест. Ссылка уходит за секунду — платите только за пройденные тесты.</p></div>
-    <div class="step reveal d1"><div class="line"></div><h3 data-i18n="step2_h">Кандидат проходит</h3><p data-i18n="step2_p">Он открывает ссылку и отвечает — на телефоне или компьютере, за 10–35 минут. Результат приходит в кабинет.</p></div>
-    <div class="step reveal d2"><div class="line"></div><h3 data-i18n="step3_h">Читаете график</h3><p data-i18n="step3_p">Готовый профиль с интерпретацией, ИИ-подсказкой и рекомендацией. Собеседование, резерв или отказ — в один клик.</p></div>
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="how_eyebrow">Автоворонка</div>
+    <h2 style="margin-top:14px" data-i18n="how_h2">От заявки до нанятого сотрудника</h2>
+    <p class="sub" data-i18n="how_sub">Вы создаёте заявку — дальше система ведёт кандидата сама. Ниже вся цепочка: от «нужен человек» до «человек нанят».</p>
+  </div>
+  <div class="chain">
+    <div class="cnode reveal"><div class="cn">1</div><h3 data-i18n="chain1_h">Заявка на подбор</h3><p data-i18n="chain1_p">Руководитель заполняет короткую заявку по ссылке. ИИ проверяет её и превращает в готовую вакансию.</p></div>
+    <div class="carrow" aria-hidden="true">→</div>
+    <div class="cnode reveal d1"><div class="cn">2</div><h3 data-i18n="chain2_h">Публикация</h3><p data-i18n="chain2_p">Вакансия сама уходит на площадки объявлений и в Google for Jobs. Кандидаты начинают откликаться.</p></div>
+    <div class="carrow" aria-hidden="true">→</div>
+    <div class="cnode reveal d2"><div class="cn">3</div><h3 data-i18n="chain3_h">Отклик</h3><p data-i18n="chain3_p">Человек откликается через вашу анкету, оставляет CV — карточка кандидата создаётся автоматически.</p></div>
+    <div class="carrow" aria-hidden="true">→</div>
+    <div class="cnode reveal d3"><div class="cn">4</div><h3 data-i18n="chain4_h">Тесты по очереди</h3><p data-i18n="chain4_p">Система шлёт тесты один за другим: Резалт, Тулс, Логис, Сэйлс. Не прошёл критичный — отсев автоматом.</p></div>
+    <div class="carrow" aria-hidden="true">→</div>
+    <div class="cnode reveal d4"><div class="cn">5</div><h3 data-i18n="chain5_h">ИИ-звонок</h3><p data-i18n="chain5_p">Голосовой бот звонит, оценивает мотивацию и заменяет первичное интервью. Русский, польский, английский.</p></div>
+    <div class="carrow" aria-hidden="true">→</div>
+    <div class="cnode reveal d4 last"><div class="cn">✓</div><h3 data-i18n="chain6_h">Нанят</h3><p data-i18n="chain6_p">ИИ собирает профиль, даёт рекомендацию, и кандидат доходит до колонки «Найм». Вам остаётся сказать «да».</p></div>
   </div>
 </section>
 
-<section class="lp-section" id="pricing">
-  <div class="eyebrow" style="justify-content:center;display:flex" data-i18n="pricing_eyebrow">Прозрачные цены</div>
-  <h2 style="text-align:center;margin-top:14px" data-i18n="pricing_h2">Платите за тесты, а не за подписку</h2>
-  <p class="sub" style="margin:14px auto 0;text-align:center" data-i18n="pricing_sub">Один тест = один кандидат. Пакеты дешевле, остаток не сгорает.</p>
-  <div class="plan-grid" id="plan-grid" style="margin-top:40px"></div>
+<!-- SYSTEM / FEATURES -->
+<section class="lp-section" id="system">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="sys_eyebrow">Не просто тесты</div>
+    <h2 style="margin-top:14px" data-i18n="sys_h2">Целая система найма вокруг оценки</h2>
+    <p class="sub" data-i18n="sys_sub">От первого отклика до оффера — автоматизируем рутину, а решение оставляем вам.</p>
+  </div>
+  <div class="sys-grid">
+    <div class="sys reveal"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 18Z"/><path d="M8 9h8M8 12h5"/></svg></div><h3 data-i18n="sys3_h">Заявки на подбор + ИИ</h3><p data-i18n="sys3_p">Руководитель заполняет заявку по ссылке → ИИ проверяет её, подсказывает кого искать и генерирует текст вакансии → автоматически создаётся вакансия.</p></div>
+    <div class="sys reveal d1"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div><h3 data-i18n="sys6_h">Авто-постинг вакансий</h3><p data-i18n="sys6_p">Вакансии сами публикуются на площадках объявлений и в Google for Jobs. По каждому каналу видно, откуда пришёл кандидат и сколько дошло до найма.</p></div>
+    <div class="sys reveal d2"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 21.5Z"/></svg></div><h3 data-i18n="sys4_h">Анкеты — мини-сайты</h3><p data-i18n="sys4_p">Публичная страница отклика с вашим брендом. Кандидат оставляет CV → карточка создаётся сама и запускаются назначенные тесты.</p></div>
+    <div class="sys reveal d3"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></div><h3 data-i18n="sys2_h">Автоворонка</h3><p data-i18n="sys2_p">Пришёл отклик → тест за тестом по очереди → на нужных шагах ИИ-звонок → все этапы пройдены → колонка «Найм». Без вашего участия.</p></div>
+    <div class="sys reveal d4"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a1 1 0 0 1 1-1h3l2 5-2 1a12 12 0 0 0 5 5l1-2 5 2v3a1 1 0 0 1-1 1A16 16 0 0 1 4 5Z"/></svg></div><h3 data-i18n="sys5_h">ИИ-звонки кандидатам</h3><p data-i18n="sys5_p">Живой голос звонит, рассказывает о вакансии, оценивает мотивацию и заменяет первичное интервью. Русский, польский, английский.</p></div>
+    <div class="sys reveal d4"><div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="10" y="4" width="4" height="16" rx="1"/><rect x="17" y="4" width="4" height="10" rx="1"/></svg></div><h3 data-i18n="sys1_h">Канбан-воронка</h3><p data-i18n="sys1_p">Кандидаты по этапам с авто-раскладкой. Критичный этап провален — карточка сама уходит в «Отказ». Всё видно на одной доске.</p></div>
+  </div>
 </section>
 
+<!-- COMPARISON -->
+<section class="lp-section">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="cmp_eyebrow">Сравните сами</div>
+    <h2 style="margin-top:14px" data-i18n="cmp_h2">Резюме и интервью против HR PRO AI</h2>
+  </div>
+  <div class="cmp reveal">
+    <div class="cmp-row cmp-head"><div class="ch" data-i18n="cmp_col0">Что вы узнаёте</div><div class="old" data-i18n="cmp_col1">Резюме и интервью</div><div class="new" data-i18n="cmp_col2">HR PRO AI</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="cmp_r1">Правда о продуктивности</div><div class="cf old" data-i18n="cmp_no">Верите на слово</div><div class="cf new" data-i18n="cmp_r1v">Резалт и звонки бывшим руководителям</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="cmp_r2">Какой человек на самом деле</div><div class="cf old" data-i18n="cmp_subj">Как вам показалось</div><div class="cf new" data-i18n="cmp_r2v">10 черт по шкале, с нормировкой</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="cmp_r3">Голова и продажи</div><div class="cf old" data-i18n="cmp_guess">Оцениваете на глаз</div><div class="cf new" data-i18n="cmp_r3v">IQ в баллах и 12 качеств продавца</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="cmp_r5">Можно ли вас обмануть</div><div class="cf old" data-i18n="cmp_r5o">Достаточно понравиться</div><div class="cf new" data-i18n="cmp_r5v">Ловим неискренние ответы</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="cmp_r6">Как принимаете решение</div><div class="cf old" data-i18n="cmp_r6o">По ощущению</div><div class="cf new" data-i18n="cmp_r6v">По готовому профилю и подсказке ИИ</div></div>
+  </div>
+
+  <div class="si-center" style="margin-top:56px">
+    <h2 style="font-size:clamp(24px,3vw,34px)" data-i18n="time_h2">А теперь — сколько это экономит времени</h2>
+  </div>
+  <div class="cmp reveal">
+    <div class="cmp-row cmp-head"><div class="ch" data-i18n="time_col0">Этап отбора</div><div class="old" data-i18n="time_col1">Руками</div><div class="new" data-i18n="time_col2">С HR PRO AI</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="time_r1">Первичный отсев кандидата</div><div class="cf old" data-i18n="time_r1o">40–60 минут интервью</div><div class="cf new" data-i18n="time_r1v">2 минуты на чтение профиля</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="time_r2">Проверка личности и мотивации</div><div class="cf old" data-i18n="time_r2o">1–2 часа встреч</div><div class="cf new" data-i18n="time_r2v">0 минут: тесты и ИИ-звонок сами</div></div>
+    <div class="cmp-row"><div class="ch" data-i18n="time_r3">Проверка референсов</div><div class="cf old" data-i18n="time_r3o">Полдня на обзвон</div><div class="cf new" data-i18n="time_r3v">Внутри теста Резалт</div></div>
+    <div class="cmp-row total-time"><div class="ch" data-i18n="time_r4">На одного кандидата</div><div class="cf old" data-i18n="time_r4o">3–5 часов вашего времени</div><div class="cf new" data-i18n="time_r4v">~15 минут</div></div>
+  </div>
+  <div class="time-save reveal">
+    <div class="ts-n">≈ 35 <span data-i18n="time_hours">часов в месяц</span></div>
+    <div class="ts-l" data-i18n="time_save_l">свободного времени при 10 кандидатах — почти целая рабочая неделя, которую вы вернёте себе и команде.</div>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<section class="stats-band reveal">
+  <div class="stats-inner">
+    <div class="st"><div class="n">4+3</div><div class="l" data-i18n="stat1">теста + мотивация, референсы, знания</div></div>
+    <div class="st"><div class="n">10&nbsp;<span data-i18n="stat_min">мин</span></div><div class="l" data-i18n="stat2">до первого профиля</div></div>
+    <div class="st"><div class="n">3</div><div class="l" data-i18n="stat3">языка кандидатам и интерфейсу</div></div>
+    <div class="st"><div class="n">0&nbsp;€</div><div class="l" data-i18n="stat4">бесплатный старт для новых</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="lp-section">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="tst_eyebrow">Отзывы</div>
+    <h2 style="margin-top:14px" data-i18n="tst_h2">Рекрутёры перестали нанимать вслепую</h2>
+  </div>
+  <div class="tst-grid">
+    <div class="tst reveal"><div class="stars">★★★★★</div><div class="q" data-i18n="tst1_q">«Раньше первичный отбор занимал у меня две недели интервью. Теперь я вижу Виннеров сразу и зову на встречу только их. Экономия времени — колоссальная.»</div><div class="who"><div class="av">М</div><div><b data-i18n="tst1_n">Марина, HR-менеджер</b><span data-i18n="tst1_r">ритейл-сеть, 40+ найма/мес</span></div></div></div>
+    <div class="tst reveal d1"><div class="stars">★★★★★</div><div class="q" data-i18n="tst2_q">«Тест Сэйлс сэкономил нам два провальных найма в отдел продаж. График сразу показал, что харизматичный кандидат не умеет удерживать клиентов.»</div><div class="who"><div class="av">D</div><div><b data-i18n="tst2_n">Dawid, Head of Sales</b><span data-i18n="tst2_r">SaaS, Варшава</span></div></div></div>
+    <div class="tst reveal d2"><div class="stars">★★★★★</div><div class="q" data-i18n="tst3_q">«Автоворонка и ИИ-звонки закрыли рутину. Кандидат сам проходит цепочку тестов, а мне приходит готовое решение. Оплата за тест — честно и предсказуемо.»</div><div class="who"><div class="av">О</div><div><b data-i18n="tst3_n">Ольга, руководитель подбора</b><span data-i18n="tst3_r">кадровое агентство</span></div></div></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="lp-section" id="pricing">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="pricing_eyebrow">Прозрачные цены</div>
+    <h2 style="margin-top:14px" data-i18n="pricing_h2">Платите за тесты, а не за подписку</h2>
+    <p class="sub" data-i18n="pricing_sub">Один тест — один кандидат. Чем больше пакет, тем ниже цена за тест.</p>
+  </div>
+  <div class="plan-grid" id="plan-grid" style="margin-top:40px"></div>
+  <div class="guarantee">
+    <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="grt1">По тесту каждого вида — бесплатно</span></div>
+    <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="grt2">Без карты при регистрации</span></div>
+    <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="grt3">Без подписки — платите за тесты</span></div>
+    <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span data-i18n="grt4">Оплата Stripe, безопасно</span></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="lp-section" id="faq" style="background:var(--surface);border-radius:var(--r-xl);border:1px solid var(--line)">
+  <div class="si-center">
+    <div class="eyebrow" data-i18n="faq_eyebrow">Вопросы</div>
+    <h2 style="margin-top:14px" data-i18n="faq_h2">Что обычно спрашивают</h2>
+  </div>
+  <div class="faq-wrap" id="faq-wrap"></div>
+</section>
+
+<!-- FINAL CTA -->
 <div class="lp-cta">
   <div class="inner reveal">
     <div class="eyebrow" style="justify-content:center;display:flex;color:#fff" data-i18n="cta_eyebrow">Начните сегодня</div>
-    <h2 style="margin-top:14px" data-i18n="cta_h2">Первые 200 тестов — бесплатно</h2>
-    <p data-i18n="cta_p">Зарегистрируйтесь и отправьте первому кандидату тест уже через минуту. Без карты, без обязательств.</p>
+    <h2 style="margin-top:14px" data-i18n="cta_h2">Оцените первого кандидата бесплатно</h2>
+    <p data-i18n="cta_p">Зарегистрируйтесь и отправьте первому кандидату тест уже через минуту. Без карты, без обязательств, с двумя готовыми вакансиями в подарок.</p>
     <a href="/login?mode=register" class="btn lg" style="background:#fff;color:var(--brand)" data-i18n="cta_btn">Создать аккаунт →</a>
   </div>
 </div>
 
-<footer class="lp-foot">
-  <div data-i18n="foot_copy">© HR PRO AI — психометрическая платформа найма</div>
-  <div data-i18n="foot_tagline">HR PRO AI · технология, которая чувствует людей</div>
+<footer class="lp-foot" style="display:block">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:center">
+    <div>
+      <div data-i18n="foot_copy" style="font-weight:700;color:var(--text)">Мы раскрываем личность, чтобы вы создавали сильные команды.</div>
+      <div data-i18n="foot_tagline" style="margin-top:4px">© HR PRO AI · технология, которая чувствует людей</div>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="#tests" data-i18n="nav_tests">Тесты</a>
+      <a href="#pricing" data-i18n="nav_pricing">Цены</a>
+      <a href="#faq" data-i18n="nav_faq">FAQ</a>
+      <a href="/login" data-i18n="nav_login">Войти</a>
+      <a href="/login?mode=register" data-i18n="foot_referral">Пригласить и получить бонус</a>
+    </div>
+  </div>
 </footer>
+
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-cta"><a href="/login?mode=register" class="btn lg" data-i18n="sticky_cta">Начать бесплатно — тесты в подарок →</a></div>
+
+<!-- LEAD MAGNET POPUP -->
+<div class="pop-ov" id="pop">
+  <div class="lmp">
+    <button class="pop-close" id="pop-close" aria-label="Закрыть">×</button>
+    <div class="l">
+      <div class="eyebrow" data-i18n="pop_eyebrow">Бесплатный гайд</div>
+      <h3 data-i18n="pop_h">7 признаков Виннера, которые видно на собеседовании</h3>
+      <ul>
+        <li data-i18n="pop_li1">Как отличить результат от имитации бурной деятельности</li>
+        <li data-i18n="pop_li2">Вопросы, на которых «Вейтер» выдаёт себя</li>
+        <li data-i18n="pop_li3">Чек-лист «продукта должности» под вашу вакансию</li>
+      </ul>
+    </div>
+    <div class="r" id="pop-form-side">
+      <h4 data-i18n="pop_fh">Получите PDF на почту</h4>
+      <p data-i18n="pop_fp">И заодно — бесплатный старт: по тесту каждого вида. Никакого спама.</p>
+      <input class="field" id="pop-email" type="email" placeholder="Рабочий email" data-i18n-ph="pop_ph">
+      <button class="btn lg" id="pop-submit" data-i18n="pop_btn">Забрать гайд →</button>
+      <p class="muted" style="font-size:12px;text-align:center;margin-top:12px" data-i18n="pop_note">Отправляя email, вы соглашаетесь получить гайд и письмо о старте.</p>
+    </div>
+  </div>
+</div>
 
 <script>
 if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
 
 const I18N={
   ru:{
-    page_title:'HR PRO AI — узнайте кандидата до найма',
-    brand_tagline:'чувствует людей',
-    nav_how:'Как это работает',
-    nav_tests:'Тесты',
-    nav_pricing:'Цены',
-    nav_login:'Войти',
-    nav_start:'Начать бесплатно',
-    eyebrow:'Психометрика найма',
+    page_title:'HR PRO AI — узнайте, кто перед вами, до того как нанять',
+    meta_desc:'Платформа оценки кандидатов по данным: 4 валидных теста раскрывают личность, продуктивность, интеллект и навыки продаж на одном графике. ИИ-анализ, автоворонка, ИИ-звонки. Старт бесплатно — по тесту каждого вида, без карты.',
+    og_title:'HR PRO AI — узнайте, кто перед вами, до того как нанять',
+    brand_tagline:'технология, которая чувствует людей',
+    bar:'Новым аккаунтам — по <b>бесплатному тесту каждого вида</b> и 2 вакансии. Карта не нужна. <a href="/login?mode=register">Забрать →</a>',
+    nav_why:'Зачем',nav_tests:'Тесты',nav_system:'Возможности',nav_pricing:'Цены',nav_faq:'FAQ',nav_login:'Войти',nav_start:'Начать бесплатно',
+    eyebrow:'Наём по данным · PL · UA · RU · EU',
     hero_h1:'Узнайте, <span class="hl">кто перед вами</span>, до того как нанять',
-    hero_lead:'Резюме говорит, кем человек хочет казаться. Наши четыре теста показывают, кто он на самом деле — личность, продуктивность, интеллект и навыки продаж. Один график вместо сотни собеседований.',
-    hero_cta_try:'Попробовать бесплатно →',
-    hero_cta_how:'Как это работает',
-    trust_tests:'валидных теста',
-    trust_time:'на оценку',
-    trust_gift:'тестов в подарок',
-    hero_name:'Анна Ковальская',
-    hero_role:'Менеджер по продажам · «Тулс»',
-    hero_badge:'● Виннер',
-    scale_low:'Очень низкий',
-    scale_mid:'Средний',
-    scale_high:'Очень высокий',
-    tests_eyebrow:'Четыре измерения',
-    tests_h2:'Каждый тест отвечает на свой вопрос найма',
-    tests_sub:'Вместе они складываются в объёмный портрет кандидата — без догадок и интуиции.',
-    feat_tools_h:'Тулс — личность',
-    feat_tools_p:'Оксфордский анализ: 200 вопросов, 10 черт характера от внимательности до общительности. График с зонами и синдромами.',
-    feat_result_h:'Резалт — продуктивность',
-    feat_result_p:'Оценка результатов на прошлой работе. Кто перед вами — Виннер, Дуэр или Вейтер. Главный фактор найма.',
-    feat_logic_h:'Логис — интеллект',
-    feat_logic_p:'Тест на IQ: скорость мышления и способность принимать решения. Балл и уровень с интерпретацией.',
-    feat_sales_h:'Сэйлс — продажи',
-    feat_sales_p:'12 показателей продавца: настойчивость, экспертность, привлечение и удержание клиентов на одном графике.',
-    how_eyebrow:'Три шага',
-    how_h2:'От ссылки до решения о найме',
-    step1_h:'Отправьте тест',
-    step1_p:'Введите email кандидата и выберите тест. Ссылка уходит за секунду — платите только за пройденные тесты.',
-    step2_h:'Кандидат проходит',
-    step2_p:'Он открывает ссылку и отвечает — на телефоне или компьютере, за 10–35 минут. Результат приходит в кабинет.',
-    step3_h:'Читаете график',
-    step3_p:'Готовый профиль с интерпретацией, ИИ-подсказкой и рекомендацией. Собеседование, резерв или отказ — в один клик.',
-    pricing_eyebrow:'Прозрачные цены',
-    pricing_h2:'Платите за тесты, а не за подписку',
-    pricing_sub:'Один тест = один кандидат. Пакеты дешевле, остаток не сгорает.',
-    cta_eyebrow:'Начните сегодня',
-    cta_h2:'Первые 200 тестов — бесплатно',
-    cta_p:'Зарегистрируйтесь и отправьте первому кандидату тест уже через минуту. Без карты, без обязательств.',
-    cta_btn:'Создать аккаунт →',
-    foot_copy:'© HR PRO AI — психометрическая платформа найма',
-    foot_tagline:'HR PRO AI · технология, которая чувствует людей',
-    trait_attention:'Внимательность',
-    trait_positivity:'Позитивность',
-    trait_composure:'Самообладание',
-    trait_activity:'Активность',
-    trait_persistence:'Настойчивость',
-    trait_empathy:'Чуткость',
-    plan_tests:'тестов',
-    plan_hit:'Хит',
-    plan_save:'Выгода',
-    plan_per:'за тест',
-    plan_buy:'Купить',
-    plan_currency:'€',
-    plan_locale:'ru'
+    hero_lead:'В резюме человек описывает себя таким, каким хочет выглядеть. Наши тесты показывают, как он работает на самом деле: даёт ли результат, что у него с характером, головой и продажами. Всё это видно на одном графике ещё до встречи.',
+    hero_cta_try:'Попробовать бесплатно →',hero_cta_how:'Как это работает',
+    trust_tests:'валидных теста',trust_min:'мин',trust_time:'на первую оценку',trust_gift:'теста в подарок',
+    hero_name:'Анна Ковальская',hero_role:'Менеджер по продажам · «Тулс»',hero_badge:'● Виннер',
+    scale_low:'Очень низкий',scale_mid:'Средний',scale_high:'Очень высокий',
+    trust_strip_h:'Ваши вакансии — на площадках, где ищут работу',
+    prob_eyebrow:'Цена ошибки',prob_h2:'Один неверный найм стоит вам месяцев и денег',
+    prob_sub:'Собеседование проверяет, как человек проходит собеседования. Как он будет работать, оно не показывает. Интуиция подводит, а счёт за это приходит вам.',
+    pain1_h:'Провальный найм = до 6 окладов',pain1_p:'Поиск, адаптация, недополученный результат и повторный подбор. Одна ошибка съедает бюджет целого полугодия.',
+    pain2_h:'Решают по первому впечатлению',pain2_p:'Обаяние на интервью ≠ результат в работе. «Вейтеры» умеют нравиться — и именно они проходят классический отбор.',
+    pain3_h:'Правда всплывает через 3 месяца',pain3_p:'Когда испытательный срок уже оплачен, команда перегружена, а результата нет. Мы показываем это до оффера.',
+    tests_eyebrow:'Четыре измерения',tests_h2:'Каждый тест отвечает на свой вопрос найма',
+    tests_sub:'Кандидат проходит их по очереди: сначала Резалт — главный фильтр, потом Тулс, Логис и Сэйлс. Плюс проверка мотивации, референсов и знаний под конкретную вакансию.',
+    feat_tools_h:'Тулс — личность',feat_tools_p:'200 вопросов, 10 черт характера от внимательности до общительности. График с зонами, 28 синдромов и детектор недостоверности. Нормировка по полу и возрасту.',
+    feat_result_h:'Резалт — продуктивность',feat_result_p:'Как человек давал результат на прошлой работе. ИИ определяет: Виннер, Дуэр или Вейтер. Главный фильтр найма и проверка референсов.',
+    feat_logic_h:'Логис — интеллект',feat_logic_p:'80 вопросов на логику. IQ-балл 75–155 с интерпретацией и рекомендацией по пригодности к руководящим должностям.',
+    feat_sales_h:'Сэйлс — продажи',feat_sales_p:'120 утверждений, 12 показателей продавца: настойчивость, экспертность, деловая хватка, привлечение и удержание клиентов на одном графике.',
+    method_eyebrow:'Авторская методика',method_h2:'Виннер, Дуэр или Вейтер — кто в вашей команде?',
+    method_sub:'Всё строится вокруг «продукта должности» — измеримого результата работы. Люди отличаются тем, как они с ним обходятся.',
+    m_win_tag:'Нанимать',m_win_h:'Виннер',m_win_p:'Даёт результат и формулирует продукт своей должности. Ориентирован на итог, а не на процесс. Тот, ради кого работает вся воронка.',
+    m_doer_tag:'Зависит от роли',m_doer_h:'Дуэр',m_doer_p:'Исполнитель: делает свою работу, но результат назвать не может. Хорош там, где нужна стабильность, а не прорыв.',
+    m_wait_tag:'Осторожно',m_wait_h:'Вейтер',m_wait_p:'«Отсиживает» время, продукт назвать не может. Чаще всего именно он лучше всех проходит классическое собеседование.',
+    pareto_h:'Принцип Парето в найме',pareto_p:'Примерно 20% сотрудников приносят около 80% результата. Это Виннеры. Проблема в том, что на собеседовании они выглядят так же, как остальные, — а иногда и проигрывают обаятельным Вейтерам. Мы находим эти 20% по данным, ещё до того как вы потратите на человека время и деньги.',
+    proof_stat_l:'успеха на работе дают soft skills, а не только компетенции',proof_stat_src:'Гарвард · Фонд Карнеги · Стэнфорд',proof_lead:'Поэтому мы измеряем самого человека: как он даёт результат, что у него с характером, интеллектом и продажами.',proof_quote:'«Ни одна компания не растёт быстрее, чем растёт её способность нанимать нужных людей.»',proof_author:'Дэвид Паккард',proof_role:'сооснователь Hewlett-Packard',
+    how_eyebrow:'Автоворонка',how_h2:'От заявки до нанятого сотрудника',how_sub:'Вы создаёте заявку — дальше система ведёт кандидата сама. Ниже вся цепочка: от «нужен человек» до «человек нанят».',
+    chain1_h:'Заявка на подбор',chain1_p:'Руководитель заполняет короткую заявку по ссылке. ИИ проверяет её и превращает в готовую вакансию.',
+    chain2_h:'Публикация',chain2_p:'Вакансия сама уходит на площадки объявлений и в Google for Jobs. Кандидаты начинают откликаться.',
+    chain3_h:'Отклик',chain3_p:'Человек откликается через вашу анкету, оставляет CV — карточка кандидата создаётся автоматически.',
+    chain4_h:'Тесты по очереди',chain4_p:'Система шлёт тесты один за другим: Резалт, Тулс, Логис, Сэйлс. Не прошёл критичный — отсев автоматом.',
+    chain5_h:'ИИ-звонок',chain5_p:'Голосовой бот звонит, оценивает мотивацию и заменяет первичное интервью. Русский, польский, английский.',
+    chain6_h:'Нанят',chain6_p:'ИИ собирает профиль, даёт рекомендацию, и кандидат доходит до колонки «Найм». Вам остаётся сказать «да».',
+    sys_eyebrow:'Не просто тесты',sys_h2:'Вокруг оценки — вся система найма',sys_sub:'От первого отклика до оффера рутину берёт на себя система. За вами остаётся решение.',
+    sys1_h:'Канбан-воронка',sys1_p:'Кандидаты по этапам с авто-раскладкой. Критичный этап провален — карточка сама уходит в «Отказ». Всё видно на одной доске.',
+    sys2_h:'Автоворонка',sys2_p:'Пришёл отклик → тест за тестом по очереди → на нужных шагах ИИ-звонок → все этапы пройдены → колонка «Найм». Без вашего участия.',
+    sys3_h:'Заявки на подбор + ИИ',sys3_p:'Руководитель заполняет заявку по ссылке → ИИ проверяет её, подсказывает кого искать и генерирует текст вакансии → автоматически создаётся вакансия.',
+    sys4_h:'Анкеты — мини-сайты',sys4_p:'Публичная страница отклика с вашим брендом. Кандидат оставляет CV → карточка создаётся сама и запускаются назначенные тесты.',
+    sys5_h:'ИИ-звонки кандидатам',sys5_p:'Живой голос звонит, рассказывает о вакансии, оценивает мотивацию и заменяет первичное интервью. Русский, польский, английский.',
+    sys6_h:'Авто-постинг вакансий',sys6_p:'Вакансии сами публикуются на площадках объявлений и в Google for Jobs. По каждому каналу видно, откуда пришёл кандидат и сколько дошло до найма.',
+    cmp_eyebrow:'Сравните сами',cmp_h2:'Резюме и интервью против HR PRO AI',
+    cmp_col0:'Что вы узнаёте',cmp_col1:'Резюме и интервью',cmp_col2:'HR PRO AI',
+    cmp_r1:'Правда о продуктивности',cmp_no:'Верите на слово',cmp_r1v:'Резалт и звонки бывшим руководителям',
+    cmp_r2:'Какой человек на самом деле',cmp_subj:'Как вам показалось',cmp_r2v:'10 черт по шкале, с нормировкой',
+    cmp_r3:'Голова и продажи',cmp_guess:'Оцениваете на глаз',cmp_r3v:'IQ в баллах и 12 качеств продавца',
+    cmp_r5:'Можно ли вас обмануть',cmp_r5o:'Достаточно понравиться',cmp_r5v:'Ловим неискренние ответы',
+    cmp_r6:'Как принимаете решение',cmp_r6o:'По ощущению',cmp_r6v:'По готовому профилю и подсказке ИИ',
+    time_h2:'А теперь — сколько это экономит времени',time_col0:'Этап отбора',time_col1:'Руками',time_col2:'С HR PRO AI',
+    time_r1:'Первичный отсев кандидата',time_r1o:'40–60 минут интервью',time_r1v:'2 минуты на чтение профиля',
+    time_r2:'Проверка личности и мотивации',time_r2o:'1–2 часа встреч',time_r2v:'0 минут: тесты и ИИ-звонок сами',
+    time_r3:'Проверка референсов',time_r3o:'Полдня на обзвон',time_r3v:'Внутри теста Резалт',
+    time_r4:'На одного кандидата',time_r4o:'3–5 часов вашего времени',time_r4v:'~15 минут',
+    time_hours:'часов в месяц',time_save_l:'свободного времени при 10 кандидатах — почти целая рабочая неделя, которую вы вернёте себе и команде.',
+    cost_h:'Посчитаем на одном человеке',cost_sub:'Оклад — 1500 €. Ошибка вскрылась на третий месяц. Вот из чего складывается счёт.',
+    cost1_l:'Зарплата сотрудника за 3 месяца впустую',cost2_l:'Работа рекрутера: поиск, звонки, отбор',cost3_l:'Время руководителя на ввод в должность',cost4_l:'Упущенная прибыль: человек не принёс денег',cost5_l:'Новый круг найма по той же технологии',cost_total_l:'Одна ошибка найма обходится в',cost_note:'Это 12 окладов. И счёт придёт снова на следующем кандидате — пока вы нанимаете по резюме и интуиции, а не по данным.',
+    stat1:'теста + мотивация, референсы, знания',stat_min:'мин',stat2:'до первого профиля',stat3:'языка кандидатам и интерфейсу',stat4:'бесплатный старт для новых',
+    tst_eyebrow:'Отзывы',tst_h2:'Рекрутёры перестали нанимать вслепую',
+    tst1_q:'«Раньше первичный отбор занимал у меня две недели интервью. Теперь я вижу Виннеров сразу и зову на встречу только их. Экономия времени — колоссальная.»',tst1_n:'Марина, HR-менеджер',tst1_r:'ритейл-сеть, 40+ найма/мес',
+    tst2_q:'«Тест Сэйлс сэкономил нам два провальных найма в отдел продаж. График сразу показал, что харизматичный кандидат не умеет удерживать клиентов.»',tst2_n:'Dawid, Head of Sales',tst2_r:'SaaS, Варшава',
+    tst3_q:'«Автоворонка и ИИ-звонки закрыли рутину. Кандидат сам проходит цепочку тестов, а мне приходит готовое решение. Оплата за тест — честно и предсказуемо.»',tst3_n:'Ольга, руководитель подбора',tst3_r:'кадровое агентство',
+    pricing_eyebrow:'Прозрачные цены',pricing_h2:'Платите за тесты, а не за подписку',pricing_sub:'Один тест — один кандидат. Чем больше пакет, тем ниже цена за тест.',
+    grt1:'По тесту каждого вида — бесплатно',grt2:'Без карты при регистрации',grt3:'Без подписки — платите за тесты',grt4:'Оплата Stripe, безопасно',
+    faq_eyebrow:'Вопросы',faq_h2:'Что обычно спрашивают',
+    cta_eyebrow:'Начните сегодня',cta_h2:'Оцените первого кандидата бесплатно',cta_p:'Зарегистрируйтесь и отправьте первый тест за минуту. По бесплатному тесту каждого вида и две готовые вакансии. Карта не нужна.',cta_btn:'Создать аккаунт →',
+    foot_copy:'Мы раскрываем личность, чтобы вы создавали сильные команды.',foot_tagline:'© HR PRO AI · технология, которая чувствует людей',foot_referral:'Пригласить и получить бонус',
+    sticky_cta:'Начать бесплатно — тесты в подарок →',
+    pop_eyebrow:'Бесплатный гайд',pop_h:'7 признаков Виннера, которые видно на собеседовании',
+    pop_li1:'Как отличить результат от имитации бурной деятельности',pop_li2:'Вопросы, на которых «Вейтер» выдаёт себя',pop_li3:'Чек-лист «продукта должности» под вашу вакансию',
+    pop_fh:'Получите PDF на почту',pop_fp:'И заодно — бесплатный старт: по тесту каждого вида. Никакого спама.',pop_ph:'Рабочий email',pop_btn:'Забрать гайд →',pop_note:'Отправляя email, вы соглашаетесь получить гайд и письмо о старте.',pop_ok:'Готово! Проверьте почту, а пока — создайте аккаунт и начните бесплатно.',
+    plan_tests:'тестов',plan_hit:'Хит',plan_save:'Выгода',plan_per:'за тест',plan_buy:'Купить',plan_currency:'€',plan_locale:'ru',
+    trait_attention:'Внимательность',trait_positivity:'Позитивность',trait_composure:'Самообладание',trait_activity:'Активность',trait_persistence:'Настойчивость',trait_empathy:'Чуткость',
+    faq:[
+      ['Что входит в бесплатный старт?','При регистрации вы и ваша компания получаете по одному бесплатному тесту каждого вида (Тулс, Резалт, Логис, Сэйлс и Знания) и две готовые вакансии. Этого достаточно, чтобы оценить первого кандидата по всем осям и понять, как работает платформа, — без единого платежа и без карты.'],
+      ['Чем это лучше обычного собеседования?','Собеседование измеряет умение производить впечатление. Мы измеряем то, что предсказывает работу: как человек давал результат раньше, его личность по 10 чертам, интеллект и навыки продаж. Плюс детектор недостоверности ловит «правильные» ответы.'],
+      ['Сколько времени занимает тестирование?','Кандидат проходит тест за 10–35 минут с телефона или компьютера. Первый профиль вы видите уже через 10 минут после отправки ссылки. Вам не нужно ничего настраивать — отправили и получили результат.'],
+      ['Как устроена оплата?','Модель pay-per-test: один отправленный тест — одно списание. Никакой подписки: пакеты тестов просто дешевле поштучных. Оплата через Stripe — карты и локальные методы.'],
+      ['На каких языках работает платформа?','Интерфейс и лендинг — русский, польский, английский. Письма и SMS кандидатам — ещё и украинский. Язык теста определяется языком вакансии, а интерфейс и часовой пояс — автоматически при регистрации.'],
+      ['Насколько это безопасно для данных?','Пароли хранятся через PBKDF2, сессии подписаны, доступ к базе — только по сервисному ключу. Данные и файлы (CV, медиа) — в Supabase. Кандидат явно даёт согласие на обработку данных перед тестом.']
+    ]
   },
   pl:{
-    page_title:'HR PRO AI — poznaj kandydata przed zatrudnieniem',
-    brand_tagline:'czuje ludzi',
-    nav_how:'Jak to działa',
-    nav_tests:'Testy',
-    nav_pricing:'Cennik',
-    nav_login:'Zaloguj się',
-    nav_start:'Zacznij za darmo',
-    eyebrow:'Psychometria rekrutacji',
+    page_title:'HR PRO AI — poznaj kandydata, zanim go zatrudnisz',
+    meta_desc:'Platforma oceny kandydatów na podstawie danych: 4 rzetelne testy ukazują osobowość, produktywność, inteligencję i sprzedaż na jednym wykresie. Analiza AI, autolejek, rozmowy AI. Darmowy start — po jednym teście każdego rodzaju, bez karty.',
+    og_title:'HR PRO AI — poznaj kandydata, zanim go zatrudnisz',
+    brand_tagline:'technologia, która czuje ludzi',
+    bar:'Nowe konta — po <b>darmowym teście każdego rodzaju</b> i 2 oferty. Karta nie jest potrzebna. <a href="/login?mode=register">Odbierz →</a>',
+    nav_why:'Po co',nav_tests:'Testy',nav_system:'Możliwości',nav_pricing:'Cennik',nav_faq:'FAQ',nav_login:'Zaloguj się',nav_start:'Zacznij za darmo',
+    eyebrow:'Rekrutacja na podstawie danych · PL · UA · RU · EU',
     hero_h1:'Poznaj, <span class="hl">kto jest przed tobą</span>, zanim go zatrudnisz',
-    hero_lead:'CV mówi, kim człowiek chce się wydawać. Nasze cztery testy pokazują, kim jest naprawdę — osobowość, produktywność, inteligencja i umiejętności sprzedażowe. Jeden wykres zamiast setek rozmów.',
-    hero_cta_try:'Wypróbuj za darmo →',
-    hero_cta_how:'Jak to działa',
-    trust_tests:'rzetelne testy',
-    trust_time:'na ocenę',
-    trust_gift:'testów w prezencie',
-    hero_name:'Anna Kowalska',
-    hero_role:'Menedżer sprzedaży · „Tools”',
-    hero_badge:'● Winner',
-    scale_low:'Bardzo niski',
-    scale_mid:'Średni',
-    scale_high:'Bardzo wysoki',
-    tests_eyebrow:'Cztery wymiary',
-    tests_h2:'Każdy test odpowiada na inne pytanie rekrutacyjne',
-    tests_sub:'Razem tworzą pełny portret kandydata — bez domysłów i intuicji.',
-    feat_tools_h:'Tools — osobowość',
-    feat_tools_p:'Analiza oksfordzka: 200 pytań, 10 cech charakteru od uważności po towarzyskość. Wykres ze strefami i syndromami.',
-    feat_result_h:'Result — produktywność',
-    feat_result_p:'Ocena wyników w poprzedniej pracy. Kto jest przed tobą — Winner, Doer czy Waiter. Kluczowy czynnik rekrutacji.',
-    feat_logic_h:'Logic — inteligencja',
-    feat_logic_p:'Test IQ: szybkość myślenia i zdolność podejmowania decyzji. Wynik i poziom z interpretacją.',
-    feat_sales_h:'Sales — sprzedaż',
-    feat_sales_p:'12 wskaźników sprzedawcy: wytrwałość, ekspertyza, pozyskiwanie i utrzymanie klientów na jednym wykresie.',
-    how_eyebrow:'Trzy kroki',
-    how_h2:'Od linku do decyzji o zatrudnieniu',
-    step1_h:'Wyślij test',
-    step1_p:'Wpisz e-mail kandydata i wybierz test. Link wychodzi w sekundę — płacisz tylko za ukończone testy.',
-    step2_h:'Kandydat rozwiązuje',
-    step2_p:'Otwiera link i odpowiada — na telefonie lub komputerze, w 10–35 minut. Wynik trafia do panelu.',
-    step3_h:'Czytasz wykres',
-    step3_p:'Gotowy profil z interpretacją, podpowiedzią AI i rekomendacją. Rozmowa, rezerwa lub odmowa — jednym kliknięciem.',
-    pricing_eyebrow:'Przejrzyste ceny',
-    pricing_h2:'Płać za testy, a nie za abonament',
-    pricing_sub:'Jeden test = jeden kandydat. Pakiety są tańsze, a niewykorzystane testy nie przepadają.',
-    cta_eyebrow:'Zacznij już dziś',
-    cta_h2:'Pierwsze 200 testów — za darmo',
-    cta_p:'Zarejestruj się i wyślij pierwszemu kandydatowi test już w minutę. Bez karty, bez zobowiązań.',
-    cta_btn:'Załóż konto →',
-    foot_copy:'© HR PRO AI — psychometryczna platforma rekrutacyjna',
-    foot_tagline:'HR PRO AI · technologia, która czuje ludzi',
-    trait_attention:'Uważność',
-    trait_positivity:'Pozytywność',
-    trait_composure:'Opanowanie',
-    trait_activity:'Aktywność',
-    trait_persistence:'Wytrwałość',
-    trait_empathy:'Empatia',
-    plan_tests:'testów',
-    plan_hit:'Hit',
-    plan_save:'Oszczędność',
-    plan_per:'za test',
-    plan_buy:'Kup',
-    plan_currency:'€',
-    plan_locale:'pl'
+    hero_lead:'W CV człowiek opisuje siebie takim, jakim chce wyglądać. Nasze testy pokazują, jak naprawdę pracuje: czy daje wynik, co u niego z charakterem, głową i sprzedażą. Widzisz to na jednym wykresie, jeszcze przed spotkaniem.',
+    hero_cta_try:'Wypróbuj za darmo →',hero_cta_how:'Jak to działa',
+    trust_tests:'rzetelne testy',trust_min:'min',trust_time:'na pierwszą ocenę',trust_gift:'testy w prezencie',
+    hero_name:'Anna Kowalska',hero_role:'Menedżer sprzedaży · „Tools”',hero_badge:'● Winner',
+    scale_low:'Bardzo niski',scale_mid:'Średni',scale_high:'Bardzo wysoki',
+    trust_strip_h:'Twoje oferty — na portalach, gdzie szukają pracy',
+    prob_eyebrow:'Koszt błędu',prob_h2:'Jedno błędne zatrudnienie kosztuje miesiące i pieniądze',
+    prob_sub:'Rozmowa sprawdza, jak ktoś radzi sobie na rozmowach. Nie pokazuje, jak będzie pracował. Intuicja się myli, a rachunek trafia do ciebie.',
+    pain1_h:'Nietrafiony najem = do 6 pensji',pain1_p:'Poszukiwanie, wdrożenie, utracony wynik i ponowna rekrutacja. Jeden błąd pochłania budżet całego półrocza.',
+    pain2_h:'Decyzja na pierwsze wrażenie',pain2_p:'Urok na rozmowie ≠ wynik w pracy. „Waiterzy” potrafią się podobać — i to oni przechodzą klasyczną selekcję.',
+    pain3_h:'Prawda wychodzi po 3 miesiącach',pain3_p:'Gdy okres próbny już opłacony, zespół przeciążony, a wyniku brak. My pokazujemy to przed ofertą.',
+    tests_eyebrow:'Cztery wymiary',tests_h2:'Każdy test odpowiada na inne pytanie rekrutacyjne',
+    tests_sub:'Kandydat przechodzi je po kolei: najpierw Result — kluczowy filtr, potem Tools, Logic i Sales. Plus weryfikacja motywacji, referencji i wiedzy pod konkretną ofertę.',
+    feat_tools_h:'Tools — osobowość',feat_tools_p:'200 pytań, 10 cech charakteru od uważności po towarzyskość. Wykres ze strefami, 28 syndromów i detektor nierzetelności. Normalizacja wg płci i wieku.',
+    feat_result_h:'Result — produktywność',feat_result_p:'Jak człowiek dawał wynik w poprzedniej pracy. AI określa: Winner, Doer czy Waiter. Kluczowy filtr i weryfikacja referencji.',
+    feat_logic_h:'Logic — inteligencja',feat_logic_p:'80 pytań logicznych. Wynik IQ 75–155 z interpretacją i rekomendacją co do stanowisk kierowniczych.',
+    feat_sales_h:'Sales — sprzedaż',feat_sales_p:'120 stwierdzeń, 12 wskaźników sprzedawcy: wytrwałość, ekspertyza, smykałka, pozyskiwanie i utrzymanie klientów na jednym wykresie.',
+    method_eyebrow:'Autorska metodyka',method_h2:'Winner, Doer czy Waiter — kto jest w twoim zespole?',
+    method_sub:'Wszystko opiera się na „produkcie stanowiska” — konkretnym mierzalnym wyniku pracy. Dzielimy ludzi wg tego, jak sobie z nim radzą.',
+    m_win_tag:'Zatrudniać',m_win_h:'Winner',m_win_p:'Daje wynik i potrafi nazwać produkt swojego stanowiska. Nastawiony na rezultat, nie na proces. Ten, dla którego działa cały lejek.',
+    m_doer_tag:'Zależy od roli',m_doer_h:'Doer',m_doer_p:'Wykonawca: robi swoją pracę, ale wyniku nie nazwie. Dobry tam, gdzie potrzeba stabilności, a nie przełomu.',
+    m_wait_tag:'Ostrożnie',m_wait_h:'Waiter',m_wait_p:'„Przesiaduje” czas, produktu nie nazwie. Najczęściej to on najlepiej przechodzi klasyczną rozmowę.',
+    pareto_h:'Zasada Pareto w rekrutacji',pareto_p:'Około 20% pracowników przynosi jakieś 80% wyniku. To Winnerzy. Problem w tym, że na rozmowie wyglądają tak samo jak reszta — a czasem przegrywają z czarującymi Waiterami. My znajdujemy te 20% na podstawie danych, zanim wydasz na człowieka czas i pieniądze.',
+    proof_stat_l:'sukcesu w pracy dają soft skills, a nie same kompetencje',proof_stat_src:'Harvard · Fundacja Carnegie · Stanford',proof_lead:'Dlatego mierzymy samego człowieka: jak daje wynik, co u niego z charakterem, głową i sprzedażą.',proof_quote:'„Żadna firma nie rośnie szybciej, niż rośnie jej zdolność do zatrudniania właściwych ludzi.”',proof_author:'David Packard',proof_role:'współzałożyciel Hewlett-Packard',
+    how_eyebrow:'Autolejek',how_h2:'Od zgłoszenia do zatrudnionego pracownika',how_sub:'Ty tworzysz zgłoszenie — dalej system prowadzi kandydata sam. Poniżej cały łańcuch: od „potrzebny człowiek” do „człowiek zatrudniony”.',
+    chain1_h:'Zgłoszenie rekrutacyjne',chain1_p:'Manager wypełnia krótkie zgłoszenie przez link. AI je sprawdza i zamienia w gotową ofertę.',
+    chain2_h:'Publikacja',chain2_p:'Oferta sama trafia na portale ogłoszeń i do Google for Jobs. Kandydaci zaczynają aplikować.',
+    chain3_h:'Aplikacja',chain3_p:'Człowiek aplikuje przez twoją ankietę, zostawia CV — karta kandydata powstaje automatycznie.',
+    chain4_h:'Testy po kolei',chain4_p:'System wysyła testy jeden po drugim: Result, Tools, Logic, Sales. Oblany krytyczny — odsiew automatem.',
+    chain5_h:'Rozmowa AI',chain5_p:'Głosowy bot dzwoni, ocenia motywację i zastępuje wstępną rozmowę. Polski, rosyjski, angielski.',
+    chain6_h:'Zatrudniony',chain6_p:'AI składa profil, daje rekomendację, a kandydat trafia do kolumny „Zatrudnienie”. Tobie zostaje powiedzieć „tak”.',
+    sys_eyebrow:'To nie tylko testy',sys_h2:'Wokół oceny — cały system rekrutacji',sys_sub:'Od pierwszej aplikacji po ofertę rutynę bierze na siebie system. Tobie zostaje decyzja.',
+    sys1_h:'Lejek kanban',sys1_p:'Kandydaci wg etapów z auto-układem. Krytyczny etap oblany — karta sama idzie do „Odmowy”. Wszystko na jednej tablicy.',
+    sys2_h:'Autolejek',sys2_p:'Aplikacja → test za testem po kolei → w kluczowych krokach rozmowa AI → wszystkie etapy zaliczone → kolumna „Zatrudnienie”. Bez twojego udziału.',
+    sys3_h:'Zgłoszenia rekrutacyjne + AI',sys3_p:'Manager wypełnia zgłoszenie przez link → AI je sprawdza, podpowiada kogo szukać i generuje treść oferty → oferta powstaje automatycznie.',
+    sys4_h:'Ankiety — mini-strony',sys4_p:'Publiczna strona aplikacji z twoją marką. Kandydat zostawia CV → karta powstaje sama i uruchamiają się przypisane testy.',
+    sys5_h:'Rozmowy AI z kandydatami',sys5_p:'Żywy głos dzwoni, opowiada o ofercie, ocenia motywację i zastępuje wstępną rozmowę. Polski, rosyjski, angielski.',
+    sys6_h:'Auto-publikacja ofert',sys6_p:'Oferty same publikują się na portalach ogłoszeń i w Google for Jobs. Dla każdego kanału widać, skąd przyszedł kandydat i ilu doszło do zatrudnienia.',
+    cmp_eyebrow:'Porównaj sam',cmp_h2:'CV i rozmowa kontra HR PRO AI',
+    cmp_col0:'Czego się dowiadujesz',cmp_col1:'CV i rozmowa',cmp_col2:'HR PRO AI',
+    cmp_r1:'Prawda o produktywności',cmp_no:'Wierzysz na słowo',cmp_r1v:'Result i telefony do byłych szefów',
+    cmp_r2:'Jaki człowiek naprawdę jest',cmp_subj:'Jak ci się wydało',cmp_r2v:'10 cech na skali, z normalizacją',
+    cmp_r3:'Głowa i sprzedaż',cmp_guess:'Oceniasz na oko',cmp_r3v:'IQ w punktach i 12 cech sprzedawcy',
+    cmp_r5:'Czy da się cię oszukać',cmp_r5o:'Wystarczy się spodobać',cmp_r5v:'Wyłapujemy nieszczere odpowiedzi',
+    cmp_r6:'Jak podejmujesz decyzję',cmp_r6o:'Na wyczucie',cmp_r6v:'Po gotowym profilu i podpowiedzi AI',
+    time_h2:'A teraz — ile to oszczędza czasu',time_col0:'Etap selekcji',time_col1:'Ręcznie',time_col2:'Z HR PRO AI',
+    time_r1:'Wstępny odsiew kandydata',time_r1o:'40–60 minut rozmowy',time_r1v:'2 minuty na profil',
+    time_r2:'Sprawdzenie osobowości i motywacji',time_r2o:'1–2 godziny spotkań',time_r2v:'0 minut: testy i rozmowa AI same',
+    time_r3:'Weryfikacja referencji',time_r3o:'Pół dnia telefonów',time_r3v:'Wewnątrz testu Result',
+    time_r4:'Na jednego kandydata',time_r4o:'3–5 godzin twojego czasu',time_r4v:'~15 minut',
+    time_hours:'godzin miesięcznie',time_save_l:'wolnego czasu przy 10 kandydatach — prawie cały tydzień pracy, który oddasz sobie i zespołowi.',
+    cost_h:'Policzmy na jednym człowieku',cost_sub:'Pensja — 1500 €. Błąd wyszedł w trzecim miesiącu. Oto z czego składa się rachunek.',
+    cost1_l:'Pensja pracownika za 3 miesiące na marne',cost2_l:'Praca rekrutera: szukanie, telefony, selekcja',cost3_l:'Czas managera na wdrożenie',cost4_l:'Utracony zysk: człowiek nie przyniósł pieniędzy',cost5_l:'Nowa runda rekrutacji tą samą metodą',cost_total_l:'Jeden błąd rekrutacji kosztuje',cost_note:'To 12 pensji. I rachunek przyjdzie znowu przy następnym kandydacie — dopóki zatrudniasz po CV i intuicji, a nie po danych.',
+    stat1:'testy + motywacja, referencje, wiedza',stat_min:'min',stat2:'do pierwszego profilu',stat3:'języki dla kandydatów i panelu',stat4:'darmowy start dla nowych',
+    tst_eyebrow:'Opinie',tst_h2:'Rekruterzy przestali zatrudniać na ślepo',
+    tst1_q:'„Wcześniej wstępna selekcja zajmowała mi dwa tygodnie rozmów. Teraz od razu widzę Winnerów i zapraszam tylko ich. Oszczędność czasu ogromna.”',tst1_n:'Marina, HR-menedżer',tst1_r:'sieć retail, 40+ najmów/mies.',
+    tst2_q:'„Test Sales oszczędził nam dwa nietrafione najmy w dziale sprzedaży. Wykres od razu pokazał, że charyzmatyczny kandydat nie utrzymuje klientów.”',tst2_n:'Dawid, Head of Sales',tst2_r:'SaaS, Warszawa',
+    tst3_q:'„Autolejek i rozmowy AI zamknęły rutynę. Kandydat sam przechodzi ścieżkę testów, a mnie przychodzi gotowa decyzja. Płatność za test — uczciwie i przewidywalnie.”',tst3_n:'Olga, kierownik rekrutacji',tst3_r:'agencja kadrowa',
+    pricing_eyebrow:'Przejrzyste ceny',pricing_h2:'Płać za testy, a nie za abonament',pricing_sub:'Jeden test — jeden kandydat. Im większy pakiet, tym niższa cena za test.',
+    grt1:'Po teście każdego rodzaju — za darmo',grt2:'Bez karty przy rejestracji',grt3:'Bez abonamentu — płacisz za testy',grt4:'Płatność Stripe, bezpiecznie',
+    faq_eyebrow:'Pytania',faq_h2:'O co zwykle pytają',
+    cta_eyebrow:'Zacznij dziś',cta_h2:'Oceń pierwszego kandydata za darmo',cta_p:'Zarejestruj się i wyślij pierwszemu kandydatowi test już w minutę. Po jednym darmowym teście każdego rodzaju i dwie gotowe oferty — bez karty i zobowiązań.',cta_btn:'Załóż konto →',
+    foot_copy:'Odkrywamy osobowość, żebyś budował silne zespoły.',foot_tagline:'© HR PRO AI · technologia, która czuje ludzi',foot_referral:'Zaproś i odbierz bonus',
+    sticky_cta:'Zacznij za darmo — testy w prezencie →',
+    pop_eyebrow:'Darmowy przewodnik',pop_h:'7 oznak Winnera, które widać na rozmowie',
+    pop_li1:'Jak odróżnić wynik od pozorowanej aktywności',pop_li2:'Pytania, na których „Waiter” się zdradza',pop_li3:'Checklista „produktu stanowiska” pod twoją ofertę',
+    pop_fh:'Odbierz PDF na e-mail',pop_fp:'A przy okazji — darmowy start: po teście każdego rodzaju. Bez spamu.',pop_ph:'Służbowy e-mail',pop_btn:'Odbierz przewodnik →',pop_note:'Wysyłając e-mail, zgadzasz się na otrzymanie przewodnika i wiadomości o starcie.',pop_ok:'Gotowe! Sprawdź pocztę, a tymczasem — załóż konto i zacznij za darmo.',
+    plan_tests:'testów',plan_hit:'Hit',plan_save:'Oszczędność',plan_per:'za test',plan_buy:'Kup',plan_currency:'€',plan_locale:'pl',
+    trait_attention:'Uważność',trait_positivity:'Pozytywność',trait_composure:'Opanowanie',trait_activity:'Aktywność',trait_persistence:'Wytrwałość',trait_empathy:'Empatia',
+    faq:[
+      ['Co obejmuje darmowy start?','Przy rejestracji ty i twoja firma dostajecie po jednym darmowym teście każdego rodzaju (Tools, Result, Logic, Sales i Wiedza) oraz dwie gotowe oferty. To wystarczy, by ocenić pierwszego kandydata na wszystkich osiach i poznać platformę — bez żadnej płatności i bez karty.'],
+      ['Czym to lepsze od zwykłej rozmowy?','Rozmowa mierzy umiejętność robienia wrażenia. My mierzymy to, co przewiduje pracę: jak ktoś dawał wynik wcześniej, osobowość wg 10 cech, inteligencję i sprzedaż. Detektor nierzetelności wyłapuje „poprawne” odpowiedzi.'],
+      ['Ile trwa testowanie?','Kandydat rozwiązuje test w 10–35 minut na telefonie lub komputerze. Pierwszy profil widzisz już po 10 minutach od wysłania linku. Nic nie musisz ustawiać — wyślij i odbierz wynik.'],
+      ['Jak działa płatność?','Model pay-per-test: jeden wysłany test — jedno naliczenie. Bez abonamentu: pakiety są po prostu tańsze niż pojedyncze testy. Płatność przez Stripe — karty i metody lokalne.'],
+      ['W jakich językach działa platforma?','Interfejs i landing — polski, rosyjski, angielski. E-maile i SMS do kandydatów — też ukraiński. Język testu wynika z języka oferty, a interfejs i strefa czasowa ustawiają się automatycznie przy rejestracji.'],
+      ['Jak bezpieczne są dane?','Hasła w PBKDF2, sesje podpisane, dostęp do bazy tylko kluczem serwisowym. Dane i pliki (CV, media) — w Supabase. Kandydat jawnie wyraża zgodę na przetwarzanie danych przed testem.']
+    ]
   },
   en:{
     page_title:'HR PRO AI — know the candidate before you hire',
-    brand_tagline:'senses people',
-    nav_how:'How it works',
-    nav_tests:'Tests',
-    nav_pricing:'Pricing',
-    nav_login:'Sign in',
-    nav_start:'Start free',
-    eyebrow:'Hiring psychometrics',
+    meta_desc:'Data-driven candidate assessment platform: 4 validated tests reveal personality, productivity, intelligence and sales skills on a single chart. AI analysis, auto-funnel, AI calls. A free start — one test of each type, no card.',
+    og_title:'HR PRO AI — know the candidate before you hire',
+    brand_tagline:'technology that senses people',
+    bar:'New accounts get <b>one free test of each type</b> and 2 vacancies. No card needed. <a href="/login?mode=register">Claim →</a>',
+    nav_why:'Why',nav_tests:'Tests',nav_system:'Features',nav_pricing:'Pricing',nav_faq:'FAQ',nav_login:'Sign in',nav_start:'Start free',
+    eyebrow:'Data-driven hiring · PL · UA · RU · EU',
     hero_h1:'See <span class="hl">who is in front of you</span>, before you hire',
-    hero_lead:'A résumé tells you who someone wants to seem. Our four tests show who they really are — personality, productivity, intelligence and sales skills. One chart instead of a hundred interviews.',
-    hero_cta_try:'Try it free →',
-    hero_cta_how:'How it works',
-    trust_tests:'validated tests',
-    trust_time:'to assess',
-    trust_gift:'tests free',
-    hero_name:'Anna Kowalska',
-    hero_role:'Sales Manager · “Tools”',
-    hero_badge:'● Winner',
-    scale_low:'Very low',
-    scale_mid:'Average',
-    scale_high:'Very high',
-    tests_eyebrow:'Four dimensions',
-    tests_h2:'Each test answers its own hiring question',
-    tests_sub:'Together they form a full portrait of the candidate — no guesswork, no intuition.',
-    feat_tools_h:'Tools — personality',
-    feat_tools_p:'Oxford analysis: 200 questions, 10 character traits from attention to sociability. A chart with zones and syndromes.',
-    feat_result_h:'Result — productivity',
-    feat_result_p:'An assessment of past job results. Who is in front of you — a Winner, Doer or Waiter. The key hiring factor.',
-    feat_logic_h:'Logic — intelligence',
-    feat_logic_p:'An IQ test: thinking speed and decision-making ability. A score and level with interpretation.',
-    feat_sales_h:'Sales — selling',
-    feat_sales_p:'12 salesperson metrics: persistence, expertise, winning and retaining clients on a single chart.',
-    how_eyebrow:'Three steps',
-    how_h2:'From a link to a hiring decision',
-    step1_h:'Send the test',
-    step1_p:'Enter the candidate’s email and pick a test. The link goes out in a second — you pay only for completed tests.',
-    step2_h:'The candidate takes it',
-    step2_p:'They open the link and answer — on phone or computer, in 10–35 minutes. The result lands in your dashboard.',
-    step3_h:'Read the chart',
-    step3_p:'A ready profile with interpretation, an AI hint and a recommendation. Interview, shortlist or reject — in one click.',
-    pricing_eyebrow:'Transparent pricing',
-    pricing_h2:'Pay for tests, not a subscription',
-    pricing_sub:'One test = one candidate. Bundles are cheaper and unused tests never expire.',
-    cta_eyebrow:'Start today',
-    cta_h2:'Your first 200 tests — free',
-    cta_p:'Sign up and send your first candidate a test within a minute. No card, no commitment.',
-    cta_btn:'Create an account →',
-    foot_copy:'© HR PRO AI — psychometric hiring platform',
-    foot_tagline:'HR PRO AI · technology that senses people',
-    trait_attention:'Attention',
-    trait_positivity:'Positivity',
-    trait_composure:'Composure',
-    trait_activity:'Activity',
-    trait_persistence:'Persistence',
-    trait_empathy:'Empathy',
-    plan_tests:'tests',
-    plan_hit:'Top pick',
-    plan_save:'Save',
-    plan_per:'per test',
-    plan_buy:'Buy',
-    plan_currency:'€',
-    plan_locale:'en'
+    hero_lead:'A résumé shows who someone wants to look like. Our tests show how they actually work: whether they deliver results, and how they score on personality, thinking and sales. You see it on one chart, before the interview.',
+    hero_cta_try:'Try it free →',hero_cta_how:'How it works',
+    trust_tests:'validated tests',trust_min:'min',trust_time:'to first assessment',trust_gift:'tests free',
+
+    hero_name:'Anna Kowalska',hero_role:'Sales Manager · “Tools”',hero_badge:'● Winner',
+    scale_low:'Very low',scale_mid:'Average',scale_high:'Very high',
+    trust_strip_h:'Your vacancies — on the boards where people look for work',
+    prob_eyebrow:'The cost of a mistake',prob_h2:'One wrong hire costs you months and money',
+    prob_sub:'An interview shows how well someone handles interviews. It doesn’t show how they’ll work. Intuition gets it wrong, and the bill lands on you.',
+    pain1_h:'A bad hire = up to 6 salaries',pain1_p:'Sourcing, onboarding, lost output and re-hiring. A single mistake eats half a year’s budget.',
+    pain2_h:'Decided on first impression',pain2_p:'Charm in an interview ≠ results at work. “Waiters” know how to be likable — and they’re the ones who pass classic screening.',
+    pain3_h:'The truth surfaces after 3 months',pain3_p:'When probation is already paid, the team is overloaded and there are no results. We show it before the offer.',
+    tests_eyebrow:'Four dimensions',tests_h2:'Each test answers its own hiring question',
+    tests_sub:'The candidate takes them in order: Result first — the key filter — then Tools, Logic and Sales. Plus motivation, references and job-specific knowledge checks.',
+    feat_tools_h:'Tools — personality',feat_tools_p:'200 questions, 10 character traits from attention to sociability. A chart with zones, 28 syndromes and a validity detector. Normalized by gender and age.',
+    feat_result_h:'Result — productivity',feat_result_p:'How they produced results in past jobs. AI classifies: Winner, Doer or Waiter. The key hiring filter and reference checks.',
+    feat_logic_h:'Logic — intelligence',feat_logic_p:'80 logic questions. An IQ score of 75–155 with interpretation and a recommendation for leadership roles.',
+    feat_sales_h:'Sales — selling',feat_sales_p:'120 statements, 12 salesperson metrics: persistence, expertise, business sense, winning and retaining clients on one chart.',
+    method_eyebrow:'A proprietary method',method_h2:'Winner, Doer or Waiter — who’s on your team?',
+    method_sub:'It all rests on the “product of the role” — a concrete, measurable work result. We sort people by how they handle it.',
+    m_win_tag:'Hire',m_win_h:'Winner',m_win_p:'Delivers results and can name the product of their role. Outcome-driven, not process-driven. The person the whole funnel exists for.',
+    m_doer_tag:'Depends on the role',m_doer_h:'Doer',m_doer_p:'An executor: does the job but can’t name the result. Great where you need stability, not a breakthrough.',
+    m_wait_tag:'Careful',m_wait_h:'Waiter',m_wait_p:'“Waits out” the time, can’t name a product. More often than not, this is the person who aces the classic interview.',
+    pareto_h:'The Pareto principle in hiring',pareto_p:'Roughly 20% of employees bring about 80% of the result. Those are the Winners. The catch: in an interview they look just like everyone else — and sometimes lose to charming Waiters. We find that 20% from the data, before you spend time and money on the person.',
+    proof_stat_l:'of job success comes from soft skills, not credentials alone',proof_stat_src:'Harvard · Carnegie Foundation · Stanford',proof_lead:'So we measure the person: how they deliver results, and how they do on personality, thinking and sales.',proof_quote:'“No company can grow revenue faster than its ability to hire the right people.”',proof_author:'David Packard',proof_role:'co-founder of Hewlett-Packard',
+    how_eyebrow:'Auto-funnel',how_h2:'From a requisition to a hired employee',how_sub:'You create a requisition — from there the system moves the candidate on its own. Below is the whole chain: from “we need someone” to “someone is hired”.',
+    chain1_h:'Requisition',chain1_p:'A manager fills a short requisition via link. AI reviews it and turns it into a ready vacancy.',
+    chain2_h:'Publishing',chain2_p:'The vacancy posts itself to job boards and Google for Jobs. Candidates start applying.',
+    chain3_h:'Application',chain3_p:'Someone applies through your form and leaves a CV — the candidate card is created automatically.',
+    chain4_h:'Tests in order',chain4_p:'The system sends tests one by one: Result, Tools, Logic, Sales. Fail a critical one — auto-rejected.',
+    chain5_h:'AI call',chain5_p:'A voice bot calls, assesses motivation and replaces the first interview. English, Polish, Russian.',
+    chain6_h:'Hired',chain6_p:'AI builds the profile, gives a recommendation, and the candidate reaches the “Hire” column. You just say yes.',
+    sys_eyebrow:'More than tests',sys_h2:'A whole hiring system around the assessment',sys_sub:'From first application to offer, the system takes the routine. The decision stays with you.',
+    sys1_h:'Kanban funnel',sys1_p:'Candidates by stage with auto-layout. Fail a critical stage and the card moves itself to “Rejected”. Everything on one board.',
+    sys2_h:'Auto-funnel',sys2_p:'Application → test after test in order → AI calls at key steps → all stages passed → the “Hire” column. Hands-free.',
+    sys3_h:'Requisitions + AI',sys3_p:'A manager fills a requisition via link → AI reviews it, suggests who to look for and generates the job ad → a vacancy is created automatically.',
+    sys4_h:'Forms — mini-sites',sys4_p:'A public application page with your brand. The candidate leaves a CV → a card is created automatically and the assigned tests start.',
+    sys5_h:'AI calls to candidates',sys5_p:'A lifelike voice calls, describes the role, assesses motivation and replaces the first interview. English, Polish, Russian.',
+    sys6_h:'Auto job posting',sys6_p:'Vacancies post themselves to job boards and Google for Jobs. For each channel you see where a candidate came from and how many reached a hire.',
+    cmp_eyebrow:'See for yourself',cmp_h2:'Résumé and interview vs HR PRO AI',
+    cmp_col0:'What you learn',cmp_col1:'Résumé and interview',cmp_col2:'HR PRO AI',
+    cmp_r1:'The truth about productivity',cmp_no:'You take their word',cmp_r1v:'Result and calls to former managers',
+    cmp_r2:'Who the person really is',cmp_subj:'However it seemed to you',cmp_r2v:'10 traits on a scale, normalized',
+    cmp_r3:'Brains and selling',cmp_guess:'You eyeball it',cmp_r3v:'IQ in points and 12 sales traits',
+    cmp_r5:'Whether you can be fooled',cmp_r5o:'Being likable is enough',cmp_r5v:'We catch insincere answers',
+    cmp_r6:'How you decide',cmp_r6o:'On a gut feeling',cmp_r6v:'From a ready profile and an AI hint',
+    time_h2:'And now — how much time it saves',time_col0:'Screening stage',time_col1:'By hand',time_col2:'With HR PRO AI',
+    time_r1:'First cut of a candidate',time_r1o:'40–60 min interview',time_r1v:'2 min to read the profile',
+    time_r2:'Checking personality and motivation',time_r2o:'1–2 hours of meetings',time_r2v:'0 min: tests and AI call do it',
+    time_r3:'Checking references',time_r3o:'Half a day of calls',time_r3v:'Inside the Result test',
+    time_r4:'Per candidate',time_r4o:'3–5 hours of your time',time_r4v:'~15 minutes',
+    time_hours:'hours a month',time_save_l:'of free time at 10 candidates — nearly a full work week you give back to yourself and your team.',
+    cost_h:'Let’s do the math on one person',cost_sub:'Salary — 1500 €. The mistake surfaced in month three. Here’s what the bill is made of.',
+    cost1_l:'Employee salary wasted over 3 months',cost2_l:'Recruiter’s work: sourcing, calls, screening',cost3_l:'Manager’s time on onboarding',cost4_l:'Lost profit: the person brought no money',cost5_l:'A new hiring round with the same method',cost_total_l:'One hiring mistake costs',cost_note:'That’s 12 salaries. And the bill comes again on the next candidate — as long as you hire by résumé and intuition, not by data.',
+    stat1:'tests + motivation, references, knowledge',stat_min:'min',stat2:'to the first profile',stat3:'languages for candidates & UI',stat4:'a free start for new accounts',
+    tst_eyebrow:'Testimonials',tst_h2:'Recruiters stopped hiring blind',
+    tst1_q:'“Initial screening used to take me two weeks of interviews. Now I spot Winners instantly and only invite them. The time saved is huge.”',tst1_n:'Marina, HR Manager',tst1_r:'retail chain, 40+ hires/mo',
+    tst2_q:'“The Sales test saved us two bad hires in the sales team. The chart instantly showed the charismatic candidate couldn’t retain clients.”',tst2_n:'Dawid, Head of Sales',tst2_r:'SaaS, Warsaw',
+    tst3_q:'“The auto-funnel and AI calls closed the routine. The candidate walks the test chain on their own and I get a ready decision. Pay-per-test is fair and predictable.”',tst3_n:'Olga, Head of Recruiting',tst3_r:'staffing agency',
+    pricing_eyebrow:'Transparent pricing',pricing_h2:'Pay for tests, not a subscription',pricing_sub:'One test — one candidate. The bigger the bundle, the lower the price per test.',
+    grt1:'One test of each type — free',grt2:'No card to sign up',grt3:'No subscription — pay per test',grt4:'Stripe payments, secure',
+    faq_eyebrow:'Questions',faq_h2:'What people usually ask',
+    cta_eyebrow:'Start today',cta_h2:'Assess your first candidate free',cta_p:'Sign up and send your first candidate a test within a minute. One free test of each type and two ready vacancies — no card, no commitment.',cta_btn:'Create an account →',
+    foot_copy:'We reveal personality so you can build strong teams.',foot_tagline:'© HR PRO AI · technology that senses people',foot_referral:'Refer and earn a bonus',
+    sticky_cta:'Start free — tests on us →',
+    pop_eyebrow:'Free guide',pop_h:'7 signs of a Winner you can spot in an interview',
+    pop_li1:'How to tell results from busywork',pop_li2:'Questions that expose a “Waiter”',pop_li3:'A “product of the role” checklist for your vacancy',
+    pop_fh:'Get the PDF by email',pop_fp:'And with it — a free start: one test of each type. No spam.',pop_ph:'Work email',pop_btn:'Get the guide →',pop_note:'By submitting your email you agree to receive the guide and a getting-started message.',pop_ok:'Done! Check your inbox — and meanwhile, create an account and start free.',
+    plan_tests:'tests',plan_hit:'Top pick',plan_save:'Save',plan_per:'per test',plan_buy:'Buy',plan_currency:'€',plan_locale:'en',
+    trait_attention:'Attention',trait_positivity:'Positivity',trait_composure:'Composure',trait_activity:'Activity',trait_persistence:'Persistence',trait_empathy:'Empathy',
+    faq:[
+      ['What’s included in the free start?','On sign-up, you and your company each get one free test of every type (Tools, Result, Logic, Sales and Knowledge) plus two ready vacancies. That’s enough to assess your first candidate across every axis and see how the platform works — with no payment and no card.'],
+      ['How is this better than a regular interview?','An interview measures the ability to make an impression. We measure what predicts work: how someone produced results before, personality across 10 traits, intelligence and sales skills. A validity detector catches “correct” answers.'],
+      ['How long does testing take?','A candidate finishes a test in 10–35 minutes on phone or computer. You see the first profile within 10 minutes of sending the link. Nothing to configure — send it and get the result.'],
+      ['How does billing work?','A pay-per-test model: one sent test — one charge. No subscription: bundles are simply cheaper than single tests. Payment via Stripe — cards and local methods.'],
+      ['What languages does it support?','The interface and landing — English, Polish, Russian. Candidate emails and SMS — also Ukrainian. Test language follows the vacancy language; UI and time zone are set automatically at sign-up.'],
+      ['How secure is my data?','Passwords are stored with PBKDF2, sessions are signed, and database access uses a service key only. Data and files (CVs, media) live in Supabase. Candidates explicitly consent to data processing before a test.']
+    ]
   }
 };
-function pickLang(){const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
+function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(q==='ru'||q==='pl'||q==='en'){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
 let LANG=pickLang();
 const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
-let lastPlans=null;
+let lastPlans=null,lastCurrency='eur';
 
-// hero bars
 const zc=(v,comp)=>comp?'#ff7a5c':'#4e79da';
 function renderHeroBars(){
   const hb=[['A. '+t('trait_attention'),50,0],['B. '+t('trait_positivity'),-18,0],['C. '+t('trait_composure'),48,0],['E. '+t('trait_activity'),94,1],['F. '+t('trait_persistence'),32,0],['I. '+t('trait_empathy'),-56,0]];
@@ -311,41 +790,72 @@ function renderHeroBars(){
 }
 function renderPlans(){
   if(!lastPlans)return;
-  document.getElementById('plan-grid').innerHTML=(lastPlans||[]).map(p=>`
-    <div class="plan ${p.popular?'pop':''} reveal">
+  const cur={eur:'€',usd:'$',pln:'zł',rub:'₽'}[lastCurrency]||t('plan_currency');
+  document.getElementById('plan-grid').innerHTML=(lastPlans||[]).map(p=>{
+    return `<div class="plan ${p.popular?'pop':''}">
       ${p.popular?`<div class="ribbon">${t('plan_hit')}</div>`:''}
       <div class="qty">${p.qty}</div>
       <div class="muted" style="font-weight:600;margin-bottom:14px">${t('plan_tests')}</div>
       ${p.save?`<span class="save">${t('plan_save')} ${p.save}%</span>`:''}
-      <div class="price">${p.price.toLocaleString(t('plan_locale'))} ${t('plan_currency')}</div>
-      <div class="per">${(p.price/p.qty).toFixed(0)} ${t('plan_currency')} ${t('plan_per')}</div>
+      <div class="price">${p.price.toLocaleString(t('plan_locale'))} ${cur}</div>
+      <div class="per">${(p.price/p.qty).toFixed(1)} ${cur} ${t('plan_per')}</div>
       <a href="/login?mode=register" class="btn ${p.popular?'':'ghost'}" style="width:100%">${t('plan_buy')}</a>
+    </div>`;}).join('');
+}
+function renderFaq(){
+  const list=I18N[LANG].faq||I18N.ru.faq;
+  document.getElementById('faq-wrap').innerHTML=list.map((f,i)=>`
+    <div class="faq-item" data-i="${i}">
+      <button class="faq-q">${f[0]}<span class="pl"></span></button>
+      <div class="faq-a"><div class="inner">${f[1]}</div></div>
     </div>`).join('');
-  document.querySelectorAll('#plan-grid .reveal').forEach(el=>{const top=el.getBoundingClientRect().top;if(top>window.innerHeight){el.style.animationPlayState='paused';io.observe(el);}});
+  document.querySelectorAll('.faq-item').forEach(it=>{
+    it.querySelector('.faq-q').onclick=()=>{
+      const open=it.classList.contains('open');
+      it.classList.toggle('open',!open);
+      const a=it.querySelector('.faq-a');
+      a.style.maxHeight=open?'0':a.querySelector('.inner').scrollHeight+40+'px';
+    };
+  });
+  // JSON-LD FAQ
+  let s=document.getElementById('faq-jsonld');if(s)s.remove();
+  s=document.createElement('script');s.type='application/ld+json';s.id='faq-jsonld';
+  s.textContent=JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":list.map(f=>({"@type":"Question","name":f[0],"acceptedAnswer":{"@type":"Answer","text":f[1]}}))});
+  document.head.appendChild(s);
 }
 function applyLang(){
   LANG=pickLang();
   document.documentElement.lang=LANG;
   document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(v==null)return;if(/<[a-z][\s\S]*>/i.test(v))el.innerHTML=v;else el.textContent=v;});
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});
+  document.querySelectorAll('[data-i18n-meta]').forEach(el=>{el.setAttribute('content',t(el.getAttribute('data-i18n-meta')));});
   document.title=t('page_title');
-  renderHeroBars();
-  renderPlans();
+  renderHeroBars();renderPlans();renderFaq();
   document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
 }
 document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
 
-// reveal below-the-fold on scroll; above-the-fold plays immediately
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running';io.unobserve(e.target);}}));
-document.querySelectorAll('.reveal').forEach(el=>{
-  const top=el.getBoundingClientRect().top;
-  if(top>window.innerHeight){el.style.animationPlayState='paused';io.observe(el);}
-});
+function bindReveal(nodes){nodes.forEach(el=>{const top=el.getBoundingClientRect().top;if(top>window.innerHeight){el.style.animationPlayState='paused';io.observe(el);}});}
+bindReveal(document.querySelectorAll('.reveal'));
 applyLang();
-// pricing
-fetch('/api/plans').then(r=>r.json()).then(d=>{
-  lastPlans=d.plans||[];
-  renderPlans();
-});
+fetch('/api/plans').then(r=>r.json()).then(d=>{lastPlans=d.plans||[];lastCurrency=d.currency||'eur';renderPlans();}).catch(()=>{});
+
+// ---- lead-magnet popup: exit-intent + scroll depth, once per visitor ----
+const POP_KEY='hp_pop_seen';
+function openPop(){if(localStorage.getItem(POP_KEY))return;document.getElementById('pop').classList.add('on');localStorage.setItem(POP_KEY,'1');}
+function closePop(){document.getElementById('pop').classList.remove('on');}
+document.getElementById('pop-close').onclick=closePop;
+document.getElementById('pop').addEventListener('click',e=>{if(e.target.id==='pop')closePop();});
+document.addEventListener('mouseout',e=>{if(e.clientY<=0&&!e.relatedTarget)openPop();});
+let popScrollFired=false;
+window.addEventListener('scroll',()=>{if(popScrollFired)return;const p=(scrollY+innerHeight)/document.body.scrollHeight;if(p>0.55){popScrollFired=true;openPop();}},{passive:true});
+document.getElementById('pop-submit').onclick=()=>{
+  const em=document.getElementById('pop-email').value.trim();
+  if(!/.+@.+\..+/.test(em)){document.getElementById('pop-email').focus();return;}
+  document.getElementById('pop-form-side').innerHTML=`<div class="ok">✓ ${t('pop_ok')}</div><a href="/login?mode=register" class="btn lg" style="width:100%">${t('nav_start')} →</a>`;
+  try{localStorage.setItem('hp_lead_email',em);}catch(e){}
+  setTimeout(()=>{location.href='/login?mode=register&email='+encodeURIComponent(em);},1600);
+};
 </script>
 </body></html>

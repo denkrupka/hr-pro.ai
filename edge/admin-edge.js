@@ -180,7 +180,16 @@ export async function handleAdmin(p, m, ctx) {
     if (comment.length < 3 || comment.length > 500) return j({ error: 'Комментарий обязателен (3–500 символов)' }, 400);
     const next = (u.balanceTotal || 0) + delta;
     if (next < (u.balancePending || 0)) return j({ error: `Баланс не может стать меньше брони (${u.balancePending})` }, 400);
-    u.balanceTotal = next; await S.upsert('users', { id: u.id, data: u });
+    // срок действия тестов — 1 год: миграцию старого баланса лотом делаем ДО изменения
+    if (!Array.isArray(u.balanceLots)) { u.balanceLots = []; if ((u.balanceTotal || 0) > 0) u.balanceLots.push({ id: uid(10), qty: u.balanceTotal, remaining: u.balanceTotal, source: 'legacy', createdAt: u.createdAt || new Date().toISOString(), expiresAt: new Date(Date.now() + 365 * 864e5).toISOString() }); }
+    u.balanceTotal = next;
+    if (delta > 0) {
+      u.balanceLots.push({ id: uid(10), qty: delta, remaining: delta, source: 'admin_add', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 365 * 864e5).toISOString() });
+    } else {
+      let need = -delta; const now = Date.now();
+      u.balanceLots.slice().sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || '')).forEach(l => { if (need <= 0) return; if (new Date(l.expiresAt).getTime() < now) return; const take = Math.min(l.remaining || 0, need); l.remaining = (l.remaining || 0) - take; need -= take; });
+    }
+    await S.upsert('users', { id: u.id, data: u });
     await logBalance(u.id, delta, delta > 0 ? 'admin_add' : 'admin_sub', { comment, adminId: me.id }, u.balanceTotal);
     await logAdmin(delta > 0 ? 'balance_add' : 'balance_sub', 'user', u.id, { delta, comment });
     return j({ ok: true, balanceTotal: u.balanceTotal, balancePending: u.balancePending });
