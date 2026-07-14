@@ -5,6 +5,7 @@ import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
 import { notifyCandidate } from './notify-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
+import makeStripe from './stripe-edge.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -85,7 +86,9 @@ const uid = (n = 12) => { const b = new Uint8Array(16); crypto.getRandomValues(b
 // ── API-роутер ──────────────────────────────────────────────────────────────────
 async function api(req, env, url) {
   const p = url.pathname, m = req.method;
-  const body = (m === 'POST' || m === 'PUT') ? await req.json().catch(() => ({})) : {};
+  const isWebhook = p === '/api/stripe/webhook';
+  const rawBody = (isWebhook && m === 'POST') ? await req.text() : null;
+  const body = (!isWebhook && (m === 'POST' || m === 'PUT')) ? await req.json().catch(() => ({})) : {};
   const S = supa(env);
 
   async function settings() { const r = await S.select('settings', 'id=eq.portal&select=data'); return (r[0] && r[0].data) || {}; }
@@ -755,6 +758,71 @@ async function api(req, env, url) {
     test.publicShare = !!body.enabled;
     await S.upsert('tests', { id: test.id, data: test });
     return j({ publicShare: test.publicShare, url: `${BASE}/r/${test.id}` });
+  }
+
+  // ── STRIPE: оплата пакетов тестов ──
+  const gsAll = await settings();
+  const activePlans = () => (gsAll.plans || []).filter(x => x.active !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
+  const stripeKey = env.STRIPE_SECRET_KEY || (gsAll.stripe && gsAll.stripe.secretKey) || '';
+  const stripe = stripeKey ? makeStripe(stripeKey) : null;
+  const creditPurchase = async (user, plan, method, sessionId) => {
+    if (sessionId) { const dup = await S.select('purchases', `data->>sessionId=eq.${encodeURIComponent(sessionId)}&select=id`); if (dup.length) return null; }
+    user.balanceTotal = (user.balanceTotal || 0) + plan.qty;
+    const purchase = { id: uid(12), userId: user.id, planId: plan.id, qty: plan.qty, amount: plan.price,
+      method, status: 'paid', sessionId: sessionId || null, createdAt: new Date().toISOString() };
+    await S.upsert('purchases', { id: purchase.id, data: purchase });
+    await S.upsert('users', { id: user.id, data: user });
+    await logBalance(user, plan.qty, 'purchase', { purchaseId: purchase.id, comment: `Покупка пакета «${plan.id}» (${method})` });
+    return purchase;
+  };
+
+  if (p === '/api/checkout' && m === 'POST') {
+    if (!me) return needAuth();
+    const plan = activePlans().find(x => x.id === body.planId);
+    if (!plan) return j({ error: 'Неизвестный пакет' }, 400);
+    if (!stripe) { const purchase = await creditPurchase(me, plan, 'demo'); return j({ simulated: true, balance: publicUser(me), purchase }); }
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: [{ price_data: { currency: gsAll.currency || 'eur',
+          product_data: { name: `${gsAll.portalName || 'HR PRO AI'} — ${plan.qty} тестов` }, unit_amount: plan.price * 100 }, quantity: 1 }],
+        customer_email: me.email, client_reference_id: me.id,
+        success_url: `${BASE}/app?checkout={CHECKOUT_SESSION_ID}`, cancel_url: `${BASE}/app?checkout=cancel`,
+        metadata: { userId: me.id, planId: plan.id, qty: String(plan.qty) },
+        payment_intent_data: { description: `${plan.qty} тестов · пакет «${plan.id}»`, metadata: { userId: me.id, planId: plan.id } },
+      }, { idempotencyKey: `co_${me.id}_${plan.id}_${Math.floor(Date.now() / 60000)}` });
+      return j({ url: session.url });
+    } catch (e) { return j({ error: 'Stripe: ' + e.message }, 500); }
+  }
+  if (p === '/api/checkout/confirm' && m === 'POST') {
+    if (!me) return needAuth();
+    if (!stripe || !body.sessionId) return j({ error: 'Нет сессии' }, 400);
+    try {
+      const s = await stripe.checkout.sessions.retrieve(body.sessionId);
+      if (s.payment_status !== 'paid') return j({ error: 'Оплата не завершена' }, 400);
+      const plan = activePlans().find(x => x.id === s.metadata.planId);
+      if (plan) await creditPurchase(me, plan, 'stripe', body.sessionId);
+      const fresh = await S.one('users', me.id);
+      return j({ balance: publicUser(fresh || me) });
+    } catch (e) { return j({ error: e.message }, 500); }
+  }
+  if (isWebhook && m === 'POST') {
+    if (!stripe) return j({ error: 'Stripe не настроен' }, 400);
+    const whSecret = ((gsAll.stripe && gsAll.stripe.webhookSecret) || env.STRIPE_WEBHOOK_SECRET || '').trim();
+    if (!whSecret) return j({ error: 'Webhook secret не настроен' }, 400);
+    let event;
+    try { event = await stripe.webhooks.constructEventAsync(rawBody, req.headers.get('stripe-signature'), whSecret); }
+    catch (e) { return j({ error: 'Подпись не прошла проверку' }, 400); }
+    const s = event.data && event.data.object;
+    const creditFromSession = async (sess) => {
+      if (!sess || !sess.metadata || !sess.metadata.userId) return;
+      const user = await S.one('users', sess.metadata.userId);
+      const plan = activePlans().find(x => x.id === sess.metadata.planId);
+      if (user && plan) await creditPurchase(user, plan, 'stripe', sess.id);
+    };
+    if (event.type === 'checkout.session.completed' && s && s.payment_status === 'paid') await creditFromSession(s);
+    else if (event.type === 'checkout.session.async_payment_succeeded') await creditFromSession(s);
+    return j({ received: true });
   }
 
   // маршрут ещё не портирован на edge
