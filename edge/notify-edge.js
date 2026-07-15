@@ -19,29 +19,45 @@ const EMAIL_I18N = {
     legal: 'Otrzymujesz tę wiadomość, ponieważ bierzesz udział w rekrutacji przez platformę HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
   en: { eyebrow: 'Assessment invitation', tagline: 'Technology that reads people', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe', cta: 'Start assessment',
     legal: 'You received this email because you are part of a hiring process on the HR PRO AI platform. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warsaw, Poland.' },
+  uk: { eyebrow: 'Запрошення на оцінювання', tagline: 'Технологія, що відчуває людей', help: 'Допомога', privacy: 'Конфіденційність', terms: 'Умови', unsub: 'Відписатися', cta: 'Почати оцінювання',
+    legal: 'Ви отримали цей лист, тому що берете участь у доборі через платформу HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
 };
-const ELOGO = (c) => `<svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px;vertical-align:middle"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="${c}" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>`;
+// Лого для писем — белый PNG (email-клиенты вырезают inline-SVG; белый гексагон виден на тёмной шапке).
+const ELOGO_IMG = (base, size) => `<img src="${base}/email/logo-white.png" width="${size}" height="${size}" alt="HR PRO AI" style="display:inline-block;vertical-align:middle;border:0">`;
 export async function unsubToken(secret, email) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('unsub:' + String(email || '').toLowerCase()));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 24);
 }
 export function wrapEmailEdge(o) {
-  const L = EMAIL_I18N[o.lang] || EMAIL_I18N.ru; const base = (o.baseUrl || '').replace(/\/+$/, '');
-  const neural = `<svg viewBox="0 0 320 120" preserveAspectRatio="none" style="position:absolute;right:0;top:0;height:100%;width:60%;opacity:.5"><g stroke="rgba(150,140,255,.5)" stroke-width="1" fill="none"><line x1="60" y1="30" x2="150" y2="60"/><line x1="150" y1="60" x2="240" y2="28"/><line x1="150" y1="60" x2="210" y2="100"/><line x1="150" y1="60" x2="90" y2="98"/><line x1="240" y1="28" x2="300" y2="66"/></g><g fill="rgba(180,170,255,.75)"><circle cx="60" cy="30" r="3"/><circle cx="240" cy="28" r="3.4"/><circle cx="210" cy="100" r="2.8"/><circle cx="90" cy="98" r="2.6"/><circle cx="300" cy="66" r="3"/></g><circle cx="150" cy="60" r="5" fill="#FF7A5C"/></svg>`;
-  const cta = o.ctaUrl ? `<div style="text-align:center;margin:6px 0 26px"><a href="${o.ctaUrl}" style="display:inline-block;font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;padding:15px 40px;border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${o.ctaLabel || L.cta}</a></div>` : '';
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="color-scheme" content="dark"></head><body style="margin:0;background:#05060d;font-family:Inter,Arial,sans-serif">
+  const L = EMAIL_I18N[o.lang] || EMAIL_I18N.ru; const base = (o.baseUrl || '').replace(/\/+$/, ''); const lang = o.lang || 'ru';
+  const steps = Array.isArray(o.steps) && o.steps.length ? o.steps.map((s, i) => `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px"><tr>
+      <td style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:15px 18px">
+        <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+          <td valign="top" style="width:30px"><div style="width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:13px;text-align:center;line-height:26px">${s.n || (i + 1)}</div></td>
+          <td style="padding-left:12px"><div style="font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:15px;color:#eef1fb;margin:0 0 3px">${s.title || ''}</div>
+            <div style="font-size:13px;line-height:1.5;color:#9aa3bf">${s.sub || ''}</div></td>
+        </tr></table></td></tr></table>`).join('') : '';
+  const cta = o.ctaUrl ? `
+    <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:20px auto 6px"><tr>
+      <td style="border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff)"><a href="${o.ctaUrl}" style="display:inline-block;font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:15px;color:#ffffff;padding:15px 42px;text-decoration:none;border-radius:13px">${o.ctaLabel || L.cta}</a></td>
+    </tr></table>${o.ctaNote ? `<div style="text-align:center;font-size:12.5px;color:#7b8299;margin:2px 0 4px">${o.ctaNote}</div>` : ''}` : '';
+  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"></head>
+<body style="margin:0;padding:0;background:#05060d;font-family:Inter,Arial,sans-serif">
 <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#05060d;padding:28px 12px"><tr><td align="center">
-<table role="presentation" cellpadding="0" cellspacing="0" style="max-width:660px;width:100%;border-collapse:collapse;background:#0d1024;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden">
-<tr><td style="position:relative;overflow:hidden;padding:34px 40px 30px;background:radial-gradient(ellipse 80% 130% at 78% 0%,rgba(139,108,255,.28),transparent 62%),linear-gradient(160deg,#141634,#0a0b1c)">${neural}
-<div style="position:relative;display:inline-block">${ELOGO('#fff')} <span style="font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:16px;color:#fff;vertical-align:middle">HR&nbsp;PRO&nbsp;AI</span></div>
-<div style="position:relative;margin-top:22px"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff">${o.eyebrow || L.eyebrow}</span>
-<div style="font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:24px;line-height:1.25;letter-spacing:-.02em;color:#fff;margin:10px 0 0;max-width:440px">${o.headline || o.subject || ''}</div></div></td></tr>
-<tr><td style="padding:30px 40px 6px;font-size:14.5px;line-height:1.62;color:#c3cbe4">${o.bodyHtml || ''}${cta}</td></tr>
-<tr><td style="padding:22px 40px 30px;background:rgba(0,0,0,.22);border-top:1px solid rgba(255,255,255,.06)">
-<div style="margin-bottom:12px">${ELOGO('#8b93ad').replace('30px;height:30px','20px;height:20px')} <span style="font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:13px;color:#c3cbe4;vertical-align:middle">HR PRO AI</span> <span style="font-size:12px;color:#6b7492">· ${L.tagline}</span></div>
-<p style="font-size:11.5px;line-height:1.6;color:#6b7492;margin:0 0 10px;max-width:460px">${L.legal}</p>
-<div style="font-size:11.5px"><a href="mailto:help@hr-pro.ai" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.help}</a><a href="${base}/privacy?lang=${o.lang || 'ru'}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.privacy}</a><a href="${base}/terms?lang=${o.lang || 'ru'}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.terms}</a><a href="${o.unsubUrl || (base + '/unsubscribe')}" style="color:#8b93ad;text-decoration:none">${L.unsub}</a></div></td></tr>
+<table role="presentation" cellpadding="0" cellspacing="0" width="640" style="max-width:640px;width:100%;background:#0d1024;border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden">
+<tr><td bgcolor="#141634" style="padding:32px 38px 28px;background:linear-gradient(160deg,#171a3a,#0b0c1e)">
+  <table role="presentation" cellpadding="0" cellspacing="0"><tr><td>${ELOGO_IMG(base, 30)}</td><td style="padding-left:10px;font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:16px;color:#ffffff">HR&nbsp;PRO&nbsp;AI</td></tr></table>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff;margin:22px 0 0">${o.eyebrow || L.eyebrow}</div>
+  <div style="font-family:Manrope,Arial,sans-serif;font-weight:800;font-size:25px;line-height:1.24;letter-spacing:-.02em;color:#ffffff;margin:10px 0 0;max-width:460px">${o.headline || o.subject || ''}</div>
+</td></tr>
+<tr><td style="padding:28px 38px 8px;font-size:14.5px;line-height:1.62;color:#c3cbe4">${o.bodyHtml || ''}${steps}${cta}</td></tr>
+<tr><td style="padding:22px 38px 30px;background:rgba(0,0,0,.22);border-top:1px solid rgba(255,255,255,.06)">
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:12px"><tr><td>${ELOGO_IMG(base, 20)}</td><td style="padding-left:9px;font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:13px;color:#c3cbe4">HR PRO AI</td><td style="padding-left:8px;font-size:12px;color:#6b7492">· ${L.tagline}</td></tr></table>
+  <p style="font-size:11.5px;line-height:1.6;color:#6b7492;margin:0 0 10px;max-width:470px">${L.legal}</p>
+  <div style="font-size:11.5px"><a href="mailto:help@hr-pro.ai" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.help}</a><a href="${base}/privacy?lang=${lang}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.privacy}</a><a href="${base}/terms?lang=${lang}" style="color:#8b93ad;text-decoration:none;margin-right:16px">${L.terms}</a><a href="${o.unsubUrl || (base + '/unsubscribe')}" style="color:#8b93ad;text-decoration:none">${L.unsub}</a></div>
+</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
