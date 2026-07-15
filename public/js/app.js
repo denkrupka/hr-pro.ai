@@ -1190,7 +1190,9 @@ async function renderVacAd(body, id) {
 }
 // Таблица размещений объявления: портал, ссылка с меткой, статистика по этапам
 async function renderVacAdList(body, id) {
-  const { placements } = await api('/api/vacancies/' + id + '/placements?lang=' + LANG);
+  let placements = [];
+  try { placements = (await api('/api/vacancies/' + id + '/placements?lang=' + LANG)).placements || []; }
+  catch (e) { placements = []; }
   const draw = q => {
     const list = placements.filter(p => !q || (p.portal + ' ' + (p.title || '') + ' ' + (p.url || '')).toLowerCase().includes(q));
     const rows = list.map(p => `<tr>

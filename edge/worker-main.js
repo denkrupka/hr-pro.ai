@@ -806,6 +806,59 @@ async function api(req, env, url) {
     }
   }
 
+  // ── РАЗМЕЩЕНИЯ ОБЪЯВЛЕНИЯ (placements) ──
+  let mPlac = p.match(/^\/api\/vacancies\/([\w-]+)\/placements$/);
+  if (mPlac && me) {
+    const v = await S.one('vacancies', mPlac[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (m === 'GET') {
+      const [pr, ar, tr] = await Promise.all([
+        S.select('participants', `data->>vacancyId=eq.${v.id}&select=data`),
+        S.select('anketas', `data->>vacancyId=eq.${v.id}&select=data`),
+        S.select('tests', `user_id=eq.${me.id}&select=data`),
+      ]);
+      const parts = pr.map(r => r.data).filter(x => x.userId === me.id);
+      const ank = ar.map(r => r.data).find(a => a.userId === me.id);
+      const testsByPart = {};
+      tr.map(r => r.data).forEach(tt => { (testsByPart[tt.participantId] = testsByPart[tt.participantId] || []).push(tt); });
+      const statsFor = src => {
+        const list = parts.filter(x => (x.src || '') === src);
+        const st = { responses: list.length, result: 0, tools: 0, motivation: 0, knowledge: 0, hired: 0 };
+        for (const x of list) {
+          const wf = buildWorkflow(x, lang, v, testsByPart[x.id] || []);
+          const done = k => { const s = wf.stages.find(y => y.key === k); return !!(s && (s.status === 'done' || s.done)); };
+          if (done('result')) st.result++; if (done('tools')) st.tools++;
+          if (done('motivation')) st.motivation++; if (done('knowledge')) st.knowledge++;
+          if (wf.decision === 'hired' || wf.column === 'hired') st.hired++;
+        }
+        st.conversion = st.responses ? Math.round(100 * st.hired / st.responses) : 0;
+        return st;
+      };
+      const placements = Array.isArray(v.placements) ? v.placements : [];
+      return j({ placements: placements.map(pl => ({ ...pl,
+        link: ank ? `${BASE}/a/${ank.slug}?src=${encodeURIComponent(pl.src)}` : (pl.url || ''),
+        stats: statsFor(pl.src) })) });
+    }
+    if (m === 'POST') {
+      const portal = String(body.portal || '').slice(0, 120).trim();
+      if (!portal) return j({ error: 'Укажите портал (где размещено)' }, 400);
+      const pl = { id: uid(8), portal, title: String(body.title || '').slice(0, 200), url: String(body.url || '').slice(0, 1000),
+        src: (slugify(portal) || 'src') + '-' + shortCode(4).toLowerCase(), createdAt: new Date().toISOString() };
+      if (!Array.isArray(v.placements)) v.placements = [];
+      v.placements.push(pl);
+      await S.upsert('vacancies', { id: v.id, data: v });
+      return j({ placement: pl });
+    }
+  }
+  let mPlacDel = p.match(/^\/api\/vacancies\/([\w-]+)\/placements\/([\w-]+)$/);
+  if (mPlacDel && me && m === 'DELETE') {
+    const v = await S.one('vacancies', mPlacDel[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    v.placements = (Array.isArray(v.placements) ? v.placements : []).filter(x => x.id !== mPlacDel[2]);
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j({ ok: true });
+  }
+
   // ── WORKFLOW кандидата ──
   let mWf = p.match(/^\/api\/participants\/([\w-]+)\/workflow$/);
   if (mWf && m === 'GET') {
