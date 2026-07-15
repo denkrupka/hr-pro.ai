@@ -9,6 +9,8 @@ import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
 import { guideCheck } from './guide-check.js';
 import * as goog from './google-oauth.js';
+import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
+import { PORTALS as JOB_PORTALS, connectionsOf as jpConns, isConnected as jpIsConnected } from './job-portals-data.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
@@ -1229,10 +1231,53 @@ async function api(req, env, url) {
     return j({ ok: true });
   }
 
+  // ── ОБУЧЕНИЕ (контент встроен из markdown, education-data.js) ──
+  {
+    const eduTitle = t => (lang === 'pl' && t.title_pl) || (lang === 'en' && t.title_en) || t.title;
+    if (p === '/api/education' && m === 'GET') {
+      const topics = EDU_TOPICS.filter(t => EDU_CONTENT[t.slug]).map(t => ({ slug: t.slug, title: eduTitle(t) }));
+      return j({ topics });
+    }
+    let mEdu = p.match(/^\/api\/education\/([\w-]+)$/);
+    if (mEdu && m === 'GET') {
+      const topic = EDU_TOPICS.find(x => x.slug === mEdu[1]);
+      const c = topic && EDU_CONTENT[topic.slug];
+      if (!topic || !c) return j({ error: 'Материал не найден' }, 404);
+      const markdown = c[lang] || c.ru || '';
+      return j({ topic: { slug: topic.slug, title: eduTitle(topic) }, markdown });
+    }
+  }
+
+  // ── ИНТЕГРАЦИИ: порталы трудоустройства + фид вакансий ──
+  if (p.startsWith('/api/job-portals')) {
+    if (!me) return needAuth();
+    if (!me.settings) me.settings = defaultSettings();
+    if (!me.settings.feedToken) { me.settings.feedToken = shortCode(16).toLowerCase(); await saveUser(me); }
+    const feedUrl = `${BASE}/feed/${me.settings.feedToken}/jobs.xml`;
+    if (p === '/api/job-portals' && m === 'GET') {
+      const conns = jpConns(me.settings);
+      return j({ feedUrl, portals: JOB_PORTALS.map(pt => { const c = conns[pt.id] || {};
+        return { ...pt, connected: jpIsConnected(me.settings, pt.id), login: c.login || '', hasPassword: !!c.password,
+          apiKey: c.apiKey ? '••••' + String(c.apiKey).slice(-4) : '', feedUrl: pt.method === 'feed' ? feedUrl : '' }; }) });
+    }
+    let mJpConn = p.match(/^\/api\/job-portals\/([\w-]+)\/connect$/);
+    if (mJpConn && m === 'POST') {
+      const portal = JOB_PORTALS.find(x => x.id === mJpConn[1]);
+      if (!portal) return j({ error: 'Портал не найден' }, 404);
+      const conns = jpConns(me.settings); const c = conns[portal.id] = conns[portal.id] || {};
+      if (body.login != null) c.login = String(body.login).trim().slice(0, 200);
+      if (body.password) c.password = String(body.password).slice(0, 200);
+      if (body.apiKey != null && !String(body.apiKey).startsWith('••••')) c.apiKey = String(body.apiKey).trim().slice(0, 400);
+      if (!c.login && !c.apiKey) return j({ error: 'Укажите логин/пароль или API-ключ' }, 400);
+      c.connectedAt = new Date().toISOString(); await saveUser(me); return j({ ok: true });
+    }
+    let mJpTest = p.match(/^\/api\/job-portals\/([\w-]+)\/test$/);
+    if (mJpTest && m === 'POST') return j({ error: 'Проверка подключения доступна в десктоп-версии.' }, 400);
+    let mJpDel = p.match(/^\/api\/job-portals\/([\w-]+)$/);
+    if (mJpDel && m === 'DELETE') { const conns = jpConns(me.settings); delete conns[mJpDel[1]]; await saveUser(me); return j({ ok: true }); }
+  }
+
   // ── Заглушки удалённых/отложенных экранов (чтобы фронт не падал) ──
-  if (p === '/api/education' && m === 'GET') return j({ topics: [] });
-  if (p === '/api/job-portals' && m === 'GET') { if (!me) return needAuth();
-    return j({ feedUrl: '', portals: [] }); }
 
   // ── СПРАВОЧНИК методики (для конструктора процесса) ──
   if (p === '/api/recruit/meta' && m === 'GET') {
@@ -1381,6 +1426,25 @@ export default {
       const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
       return new Response(`<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} — HR PRO AI</title><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></head><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse 90% 60% at 50% -10%,#12132b,#070813 60%);font-family:Inter,system-ui,sans-serif;color:#9aa3bf"><div style="max-width:440px;text-align:center;padding:40px 28px"><div style="width:60px;height:60px;margin:0 auto 22px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="${icon}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${valid ? '<path d="M5 12l4 4 10-11"/>' : '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>'}</svg></div><h1 style="font-family:Manrope,sans-serif;font-weight:800;font-size:24px;color:#fff;margin:0 0 10px">${title}</h1><p style="font-size:14.5px;line-height:1.6;margin:0 0 26px">${sub}</p><a href="${base}/" style="display:inline-block;font-family:Manrope,sans-serif;font-weight:700;font-size:14px;color:#fff;padding:12px 26px;border-radius:12px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${T.home}</a></div></body></html>`, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
+    // Публичный JobPosting-фид вакансий для агрегаторов
+    const mFeed = url.pathname.match(/^\/feed\/([\w-]+)\/jobs\.xml$/);
+    if (mFeed) {
+      const S2 = supa(env);
+      const rows = await S2.select('users', `data->settings->>feedToken=eq.${mFeed[1]}&select=data`).catch(() => []);
+      const user = rows[0] && rows[0].data;
+      if (!user) return new Response('Not found', { status: 404 });
+      const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+      const [vr, ar] = await Promise.all([
+        S2.select('vacancies', `data->>userId=eq.${user.id}&select=data`).catch(() => []),
+        S2.select('anketas', `data->>userId=eq.${user.id}&select=data`).catch(() => []),
+      ]);
+      const anks = ar.map(r => r.data);
+      const jobs = vr.map(r => r.data).filter(v => v.published).map(v => { const a = anks.find(x => x.vacancyId === v.id); return { v, url: a ? `${base}/a/${a.slug}` : '', desc: v.adText || v.name }; }).filter(x => x.url);
+      const items = jobs.map(x => `  <job>\n    <title><![CDATA[${x.v.name}]]></title>\n    <date><![CDATA[${x.v.createdAt || new Date().toISOString()}]]></date>\n    <referencenumber><![CDATA[${x.v.id}]]></referencenumber>\n    <url><![CDATA[${x.url}]]></url>\n    <company><![CDATA[${user.company || ''}]]></company>\n    <city><![CDATA[]]></city>\n    <country><![CDATA[PL]]></country>\n    <description><![CDATA[${x.desc}]]></description>\n  </job>`).join('\n');
+      const xml = `<?xml version="1.0" encoding="utf-8"?>\n<source>\n  <publisher><![CDATA[${user.company || 'HR PRO AI'}]]></publisher>\n  <publisherurl><![CDATA[${base}]]></publisherurl>\n  <lastBuildDate><![CDATA[${new Date().toISOString()}]]></lastBuildDate>\n${items}\n</source>`;
+      return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
+    }
+
     // HTML SPA-роуты — отдать содержимое нужного файла по clean-пути (без редиректа)
     for (const [re, clean] of HTML_MAP) {
       if (re.test(url.pathname)) {
