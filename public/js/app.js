@@ -3136,7 +3136,7 @@ function openSecureReader(programId, section) {
   const stamp = new Date().toLocaleString();
   const token = Math.random().toString(36).slice(2, 8).toUpperCase();
   const mark = esc((email || 'HR PRO AI') + (uidShort ? ' #' + uidShort : '') + ' · ' + stamp + ' · ' + token);
-  const wm = Array.from({ length: 100 }, () => `<span>${mark}</span>`).join('');
+  const wm = Array.from({ length: 55 }, () => `<span>${mark}</span>`).join('');
   const ov = document.createElement('div');
   ov.className = 'sec-reader';
   ov.setAttribute('oncontextmenu', 'return false');
