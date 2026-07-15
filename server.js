@@ -1326,6 +1326,7 @@ app.get('/api/tests/:id/result', requireAuth, (req, res) => {
   if (test.type === 'result') hint = ai.resultHint(test, lang);
   if (test.type === 'tools') hint = ai.toolsHint(result, lang);
   if (test.type === 'sales') hint = ai.salesHint(result, lang);
+  if (test.type === 'logic') hint = ai.logicHint(result, lang);
   if (test.type === 'knowledge') hint = air.knowledgeAnalysis(result.correct, result.total, (test.knowledge && test.knowledge.passScore) || 60, lang);
   res.json({ test: { id: test.id, type: test.type, title: testTitleOf(test.type), status: test.status,
       knName: (test.knowledge && test.knowledge.name) || null, passScore: (test.knowledge && test.knowledge.passScore) || null,
@@ -1463,6 +1464,7 @@ app.get('/api/r/:id', (req, res) => {
   if (test.type === 'result') hint = ai.resultHint(test, lang);
   if (test.type === 'tools') hint = ai.toolsHint(result, lang);
   if (test.type === 'sales') hint = ai.salesHint(result, lang);
+  if (test.type === 'logic') hint = ai.logicHint(result, lang);
   res.json({ test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec },
     participant: p ? { name: p.name, surname: p.surname, age: p.age } : null, result, hint });
 });

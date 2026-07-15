@@ -1921,14 +1921,17 @@ function openSendModal(vacs, vacOptions) {
   wireSendLang(vacs);
 }
 // Анимация «нейросети» в баннере: гексагональные узлы + спутники, магнитная реакция на курсор
-function portalNet(id) {
+function portalNet(id, opts) {
   const cv = document.getElementById(id); if (!cv) return;
-  const host = cv.closest('.dash-banner') || cv.parentElement || cv; if (!host) return;
+  const interactive = !opts || opts.interactive !== false;
+  const host = cv.closest('.dash-banner,.ai-banner') || cv.parentElement || cv; if (!host) return;
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   const rgb = [110, 120, 220], acc = [150, 140, 255];
   let gen = 0, M = { x: 0, y: 0, on: false };
-  host.addEventListener('mousemove', e => { const r = cv.getBoundingClientRect(); if (!r.width) return; M.x = (e.clientX - r.left) * (cv.__W / r.width); M.y = (e.clientY - r.top) * (cv.__H / r.height); M.on = true; });
-  host.addEventListener('mouseleave', () => { M.on = false; });
+  if (interactive) {
+    host.addEventListener('mousemove', e => { const r = cv.getBoundingClientRect(); if (!r.width) return; M.x = (e.clientX - r.left) * (cv.__W / r.width); M.y = (e.clientY - r.top) * (cv.__H / r.height); M.on = true; });
+    host.addEventListener('mouseleave', () => { M.on = false; });
+  }
   function start() {
     if (!document.getElementById(id)) return;
     gen++; const g = gen; const ctx = cv.getContext('2d'); const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -2631,6 +2634,7 @@ async function openReport(testId) {
   history.replaceState(null, '', '/result/' + testId);
   const d = await api('/api/tests/' + testId + '/result?lang=' + LANG); closeModal();
   ({ tools: renderToolsReport, result: renderResultReport, sales: renderSalesReport, logic: renderLogicReport, knowledge: renderKnowledgeReport }[d.test.type] || renderLogicReport)(d);
+  requestAnimationFrame(initAiNeu);
 }
 // Отчёт по проверке знаний (свой рендер — не IQ)
 function renderKnowledgeReport(d) {
@@ -2670,7 +2674,11 @@ function reportHeader(d, extra) {
     ${p && p.id ? `<select class="stage-select no-print" aria-label="${t('pm_stage')}" title="${t('pm_stage')}" onchange="setStageFromReport('${p.id}', this.value)">${stageOptions(p.stage)}</select>` : ''}
     <div class="grow"></div><button class="btn ghost sm ic-btn no-print" onclick="window.print()">${ICON_PRINT}${t('rep_print')}</button><button class="btn ghost sm ic-btn no-print" onclick="backHome()" aria-label="${t('rep_close')}">${_svg('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>')}${t('rep_close')}</button></div>`;
 }
-function aiBanner(hint, tone) { if (!hint) return ''; const tn = tone || hint.tone || 'good'; return `<div class="ai-banner ${tn} reveal d1"><small><span class="ai-spark">${ICON_SPARK}</span>${t('ai_hint')}</small><h3>${esc(hint.verdict)}</h3><ul>${hint.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>`; }
+let aiBannerSeq = 0;
+function aiBanner(hint, tone) { if (!hint) return ''; const tn = tone || hint.tone || 'good'; const cid = 'aineu' + (++aiBannerSeq);
+  return `<div class="ai-banner ${tn} reveal d1"><canvas class="ai-neu" id="${cid}"></canvas><div class="aib-in"><small><span class="ai-spark">${ICON_SPARK}</span>${t('ai_hint')}</small><h3>${esc(hint.verdict)}</h3><ul>${(hint.notes || []).map(n => `<li>${esc(n)}</li>`).join('')}</ul></div></div>`; }
+// Запуск фоновой гексо-сети во всех подсказках ИИ (без реакции на курсор — в отличие от баннера дашборда)
+function initAiNeu() { document.querySelectorAll('canvas.ai-neu:not([data-neu-on])').forEach(cv => { cv.setAttribute('data-neu-on', '1'); portalNet(cv.id, { interactive: false }); }); }
 function zoneHead() { return `<div class="chart-zonehead"><span>${t('z_vlow')}</span><span>${t('z_low')}</span><span>${t('z_mid')}</span><span>${t('z_high')}</span><span>${t('z_vhigh')}</span></div>`; }
 function zoneCols() { return [t('z_vlow'), t('z_low'), t('z_mid'), t('z_high'), t('z_vhigh')]; }
 // ---- HR-scanner-style zone-column bar chart ----
@@ -2768,6 +2776,7 @@ function renderLogicReport(d) {
   const rows = r.details.map(q => { const isImg = q.optionImages && q.optionImages.length; const givenTxt = q.given != null ? (isImg ? t(`variant`)+` `+(q.given + 1) : q.options[q.given]) : '—'; const mark = q.unscored ? t(`mark_visual`) : q.correct ? t(`mark_correct`) : q.given == null ? t(`mark_skipped`) : t(`mark_wrong`); const qImg = q.image ? `<div style="text-align:center;margin:8px 0"><img src="${esc(q.image)}" style="max-height:150px;max-width:100%"></div>` : ''; const optImgs = isImg ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${q.optionImages.map((im, i) => { const isRight = i === q.answer, isGivenWrong = q.given === i && !q.correct; const bc = isRight ? 'var(--good)' : isGivenWrong ? 'var(--bad)' : 'var(--line)'; const tag = isRight ? `<div style="font-size:10px;font-weight:700;color:var(--good)">${t(`opt_right`)}</div>` : isGivenWrong ? `<div style="font-size:10px;font-weight:700;color:var(--bad)">${t(`opt_chosen`)}</div>` : `<div class="muted" style="font-size:11px">${i + 1}</div>`; return `<div style="text-align:center"><img src="${esc(im)}" style="height:56px;border:2px solid ${bc};border-radius:8px;padding:2px">${tag}</div>`; }).join('')}</div>` : '';
     return `<div class="q-card"><div class="q-top"><b>${t(`lr_question`)} ${q.id}</b><span>${mark}</span></div><div>${esc(q.text)}</div>${qImg}${optImgs}${q.unscored ? `<div class="q-ans muted">${t(`lr_matrix`)}</div>` : `<div class="q-ans">${t(`lr_answer`)} <b style="color:${q.correct ? 'var(--good)' : 'var(--bad)'}">${esc(givenTxt)}</b>${!q.correct && q.answer != null ? ` · ${t(`lr_right`)} <b>${esc(q.options[q.answer])}</b>` : ''}</div>`}</div>`; }).join('');
   $('#main').innerHTML = reportHeader(d, `<span class="tag">${t(`lr_correct`)} <b>${r.correct}/${r.total}</b></span>`) +
+    aiBanner(d.hint, d.hint && d.hint.tone) +
     `<div class="rep-compact"><div class="card reveal d2">
       <div class="iq-score" id="iq-score">0</div>
       <div class="iq-scale"><div class="iq-track"><div class="iq-cursor" id="iq-cursor" style="left:0"></div></div>

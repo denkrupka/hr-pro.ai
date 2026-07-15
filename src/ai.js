@@ -46,6 +46,17 @@ const L = {
   sv_low: { ru: 'Слабый профиль для продаж', pl: 'Słaby profil sprzedażowy', en: 'Weak sales profile' },
   s_persist: { ru: 'Настойчивость (закрытие сделок): {g}. Результативность: {f}.', pl: 'Wytrwałość (zamykanie transakcji): {g}. Skuteczność: {f}.', en: 'Persistence (closing deals): {g}. Effectiveness: {f}.' },
   s_improve: { ru: 'Показатели можно улучшать обучением и практикой, кроме врождённых черт.', pl: 'Wskaźniki można poprawiać szkoleniem i praktyką, poza cechami wrodzonymi.', en: 'Indicators can be improved through training and practice, except innate traits.' },
+  // logicHint (IQ)
+  lv_vhigh: { ru: 'Очень высокий уровень интеллекта', pl: 'Bardzo wysoki poziom intelektu', en: 'Very high intelligence level' },
+  lv_high: { ru: 'Высокий уровень интеллекта', pl: 'Wysoki poziom intelektu', en: 'High intelligence level' },
+  lv_mid: { ru: 'Средний уровень интеллекта', pl: 'Przeciętny poziom intelektu', en: 'Average intelligence level' },
+  lv_low: { ru: 'Низкий уровень интеллекта', pl: 'Niski poziom intelektu', en: 'Low intelligence level' },
+  lv_vlow: { ru: 'Очень низкий уровень интеллекта', pl: 'Bardzo niski poziom intelektu', en: 'Very low intelligence level' },
+  lv_score: { ru: 'Балл IQ {iq} · верных ответов {c} из {t}.', pl: 'Wynik IQ {iq} · poprawnych odpowiedzi {c} z {t}.', en: 'IQ score {iq} · {c} of {t} answers correct.' },
+  lv_role_ok: { ru: 'Уровня достаточно для руководящих и линейных должностей, требующих логического и аналитического мышления.', pl: 'Poziom wystarczający na stanowiska kierownicze i liniowe wymagające myślenia logicznego i analitycznego.', en: 'The level is sufficient for managerial and line roles that require logical and analytical thinking.' },
+  lv_role_line: { ru: 'Подходит для линейных должностей; для руководящих ролей уровень пограничный — оцените вместе с опытом и результатами.', pl: 'Nadaje się na stanowiska liniowe; na kierownicze poziom graniczny — oceń wraz z doświadczeniem i wynikami.', en: 'Fits line roles; for managerial positions the level is borderline — assess it together with experience and results.' },
+  lv_role_no: { ru: 'Для задач с высокими аналитическими требованиями уровня недостаточно — вероятны трудности с принятием сложных решений.', pl: 'Do zadań o wysokich wymaganiach analitycznych poziom jest niewystarczający — możliwe trudności z podejmowaniem złożonych decyzji.', en: 'For tasks with high analytical demands the level is insufficient — difficulty with complex decisions is likely.' },
+  lv_final: { ru: 'IQ — только один срез: сопоставьте его с профилем продуктивности, опытом и мотивацией кандидата.', pl: 'IQ to tylko jeden wymiar: zestaw go z profilem produktywności, doświadczeniem i motywacją kandydata.', en: 'IQ is only one dimension: weigh it against the candidate’s productivity profile, experience and motivation.' },
 };
 function T(key, lang, vars) {
   let s = (L[key] && (L[key][lang] || L[key].ru)) || '';
@@ -162,4 +173,22 @@ function salesHint(result, lang) {
   return { verdict, tone: avg >= 55 ? 'good' : avg >= 40 ? 'mid' : 'low', notes };
 }
 
-module.exports = { resultHint, toolsHint, salesHint };
+// Подсказка по логическому тесту (IQ). result: { iq, percent, correct, total }
+function logicHint(result, lang) {
+  lang = lang || 'ru';
+  const iq = result && (result.iq != null ? result.iq : result.percent) || 0;
+  let verdict, tone, roleKey;
+  if (iq >= 140) { verdict = T('lv_vhigh', lang); tone = 'win'; roleKey = 'lv_role_ok'; }
+  else if (iq >= 120) { verdict = T('lv_high', lang); tone = 'good'; roleKey = 'lv_role_ok'; }
+  else if (iq >= 100) { verdict = T('lv_mid', lang); tone = 'mid'; roleKey = 'lv_role_line'; }
+  else if (iq >= 80) { verdict = T('lv_low', lang); tone = 'low'; roleKey = 'lv_role_no'; }
+  else { verdict = T('lv_vlow', lang); tone = 'low'; roleKey = 'lv_role_no'; }
+  const notes = [
+    T('lv_score', lang, { iq, c: result.correct, t: result.total }),
+    T(roleKey, lang),
+    T('lv_final', lang),
+  ];
+  return { verdict, tone, notes };
+}
+
+module.exports = { resultHint, toolsHint, salesHint, logicHint };

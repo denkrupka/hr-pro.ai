@@ -118,6 +118,7 @@ export function resultHintFor(test, result, lang) {
   if (test.type === 'result') return ai.resultHint(test, lang);
   if (test.type === 'tools') return ai.toolsHint(result, lang);
   if (test.type === 'sales') return ai.salesHint(result, lang);
+  if (test.type === 'logic') return ai.logicHint(result, lang);
   if (test.type === 'knowledge') return air.knowledgeAnalysis(result.correct, result.total, (test.knowledge && test.knowledge.passScore) || 60, lang);
   return null;
 }
