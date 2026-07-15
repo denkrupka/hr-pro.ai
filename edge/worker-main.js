@@ -213,6 +213,19 @@ async function api(req, env, url) {
     return new Response(null, { status: 302, headers });
   }
 
+  if (p === '/sitemap.xml') { // авто-sitemap: статические страницы + опубликованные посты блога
+    const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+    const gs = await settings();
+    const staticU = ['/', '/blog', '/login', '/privacy', '/terms'];
+    const posts = (gs.blogPosts || []).filter(x => x && x.published && x.slug);
+    const rows = [
+      ...staticU.map(u => `  <url><loc>${base}${u}</loc></url>`),
+      ...posts.map(pp => `  <url><loc>${base}/blog/${pp.slug}</loc>${pp.date ? `<lastmod>${String(pp.date).slice(0, 10)}</lastmod>` : ''}</url>`),
+    ];
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows.join('\n')}\n</urlset>`;
+    return new Response(xml, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
+  }
+
   if (p === '/api/meta') {
     const gs = await settings();
     return j({ langs: [{ code: 'ru', name: 'Русский' }, { code: 'uk', name: 'Украи́нский' }, { code: 'pl', name: 'Польский' }, { code: 'en', name: 'Английский' }],
@@ -1596,7 +1609,7 @@ export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     try {
-      if (url.pathname.startsWith('/api/')) return await api(req, env, url);
+      if (url.pathname.startsWith('/api/') || url.pathname === '/sitemap.xml') return await api(req, env, url);
     } catch (e) {
       return j({ error: 'edge error: ' + (e.message || e) }, 500);
     }
