@@ -48,7 +48,7 @@ const I18N = {
     lp_quiz: 'Итоговый тест', lp_quiz_locked: 'Пройдите все разделы, чтобы открыть тест', lp_quiz_pass: 'Порог прохождения',
     lp_quiz_submit: 'Проверить', lp_quiz_passed: 'Тест сдан — программа завершена!', lp_quiz_failed: 'Не сдано. Повторите: верно {c} из {t} ({p}%)',
     lp_quiz_result: 'Результат: {c} из {t} ({p}%)', lp_pick_answer: 'Ответьте на все вопросы', lp_your_balance: 'Ваш баланс',
-    lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт',
+    lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт', lp_copy_blocked: 'Копирование запрещено — материал защищён',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
@@ -101,7 +101,7 @@ const I18N = {
     lp_quiz: 'Test końcowy', lp_quiz_locked: 'Ukończ wszystkie rozdziały, aby odblokować test', lp_quiz_pass: 'Próg zaliczenia',
     lp_quiz_submit: 'Sprawdź', lp_quiz_passed: 'Test zdany — program ukończony!', lp_quiz_failed: 'Niezaliczone. Spróbuj ponownie: poprawnie {c} z {t} ({p}%)',
     lp_quiz_result: 'Wynik: {c} z {t} ({p}%)', lp_pick_answer: 'Odpowiedz na wszystkie pytania', lp_your_balance: 'Twoje saldo',
-    lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta',
+    lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta', lp_copy_blocked: 'Kopiowanie zabronione — materiał chroniony',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
@@ -154,7 +154,7 @@ const I18N = {
     lp_quiz: 'Final test', lp_quiz_locked: 'Complete all sections to unlock the test', lp_quiz_pass: 'Pass threshold',
     lp_quiz_submit: 'Check', lp_quiz_passed: 'Test passed — program completed!', lp_quiz_failed: 'Not passed. Try again: {c} of {t} correct ({p}%)',
     lp_quiz_result: 'Result: {c} of {t} ({p}%)', lp_pick_answer: 'Answer all questions', lp_your_balance: 'Your balance',
-    lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden',
+    lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden', lp_copy_blocked: 'Copying is disabled — material is protected',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
     dash_overview: 'Overview', dash_title: 'Dashboard', balance: 'Balance',
@@ -3132,9 +3132,10 @@ let _secReader = null;
 function openSecureReader(programId, section) {
   closeSecureReader();
   const email = (state.user && state.user.email) || '';
+  const uidShort = ((state.user && state.user.id) || '').slice(0, 6);
   const stamp = new Date().toLocaleString();
   const token = Math.random().toString(36).slice(2, 8).toUpperCase();
-  const mark = esc((email || 'HR PRO AI') + ' · ' + stamp + ' · ' + token);
+  const mark = esc((email || 'HR PRO AI') + (uidShort ? ' #' + uidShort : '') + ' · ' + stamp + ' · ' + token);
   const wm = Array.from({ length: 100 }, () => `<span>${mark}</span>`).join('');
   const ov = document.createElement('div');
   ov.className = 'sec-reader';
@@ -3159,6 +3160,10 @@ function openSecureReader(programId, section) {
   document.body.classList.add('sec-lock');
 
   const stop = e => { e.preventDefault(); e.stopPropagation(); return false; };
+  const onCopy = e => {
+    try { (e.clipboardData || window.clipboardData).setData('text/plain', '© ' + (email || 'HR PRO AI') + ' — материал защищён авторским правом, копирование запрещено (' + token + ')'); } catch (_) {}
+    e.preventDefault(); e.stopPropagation(); toast(t('lp_copy_blocked')); return false;
+  };
   const clearClip = () => { try { navigator.clipboard && navigator.clipboard.writeText(''); } catch (_) {} };
   const onKey = e => {
     const k = (e.key || '').toLowerCase();
@@ -3172,14 +3177,16 @@ function openSecureReader(programId, section) {
   const onBlur = () => showShield(true);
   const onFocus = () => showShield(false);
   const onPrint = () => showShield(true);
-  ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(ev => ov.addEventListener(ev, stop));
+  ['copy', 'cut'].forEach(ev => ov.addEventListener(ev, onCopy));
+  ['paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(ev => ov.addEventListener(ev, stop));
   document.addEventListener('keydown', onKey, true);
   document.addEventListener('visibilitychange', onVis);
   window.addEventListener('blur', onBlur);
   window.addEventListener('focus', onFocus);
   window.addEventListener('beforeprint', onPrint);
-  // опрос фокуса: если окно потеряло фокус (переключение на инструмент захвата) — прячем контент
-  const poll = setInterval(() => { if (!_secReader) return; showShield(!document.hasFocus() || document.hidden); }, 400);
+  // опрос: прячем контент при потере фокуса (переключение на инструмент захвата) или при открытых DevTools
+  const devtoolsOpen = () => (window.outerWidth - window.innerWidth > 260) || (window.outerHeight - window.innerHeight > 260);
+  const poll = setInterval(() => { if (!_secReader) return; showShield(!document.hasFocus() || document.hidden || devtoolsOpen()); }, 400);
   _secReader = { ov, onKey, onVis, onBlur, onFocus, onPrint, poll };
 
   ov.querySelector('#sec-close').onclick = () => closeSecureReader();
