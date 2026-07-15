@@ -80,7 +80,7 @@ function setView(v) {
   state.view = v;
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   ({ dashboard: renderAdmDashboard, clients: renderAdmClients, payments: renderAdmPayments, plans: renderAdmPlans,
-    integrations: renderAdmIntegrations, content: renderAdmContent, log: renderAdmLog }[v] || renderAdmDashboard)();
+    integrations: renderAdmIntegrations, content: renderAdmContent, blog: renderAdmBlog, log: renderAdmLog }[v] || renderAdmDashboard)();
 }
 
 // ---------- Дашборд ----------
@@ -767,6 +767,90 @@ async function renderAdmContent() {
       toast('Возвращены заводские'); renderAdmContent();
     };
   }
+}
+
+// ---------- Блог (SEO) ----------
+const BLOG_TRANSLIT = { а: 'a', б: 'b', в: 'v', г: 'g', ґ: 'g', д: 'd', е: 'e', ё: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'i', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'iu', я: 'ia' };
+const blogSlugify = s => String(s || '').toLowerCase().trim().replace(/[а-яёіїєґ]/g, ch => BLOG_TRANSLIT[ch] != null ? BLOG_TRANSLIT[ch] : ch).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+const BLOG_LANG = { ru: 'Русский', pl: 'Polski', en: 'English' };
+async function renderAdmBlog() {
+  const d = await api('/api/admin/blog');
+  const posts = d.posts || [];
+  const rows = posts.map(p => `<tr>
+    <td><b>${esc(p.title || '—')}</b>${p.slug ? `<div class="muted mono" style="font-size:11.5px">/blog/${esc(p.slug)}</div>` : ''}</td>
+    <td>${(p.lang || 'ru').toUpperCase()}</td>
+    <td>${p.published ? '<span class="blk st-on">Опубликован</span>' : '<span class="blk st-off">Черновик</span>'}</td>
+    <td class="muted mono" style="white-space:nowrap">${fmtDate(p.date)}</td>
+    <td style="white-space:nowrap;text-align:right">
+      <button class="btn ghost sm" data-bl-pub="${esc(p.id)}">${p.published ? 'Снять' : 'Опубликовать'}</button>
+      <button class="btn soft sm" data-bl-edit="${esc(p.id)}">Изменить</button>
+      <button class="btn ghost danger sm" data-bl-del="${esc(p.id)}">Удалить</button></td></tr>`).join('');
+  $('#main').innerHTML = `<div class="topbar reveal"><div><div class="eyebrow">Админ-панель</div><h1 class="page-h" style="margin-top:8px">Блог</h1></div>
+      <div class="row" style="gap:8px"><button class="btn" id="bl-add">+ Новый пост</button></div></div>
+    <div class="adm-stats reveal d1">
+      <div class="adm-stat"><b>${posts.length}</b><span>Всего постов</span></div>
+      <div class="adm-stat"><b>${posts.filter(p => p.published).length}</b><span>Опубликовано</span></div>
+      <div class="adm-stat"><b>${posts.filter(p => !p.published).length}</b><span>Черновиков</span></div></div>
+    <div class="card reveal d2" style="margin-top:16px"><div class="table-wrap" style="box-shadow:none">
+      <table><thead><tr><th>Заголовок</th><th>Язык</th><th>Статус</th><th>Дата</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="muted" style="text-align:center;padding:26px">Постов пока нет — создайте первый</td></tr>'}</tbody></table></div>
+      <p class="muted" style="font-size:12px;margin:12px 2px 0">Публичные страницы: <a href="/blog" target="_blank" style="color:var(--brand)">/blog</a> (список) и /blog/{slug} (пост). Черновики видны только здесь.</p></div>`;
+
+  const savePost = async (payload) => {
+    await api('/api/admin/blog', { method: 'POST', body: JSON.stringify(payload) });
+    toast('Сохранено ✓'); closeModal(); renderAdmBlog();
+  };
+  const openPostModal = (post) => {
+    const isNew = !post;
+    const p = post || { id: '', title: '', slug: '', lang: 'ru', cover: '', excerpt: '', contentHtml: '', tags: [], published: false };
+    const tags = Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || '');
+    openModal(`<h2 style="margin:0 0 16px">${isNew ? 'Новый пост' : 'Редактирование поста'}</h2>
+      <div class="form-grid">
+        <div class="full"><label class="lbl">Заголовок</label><input class="field" id="bl-title" value="${esc(p.title)}" placeholder="Как читать спектр-профиль кандидата"></div>
+        <div><label class="lbl">Slug (URL)</label><input class="field mono" id="bl-slug" value="${esc(p.slug)}" placeholder="генерируется из заголовка"></div>
+        <div><label class="lbl">Язык</label><select class="field" id="bl-lang">
+          ${Object.entries(BLOG_LANG).map(([c, n]) => `<option value="${c}" ${(p.lang || 'ru') === c ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+        <div class="full"><label class="lbl">Обложка (URL картинки)</label><input class="field" id="bl-cover" value="${esc(p.cover)}" placeholder="https://…/cover.jpg"></div>
+        <div class="full"><label class="lbl">Теги (через запятую)</label><input class="field" id="bl-tags" value="${esc(tags)}" placeholder="найм, тесты"></div>
+        <div class="full"><label class="lbl">Краткое описание (excerpt — идёт в SEO description и карточку)</label>
+          <textarea class="field" id="bl-excerpt" rows="3" placeholder="1–2 предложения о статье">${esc(p.excerpt)}</textarea></div>
+        <div class="full"><label class="lbl">Контент поста</label>${rteHtml('bl-rte', p.contentHtml || '')}</div>
+        <div class="full"><label class="switchrow" style="border:none;padding:0;gap:10px"><span>Опубликовать (показывать на /blog)</span>
+          <span class="switch ${p.published ? 'on' : ''}" id="bl-pub"><i></i></span></label></div>
+      </div>
+      <div class="row" style="gap:8px;margin-top:16px"><button class="btn" id="bl-save">Сохранить</button>
+        <button class="btn ghost" onclick="closeModal()">Отмена</button></div>`, true);
+    wireRte('bl-rte');
+    $('#bl-pub').onclick = () => $('#bl-pub').classList.toggle('on');
+    // Автогенерация slug из заголовка, пока slug пуст или не тронут вручную
+    const titleEl = $('#bl-title'), slugEl = $('#bl-slug');
+    let slugTouched = !!p.slug;
+    slugEl.oninput = () => { slugTouched = true; };
+    titleEl.oninput = () => { if (!slugTouched) slugEl.value = blogSlugify(titleEl.value); };
+    $('#bl-save').onclick = async () => {
+      const title = titleEl.value.trim();
+      if (!title) return toast('Укажите заголовок');
+      const payload = { id: p.id || undefined, title, slug: slugEl.value.trim(), lang: $('#bl-lang').value,
+        cover: $('#bl-cover').value.trim(), excerpt: $('#bl-excerpt').value.trim(),
+        contentHtml: rteValue('bl-rte'), tags: $('#bl-tags').value,
+        published: $('#bl-pub').classList.contains('on'),
+        date: p.date || new Date().toISOString() };
+      try { await savePost(payload); } catch (e) { toast(e.message); }
+    };
+  };
+  $('#bl-add').onclick = () => openPostModal(null);
+  $$('[data-bl-edit]').forEach(b => b.onclick = () => openPostModal(posts.find(x => x.id === b.dataset.blEdit)));
+  $$('[data-bl-pub]').forEach(b => b.onclick = async () => {
+    const p = posts.find(x => x.id === b.dataset.blPub); if (!p) return;
+    try { await api('/api/admin/blog', { method: 'POST', body: JSON.stringify(Object.assign({}, p, { published: !p.published })) });
+      toast(p.published ? 'Снят с публикации' : 'Опубликован'); renderAdmBlog(); } catch (e) { toast(e.message); }
+  });
+  $$('[data-bl-del]').forEach(b => b.onclick = async () => {
+    const p = posts.find(x => x.id === b.dataset.blDel); if (!p) return;
+    if (!confirm('Удалить пост «' + (p.title || '') + '»? Действие необратимо.')) return;
+    try { await api('/api/admin/blog?id=' + encodeURIComponent(p.id), { method: 'DELETE' });
+      toast('Удалено'); renderAdmBlog(); } catch (e) { toast(e.message); }
+  });
 }
 
 // ---------- Журнал действий ----------

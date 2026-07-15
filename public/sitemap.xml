@@ -13,6 +13,14 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://hr-pro.ai/blog</loc>
+    <lastmod>2026-07-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <!-- Посты блога добавляются вручную: <loc>https://hr-pro.ai/blog/{slug}</loc> priority 0.6.
+       При росте объёма можно генерировать sitemap динамически из gs.blogPosts на edge. -->
+  <url>
     <loc>https://hr-pro.ai/privacy</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>yearly</changefreq>

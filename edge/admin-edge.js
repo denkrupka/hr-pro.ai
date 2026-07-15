@@ -25,6 +25,7 @@ const ACTION_LABELS = {
   impersonate_start: 'Вход как клиент', user_delete: 'Удалил клиента', purchase_refund: 'Возврат покупки', plans_update: 'Изменил тарифы',
   integration_update: 'Обновил ключи интеграции', settings_update: 'Изменил настройки портала',
   templates_update: 'Изменил шаблоны', templates_reset: 'Вернул заводские шаблоны',
+  blog_update: 'Изменил пост блога', blog_delete: 'Удалил пост блога',
 };
 
 // ctx: { S, j, req, url, body, me, uid, publicUser, hashPassword, gs, saveSettings, testTitleOf, env, makeStripe, signCookie }
@@ -460,6 +461,53 @@ export async function handleAdmin(p, m, ctx) {
     if (scope === 'mail' || scope === 'all') gs.defaultMailTemplates = null;
     await saveSettings(gs);
     await logAdmin('templates_reset', 'settings', null, { scope });
+    return j({ ok: true });
+  }
+
+  // ── Блог (SEO): посты хранятся в gs.blogPosts ──
+  const BLOG_TRANSLIT = { а: 'a', б: 'b', в: 'v', г: 'g', ґ: 'g', д: 'd', е: 'e', ё: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'i', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'iu', я: 'ia' };
+  const blogSlugify = s => String(s || '').toLowerCase().trim().replace(/[а-яёіїєґ]/g, ch => BLOG_TRANSLIT[ch] != null ? BLOG_TRANSLIT[ch] : ch).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+  if (p === '/api/admin/blog' && m === 'GET') {
+    const posts = (gs.blogPosts || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return j({ posts });
+  }
+  if (p === '/api/admin/blog' && m === 'POST') {
+    const posts = Array.isArray(gs.blogPosts) ? gs.blogPosts : [];
+    const title = String(body.title || '').trim().slice(0, 200);
+    if (!title) return j({ error: 'Укажите заголовок поста' }, 400);
+    const lang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : 'ru';
+    const tags = (Array.isArray(body.tags) ? body.tags : String(body.tags || '').split(',')).map(t => String(t).trim()).filter(Boolean).slice(0, 12);
+    let post = body.id ? posts.find(x => x.id === body.id) : null;
+    const isNew = !post;
+    // slug: из body.slug или из title; уникален среди прочих постов
+    let baseSlug = blogSlugify(body.slug || title) || ('post-' + uid(6).toLowerCase());
+    let slug = baseSlug, i = 1;
+    while (posts.find(x => x.slug === slug && x.id !== (post && post.id))) slug = baseSlug + '-' + (++i);
+    const fields = {
+      slug, title,
+      excerpt: String(body.excerpt || '').slice(0, 600),
+      contentHtml: String(body.contentHtml || '').slice(0, 200000),
+      cover: String(body.cover || '').slice(0, 1000),
+      lang, tags,
+      published: !!body.published,
+      date: (typeof body.date === 'string' && body.date) ? body.date.slice(0, 40) : new Date().toISOString(),
+    };
+    if (isNew) { post = Object.assign({ id: uid(12) }, fields); posts.push(post); }
+    else Object.assign(post, fields);
+    gs.blogPosts = posts;
+    await saveSettings(gs);
+    await logAdmin('blog_update', 'blog', post.id, { title: post.title, published: post.published, isNew });
+    return j({ post });
+  }
+  if (p === '/api/admin/blog' && m === 'DELETE') {
+    const id = q.get('id');
+    const posts = Array.isArray(gs.blogPosts) ? gs.blogPosts : [];
+    const idx = posts.findIndex(x => x.id === id);
+    if (idx < 0) return j({ error: 'Пост не найден' }, 404);
+    const [removed] = posts.splice(idx, 1);
+    gs.blogPosts = posts;
+    await saveSettings(gs);
+    await logAdmin('blog_delete', 'blog', id, { title: removed.title });
     return j({ ok: true });
   }
 

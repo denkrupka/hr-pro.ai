@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="page_title">Блог — HR PRO AI</title>
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/favicon.png">
+<meta name="description" data-i18n-meta="meta_desc" content="Блог HR PRO AI: как нанимать по данным, читать спектр-профиль кандидата и избегать ошибок найма.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#3d6cd1">
+<link rel="canonical" href="https://hr-pro.ai/blog">
+<link rel="alternate" hreflang="ru" href="https://hr-pro.ai/blog?lang=ru">
+<link rel="alternate" hreflang="pl" href="https://hr-pro.ai/blog?lang=pl">
+<link rel="alternate" hreflang="en" href="https://hr-pro.ai/blog?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://hr-pro.ai/blog">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HR PRO AI">
+<meta property="og:url" content="https://hr-pro.ai/blog">
+<meta property="og:title" data-i18n-meta="og_title" content="Блог — HR PRO AI">
+<meta property="og:description" data-i18n-meta="meta_desc" content="Блог HR PRO AI: как нанимать по данным, читать спектр-профиль кандидата и избегать ошибок найма.">
+<meta property="og:image" content="https://hr-pro.ai/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+/* ===== Блог — тёмная hi-tech тема (палитра лендинга) ===== */
+body.lp{
+  --canvas:#070a16;--surface:#0f1430;--surface-2:#151c3c;--surface-3:#1e2750;
+  --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);
+  --text:#e8ecf8;--text-2:#9aa3bf;--muted:#7a84a3;--faint:#5a6483;
+  --brand:#5c7cff;--brand-2:#8b6cff;--coral:#ff7a5c;--good:#43e0a0;
+  --maxw:1100px;
+  background:var(--canvas);color:var(--text);font-family:Inter,system-ui,sans-serif;margin:0}
+body.lp::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(55% 40% at 82% 8%,rgba(123,108,255,.12),transparent 60%),
+    radial-gradient(50% 40% at 8% 26%,rgba(77,124,255,.09),transparent 60%),
+    linear-gradient(rgba(120,140,220,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,140,220,.035) 1px,transparent 1px),
+    var(--canvas);
+  background-size:auto,auto,52px 52px,52px 52px,auto}
+body.lp h1,body.lp h2,body.lp h3{font-family:'Manrope',sans-serif;text-wrap:balance}
+a{text-decoration:none;color:inherit}
+
+/* nav (как на лендинге) */
+.lp-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:16px 40px;max-width:var(--maxw);margin:0 auto;background:transparent}
+.lp-logo{display:flex;align-items:center;gap:12px;font-family:'Manrope';font-weight:800;font-size:19px;color:#fff}
+.lp-logo .m{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--brand),var(--brand-2));display:grid;place-items:center}
+.lp-logo .m svg{width:22px;height:22px}
+.lp-links{display:flex;gap:24px;align-items:center;font-weight:600;font-size:14.5px}
+.lp-links a{color:#c3cbe4}.lp-links a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Manrope';font-weight:700;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:.16s}
+.btn.sm{font-size:13.5px;padding:9px 16px}
+.btn.primary{background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.08);color:#eef1fb;border-color:rgba(255,255,255,.24)}
+.btn.ghost:hover{background:rgba(255,255,255,.16)}
+.lang-switch{display:flex;gap:4px}
+.lang-switch button{background:transparent;border:1px solid rgba(255,255,255,.16);color:#8b93ad;font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;cursor:pointer}
+.lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+
+/* section */
+.blog-wrap{max-width:var(--maxw);margin:0 auto;padding:40px 40px 80px}
+.eyebrow{font-family:'Manrope';font-weight:700;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-2)}
+.blog-h1{font-size:clamp(30px,4vw,44px);line-height:1.12;letter-spacing:-.02em;margin:14px 0 12px;color:#fff}
+.blog-lead{font-size:16px;line-height:1.65;color:var(--text-2);max-width:640px;margin:0 0 40px}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.bcard{display:flex;flex-direction:column;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.bcard:hover{transform:translateY(-4px);border-color:var(--line-2);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.bcard-cover{aspect-ratio:16/9;background:linear-gradient(135deg,#1b2540,#12132b);background-size:cover;background-position:center;position:relative}
+.bcard-cover.ph{display:grid;place-items:center}
+.bcard-cover.ph svg{width:48px;height:48px;opacity:.35}
+.bcard-body{padding:20px 22px 24px;display:flex;flex-direction:column;flex:1}
+.bcard-date{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.bcard-title{font-family:'Manrope';font-weight:800;font-size:18px;line-height:1.3;color:#fff;margin:0 0 10px}
+.bcard-ex{font-size:14px;line-height:1.6;color:var(--text-2);margin:0 0 16px;flex:1}
+.bcard-more{font-weight:700;font-size:13.5px;color:var(--brand);font-family:'Manrope'}
+.blog-empty{text-align:center;padding:80px 20px;color:var(--muted);border:1px dashed var(--line);border-radius:18px;background:rgba(255,255,255,.02)}
+.blog-empty svg{width:56px;height:56px;opacity:.3;margin-bottom:16px}
+.blog-empty h3{color:var(--text);margin:0 0 6px;font-size:19px}
+
+/* footer */
+.lp-foot{border-top:1px solid var(--line);background:rgba(0,0,0,.2)}
+.foot-inner{max-width:var(--maxw);margin:0 auto;padding:34px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.foot-inner .foot-tag{font-size:13px;color:var(--muted)}
+.foot-links{display:flex;gap:22px;font-size:13.5px}
+.foot-links a{color:var(--text-2)}.foot-links a:hover{color:#fff}
+@media(max-width:760px){.lp-links a[href^="#"],.lp-links a[href="/"]{display:none}.blog-wrap,.lp-nav,.foot-inner{padding-left:20px;padding-right:20px}}
+</style>
+</head><body class="lp">
+<nav class="lp-nav">
+  <a href="/" class="lp-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><b>HR PRO AI</b></a>
+  <div class="lp-links">
+    <a href="/#tests" data-i18n="nav_tests">Тесты</a>
+    <a href="/#pricing" data-i18n="nav_pricing">Цены</a>
+    <a href="/blog" data-i18n="nav_blog" style="color:#fff">Блог</a>
+    <span class="lang-switch" id="lang-switch">
+      <button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button>
+    </span>
+    <a href="/login" class="btn ghost sm" data-i18n="nav_login">Войти</a>
+    <a href="/login?mode=register" class="btn primary sm" data-i18n="nav_start">Начать бесплатно</a>
+  </div>
+</nav>
+
+<main class="blog-wrap">
+  <div class="eyebrow" data-i18n="blog_eyebrow">Блог HR PRO AI</div>
+  <h1 class="blog-h1" data-i18n="blog_title">Как нанимать по данным, а не по интуиции</h1>
+  <p class="blog-lead" data-i18n="blog_lead">Практика найма, чтение спектр-профиля кандидата, разбор ошибок отбора и обновления платформы.</p>
+  <div id="blog-list"><p style="color:var(--muted)" data-i18n="blog_loading">Загрузка…</p></div>
+</main>
+
+<footer class="lp-foot">
+  <div class="foot-inner">
+    <div class="foot-tag" data-i18n="foot_copy">© HR PRO AI · технология, которая чувствует людей</div>
+    <div class="foot-links">
+      <a href="/" data-i18n="foot_home">Главная</a>
+      <a href="/blog" data-i18n="nav_blog">Блог</a>
+      <a href="/privacy" data-i18n="foot_privacy">Приватность</a>
+      <a href="/terms" data-i18n="foot_terms">Условия</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const I18N={
+  ru:{page_title:'Блог — HR PRO AI',meta_desc:'Блог HR PRO AI: как нанимать по данным, читать спектр-профиль кандидата и избегать ошибок найма.',og_title:'Блог — HR PRO AI',
+    nav_tests:'Тесты',nav_pricing:'Цены',nav_blog:'Блог',nav_login:'Войти',nav_start:'Начать бесплатно',
+    blog_eyebrow:'Блог HR PRO AI',blog_title:'Как нанимать по данным, а не по интуиции',blog_lead:'Практика найма, чтение спектр-профиля кандидата, разбор ошибок отбора и обновления платформы.',
+    blog_loading:'Загрузка…',empty_h:'Скоро первые статьи',empty_p:'Мы готовим материалы о найме по данным. Загляните чуть позже.',read_more:'Читать →',
+    foot_copy:'© HR PRO AI · технология, которая чувствует людей',foot_home:'Главная',foot_privacy:'Приватность',foot_terms:'Условия'},
+  pl:{page_title:'Blog — HR PRO AI',meta_desc:'Blog HR PRO AI: jak zatrudniać na danych, czytać profil-spektrum kandydata i unikać błędów rekrutacji.',og_title:'Blog — HR PRO AI',
+    nav_tests:'Testy',nav_pricing:'Cennik',nav_blog:'Blog',nav_login:'Zaloguj',nav_start:'Zacznij za darmo',
+    blog_eyebrow:'Blog HR PRO AI',blog_title:'Jak zatrudniać na danych, a nie na przeczuciu',blog_lead:'Praktyka rekrutacji, czytanie profilu-spektrum kandydata, analiza błędów selekcji i aktualizacje platformy.',
+    blog_loading:'Ładowanie…',empty_h:'Wkrótce pierwsze artykuły',empty_p:'Przygotowujemy materiały o rekrutacji na danych. Zajrzyj później.',read_more:'Czytaj →',
+    foot_copy:'© HR PRO AI · technologia, która czuje ludzi',foot_home:'Strona główna',foot_privacy:'Prywatność',foot_terms:'Regulamin'},
+  en:{page_title:'Blog — HR PRO AI',meta_desc:'HR PRO AI blog: how to hire on data, read a candidate spectrum profile and avoid hiring mistakes.',og_title:'Blog — HR PRO AI',
+    nav_tests:'Tests',nav_pricing:'Pricing',nav_blog:'Blog',nav_login:'Log in',nav_start:'Start free',
+    blog_eyebrow:'HR PRO AI Blog',blog_title:'How to hire on data, not gut feeling',blog_lead:'Hiring practice, reading a candidate spectrum profile, breaking down selection mistakes, and product updates.',
+    blog_loading:'Loading…',empty_h:'First articles coming soon',empty_p:'We are preparing materials on data-driven hiring. Check back a little later.',read_more:'Read →',
+    foot_copy:'© HR PRO AI · technology that senses people',foot_home:'Home',foot_privacy:'Privacy',foot_terms:'Terms'},
+};
+function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(q==='ru'||q==='pl'||q==='en'){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
+let LANG=pickLang();
+const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmtDate(iso){if(!iso)return '';try{const d=new Date(iso);return d.toLocaleDateString(LANG==='ru'?'ru-RU':LANG==='pl'?'pl-PL':'en-GB',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
+const ICON_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="#8b93ad" stroke-width="1.6"><path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M14 3v5h5" stroke-linejoin="round"/></svg>';
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(v!=null)el.textContent=v;});
+  document.querySelectorAll('[data-i18n-meta]').forEach(el=>{el.setAttribute('content',t(el.getAttribute('data-i18n-meta')));});
+  document.title=t('page_title');
+  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  loadPosts();
+}
+async function loadPosts(){
+  const box=document.getElementById('blog-list');
+  try{
+    const r=await fetch('/api/blog?lang='+encodeURIComponent(LANG));
+    const d=await r.json();
+    const posts=(d&&d.posts)||[];
+    if(!posts.length){box.innerHTML=`<div class="blog-empty">${ICON_DOC}<h3>${esc(t('empty_h'))}</h3><p>${esc(t('empty_p'))}</p></div>`;return;}
+    box.innerHTML='<div class="blog-grid">'+posts.map(p=>{
+      const cover=p.cover?`<a href="/blog/${encodeURIComponent(p.slug)}" class="bcard-cover" style="background-image:url('${esc(p.cover)}')"></a>`
+        :`<a href="/blog/${encodeURIComponent(p.slug)}" class="bcard-cover ph">${ICON_DOC}</a>`;
+      return `<article class="bcard">${cover}
+        <div class="bcard-body">
+          <div class="bcard-date">${esc(fmtDate(p.date))}</div>
+          <h2 class="bcard-title"><a href="/blog/${encodeURIComponent(p.slug)}">${esc(p.title)}</a></h2>
+          <p class="bcard-ex">${esc(p.excerpt||'')}</p>
+          <a href="/blog/${encodeURIComponent(p.slug)}" class="bcard-more">${esc(t('read_more'))}</a>
+        </div></article>`;
+    }).join('')+'</div>';
+  }catch(e){box.innerHTML=`<div class="blog-empty"><h3>${esc(t('empty_h'))}</h3><p>${esc(t('empty_p'))}</p></div>`;}
+}
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;localStorage.setItem('hp_lang',LANG);applyLang();});
+applyLang();
+</script>
+</body></html>

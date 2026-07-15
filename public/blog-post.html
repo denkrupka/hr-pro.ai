@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Блог — HR PRO AI</title>
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/favicon.png">
+<meta name="description" id="meta-desc" content="">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#3d6cd1">
+<link rel="canonical" id="meta-canonical" href="https://hr-pro.ai/blog">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="HR PRO AI">
+<meta property="og:url" id="og-url" content="https://hr-pro.ai/blog">
+<meta property="og:title" id="og-title" content="Блог — HR PRO AI">
+<meta property="og:description" id="og-desc" content="">
+<meta property="og:image" id="og-image" content="https://hr-pro.ai/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" id="tw-title" content="Блог — HR PRO AI">
+<meta name="twitter:image" id="tw-image" content="https://hr-pro.ai/img/og-cover.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+body.lp{
+  --canvas:#070a16;--surface:#0f1430;--surface-2:#151c3c;--surface-3:#1e2750;
+  --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);
+  --text:#e8ecf8;--text-2:#9aa3bf;--muted:#7a84a3;--faint:#5a6483;
+  --brand:#5c7cff;--brand-2:#8b6cff;--coral:#ff7a5c;--good:#43e0a0;
+  --maxw:1100px;--readw:760px;
+  background:var(--canvas);color:var(--text);font-family:Inter,system-ui,sans-serif;margin:0}
+body.lp::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(55% 40% at 82% 8%,rgba(123,108,255,.12),transparent 60%),
+    radial-gradient(50% 40% at 8% 26%,rgba(77,124,255,.09),transparent 60%),
+    linear-gradient(rgba(120,140,220,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,140,220,.035) 1px,transparent 1px),
+    var(--canvas);
+  background-size:auto,auto,52px 52px,52px 52px,auto}
+body.lp h1,body.lp h2,body.lp h3{font-family:'Manrope',sans-serif;text-wrap:balance}
+a{text-decoration:none;color:inherit}
+.lp-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;max-width:var(--maxw);margin:0 auto;background:transparent}
+.lp-logo{display:flex;align-items:center;gap:12px;font-family:'Manrope';font-weight:800;font-size:19px;color:#fff}
+.lp-logo .m{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--brand),var(--brand-2));display:grid;place-items:center}
+.lp-logo .m svg{width:22px;height:22px}
+.lp-links{display:flex;gap:24px;align-items:center;font-weight:600;font-size:14.5px}
+.lp-links a{color:#c3cbe4}.lp-links a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Manrope';font-weight:700;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:.16s}
+.btn.sm{font-size:13.5px;padding:9px 16px}
+.btn.primary{background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:rgba(255,255,255,.08);color:#eef1fb;border-color:rgba(255,255,255,.24)}
+.btn.ghost:hover{background:rgba(255,255,255,.16)}
+.btn.lg{font-size:16px;padding:15px 30px;border-radius:14px}
+.lang-switch{display:flex;gap:4px}
+.lang-switch button{background:transparent;border:1px solid rgba(255,255,255,.16);color:#8b93ad;font-size:12px;font-weight:700;padding:5px 9px;border-radius:8px;cursor:pointer}
+.lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+
+.art-wrap{max-width:var(--readw);margin:0 auto;padding:28px 24px 90px}
+.crumbs{font-size:13px;color:var(--muted);margin:8px 0 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.crumbs a{color:var(--text-2)}.crumbs a:hover{color:#fff}.crumbs .sep{opacity:.5}
+.art-title{font-size:clamp(28px,4vw,42px);line-height:1.14;letter-spacing:-.02em;margin:6px 0 14px;color:#fff}
+.art-meta{font-size:13.5px;color:var(--muted);font-weight:600;margin-bottom:26px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.art-tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand-2);background:rgba(139,108,255,.12);border:1px solid rgba(139,108,255,.24);padding:3px 10px;border-radius:20px}
+.art-cover{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:18px;border:1px solid var(--line);margin:0 0 30px;background:#12132b}
+.art-body{font-size:17px;line-height:1.75;color:var(--text)}
+.art-body h2{font-size:26px;margin:36px 0 14px;color:#fff}
+.art-body h3{font-size:21px;margin:28px 0 10px;color:#fff}
+.art-body p{margin:0 0 18px;color:var(--text-2)}
+.art-body a{color:var(--brand);text-decoration:underline}
+.art-body ul,.art-body ol{margin:0 0 18px;padding-left:24px;color:var(--text-2)}
+.art-body li{margin:0 0 8px}
+.art-body img{max-width:100%;border-radius:14px;margin:20px 0}
+.art-body blockquote{margin:20px 0;padding:14px 20px;border-left:3px solid var(--brand);background:rgba(255,255,255,.03);border-radius:0 12px 12px 0;color:var(--text)}
+.art-body code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;font-size:.92em}
+.art-cta{margin-top:52px;padding:34px 30px;text-align:center;background:linear-gradient(135deg,rgba(139,108,255,.12),rgba(92,124,255,.08));border:1px solid var(--line-2);border-radius:20px}
+.art-cta h3{font-size:22px;color:#fff;margin:0 0 8px}
+.art-cta p{color:var(--text-2);margin:0 0 20px;font-size:14.5px}
+.art-loading,.art-404{text-align:center;padding:100px 20px;color:var(--muted)}
+.art-404 h1{color:#fff;font-size:26px;margin:0 0 10px}
+
+.lp-foot{border-top:1px solid var(--line);background:rgba(0,0,0,.2)}
+.foot-inner{max-width:var(--maxw);margin:0 auto;padding:34px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.foot-inner .foot-tag{font-size:13px;color:var(--muted)}
+.foot-links{display:flex;gap:22px;font-size:13.5px}
+.foot-links a{color:var(--text-2)}.foot-links a:hover{color:#fff}
+@media(max-width:760px){.lp-links a[href^="/#"]{display:none}.art-wrap,.lp-nav,.foot-inner{padding-left:20px;padding-right:20px}}
+</style>
+</head><body class="lp">
+<nav class="lp-nav">
+  <a href="/" class="lp-logo"><span class="m"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span><b>HR PRO AI</b></a>
+  <div class="lp-links">
+    <a href="/#tests" data-i18n="nav_tests">Тесты</a>
+    <a href="/#pricing" data-i18n="nav_pricing">Цены</a>
+    <a href="/blog" data-i18n="nav_blog" style="color:#fff">Блог</a>
+    <span class="lang-switch" id="lang-switch">
+      <button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button>
+    </span>
+    <a href="/login?mode=register" class="btn primary sm" data-i18n="nav_start">Начать бесплатно</a>
+  </div>
+</nav>
+
+<main class="art-wrap" id="art"><div class="art-loading" data-i18n="loading">Загрузка…</div></main>
+
+<footer class="lp-foot">
+  <div class="foot-inner">
+    <div class="foot-tag" data-i18n="foot_copy">© HR PRO AI · технология, которая чувствует людей</div>
+    <div class="foot-links">
+      <a href="/" data-i18n="foot_home">Главная</a>
+      <a href="/blog" data-i18n="nav_blog">Блог</a>
+      <a href="/privacy" data-i18n="foot_privacy">Приватность</a>
+      <a href="/terms" data-i18n="foot_terms">Условия</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const I18N={
+  ru:{nav_tests:'Тесты',nav_pricing:'Цены',nav_blog:'Блог',nav_start:'Начать бесплатно',loading:'Загрузка…',
+    crumb_home:'Главная',crumb_blog:'Блог',cta_h:'Наймите сильных — без ошибок',cta_p:'Оцените кандидата по данным ещё до собеседования. Первые тесты — бесплатно, без карты.',cta_btn:'Оценить первого кандидата — бесплатно →',
+    nf_h:'Статья не найдена',nf_p:'Возможно, она была удалена или ссылка неверна.',nf_btn:'Ко всем статьям',
+    foot_copy:'© HR PRO AI · технология, которая чувствует людей',foot_home:'Главная',foot_privacy:'Приватность',foot_terms:'Условия'},
+  pl:{nav_tests:'Testy',nav_pricing:'Cennik',nav_blog:'Blog',nav_start:'Zacznij za darmo',loading:'Ładowanie…',
+    crumb_home:'Strona główna',crumb_blog:'Blog',cta_h:'Zatrudniaj najlepszych — bez błędów',cta_p:'Oceń kandydata na danych jeszcze przed rozmową. Pierwsze testy — za darmo, bez karty.',cta_btn:'Oceń pierwszego kandydata — za darmo →',
+    nf_h:'Nie znaleziono artykułu',nf_p:'Mógł zostać usunięty lub link jest nieprawidłowy.',nf_btn:'Do wszystkich artykułów',
+    foot_copy:'© HR PRO AI · technologia, która czuje ludzi',foot_home:'Strona główna',foot_privacy:'Prywatność',foot_terms:'Regulamin'},
+  en:{nav_tests:'Tests',nav_pricing:'Pricing',nav_blog:'Blog',nav_start:'Start free',loading:'Loading…',
+    crumb_home:'Home',crumb_blog:'Blog',cta_h:'Hire strong people — without mistakes',cta_p:'Assess a candidate on data before the interview. First tests are free, no card needed.',cta_btn:'Assess your first candidate — free →',
+    nf_h:'Article not found',nf_p:'It may have been removed or the link is wrong.',nf_btn:'To all articles',
+    foot_copy:'© HR PRO AI · technology that senses people',foot_home:'Home',foot_privacy:'Privacy',foot_terms:'Terms'},
+};
+function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(q==='ru'||q==='pl'||q==='en'){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(s==='ru'||s==='pl'||s==='en')return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return 'pl';if(n.startsWith('en'))return 'en';return 'ru';}
+let LANG=pickLang();
+const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.ru[k]||k;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmtDate(iso){if(!iso)return '';try{const d=new Date(iso);return d.toLocaleDateString(LANG==='ru'?'ru-RU':LANG==='pl'?'pl-PL':'en-GB',{day:'numeric',month:'long',year:'numeric'});}catch(e){return '';}}
+function slugFromPath(){const m=location.pathname.match(/^\/blog\/([\w-]+)/);return m?m[1]:'';}
+function applyStaticI18n(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(v!=null)el.textContent=v;});
+  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+}
+async function load(){
+  const slug=slugFromPath();
+  const art=document.getElementById('art');
+  const canonical='https://hr-pro.ai/blog/'+slug;
+  try{
+    const r=await fetch('/api/blog/'+encodeURIComponent(slug));
+    if(!r.ok)throw new Error('nf');
+    const d=await r.json();const p=d.post;if(!p)throw new Error('nf');
+    // SEO head
+    document.title=esc(p.title)+' — HR PRO AI';
+    const desc=(p.excerpt||'').slice(0,300);
+    const img=p.cover||'https://hr-pro.ai/img/og-cover.png';
+    const set=(id,attr,val)=>{const el=document.getElementById(id);if(el)el.setAttribute(attr,val);};
+    set('meta-desc','content',desc);set('meta-canonical','href',canonical);
+    set('og-url','content',canonical);set('og-title','content',p.title+' — HR PRO AI');set('og-desc','content',desc);
+    set('og-image','content',img);set('tw-title','content',p.title+' — HR PRO AI');set('tw-image','content',img);
+    // JSON-LD Article
+    const ld={"@context":"https://schema.org","@type":"BlogPosting","headline":p.title,"description":desc,
+      "image":img,"datePublished":p.date||undefined,"dateModified":p.date||undefined,
+      "inLanguage":p.lang||'ru',
+      "author":{"@type":"Organization","name":"HR PRO AI","url":"https://hr-pro.ai/"},
+      "publisher":{"@type":"Organization","name":"HR PRO AI","logo":{"@type":"ImageObject","url":"https://hr-pro.ai/img/logo.png"}},
+      "mainEntityOfPage":{"@type":"WebPage","@id":canonical}};
+    const s=document.createElement('script');s.type='application/ld+json';s.textContent=JSON.stringify(ld);document.head.appendChild(s);
+    // render
+    const tags=(p.tags||[]).map(x=>`<span class="art-tag">${esc(x)}</span>`).join(' ');
+    const cover=p.cover?`<img class="art-cover" src="${esc(p.cover)}" alt="${esc(p.title)}">`:'';
+    art.innerHTML=`
+      <nav class="crumbs" aria-label="breadcrumb">
+        <a href="/">${esc(t('crumb_home'))}</a><span class="sep">/</span>
+        <a href="/blog">${esc(t('crumb_blog'))}</a><span class="sep">/</span>
+        <span>${esc(p.title)}</span>
+      </nav>
+      <h1 class="art-title">${esc(p.title)}</h1>
+      <div class="art-meta"><span>${esc(fmtDate(p.date))}</span>${tags}</div>
+      ${cover}
+      <div class="art-body">${p.contentHtml||''}</div>
+      <div class="art-cta">
+        <h3>${esc(t('cta_h'))}</h3>
+        <p>${esc(t('cta_p'))}</p>
+        <a href="/login?mode=register" class="btn primary lg">${esc(t('cta_btn'))}</a>
+      </div>`;
+  }catch(e){
+    art.innerHTML=`<div class="art-404"><h1>${esc(t('nf_h'))}</h1><p>${esc(t('nf_p'))}</p>
+      <p style="margin-top:22px"><a href="/blog" class="btn ghost sm">${esc(t('nf_btn'))}</a></p></div>`;
+  }
+}
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;localStorage.setItem('hp_lang',LANG);location.search='?lang='+LANG;});
+applyStaticI18n();load();
+</script>
+</body></html>

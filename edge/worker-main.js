@@ -225,6 +225,25 @@ async function api(req, env, url) {
     return j({ plans, currency: gs.currency || 'eur', stripe: !!(gs.stripe && gs.stripe.secretKey) });
   }
 
+  // ── Публичный блог (SEO): опубликованные посты из gs.blogPosts ──
+  if (p === '/api/blog' && m === 'GET') {
+    const gs = await settings();
+    const langQ = url.searchParams.get('lang');
+    let posts = (gs.blogPosts || []).filter(x => x && x.published);
+    if (langQ && ['ru', 'pl', 'en'].includes(langQ)) posts = posts.filter(x => (x.lang || 'ru') === langQ);
+    posts = posts.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+      .map(x => ({ slug: x.slug, title: x.title, excerpt: x.excerpt || '', cover: x.cover || '', lang: x.lang || 'ru', tags: x.tags || [], date: x.date }));
+    return j({ posts });
+  }
+  let mBlogPost = p.match(/^\/api\/blog\/([\w-]+)$/);
+  if (mBlogPost && m === 'GET') {
+    const gs = await settings();
+    const post = (gs.blogPosts || []).find(x => x && x.published && x.slug === mBlogPost[1]);
+    if (!post) return j({ error: 'not_found' }, 404);
+    return j({ post: { slug: post.slug, title: post.title, excerpt: post.excerpt || '', contentHtml: post.contentHtml || '',
+      cover: post.cover || '', lang: post.lang || 'ru', tags: post.tags || [], date: post.date } });
+  }
+
   if (p === '/api/login' && m === 'POST') {
     const rows = await S.select('users', `email=eq.${encodeURIComponent(String(body.email || '').toLowerCase())}&select=data`);
     const u = rows[0] && rows[0].data;
@@ -1562,6 +1581,8 @@ const HTML_MAP = [
   [/^\/storage\/guide(\/|$)/, '/guide'],
   [/^\/privacy$/, '/privacy'],
   [/^\/terms$/, '/terms'],
+  [/^\/blog$/, '/blog'],
+  [/^\/blog\/[\w-]+$/, '/blog-post'],
   [/^\/admin$/, '/admin'],
   [/^\/(app|dashboard|home|vacancies|balance|search|education|anketas|settings|faq|instruct)(\/|$)/, '/'],
   [/^\/result\//, '/'],
