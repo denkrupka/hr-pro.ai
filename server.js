@@ -1539,6 +1539,20 @@ app.post('/api/learning/:id/section/:sid', requireAuth, (req, res) => {
   save();
   res.json({ ok: true, program: learn.detailView(req.user, p.id, lang) });
 });
+app.post('/api/learning/:id/bookmark', requireAuth, (req, res) => {
+  const p = learn.progOf(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Программа не найдена' });
+  const st = req.user.learning && req.user.learning[p.id];
+  if (!st || !st.boughtAt) return res.status(403).json({ error: 'Программа не куплена' });
+  const sectionId = req.body && req.body.sectionId;
+  if (!p.sections.find(s => s.id === sectionId)) return res.status(404).json({ error: 'Раздел не найден' });
+  st.bookmarks = st.bookmarks || {};
+  const pct = req.body && req.body.pct;
+  if (pct == null) delete st.bookmarks[sectionId];
+  else st.bookmarks[sectionId] = Math.max(0, Math.min(100, +pct || 0));
+  save();
+  res.json({ ok: true });
+});
 app.post('/api/learning/:id/quiz', requireAuth, (req, res) => {
   const lang = pickLang(req);
   const p = learn.progOf(req.params.id);

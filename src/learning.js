@@ -177,6 +177,7 @@ function detailView(user, id, lang) {
       id: s.id, title: L(s.title, lang), desc: L(s.desc, lang),
       html: pr.purchased ? L(s.html, lang) : '',
       done: pr.sectionsDone.includes(s.id),
+      bookmark: (pr.st && pr.st.bookmarks && pr.st.bookmarks[s.id]) || 0,
     })),
     quiz: {
       passScore: p.quiz.passScore, count: p.quiz.questions.length,

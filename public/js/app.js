@@ -51,6 +51,7 @@ const I18N = {
     lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт', lp_copy_blocked: 'Копирование запрещено — материал защищён', lp_read_to_end: 'Дочитайте до конца', lp_reading: 'Прочитано',
     lp_trailer: 'Трейлер', lp_trailer_locked: 'Трейлер откроется после покупки предыдущей программы', lp_trailer_soon: 'Трейлер скоро появится', lp_buy_title: 'Покупка программы', lp_buy_after: 'Останется после покупки', lp_buy_btn: 'Купить за {n} тестов', lp_cancel: 'Отмена',
     lp_material: 'Материал обучения', lp_module: 'Модуль', lp_min_read: 'мин чтения', lp_passed_title: 'Материал пройден', lp_passed_sub: 'Прогресс сохранён в вашей программе обучения', lp_mark_passed: 'Отметить как пройдено',
+    lp_bookmark: 'Закладка', lp_bookmark_on: 'Закладка стоит', lp_bookmark_set: 'Закладка поставлена', lp_bookmark_removed: 'Закладка снята', lp_bookmark_resumed: 'Открыто с закладки', lp_bm_q_title: 'Поставить закладку?', lp_bm_q_text: 'Сохраним место, на котором вы остановились, чтобы в следующий раз открыть материал с этого места.', lp_bm_set_btn: 'Поставить закладку', lp_bm_exit: 'Выйти без закладки',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
@@ -106,6 +107,7 @@ const I18N = {
     lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta', lp_copy_blocked: 'Kopiowanie zabronione — materiał chroniony', lp_read_to_end: 'Doczytaj do końca', lp_reading: 'Przeczytano',
     lp_trailer: 'Zwiastun', lp_trailer_locked: 'Zwiastun odblokuje się po zakupie poprzedniego programu', lp_trailer_soon: 'Zwiastun wkrótce', lp_buy_title: 'Zakup programu', lp_buy_after: 'Pozostanie po zakupie', lp_buy_btn: 'Kup za {n} testów', lp_cancel: 'Anuluj',
     lp_material: 'Materiał szkoleniowy', lp_module: 'Moduł', lp_min_read: 'min czytania', lp_passed_title: 'Materiał ukończony', lp_passed_sub: 'Postęp zapisany w Twoim programie szkoleniowym', lp_mark_passed: 'Oznacz jako ukończone',
+    lp_bookmark: 'Zakładka', lp_bookmark_on: 'Zakładka ustawiona', lp_bookmark_set: 'Zakładka ustawiona', lp_bookmark_removed: 'Zakładka usunięta', lp_bookmark_resumed: 'Otwarto od zakładki', lp_bm_q_title: 'Ustawić zakładkę?', lp_bm_q_text: 'Zapiszemy miejsce, w którym skończyłeś, aby następnym razem otworzyć materiał od tego miejsca.', lp_bm_set_btn: 'Ustaw zakładkę', lp_bm_exit: 'Wyjdź bez zakładki',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
@@ -161,6 +163,7 @@ const I18N = {
     lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden', lp_copy_blocked: 'Copying is disabled — material is protected', lp_read_to_end: 'Read to the end', lp_reading: 'Read',
     lp_trailer: 'Trailer', lp_trailer_locked: 'The trailer unlocks after buying the previous program', lp_trailer_soon: 'Trailer coming soon', lp_buy_title: 'Buy program', lp_buy_after: 'Balance after purchase', lp_buy_btn: 'Buy for {n} tests', lp_cancel: 'Cancel',
     lp_material: 'Learning material', lp_module: 'Module', lp_min_read: 'min read', lp_passed_title: 'Material completed', lp_passed_sub: 'Progress saved in your training program', lp_mark_passed: 'Mark as completed',
+    lp_bookmark: 'Bookmark', lp_bookmark_on: 'Bookmarked', lp_bookmark_set: 'Bookmark saved', lp_bookmark_removed: 'Bookmark removed', lp_bookmark_resumed: 'Opened at your bookmark', lp_bm_q_title: 'Save a bookmark?', lp_bm_q_text: 'We will save where you stopped so you can reopen this material right at that spot next time.', lp_bm_set_btn: 'Save bookmark', lp_bm_exit: 'Exit without bookmark',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
     dash_overview: 'Overview', dash_title: 'Dashboard', balance: 'Balance',
@@ -3036,6 +3039,7 @@ window.addEventListener('resize', () => { if (document.getElementById('edu-conte
 const LP_LOCK = _svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/>');
 const LP_CHECK = _svg('<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>');
 const LP_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const LP_BM = _svg('<path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4.3L5 21V4.5a1 1 0 0 1 1-1z"/>');
 function lpProgressBar(pct) { return `<div class="lp-track"><div class="lp-fill" style="width:${Math.max(2, pct)}%"></div></div>`; }
 async function renderLearning() {
   state.eduMode = 'paid';
@@ -3172,11 +3176,14 @@ function openSecureReader(programId, section, ctx) {
   closeSecureReader();
   ctx = ctx || {};
   const email = (state.user && state.user.email) || '';
-  const uidShort = ((state.user && state.user.id) || '').slice(0, 6);
+  const acctId = (state.user && state.user.id) || '';
   const stamp = new Date().toLocaleString();
   const token = Math.random().toString(36).slice(2, 8).toUpperCase();
-  const wmText = esc((email || 'HR PRO AI') + (uidShort ? ' · #' + uidShort : '') + ' · ' + stamp + ' · ' + token);
-  const wm = Array.from({ length: 48 }, () => `<span>${wmText}</span>`).join('');
+  // Свой водяной знак — реальные данные аккаунта; тайловый SVG-фон на всю страницу ридера
+  const wmPlain = ('HR PRO AI · ' + (email || '') + (acctId ? ' · ID ' + acctId : '') + ' · ' + stamp)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const wmSvg = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='470' height='150'><text x='6' y='78' transform='rotate(-22 235 75)' fill='rgba(255,255,255,0.06)' font-family='monospace' font-size='12' font-weight='600'>${wmPlain}</text></svg>`);
   const plain = (section.html || '').replace(/<[^>]+>/g, ' ');
   const readTime = Math.max(1, Math.round(plain.length / 900)) + ' ' + t('lp_min_read');
   const moduleTag = (ctx.order ? t('lp_module') + ' ' + ctx.order : '') + (ctx.title ? (ctx.order ? ' · ' : '') + ctx.title : '');
@@ -3186,18 +3193,19 @@ function openSecureReader(programId, section, ctx) {
   ov.setAttribute('oncontextmenu', 'return false');
   ov.innerHTML = `
     <div class="lm-ambient" aria-hidden="true"><div class="lm-glow lm-glow1"></div><div class="lm-glow lm-glow2"></div><div class="lm-scan"></div></div>
+    <div class="lm-wm" id="sec-wm" aria-hidden="true"></div>
     <div class="lm-progress"><div class="lm-progress-fill" id="sec-read-fill" style="width:${done ? 100 : 0}%"></div></div>
     <header class="lm-head">
       <span class="lm-head-ic">${LP_LOCK}</span>
       <div class="lm-head-t"><div class="lm-eyebrow">${t('lp_material')}</div><h1 class="lm-head-title">${esc(section.title)}</h1></div>
       <div class="lm-head-r">
         <span class="lm-pct" id="sec-read-pct">${done ? '100%' : '0%'}</span>
+        <button class="lm-bm ${section.bookmark > 0 ? 'on' : ''}" id="sec-bm" title="${t('lp_bookmark')}">${LP_BM}<span class="lm-bm-l">${t('lp_bookmark')}</span></button>
         <button class="lm-passed ${done ? 'on' : ''}" id="sec-done" ${done ? '' : 'disabled'}><span class="lm-passed-dot"></span><span class="lm-passed-label">${done ? t('lp_done') : t('lp_read_to_end')}</span></button>
         <button class="lm-close" id="sec-close">${_svg('<path d="M6 6l12 12M18 6L6 18"/>')}${t('lp_close')}</button>
       </div>
     </header>
     <div class="lm-scroll" id="sec-scroll">
-      <div class="lm-wm" aria-hidden="true"><div class="lm-wm-grid">${wm}</div></div>
       <article class="lm-article">
         <div class="lm-tag"><span class="lm-tag-dot"></span>${esc(moduleTag) || t('lp_material')}</div>
         <h2 class="lm-title">${esc(section.title)}</h2>
@@ -3214,6 +3222,9 @@ function openSecureReader(programId, section, ctx) {
     <div class="sec-reader-shield" id="sec-shield"><div>${LP_LOCK}<span>${t('lp_hidden')}</span></div></div>`;
   document.body.appendChild(ov);
   document.body.classList.add('sec-lock');
+  const wmEl = ov.querySelector('#sec-wm'); if (wmEl) wmEl.style.backgroundImage = 'url("' + wmSvg + '")';
+  let bookmarked = section.bookmark > 0;
+  let curPct = section.bookmark || 0;
 
   const stop = e => { e.preventDefault(); e.stopPropagation(); return false; };
   const onCopy = e => {
@@ -3245,7 +3256,6 @@ function openSecureReader(programId, section, ctx) {
   const poll = setInterval(() => { if (!_secReader) return; showShield(!document.hasFocus() || document.hidden || devtoolsOpen()); }, 400);
   _secReader = { ov, onKey, onVis, onBlur, onFocus, onPrint, poll };
 
-  ov.querySelector('#sec-close').onclick = () => closeSecureReader();
   const doneBtns = [ov.querySelector('#sec-done'), ov.querySelector('#sec-done-2')].filter(Boolean);
   const markDone = async (btn) => {
     if (btn.disabled) return;
@@ -3254,6 +3264,16 @@ function openSecureReader(programId, section, ctx) {
     catch (e) { toast(e.message); doneBtns.forEach(b => { b.disabled = false; }); }
   };
   doneBtns.forEach(b => b.onclick = () => markDone(b));
+
+  // Закладка — сохраняет текущее место прокрутки, чтобы вернуться сюда позже.
+  const saveBookmark = async (pct) => api('/api/learning/' + programId + '/bookmark', { method: 'POST', body: JSON.stringify({ sectionId: section.id, pct }) });
+  const bmBtn = ov.querySelector('#sec-bm');
+  if (bmBtn) bmBtn.onclick = async () => {
+    try {
+      if (bookmarked) { await saveBookmark(null); bookmarked = false; bmBtn.classList.remove('on'); toast(t('lp_bookmark_removed')); }
+      else { await saveBookmark(Math.round(curPct)); bookmarked = true; bmBtn.classList.add('on'); toast(t('lp_bookmark_set')); }
+    } catch (e) { toast(e.message); }
+  };
 
   // Трекинг чтения: раздел засчитывается только после доскролла материала до конца.
   const scroller = ov.querySelector('#sec-scroll');
@@ -3264,6 +3284,7 @@ function openSecureReader(programId, section, ctx) {
     if (!scroller) return;
     const max = scroller.scrollHeight - scroller.clientHeight;
     const pct = max <= 8 ? 100 : Math.min(100, Math.round(scroller.scrollTop / max * 100));
+    curPct = pct;
     if (fill) fill.style.width = pct + '%';
     if (pctEl) pctEl.textContent = pct + '%';
     if (!reachedEnd && (max <= 8 || pct >= 99)) {
@@ -3277,6 +3298,34 @@ function openSecureReader(programId, section, ctx) {
   if (scroller) scroller.addEventListener('scroll', updateRead, { passive: true });
   requestAnimationFrame(updateRead);
   setTimeout(updateRead, 200);
+  // Восстановление позиции с закладки при открытии
+  if (section.bookmark > 0 && scroller) {
+    const restore = () => { const max = scroller.scrollHeight - scroller.clientHeight; scroller.scrollTop = section.bookmark / 100 * max; updateRead(); };
+    setTimeout(restore, 140); setTimeout(() => { toast(t('lp_bookmark_resumed')); }, 260);
+  }
+
+  // Выход: если закладка не стоит и материал начат, но не дочитан — спросить о закладке.
+  const requestClose = () => {
+    if (!bookmarked && !done && curPct > 2 && curPct < 98) {
+      readerAsk(ov, {
+        title: t('lp_bm_q_title'), text: t('lp_bm_q_text'), okLabel: t('lp_bm_set_btn'), cancelLabel: t('lp_bm_exit'),
+        onOk: async () => { try { await saveBookmark(Math.round(curPct)); } catch (_) {} closeSecureReader(); },
+        onCancel: () => closeSecureReader(),
+      });
+    } else closeSecureReader();
+  };
+  ov.querySelector('#sec-close').onclick = requestClose;
+  _secReader.requestClose = requestClose;
+}
+// Небольшой диалог внутри ридера (поверх шилда/контента) — для вопроса о закладке.
+function readerAsk(ov, o) {
+  const m = document.createElement('div');
+  m.className = 'lm-ask';
+  m.innerHTML = `<div class="lm-ask-box"><div class="lm-ask-ic">${LP_BM}</div><h3>${esc(o.title)}</h3><p>${esc(o.text)}</p>
+    <div class="lm-ask-actions"><button class="lm-ask-cancel">${esc(o.cancelLabel)}</button><button class="lm-ask-ok">${esc(o.okLabel)}</button></div></div>`;
+  ov.appendChild(m);
+  m.querySelector('.lm-ask-ok').onclick = () => { m.remove(); o.onOk && o.onOk(); };
+  m.querySelector('.lm-ask-cancel').onclick = () => { m.remove(); o.onCancel && o.onCancel(); };
 }
 function closeSecureReader() {
   if (!_secReader) return;
@@ -3291,7 +3340,7 @@ function closeSecureReader() {
   document.body.classList.remove('sec-lock');
   _secReader = null;
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && _secReader) closeSecureReader(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && _secReader) { _secReader.requestClose ? _secReader.requestClose() : closeSecureReader(); } });
 
 async function renderSearch() {
   $('#main').innerHTML = `<div class="eyebrow reveal">Поиск</div><h1 class="page-h reveal d1" style="margin-top:10px">Найти кандидата</h1><div class="card reveal d2"><div class="search-wrap"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="gs" aria-label="Поиск кандидата" placeholder="Имя, email, телефон, город…" autofocus></div><div class="table-wrap" style="margin-top:16px;box-shadow:none"><table><thead><tr><th>Кандидат</th><th>Почта</th><th>Телефон</th><th>Город</th><th>Вакансия</th></tr></thead><tbody id="gs-rows"></tbody></table></div></div>`;

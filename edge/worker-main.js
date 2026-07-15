@@ -1477,6 +1477,21 @@ async function api(req, env, url) {
       await saveUser(me);
       return j({ ok: true, program: learn.detailView(me, prog.id, lang) });
     }
+    let mBm = p.match(/^\/api\/learning\/([\w-]+)\/bookmark$/);
+    if (mBm && m === 'POST') {
+      const prog = learn.progOf(mBm[1]);
+      if (!prog) return j({ error: 'Программа не найдена' }, 404);
+      const st = me.learning && me.learning[prog.id];
+      if (!st || !st.boughtAt) return j({ error: 'Программа не куплена' }, 403);
+      const sectionId = body && body.sectionId;
+      if (!prog.sections.find(s => s.id === sectionId)) return j({ error: 'Раздел не найден' }, 404);
+      st.bookmarks = st.bookmarks || {};
+      const pct = body && body.pct;
+      if (pct == null) delete st.bookmarks[sectionId];
+      else st.bookmarks[sectionId] = Math.max(0, Math.min(100, +pct || 0));
+      await saveUser(me);
+      return j({ ok: true });
+    }
     let mQuiz = p.match(/^\/api\/learning\/([\w-]+)\/quiz$/);
     if (mQuiz && m === 'POST') {
       const prog = learn.progOf(mQuiz[1]);
