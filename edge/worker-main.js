@@ -3,7 +3,7 @@
 // чистые модули портала (scoring/ai/recruitment) по мере портирования.
 import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
-import { notifyCandidate, wrapEmailEdge, unsubToken } from './notify-edge.js';
+import { notifyCandidate, wrapEmailEdge, unsubToken, resetToken, verifyResetToken } from './notify-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
@@ -261,6 +261,64 @@ async function api(req, env, url) {
     await S.upsert('users', { id: u.id, data: u });
     const cookie = `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`;
     return j({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
+  }
+
+  // ── Восстановление пароля: запрос ссылки ──
+  // Всегда отвечаем {ok:true} — не раскрываем, существует ли email. Токен живёт 1 час.
+  if (p === '/api/forgot' && m === 'POST') {
+    const email = String(body.email || '').trim().toLowerCase();
+    const lang = ['ru', 'pl', 'en', 'uk'].includes(body.lang) ? body.lang : 'ru';
+    if (!/.+@.+\..+/.test(email)) return j({ ok: true });
+    try {
+      const rows = await S.select('users', `email=eq.${encodeURIComponent(email)}&select=data`);
+      const u = rows[0] && rows[0].data;
+      const resendKey = env.RESEND_API_KEY;
+      if (u && !u.blocked && resendKey) {
+        const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+        const exp = Math.floor(Date.now() / 1000) + 3600; // +1 час
+        const sig = await resetToken(env.SECRET, email, exp);
+        const resetUrl = `${base}/reset?e=${btoa(email)}&t=${sig}&exp=${exp}&lang=${lang}`;
+        const FORGOT = {
+          ru: { subj: 'Сброс пароля — HR PRO AI', eyebrow: 'Безопасность', head: 'Сброс пароля',
+            body: 'Мы получили запрос на сброс пароля для вашего аккаунта HR PRO AI. Нажмите кнопку ниже, чтобы задать новый пароль. Ссылка действует 1 час.', cta: 'Сбросить пароль',
+            note: 'Если вы не запрашивали сброс — просто проигнорируйте это письмо, ваш пароль останется прежним.' },
+          pl: { subj: 'Reset hasła — HR PRO AI', eyebrow: 'Bezpieczeństwo', head: 'Reset hasła',
+            body: 'Otrzymaliśmy prośbę o zresetowanie hasła do Twojego konta HR PRO AI. Kliknij przycisk poniżej, aby ustawić nowe hasło. Link jest ważny 1 godzinę.', cta: 'Zresetuj hasło',
+            note: 'Jeśli nie prosiłeś o reset — zignoruj tę wiadomość, Twoje hasło pozostanie bez zmian.' },
+          en: { subj: 'Password reset — HR PRO AI', eyebrow: 'Security', head: 'Password reset',
+            body: 'We received a request to reset the password for your HR PRO AI account. Click the button below to set a new password. This link is valid for 1 hour.', cta: 'Reset password',
+            note: 'If you did not request this — just ignore this email, your password will stay the same.' },
+          uk: { subj: 'Скидання пароля — HR PRO AI', eyebrow: 'Безпека', head: 'Скидання пароля',
+            body: 'Ми отримали запит на скидання пароля для вашого акаунта HR PRO AI. Натисніть кнопку нижче, щоб задати новий пароль. Посилання дійсне 1 годину.', cta: 'Скинути пароль',
+            note: 'Якщо ви не запитували скидання — просто проігноруйте цей лист, ваш пароль залишиться незмінним.' },
+        }[lang] || {};
+        const tok = await unsubToken(env.SECRET, email);
+        const unsubUrl = `${base}/unsubscribe?e=${btoa(email)}&t=${tok}&lang=${lang}`;
+        const html = wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject: FORGOT.subj, eyebrow: FORGOT.eyebrow,
+          headline: FORGOT.head, bodyHtml: FORGOT.body, ctaUrl: resetUrl, ctaLabel: FORGOT.cta, ctaNote: FORGOT.note });
+        await fetch('https://api.resend.com/emails', { method: 'POST',
+          headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: FORGOT.subj, html }) });
+      }
+    } catch (e) {}
+    return j({ ok: true });
+  }
+
+  // ── Восстановление пароля: установка нового ──
+  if (p === '/api/reset' && m === 'POST') {
+    let email = '';
+    try { email = atob(String(body.e || '')).trim().toLowerCase(); } catch (_) { return j({ error: 'invalid_token' }, 400); }
+    const password = String(body.password || '');
+    const ok = await verifyResetToken(env.SECRET, email, body.exp, String(body.t || ''));
+    if (!ok) return j({ error: 'invalid_token' }, 400);
+    if (password.length < 6) return j({ error: 'weak_password' }, 400);
+    const rows = await S.select('users', `email=eq.${encodeURIComponent(email)}&select=data`);
+    const u = rows[0] && rows[0].data;
+    if (!u) return j({ error: 'invalid_token' }, 400);
+    u.password = await hashPassword(password);
+    u.passwordResetAt = new Date().toISOString();
+    await S.upsert('users', { id: u.id, data: u });
+    return j({ ok: true });
   }
 
   // ── дальше — только для авторизованных ──
@@ -1499,6 +1557,7 @@ async function api(req, env, url) {
 const HTML_MAP = [
   [/^\/$/, '/landing'],
   [/^\/login$/, '/login'],
+  [/^\/reset$/, '/reset'],
   [/^\/guide(\/|$)/, '/guide'],
   [/^\/storage\/guide(\/|$)/, '/guide'],
   [/^\/privacy$/, '/privacy'],

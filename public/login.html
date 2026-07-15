@@ -87,6 +87,12 @@ form{display:flex;flex-direction:column;gap:15px}
 .switch-line{text-align:center;font-size:13.5px;color:#9aa3bf;margin-top:22px}
 .switch-line a{font-weight:600}
 .form-foot{text-align:center;font-size:11.5px;color:#5f6885;margin-top:20px}
+.forgot-panel{margin-top:22px;padding:20px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:13px}
+.forgot-panel h3{font-family:Manrope,Inter,sans-serif;font-weight:800;font-size:17px;color:#eef1fb;margin:0}
+.forgot-panel .fg-hint{font-size:13px;line-height:1.5;color:#9aa3bf;margin:-4px 0 2px}
+.forgot-panel .submit{margin-top:0}
+.fg-cancel{background:transparent;border:none;color:#8b93ad;font-size:13px;font-family:Inter,sans-serif;cursor:pointer;padding:2px}
+.fg-cancel:hover{color:#c3cbe4}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:rgba(20,24,44,.96);border:1px solid rgba(255,255,255,.12);color:#eef1fb;font-size:14px;padding:12px 20px;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index:80;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes scanA{0%{transform:translateY(-90px)}100%{transform:translateY(520px)}}
@@ -138,6 +144,13 @@ form{display:flex;flex-direction:column;gap:15px}
         <button type="submit" class="submit" id="a-submit">Войти →</button>
       </form>
       <div class="switch-line"><span id="a-switch-prompt">Нет аккаунта?</span> <a href="#" id="a-switch-link">Зарегистрируйтесь</a></div>
+      <div class="forgot-panel" id="forgot-panel" hidden>
+        <h3 id="fg-title">Восстановление пароля</h3>
+        <p class="fg-hint" id="fg-hint">Введите email — пришлём ссылку для сброса пароля.</p>
+        <div class="fld"><div class="wrap"><input class="afield" id="fg-email" type="email" placeholder="you@company.com" autocomplete="email"></div></div>
+        <button type="button" class="submit" id="fg-send">Отправить ссылку</button>
+        <button type="button" class="fg-cancel" id="fg-cancel">Отмена</button>
+      </div>
     </div>
     <div class="form-foot" data-i18n="footerRights">© 2026 HR PRO AI. Все права защищены.</div>
   </div>
@@ -162,7 +175,8 @@ const I18N={
     switchToReg:'Нет аккаунта?',switchToRegLink:'Зарегистрируйтесь',switchToLogin:'Уже есть аккаунт?',switchToLoginLink:'Войдите',
     termsPre:'Я принимаю ',termsLink:'условия',termsMid:' и ',privacyLink:'политику конфиденциальности',termsPost:'.',
     show:'ПОКАЗАТЬ',hide:'СКРЫТЬ',submitting:'Минуту…',termsRequired:'Примите условия и политику конфиденциальности.',
-    errGeneric:'Ошибка. Проверьте данные.',errNetwork:'Нет связи с сервером.',googleSoon:'Вход через Google подключим позже.',googleErr:'Не удалось войти через Google. Попробуйте ещё раз.',blockedErr:'Аккаунт заблокирован. Свяжитесь с поддержкой.',regClosedErr:'Регистрация временно закрыта.',forgotSoon:'Восстановление пароля скоро будет доступно.',
+    errGeneric:'Ошибка. Проверьте данные.',errNetwork:'Нет связи с сервером.',googleSoon:'Вход через Google подключим позже.',googleErr:'Не удалось войти через Google. Попробуйте ещё раз.',blockedErr:'Аккаунт заблокирован. Свяжитесь с поддержкой.',regClosedErr:'Регистрация временно закрыта.',
+    forgotTitle:'Восстановление пароля',forgotHint:'Введите email — пришлём ссылку для сброса пароля.',forgotSend:'Отправить ссылку',forgotCancel:'Отмена',forgotBadEmail:'Укажите корректный email.',forgotSent:'Если такой email есть — мы отправили ссылку для сброса.',
     footerRights:'© 2026 HR PRO AI. Все права защищены.'},
   pl:{page_title:'HR PRO AI — Logowanie',tagline:'technologia, która czuje ludzi',brandEyebrow:'Analiza kandydatów AI',
     brandTitle:'Jedno logowanie — cały portret zespołu',
@@ -180,7 +194,8 @@ const I18N={
     switchToReg:'Nie masz konta?',switchToRegLink:'Zarejestruj się',switchToLogin:'Masz już konto?',switchToLoginLink:'Zaloguj się',
     termsPre:'Akceptuję ',termsLink:'regulamin',termsMid:' i ',privacyLink:'politykę prywatności',termsPost:'.',
     show:'POKAŻ',hide:'UKRYJ',submitting:'Chwileczkę…',termsRequired:'Zaakceptuj regulamin i politykę prywatności.',
-    errGeneric:'Błąd. Sprawdź dane.',errNetwork:'Brak połączenia z serwerem.',googleSoon:'Logowanie przez Google wkrótce.',googleErr:'Nie udało się zalogować przez Google. Spróbuj ponownie.',blockedErr:'Konto zablokowane. Skontaktuj się z pomocą.',regClosedErr:'Rejestracja jest chwilowo zamknięta.',forgotSoon:'Odzyskiwanie hasła będzie wkrótce dostępne.',
+    errGeneric:'Błąd. Sprawdź dane.',errNetwork:'Brak połączenia z serwerem.',googleSoon:'Logowanie przez Google wkrótce.',googleErr:'Nie udało się zalogować przez Google. Spróbuj ponownie.',blockedErr:'Konto zablokowane. Skontaktuj się z pomocą.',regClosedErr:'Rejestracja jest chwilowo zamknięta.',
+    forgotTitle:'Odzyskiwanie hasła',forgotHint:'Podaj email — wyślemy link do zresetowania hasła.',forgotSend:'Wyślij link',forgotCancel:'Anuluj',forgotBadEmail:'Podaj poprawny email.',forgotSent:'Jeśli taki email istnieje — wysłaliśmy link do resetu.',
     footerRights:'© 2026 HR PRO AI. Wszelkie prawa zastrzeżone.'},
   en:{page_title:'HR PRO AI — Sign in',tagline:'technology that senses people',brandEyebrow:'AI candidate analysis',
     brandTitle:'One sign-in — the whole team portrait',
@@ -198,7 +213,8 @@ const I18N={
     switchToReg:'No account yet?',switchToRegLink:'Sign up',switchToLogin:'Already have an account?',switchToLoginLink:'Sign in',
     termsPre:'I accept the ',termsLink:'terms',termsMid:' and ',privacyLink:'privacy policy',termsPost:'.',
     show:'SHOW',hide:'HIDE',submitting:'One moment…',termsRequired:'Please accept the terms and privacy policy.',
-    errGeneric:'Error. Check your details.',errNetwork:'No connection to server.',googleSoon:'Google sign-in is coming soon.',googleErr:'Could not sign in with Google. Please try again.',blockedErr:'Account is blocked. Contact support.',regClosedErr:'Registration is temporarily closed.',forgotSoon:'Password recovery is coming soon.',
+    errGeneric:'Error. Check your details.',errNetwork:'No connection to server.',googleSoon:'Google sign-in is coming soon.',googleErr:'Could not sign in with Google. Please try again.',blockedErr:'Account is blocked. Contact support.',regClosedErr:'Registration is temporarily closed.',
+    forgotTitle:'Reset password',forgotHint:'Enter your email — we\'ll send a reset link.',forgotSend:'Send link',forgotCancel:'Cancel',forgotBadEmail:'Please enter a valid email.',forgotSent:'If that email exists — we\'ve sent a reset link.',
     footerRights:'© 2026 HR PRO AI. All rights reserved.'}
 };
 function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(['ru','pl','en'].includes(q)){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(['ru','pl','en'].includes(s))return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('en'))return'en';return'ru';}
@@ -249,8 +265,9 @@ function renderForm(){
   $('#a-switch-prompt').textContent=isLogin?t('switchToReg'):t('switchToLogin');
   $('#a-switch-link').textContent=isLogin?t('switchToRegLink'):t('switchToLoginLink');
   const pw=$('#pw-toggle');if(pw)pw.onclick=()=>{SHOWPW=!SHOWPW;const inp=$('#f-pass');if(inp)inp.type=SHOWPW?'text':'password';pw.textContent=SHOWPW?t('hide'):t('show');};
-  const fl=$('#forgot-link');if(fl)fl.onclick=e=>{e.preventDefault();toast(t('forgotSoon'));};
+  const fl=$('#forgot-link');if(fl)fl.onclick=e=>{e.preventDefault();openForgot();};
   const em=$('#f-email');if(em&&preEmail)em.value=preEmail;
+  const fp=$('#forgot-panel');if(fp)fp.hidden=true;
   $('#f-pass')&&$('#f-pass').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submit();}});
 }
 function applyLang(){
@@ -294,6 +311,30 @@ async function submit(e){
   }catch(err){toast(t('errNetwork'));btn.disabled=false;btn.innerHTML=orig;}
 }
 $('#auth-form').addEventListener('submit',submit);
+
+// восстановление пароля — инлайн-панель (без prompt/alert)
+function openForgot(){
+  $('#fg-title').textContent=t('forgotTitle');
+  $('#fg-hint').textContent=t('forgotHint');
+  $('#fg-send').textContent=t('forgotSend');
+  $('#fg-cancel').textContent=t('forgotCancel');
+  const fe=$('#fg-email');fe.value=($('#f-email')||{}).value||preEmail||'';
+  $('#forgot-panel').hidden=false;fe.focus();
+}
+function closeForgot(){$('#forgot-panel').hidden=true;}
+$('#fg-cancel').onclick=closeForgot;
+$('#fg-email').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendForgot();}});
+$('#fg-send').onclick=sendForgot;
+async function sendForgot(){
+  const email=($('#fg-email').value||'').trim();
+  if(!/.+@.+\..+/.test(email)){toast(t('forgotBadEmail'));return;}
+  const btn=$('#fg-send');btn.disabled=true;btn.textContent=t('submitting');
+  try{
+    await fetch('/api/forgot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,lang:LANG})});
+    toast(t('forgotSent'));closeForgot();
+  }catch(err){toast(t('errNetwork'));}
+  btn.disabled=false;btn.textContent=t('forgotSend');
+}
 
 // анимированная фирменная сеть на брендовой стороне
 function neural(){

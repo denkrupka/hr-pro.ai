@@ -31,6 +31,23 @@ export async function unsubToken(secret, email) {
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('unsub:' + String(email || '').toLowerCase()));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 24);
 }
+// Токен сброса пароля: HMAC(secret, `reset:email:expTs`). Привязан к email и времени
+// (expTs — unix-секунды истечения), поэтому не переиспользуется и протухает. Проверка —
+// пересчитать подпись + сверить exp>now (см. verifyResetToken).
+export async function resetToken(secret, email, expTs) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('reset:' + String(email || '').toLowerCase() + ':' + String(expTs)));
+  return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
+}
+// Проверка токена сброса: exp — число unix-секунд, sig — подпись из ссылки. Возвращает true,
+// только если exp ещё не наступил и подпись совпадает (постоянное сравнение не критично — токен одноразово-временный).
+export async function verifyResetToken(secret, email, expTs, sig) {
+  const exp = parseInt(expTs, 10);
+  if (!email || !exp || !sig) return false;
+  if (exp * 1000 < Date.now()) return false;
+  const expect = await resetToken(secret, email, exp);
+  return sig === expect;
+}
 // Универсальный email-шаблон HR PRO AI (по макету дизайнера): table-верстка, VML-кнопка (Outlook),
 // PNG-лого/сеть-графика (Gmail режет SVG), подвал и chrome — по языку получателя (o.lang).
 export function wrapEmailEdge(o) {
