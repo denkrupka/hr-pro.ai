@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Условия использования — HR PRO AI</title>
+<title data-i18n="page_title">Условия использования — HR PRO AI</title>
 <link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/favicon.png">
 <meta name="theme-color" content="#070813">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,41 +19,128 @@ ul{padding-left:0;list-style:none;margin:12px 0}
 li{position:relative;padding-left:22px;margin-bottom:8px;color:#c3cbe4}
 li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,#8b6cff,#6f97ff)}
 a{color:#b3a4ff;text-decoration:none}
+.lang-switch{position:absolute;top:22px;right:24px;display:inline-flex;gap:3px;align-items:center}
+.lang-switch button{font:700 11px/1 'JetBrains Mono',monospace;padding:6px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8b93ad;cursor:pointer}
+.lang-switch button.on{border-color:#6f97ff;background:rgba(77,124,255,.85);color:#fff;box-shadow:0 0 14px rgba(77,124,255,.5)}
 .foot{margin-top:48px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#6b7492}
 </style></head><body>
+<div class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
 <div class="wrap">
   <div class="top">
     <svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>
-    <span><b>HR&nbsp;PRO&nbsp;AI</b><br><small>Технология, которая чувствует людей</small></span>
+    <span><b>HR&nbsp;PRO&nbsp;AI</b><br><small data-i18n="tagline">Технология, которая чувствует людей</small></span>
   </div>
-  <h1>Условия использования</h1>
-  <div class="upd">Действует с 14 июля 2026</div>
+  <h1 data-i18n="h1">Условия использования</h1>
+  <div class="upd" data-i18n="updated">Действует с 14 июля 2026</div>
 
-  <p>Используя HR PRO AI, вы соглашаетесь с этими условиями. Пожалуйста, прочитайте их внимательно.</p>
+  <p data-i18n="intro">Используя HR PRO AI, вы соглашаетесь с этими условиями. Пожалуйста, прочитайте их внимательно.</p>
 
-  <h2>1. О сервисе</h2>
-  <p>HR PRO AI — платформа для оценки кандидатов: тесты продуктивности и личности, спектр-профиль и рекомендация ИИ. Сервис предоставляется «как есть» и постоянно улучшается.</p>
+  <h2 data-i18n="s1_h">1. О сервисе</h2>
+  <p data-i18n="s1_p">HR PRO AI — платформа для оценки кандидатов: тесты продуктивности и личности, спектр-профиль и рекомендация ИИ. Сервис предоставляется «как есть» и постоянно улучшается.</p>
 
-  <h2>2. Аккаунт клиента</h2>
+  <h2 data-i18n="s2_h">2. Аккаунт клиента</h2>
   <ul>
-    <li>Вы отвечаете за сохранность доступа к своему аккаунту.</li>
-    <li>Вы гарантируете, что имеете право отправлять данные кандидатов на оценку.</li>
-    <li>Запрещено использовать сервис для дискриминации или нарушения закона.</li>
-      <li>Вход возможен по email/паролю или через аккаунт Google — вы отвечаете за сохранность любого из способов доступа.</li>
-</ul>
+    <li data-i18n="s2_l1">Вы отвечаете за сохранность доступа к своему аккаунту.</li>
+    <li data-i18n="s2_l2">Вы гарантируете, что имеете право отправлять данные кандидатов на оценку.</li>
+    <li data-i18n="s2_l3">Запрещено использовать сервис для дискриминации или нарушения закона.</li>
+    <li data-i18n="s2_l4">Вход возможен по email/паролю или через аккаунт Google — вы отвечаете за сохранность любого из способов доступа.</li>
+  </ul>
 
-  <h2>3. Оценки и баланс</h2>
-  <p>Тесты списываются с баланса при отправке кандидату. Пополнения действуют <strong>1 год</strong> с даты оплаты. Возврат за использованные тесты не производится.</p>
+  <h2 data-i18n="s3_h">3. Оценки и баланс</h2>
+  <p data-i18n="s3_p">Тесты списываются с баланса при отправке кандидату. Пополнения действуют <strong>1 год</strong> с даты оплаты. Возврат за использованные тесты не производится.</p>
 
-  <h2>4. Результаты и решения</h2>
-  <p>Вердикт ИИ (например, «Виннер» или «Дуер») — это <strong>рекомендация, а не решение</strong>. Финальный выбор всегда за работодателем. Мы не несём ответственности за кадровые решения, принятые на основе отчётов.</p>
+  <h2 data-i18n="s4_h">4. Результаты и решения</h2>
+  <p data-i18n="s4_p">Вердикт ИИ (например, «Виннер» или «Дуер») — это <strong>рекомендация, а не решение</strong>. Финальный выбор всегда за работодателем. Мы не несём ответственности за кадровые решения, принятые на основе отчётов.</p>
 
-  <h2>5. Интеллектуальная собственность</h2>
-  <p>Методика, тесты, дизайн и код принадлежат HR PRO AI. Отчёты по вашим кандидатам принадлежат вам.</p>
+  <h2 data-i18n="s5_h">5. Интеллектуальная собственность</h2>
+  <p data-i18n="s5_p">Методика, тесты, дизайн и код принадлежат HR PRO AI. Отчёты по вашим кандидатам принадлежат вам.</p>
 
-  <h2>6. Изменения и связь</h2>
-  <p>Мы можем обновлять условия и уведомим об этом заранее. Вопросы — на <a href="mailto:help@hr-pro.ai">help@hr-pro.ai</a>.</p>
+  <h2 data-i18n="s6_h">6. Изменения и связь</h2>
+  <p data-i18n="s6_p">Мы можем обновлять условия и уведомим об этом заранее. Вопросы — на <a href="mailto:help@hr-pro.ai">help@hr-pro.ai</a>.</p>
 
-  <div class="foot">HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Политика конфиденциальности</a> · <a href="/">На главную</a></div>
+  <div class="foot" data-i18n="foot">HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Политика конфиденциальности</a> · <a href="/">На главную</a></div>
 </div>
+<script>
+const I18N={
+  ru:{
+    page_title:'Условия использования — HR PRO AI',
+    tagline:'Технология, которая чувствует людей',
+    h1:'Условия использования',
+    updated:'Действует с 14 июля 2026',
+    intro:'Используя HR PRO AI, вы соглашаетесь с этими условиями. Пожалуйста, прочитайте их внимательно.',
+    s1_h:'1. О сервисе',
+    s1_p:'HR PRO AI — платформа для оценки кандидатов: тесты продуктивности и личности, спектр-профиль и рекомендация ИИ. Сервис предоставляется «как есть» и постоянно улучшается.',
+    s2_h:'2. Аккаунт клиента',
+    s2_l1:'Вы отвечаете за сохранность доступа к своему аккаунту.',
+    s2_l2:'Вы гарантируете, что имеете право отправлять данные кандидатов на оценку.',
+    s2_l3:'Запрещено использовать сервис для дискриминации или нарушения закона.',
+    s2_l4:'Вход возможен по email/паролю или через аккаунт Google — вы отвечаете за сохранность любого из способов доступа.',
+    s3_h:'3. Оценки и баланс',
+    s3_p:'Тесты списываются с баланса при отправке кандидату. Пополнения действуют <strong>1 год</strong> с даты оплаты. Возврат за использованные тесты не производится.',
+    s4_h:'4. Результаты и решения',
+    s4_p:'Вердикт ИИ (например, «Виннер» или «Дуер») — это <strong>рекомендация, а не решение</strong>. Финальный выбор всегда за работодателем. Мы не несём ответственности за кадровые решения, принятые на основе отчётов.',
+    s5_h:'5. Интеллектуальная собственность',
+    s5_p:'Методика, тесты, дизайн и код принадлежат HR PRO AI. Отчёты по вашим кандидатам принадлежат вам.',
+    s6_h:'6. Изменения и связь',
+    s6_p:'Мы можем обновлять условия и уведомим об этом заранее. Вопросы — на <a href="mailto:help@hr-pro.ai">help@hr-pro.ai</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Политика конфиденциальности</a> · <a href="/">На главную</a>'
+  },
+  pl:{
+    page_title:'Warunki korzystania — HR PRO AI',
+    tagline:'Technologia, która czuje ludzi',
+    h1:'Warunki korzystania',
+    updated:'Obowiązuje od 14 lipca 2026',
+    intro:'Korzystając z HR PRO AI, akceptujesz niniejsze warunki. Prosimy o uważne zapoznanie się z nimi.',
+    s1_h:'1. O serwisie',
+    s1_p:'HR PRO AI to platforma do oceny kandydatów: testy produktywności i osobowości, profil spektralny oraz rekomendacja AI. Serwis jest udostępniany „w stanie, w jakim jest” i stale ulepszany.',
+    s2_h:'2. Konto klienta',
+    s2_l1:'Odpowiadasz za bezpieczeństwo dostępu do swojego konta.',
+    s2_l2:'Gwarantujesz, że masz prawo przekazywać dane kandydatów do oceny.',
+    s2_l3:'Zabronione jest wykorzystywanie serwisu do dyskryminacji lub naruszania prawa.',
+    s2_l4:'Logowanie jest możliwe za pomocą email/hasła lub przez konto Google — odpowiadasz za bezpieczeństwo każdego ze sposobów dostępu.',
+    s3_h:'3. Oceny i saldo',
+    s3_p:'Testy są odejmowane z salda w momencie wysłania do kandydata. Doładowania są ważne przez <strong>1 rok</strong> od daty płatności. Zwrot za wykorzystane testy nie przysługuje.',
+    s4_h:'4. Wyniki i decyzje',
+    s4_p:'Werdykt AI (na przykład „Winner” lub „Doer”) jest <strong>rekomendacją, a nie decyzją</strong>. Ostateczny wybór zawsze należy do pracodawcy. Nie ponosimy odpowiedzialności za decyzje kadrowe podjęte na podstawie raportów.',
+    s5_h:'5. Własność intelektualna',
+    s5_p:'Metodologia, testy, projekt graficzny i kod należą do HR PRO AI. Raporty dotyczące Twoich kandydatów należą do Ciebie.',
+    s6_h:'6. Zmiany i kontakt',
+    s6_p:'Możemy aktualizować warunki i powiadomimy o tym z wyprzedzeniem. Pytania — na <a href="mailto:help@hr-pro.ai">help@hr-pro.ai</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Polityka prywatności</a> · <a href="/">Strona główna</a>'
+  },
+  en:{
+    page_title:'Terms of Use — HR PRO AI',
+    tagline:'Technology that senses people',
+    h1:'Terms of Use',
+    updated:'Effective from 14 July 2026',
+    intro:'By using HR PRO AI, you agree to these terms. Please read them carefully.',
+    s1_h:'1. About the service',
+    s1_p:'HR PRO AI is a platform for candidate assessment: productivity and personality tests, a spectrum profile, and an AI recommendation. The service is provided “as is” and is continuously improved.',
+    s2_h:'2. Client account',
+    s2_l1:'You are responsible for keeping access to your account secure.',
+    s2_l2:'You warrant that you have the right to submit candidate data for assessment.',
+    s2_l3:'Using the service for discrimination or to break the law is prohibited.',
+    s2_l4:'Sign-in is available via email/password or through a Google account — you are responsible for keeping either access method secure.',
+    s3_h:'3. Assessments and balance',
+    s3_p:'Tests are deducted from your balance when sent to a candidate. Top-ups are valid for <strong>1 year</strong> from the date of payment. No refunds are given for used tests.',
+    s4_h:'4. Results and decisions',
+    s4_p:'The AI verdict (for example, “Winner” or “Doer”) is a <strong>recommendation, not a decision</strong>. The final choice always rests with the employer. We are not liable for hiring decisions made on the basis of the reports.',
+    s5_h:'5. Intellectual property',
+    s5_p:'The methodology, tests, design, and code belong to HR PRO AI. The reports on your candidates belong to you.',
+    s6_h:'6. Changes and contact',
+    s6_p:'We may update these terms and will notify you in advance. Questions — at <a href="mailto:help@hr-pro.ai">help@hr-pro.ai</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Privacy Policy</a> · <a href="/">Home</a>'
+  }
+};
+function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(['ru','pl','en'].includes(q)){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(['ru','pl','en'].includes(s))return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('en'))return'en';return'ru';}
+let LANG=pickLang();
+const t=k=>{const v=I18N[LANG]&&I18N[LANG][k];return v==null?(I18N.ru[k]!=null?I18N.ru[k]:k):v;};
+function applyLang(){
+  LANG=pickLang();document.documentElement.lang=LANG;document.title=t('page_title');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.innerHTML=t(el.getAttribute('data-i18n'));});
+  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+}
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+applyLang();
+</script>
 </body></html>

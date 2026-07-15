@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Политика конфиденциальности — HR PRO AI</title>
+<title data-i18n="page_title">Политика конфиденциальности — HR PRO AI</title>
 <link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/favicon.png">
 <meta name="theme-color" content="#070813">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,49 +19,151 @@ ul{padding-left:0;list-style:none;margin:12px 0}
 li{position:relative;padding-left:22px;margin-bottom:8px;color:#c3cbe4}
 li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,#8b6cff,#6f97ff)}
 a{color:#b3a4ff;text-decoration:none}
+.lang-switch{position:absolute;top:22px;right:24px;display:inline-flex;gap:3px;align-items:center}
+.lang-switch button{font:700 11px/1 'JetBrains Mono',monospace;padding:6px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8b93ad;cursor:pointer}
+.lang-switch button.on{border-color:#6f97ff;background:rgba(77,124,255,.85);color:#fff;box-shadow:0 0 14px rgba(77,124,255,.5)}
 .foot{margin-top:48px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#6b7492}
 </style></head><body>
+<div class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
 <div class="wrap">
   <div class="top">
     <svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>
-    <span><b>HR&nbsp;PRO&nbsp;AI</b><br><small>Технология, которая чувствует людей</small></span>
+    <span><b>HR&nbsp;PRO&nbsp;AI</b><br><small data-i18n="tagline">Технология, которая чувствует людей</small></span>
   </div>
-  <h1>Политика конфиденциальности</h1>
-  <div class="upd">Действует с 14 июля 2026</div>
+  <h1 data-i18n="h1">Политика конфиденциальности</h1>
+  <div class="upd" data-i18n="updated">Действует с 14 июля 2026</div>
 
-  <p>Мы в HR PRO AI бережно относимся к персональным данным кандидатов и клиентов. Этот документ объясняет, какие данные мы собираем, зачем и как их защищаем.</p>
+  <p data-i18n="intro">Мы в HR PRO AI бережно относимся к персональным данным кандидатов и клиентов. Этот документ объясняет, какие данные мы собираем, зачем и как их защищаем.</p>
 
-  <h2>1. Кто обрабатывает данные</h2>
-  <p>Оператор данных — <strong>HR PRO AI sp. z o.o.</strong>, ul. Prosta 51, 00-838 Warszawa, Польша. По вопросам обработки данных пишите на <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.</p>
+  <h2 data-i18n="s1_h">1. Кто обрабатывает данные</h2>
+  <p data-i18n="s1_p">Оператор данных — <strong>HR PRO AI sp. z o.o.</strong>, ul. Prosta 51, 00-838 Warszawa, Польша. По вопросам обработки данных пишите на <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.</p>
 
-  <h2>2. Какие данные мы собираем</h2>
+  <h2 data-i18n="s2_h">2. Какие данные мы собираем</h2>
   <ul>
-    <li>Данные аккаунта клиента: имя, email, название компании, телефон.</li>
-    <li>Данные кандидатов, переданные клиентом: имя, email, телефон, город, ответы на тесты.</li>
-    <li>Результаты оценки и спектр-профили, сформированные системой.</li>
-    <li>Технические данные: журнал действий, IP-адрес, тип устройства.</li>
+    <li data-i18n="s2_l1">Данные аккаунта клиента: имя, email, название компании, телефон.</li>
+    <li data-i18n="s2_l2">Данные кандидатов, переданные клиентом: имя, email, телефон, город, ответы на тесты.</li>
+    <li data-i18n="s2_l3">Результаты оценки и спектр-профили, сформированные системой.</li>
+    <li data-i18n="s2_l4">Технические данные: журнал действий, IP-адрес, тип устройства.</li>
   </ul>
 
-  <h2>3. Вход через Google</h2>
-  <p>Вы можете войти или зарегистрироваться через аккаунт Google. В этом случае мы получаем от Google только базовые данные вашего профиля — <strong>адрес email, имя и фото профиля</strong> — и используем их, чтобы создать или найти ваш аккаунт и выполнить вход. Мы <strong>не получаем ваш пароль Google</strong> и не имеем доступа к другим данным аккаунта Google. Отозвать доступ можно в настройках вашего Google-аккаунта. Использование данных, полученных через Google, соответствует <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, включая требования Limited Use.</p>
+  <h2 data-i18n="s3_h">3. Вход через Google</h2>
+  <p data-i18n="s3_p">Вы можете войти или зарегистрироваться через аккаунт Google. В этом случае мы получаем от Google только базовые данные вашего профиля — <strong>адрес email, имя и фото профиля</strong> — и используем их, чтобы создать или найти ваш аккаунт и выполнить вход. Мы <strong>не получаем ваш пароль Google</strong> и не имеем доступа к другим данным аккаунта Google. Отозвать доступ можно в настройках вашего Google-аккаунта. Использование данных, полученных через Google, соответствует <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, включая требования Limited Use.</p>
 
-  <h2>4. Зачем мы используем данные</h2>
+  <h2 data-i18n="s4_h">4. Зачем мы используем данные</h2>
   <ul>
-    <li>Чтобы провести оценку кандидата и показать результат клиенту.</li>
-    <li>Чтобы обеспечить работу личного кабинета и биллинга.</li>
-    <li>Чтобы отправлять письма о ходе подбора (от них можно отписаться).</li>
-    <li>Чтобы улучшать методику и качество сервиса в обезличенном виде.</li>
+    <li data-i18n="s4_l1">Чтобы провести оценку кандидата и показать результат клиенту.</li>
+    <li data-i18n="s4_l2">Чтобы обеспечить работу личного кабинета и биллинга.</li>
+    <li data-i18n="s4_l3">Чтобы отправлять письма о ходе подбора (от них можно отписаться).</li>
+    <li data-i18n="s4_l4">Чтобы улучшать методику и качество сервиса в обезличенном виде.</li>
   </ul>
 
-  <h2>5. Кандидат как участник подбора</h2>
-  <p>Кандидат проходит оценку по приглашению работодателя. Результаты видны только рекрутеру, отправившему приглашение. Кандидат может запросить копию или удаление своих данных, а также <strong>отписаться</strong> от писем по ссылке в любом письме.</p>
+  <h2 data-i18n="s5_h">5. Кандидат как участник подбора</h2>
+  <p data-i18n="s5_p">Кандидат проходит оценку по приглашению работодателя. Результаты видны только рекрутеру, отправившему приглашение. Кандидат может запросить копию или удаление своих данных, а также <strong>отписаться</strong> от писем по ссылке в любом письме.</p>
 
-  <h2>6. Хранение и защита</h2>
-  <p>Данные хранятся на защищённых серверах и передаются по зашифрованному каналу. Мы храним результаты, пока это необходимо для подбора, и удаляем их по запросу.</p>
+  <h2 data-i18n="s6_h">6. Хранение и защита</h2>
+  <p data-i18n="s6_p">Данные хранятся на защищённых серверах и передаются по зашифрованному каналу. Мы храним результаты, пока это необходимо для подбора, и удаляем их по запросу.</p>
 
-  <h2>7. Ваши права</h2>
-  <p>Вы вправе получить доступ к своим данным, исправить их, ограничить обработку или потребовать удаления. Для этого напишите на <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.</p>
+  <h2 data-i18n="s7_h">7. Ваши права</h2>
+  <p data-i18n="s7_p">Вы вправе получить доступ к своим данным, исправить их, ограничить обработку или потребовать удаления. Для этого напишите на <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.</p>
 
-  <div class="foot">HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/terms">Условия использования</a> · <a href="/">На главную</a></div>
+  <div class="foot" data-i18n="foot">HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/terms">Условия использования</a> · <a href="/">На главную</a></div>
 </div>
+<script>
+const I18N={
+  ru:{
+    page_title:'Политика конфиденциальности — HR PRO AI',
+    tagline:'Технология, которая чувствует людей',
+    h1:'Политика конфиденциальности',
+    updated:'Действует с 14 июля 2026',
+    intro:'Мы в HR PRO AI бережно относимся к персональным данным кандидатов и клиентов. Этот документ объясняет, какие данные мы собираем, зачем и как их защищаем.',
+    s1_h:'1. Кто обрабатывает данные',
+    s1_p:'Оператор данных — <strong>HR PRO AI sp. z o.o.</strong>, ul. Prosta 51, 00-838 Warszawa, Польша. По вопросам обработки данных пишите на <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.',
+    s2_h:'2. Какие данные мы собираем',
+    s2_l1:'Данные аккаунта клиента: имя, email, название компании, телефон.',
+    s2_l2:'Данные кандидатов, переданные клиентом: имя, email, телефон, город, ответы на тесты.',
+    s2_l3:'Результаты оценки и спектр-профили, сформированные системой.',
+    s2_l4:'Технические данные: журнал действий, IP-адрес, тип устройства.',
+    s3_h:'3. Вход через Google',
+    s3_p:'Вы можете войти или зарегистрироваться через аккаунт Google. В этом случае мы получаем от Google только базовые данные вашего профиля — <strong>адрес email, имя и фото профиля</strong> — и используем их, чтобы создать или найти ваш аккаунт и выполнить вход. Мы <strong>не получаем ваш пароль Google</strong> и не имеем доступа к другим данным аккаунта Google. Отозвать доступ можно в настройках вашего Google-аккаунта. Использование данных, полученных через Google, соответствует <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, включая требования Limited Use.',
+    s4_h:'4. Зачем мы используем данные',
+    s4_l1:'Чтобы провести оценку кандидата и показать результат клиенту.',
+    s4_l2:'Чтобы обеспечить работу личного кабинета и биллинга.',
+    s4_l3:'Чтобы отправлять письма о ходе подбора (от них можно отписаться).',
+    s4_l4:'Чтобы улучшать методику и качество сервиса в обезличенном виде.',
+    s5_h:'5. Кандидат как участник подбора',
+    s5_p:'Кандидат проходит оценку по приглашению работодателя. Результаты видны только рекрутеру, отправившему приглашение. Кандидат может запросить копию или удаление своих данных, а также <strong>отписаться</strong> от писем по ссылке в любом письме.',
+    s6_h:'6. Хранение и защита',
+    s6_p:'Данные хранятся на защищённых серверах и передаются по зашифрованному каналу. Мы храним результаты, пока это необходимо для подбора, и удаляем их по запросу.',
+    s7_h:'7. Ваши права',
+    s7_p:'Вы вправе получить доступ к своим данным, исправить их, ограничить обработку или потребовать удаления. Для этого напишите на <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/terms">Условия использования</a> · <a href="/">На главную</a>'
+  },
+  pl:{
+    page_title:'Polityka prywatności — HR PRO AI',
+    tagline:'Technologia, która czuje ludzi',
+    h1:'Polityka prywatności',
+    updated:'Obowiązuje od 14 lipca 2026',
+    intro:'W HR PRO AI z troską podchodzimy do danych osobowych kandydatów i klientów. Ten dokument wyjaśnia, jakie dane zbieramy, w jakim celu i jak je chronimy.',
+    s1_h:'1. Kto przetwarza dane',
+    s1_p:'Administratorem danych jest <strong>HR PRO AI sp. z o.o.</strong>, ul. Prosta 51, 00-838 Warszawa, Polska. W sprawach dotyczących przetwarzania danych prosimy pisać na <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.',
+    s2_h:'2. Jakie dane zbieramy',
+    s2_l1:'Dane konta klienta: imię i nazwisko, email, nazwa firmy, telefon.',
+    s2_l2:'Dane kandydatów przekazane przez klienta: imię i nazwisko, email, telefon, miasto, odpowiedzi na testy.',
+    s2_l3:'Wyniki oceny i profile spektralne wygenerowane przez system.',
+    s2_l4:'Dane techniczne: dziennik działań, adres IP, typ urządzenia.',
+    s3_h:'3. Logowanie przez Google',
+    s3_p:'Możesz zalogować się lub zarejestrować przez konto Google. W takim przypadku otrzymujemy od Google wyłącznie podstawowe dane Twojego profilu — <strong>adres email, imię i zdjęcie profilowe</strong> — i wykorzystujemy je, aby utworzyć lub odnaleźć Twoje konto i przeprowadzić logowanie. <strong>Nie otrzymujemy Twojego hasła Google</strong> ani nie mamy dostępu do innych danych konta Google. Dostęp możesz cofnąć w ustawieniach swojego konta Google. Wykorzystanie danych uzyskanych za pośrednictwem Google jest zgodne z <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, w tym z wymogami Limited Use.',
+    s4_h:'4. W jakim celu wykorzystujemy dane',
+    s4_l1:'Aby przeprowadzić ocenę kandydata i przedstawić wynik klientowi.',
+    s4_l2:'Aby zapewnić działanie panelu użytkownika i rozliczeń.',
+    s4_l3:'Aby wysyłać wiadomości o przebiegu rekrutacji (można się z nich wypisać).',
+    s4_l4:'Aby doskonalić metodologię i jakość usługi w formie zanonimizowanej.',
+    s5_h:'5. Kandydat jako uczestnik rekrutacji',
+    s5_p:'Kandydat przechodzi ocenę na zaproszenie pracodawcy. Wyniki są widoczne wyłącznie dla rekrutera, który wysłał zaproszenie. Kandydat może zażądać kopii lub usunięcia swoich danych, a także <strong>wypisać się</strong> z wiadomości poprzez link zawarty w każdej z nich.',
+    s6_h:'6. Przechowywanie i ochrona',
+    s6_p:'Dane są przechowywane na zabezpieczonych serwerach i przesyłane szyfrowanym kanałem. Przechowujemy wyniki tak długo, jak jest to niezbędne dla rekrutacji, i usuwamy je na żądanie.',
+    s7_h:'7. Twoje prawa',
+    s7_p:'Masz prawo do dostępu do swoich danych, ich sprostowania, ograniczenia przetwarzania lub żądania usunięcia. W tym celu napisz na <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/terms">Warunki korzystania</a> · <a href="/">Strona główna</a>'
+  },
+  en:{
+    page_title:'Privacy Policy — HR PRO AI',
+    tagline:'Technology that senses people',
+    h1:'Privacy Policy',
+    updated:'Effective from 14 July 2026',
+    intro:'At HR PRO AI we handle the personal data of candidates and clients with care. This document explains what data we collect, why, and how we protect it.',
+    s1_h:'1. Who processes the data',
+    s1_p:'The data controller is <strong>HR PRO AI sp. z o.o.</strong>, ul. Prosta 51, 00-838 Warszawa, Poland. For questions about data processing, write to <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.',
+    s2_h:'2. What data we collect',
+    s2_l1:'Client account data: name, email, company name, phone.',
+    s2_l2:'Candidate data submitted by the client: name, email, phone, city, test answers.',
+    s2_l3:'Assessment results and spectrum profiles generated by the system.',
+    s2_l4:'Technical data: activity log, IP address, device type.',
+    s3_h:'3. Sign-in with Google',
+    s3_p:'You can sign in or register with a Google account. In that case we receive from Google only the basic data of your profile — <strong>email address, name and profile photo</strong> — and use it to create or find your account and sign you in. We <strong>do not receive your Google password</strong> and have no access to other Google account data. You can revoke access in your Google account settings. Our use of data obtained through Google complies with the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.',
+    s4_h:'4. Why we use the data',
+    s4_l1:'To assess a candidate and show the result to the client.',
+    s4_l2:'To operate the client dashboard and billing.',
+    s4_l3:'To send emails about the hiring process (you can unsubscribe from them).',
+    s4_l4:'To improve our methodology and service quality in anonymised form.',
+    s5_h:'5. The candidate as a participant in hiring',
+    s5_p:'A candidate takes the assessment at the employer’s invitation. Results are visible only to the recruiter who sent the invitation. A candidate may request a copy or deletion of their data, and also <strong>unsubscribe</strong> from emails via the link in any message.',
+    s6_h:'6. Storage and protection',
+    s6_p:'Data is stored on secured servers and transmitted over an encrypted channel. We keep results for as long as necessary for hiring and delete them on request.',
+    s7_h:'7. Your rights',
+    s7_p:'You have the right to access your data, correct it, restrict processing, or request its deletion. To do so, write to <a href="mailto:privacy@hr-pro.ai">privacy@hr-pro.ai</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/terms">Terms of Use</a> · <a href="/">Home</a>'
+  }
+};
+function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(['ru','pl','en'].includes(q)){localStorage.setItem('hp_lang',q);return q;}const s=localStorage.getItem('hp_lang');if(['ru','pl','en'].includes(s))return s;const n=(navigator.language||'').toLowerCase();if(n.startsWith('pl'))return'pl';if(n.startsWith('en'))return'en';return'ru';}
+let LANG=pickLang();
+const t=k=>{const v=I18N[LANG]&&I18N[LANG][k];return v==null?(I18N.ru[k]!=null?I18N.ru[k]:k):v;};
+function applyLang(){
+  LANG=pickLang();document.documentElement.lang=LANG;document.title=t('page_title');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.innerHTML=t(el.getAttribute('data-i18n'));});
+  document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+}
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+applyLang();
+</script>
 </body></html>
