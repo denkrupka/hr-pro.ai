@@ -449,8 +449,10 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .iq-scale{margin:10px 0 4px}
 .iq-track{position:relative;height:26px;background:linear-gradient(90deg,var(--z1),var(--z2),var(--z3),var(--z4),var(--z5));
   border-radius:10px;overflow:hidden;opacity:.9}
-.iq-cursor{position:absolute;top:-5px;bottom:-5px;width:4px;background:var(--ink);border-radius:4px;
-  box-shadow:0 0 0 3px var(--surface),0 5px 12px rgba(0,0,0,.25);transition:left 1s var(--ease)}
+.iq-cursor{position:absolute;top:0;bottom:0;width:3px;background:#fff;border-radius:3px;transform:translateX(-1.5px);z-index:2;
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 9px rgba(255,255,255,.65);transition:left 1s var(--ease)}
+.iq-cursor::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:11px;border-radius:50%;background:#fff;
+  transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(0,0,0,.45),0 0 8px rgba(255,255,255,.7)}
 .iq-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:11.5px;font-weight:600;margin-top:7px}
 /* мини-шкала результата (отчёт «Проверка знаний») */
 .iq-track.sm{height:16px;border-radius:8px}
@@ -1134,15 +1136,15 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .trait-chip input{accent-color:var(--brand);cursor:pointer}
 .trait-chip.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
 .share-block{background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--r-sm);padding:12px 14px;margin-top:14px}
-.ai-note{border-radius:var(--r-sm);padding:12px 15px;margin-top:14px;border:1px solid var(--line);background:var(--surface-2);font-size:13.5px;line-height:1.55}
-.ai-note .ai-h{font-weight:700;margin-bottom:5px}
-.ai-note ul{margin:0;padding-left:18px}.ai-note li{margin:3px 0}
-.ai-note.tone-good{background:#eaf7f0;border-color:#bfe6d1}
-[data-theme="dark"] .ai-note.tone-good{background:#15281d;border-color:#265138}
-.ai-note.tone-low{background:#fdeeee;border-color:#f2c9c9}
-[data-theme="dark"] .ai-note.tone-low{background:#2c1719;border-color:#5a2c30}
-.ai-note.tone-mid{background:#fff6e8;border-color:#f0dcb4}
-[data-theme="dark"] .ai-note.tone-mid{background:#2c2415;border-color:#5a4a26}
+/* ИИ-подсказка — единый градиентный стиль (как .ai-banner / дизайн Claude Design) */
+.ai-note{border-radius:var(--r-lg);padding:17px 21px;margin-top:14px;color:#fff;border:0;position:relative;overflow:hidden;font-size:13.8px;line-height:1.55}
+.ai-note::before{content:"";position:absolute;right:-38px;top:-38px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.28),rgba(255,255,255,0) 70%)}
+.ai-note .ai-h{font-weight:700;font-size:16.5px;margin-bottom:7px;position:relative;color:#fff}
+.ai-note ul{margin:0;padding-left:18px;position:relative}.ai-note li{margin:3px 0;color:rgba(255,255,255,.95)}
+.ai-note.tone-good{background:linear-gradient(120deg,var(--brand),var(--brand-2))}
+.ai-note.tone-win{background:linear-gradient(120deg,#12b886,#0a9b74)}
+.ai-note.tone-mid{background:linear-gradient(120deg,#8b6cff,#6f97ff)}
+.ai-note.tone-low{background:linear-gradient(120deg,#f5576c,#e0435a)}
 .vac-cfg{max-height:calc(100vh - 180px);overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:16px}
 .cfg-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 17px}
 .cfg-h{font-weight:700;font-size:15px;margin-bottom:10px}
