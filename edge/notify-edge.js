@@ -105,7 +105,7 @@ export function wrapEmailEdge(o) {
                     </td>
                   </tr></table>
                 </td>
-                <td valign="middle" align="right"><img src="${base}/email/header-graph.png" width="232" height="109" alt="" style="display:block;border:0;opacity:.9;"></td>
+                <td valign="middle" align="right"><img src="${base}/email/header-net.png" width="232" height="109" alt="" style="display:block;border:0;opacity:.9;"></td>
               </tr></table>
               <p style="margin:22px 0 10px;font-family:'Inter',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b7a8ff;">${o.eyebrow || L.eyebrow}</p>
               <h1 class="h1" style="margin:0;font-family:'Manrope',Arial,sans-serif;font-weight:800;font-size:26px;line-height:1.2;letter-spacing:-.5px;color:#ffffff;">${o.headline || subject}</h1>
