@@ -1210,29 +1210,29 @@ async function renderVacAdList(body, id) {
       <td style="text-align:center"><b>${p.stats.hired}</b></td>
       <td style="text-align:center;color:${p.stats.conversion > 0 ? 'var(--good)' : 'var(--muted)'}"><b>${p.stats.conversion}%</b></td>
       <td><button class="btn ghost danger xs" data-pl-del="${p.id}">×</button></td></tr>`).join('');
-    $('#adp-rows').innerHTML = rows || `<tr><td colspan="11" class="muted" style="text-align:center;padding:26px">${rt('adp_empty')}</td></tr>`;
+    $('#vannp-rows').innerHTML = rows || `<tr><td colspan="11" class="muted" style="text-align:center;padding:26px">${rt('adp_empty')}</td></tr>`;
     $$('[data-pl-del]').forEach(b => b.onclick = async () => { if (!confirm('×?')) return; await api('/api/vacancies/' + id + '/placements/' + b.dataset.plDel, { method: 'DELETE' }); renderVacAdList(body, id); });
   };
   body.innerHTML = `${adSubTabsHtml()}
     <div class="card">
       <div class="row" style="gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end">
-        <div><label class="lbl">${rt('adp_portal')}</label><input class="field sm" id="adp-portal" placeholder="pracuj.pl / OLX / LinkedIn…" style="width:170px"></div>
-        <div><label class="lbl">${rt('adp_title')}</label><input class="field sm" id="adp-title" style="width:200px"></div>
-        <div style="flex:1;min-width:200px"><label class="lbl">${rt('adp_url')}</label><input class="field sm" id="adp-url" placeholder="https://…"></div>
-        <button class="btn sm" id="adp-add">+ ${rt('adp_add')}</button></div>
-      <div class="row" style="margin-bottom:10px"><div class="search-wrap grow"><span class="search-ic">${ICON_SEARCH}</span><input class="field sm" id="adp-q" placeholder="${t('search')}…"></div></div>
+        <div><label class="lbl">${rt('adp_portal')}</label><input class="field sm" id="vannp-portal" placeholder="pracuj.pl / OLX / LinkedIn…" style="width:170px"></div>
+        <div><label class="lbl">${rt('adp_title')}</label><input class="field sm" id="vannp-title" style="width:200px"></div>
+        <div style="flex:1;min-width:200px"><label class="lbl">${rt('adp_url')}</label><input class="field sm" id="vannp-url" placeholder="https://…"></div>
+        <button class="btn sm" id="vannp-add">+ ${rt('adp_add')}</button></div>
+      <div class="row" style="margin-bottom:10px"><div class="search-wrap grow"><span class="search-ic">${ICON_SEARCH}</span><input class="field sm" id="vannp-q" placeholder="${t('search')}…"></div></div>
       <p class="muted" style="font-size:12px;margin:0 0 10px">${rt('adp_hint')}</p>
       <div class="table-wrap" style="box-shadow:none"><table>
         <thead><tr><th>${rt('adp_portal')}</th><th>${rt('adp_title')}</th><th>${rt('adp_link')}</th><th>${rt('adp_resp')}</th><th>Резалт</th><th>Тулс</th><th>${rt('adp_motiv')}</th><th>${rt('adp_knowl')}</th><th>${rt('kpi7_hired')}</th><th>${rt('adp_conv')}</th><th></th></tr></thead>
-        <tbody id="adp-rows"></tbody></table></div></div>`;
+        <tbody id="vannp-rows"></tbody></table></div></div>`;
   $$('[data-adtab]').forEach(b => b.onclick = () => { adSubTab = b.dataset.adtab; renderVacAd(body, id); });
-  $('#adp-add').onclick = async () => {
+  $('#vannp-add').onclick = async () => {
     try {
-      await api('/api/vacancies/' + id + '/placements', { method: 'POST', body: JSON.stringify({ portal: $('#adp-portal').value.trim(), title: $('#adp-title').value.trim(), url: $('#adp-url').value.trim() }) });
+      await api('/api/vacancies/' + id + '/placements', { method: 'POST', body: JSON.stringify({ portal: $('#vannp-portal').value.trim(), title: $('#vannp-title').value.trim(), url: $('#vannp-url').value.trim() }) });
       toast(rt('common_saved')); renderVacAdList(body, id);
     } catch (e) { toast(e.message); }
   };
-  $('#adp-q').oninput = e => draw(e.target.value.toLowerCase().trim());
+  $('#vannp-q').oninput = e => draw(e.target.value.toLowerCase().trim());
   draw('');
 }
 async function renderVacAdEditor(body, id) {
@@ -1243,28 +1243,28 @@ async function renderVacAdEditor(body, id) {
     .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('');
   body.innerHTML = `${adSubTabsHtml()}<div class="card">
     <div class="row" style="gap:8px;align-items:flex-end;margin-bottom:8px">
-      <div style="flex:1;max-width:340px"><label class="lbl">${rt('vac_ad_target')}</label><select class="field" id="ad-target" ${isBoss ? 'disabled' : ''}>${targetOpts}</select>
+      <div style="flex:1;max-width:340px"><label class="lbl">${rt('vac_ad_target')}</label><select class="field" id="vann-target" ${isBoss ? 'disabled' : ''}>${targetOpts}</select>
       ${isBoss ? `<div class="muted" style="font-size:12px;margin-top:4px">${rt('vac_target_boss_hint')}</div>` : ''}</div>
-      <button class="btn soft" id="ad-gen">${rt('vac_ad_gen')}</button></div>
+      <button class="btn soft" id="vann-gen">${rt('vac_ad_gen')}</button></div>
     <label class="lbl">${rt('vac_ad_manual')}</label>
-    <textarea class="field" id="ad-text" rows="10" style="font-family:inherit">${esc(vacancy.adText || '')}</textarea>
+    <textarea class="field" id="vann-text" rows="10" style="font-family:inherit">${esc(vacancy.adText || '')}</textarea>
     <div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">
-      <button class="btn" id="ad-save">${rt('vac_save')}</button>
-      <button class="btn soft" id="ad-publish">${vacancy.published ? rt('vac_published') + ' ✓' : rt('vac_publish')}</button></div>
+      <button class="btn" id="vann-save">${rt('vac_save')}</button>
+      <button class="btn soft" id="vann-publish">${vacancy.published ? rt('vac_published') + ' ✓' : rt('vac_publish')}</button></div>
     <div id="publish-link"></div></div>`;
   $$('[data-adtab]').forEach(b => b.onclick = () => { adSubTab = b.dataset.adtab; renderVacAd(body, id); });
-  $('#ad-gen').onclick = async () => {
-    const bt = $('#ad-gen'); bt.disabled = true; const o = bt.textContent; bt.textContent = rt('common_gen');
-    try { const d = await api('/api/requisitions/' + vacancy.requisitionId + '/generate-ad', { method: 'POST', body: JSON.stringify({ lang: vacancy.lang, target: $('#ad-target').value }) }); $('#ad-text').value = stripTags(d.ad); }
+  $('#vann-gen').onclick = async () => {
+    const bt = $('#vann-gen'); bt.disabled = true; const o = bt.textContent; bt.textContent = rt('common_gen');
+    try { const d = await api('/api/requisitions/' + vacancy.requisitionId + '/generate-ad', { method: 'POST', body: JSON.stringify({ lang: vacancy.lang, target: $('#vann-target').value }) }); $('#vann-text').value = stripTags(d.ad); }
     catch (e) { toast(e.message); }
     bt.disabled = false; bt.textContent = o;
   };
-  const saveAd = () => api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ adText: $('#ad-text').value }) });
-  $('#ad-save').onclick = async () => { await saveAd(); toast(rt('common_saved')); };
-  $('#ad-publish').onclick = async () => {
+  const saveAd = () => api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ adText: $('#vann-text').value }) });
+  $('#vann-save').onclick = async () => { await saveAd(); toast(rt('common_saved')); };
+  $('#vann-publish').onclick = async () => {
     await saveAd();
     await api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ published: true }) });
-    const a = await api('/api/anketas', { method: 'POST', body: JSON.stringify({ title: vacancy.name, vacancyId: id, tests: ['result', 'tools'], description: $('#ad-text').value }) });
+    const a = await api('/api/anketas', { method: 'POST', body: JSON.stringify({ title: vacancy.name, vacancyId: id, tests: ['result', 'tools'], description: $('#vann-text').value }) });
     const url = location.origin + '/a/' + a.anketa.slug;
     $('#publish-link').innerHTML = `<div class="share-block" style="margin-top:12px"><div class="lbl">${rt('vac_apply_open')}</div>
       <div class="row" style="gap:6px;margin-top:6px"><input class="field sm" style="flex:1" readonly value="${esc(url)}"><button class="btn ghost xs" onclick="copyLink('${url}')">${rt('common_copy')}</button></div></div>`;
