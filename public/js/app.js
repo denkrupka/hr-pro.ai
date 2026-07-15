@@ -48,7 +48,9 @@ const I18N = {
     lp_quiz: 'Итоговый тест', lp_quiz_locked: 'Пройдите все разделы, чтобы открыть тест', lp_quiz_pass: 'Порог прохождения',
     lp_quiz_submit: 'Проверить', lp_quiz_passed: 'Тест сдан — программа завершена!', lp_quiz_failed: 'Не сдано. Повторите: верно {c} из {t} ({p}%)',
     lp_quiz_result: 'Результат: {c} из {t} ({p}%)', lp_pick_answer: 'Ответьте на все вопросы', lp_your_balance: 'Ваш баланс',
-    lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт', lp_copy_blocked: 'Копирование запрещено — материал защищён',
+    lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт', lp_copy_blocked: 'Копирование запрещено — материал защищён', lp_read_to_end: 'Дочитайте до конца', lp_reading: 'Прочитано',
+    lp_trailer: 'Трейлер', lp_trailer_locked: 'Трейлер откроется после покупки предыдущей программы', lp_trailer_soon: 'Трейлер скоро появится', lp_buy_title: 'Покупка программы', lp_buy_after: 'Останется после покупки', lp_buy_btn: 'Купить за {n} тестов', lp_cancel: 'Отмена',
+    lp_material: 'Материал обучения', lp_module: 'Модуль', lp_min_read: 'мин чтения', lp_passed_title: 'Материал пройден', lp_passed_sub: 'Прогресс сохранён в вашей программе обучения', lp_mark_passed: 'Отметить как пройдено',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
@@ -101,7 +103,9 @@ const I18N = {
     lp_quiz: 'Test końcowy', lp_quiz_locked: 'Ukończ wszystkie rozdziały, aby odblokować test', lp_quiz_pass: 'Próg zaliczenia',
     lp_quiz_submit: 'Sprawdź', lp_quiz_passed: 'Test zdany — program ukończony!', lp_quiz_failed: 'Niezaliczone. Spróbuj ponownie: poprawnie {c} z {t} ({p}%)',
     lp_quiz_result: 'Wynik: {c} z {t} ({p}%)', lp_pick_answer: 'Odpowiedz na wszystkie pytania', lp_your_balance: 'Twoje saldo',
-    lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta', lp_copy_blocked: 'Kopiowanie zabronione — materiał chroniony',
+    lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta', lp_copy_blocked: 'Kopiowanie zabronione — materiał chroniony', lp_read_to_end: 'Doczytaj do końca', lp_reading: 'Przeczytano',
+    lp_trailer: 'Zwiastun', lp_trailer_locked: 'Zwiastun odblokuje się po zakupie poprzedniego programu', lp_trailer_soon: 'Zwiastun wkrótce', lp_buy_title: 'Zakup programu', lp_buy_after: 'Pozostanie po zakupie', lp_buy_btn: 'Kup za {n} testów', lp_cancel: 'Anuluj',
+    lp_material: 'Materiał szkoleniowy', lp_module: 'Moduł', lp_min_read: 'min czytania', lp_passed_title: 'Materiał ukończony', lp_passed_sub: 'Postęp zapisany w Twoim programie szkoleniowym', lp_mark_passed: 'Oznacz jako ukończone',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
@@ -154,7 +158,9 @@ const I18N = {
     lp_quiz: 'Final test', lp_quiz_locked: 'Complete all sections to unlock the test', lp_quiz_pass: 'Pass threshold',
     lp_quiz_submit: 'Check', lp_quiz_passed: 'Test passed — program completed!', lp_quiz_failed: 'Not passed. Try again: {c} of {t} correct ({p}%)',
     lp_quiz_result: 'Result: {c} of {t} ({p}%)', lp_pick_answer: 'Answer all questions', lp_your_balance: 'Your balance',
-    lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden', lp_copy_blocked: 'Copying is disabled — material is protected',
+    lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden', lp_copy_blocked: 'Copying is disabled — material is protected', lp_read_to_end: 'Read to the end', lp_reading: 'Read',
+    lp_trailer: 'Trailer', lp_trailer_locked: 'The trailer unlocks after buying the previous program', lp_trailer_soon: 'Trailer coming soon', lp_buy_title: 'Buy program', lp_buy_after: 'Balance after purchase', lp_buy_btn: 'Buy for {n} tests', lp_cancel: 'Cancel',
+    lp_material: 'Learning material', lp_module: 'Module', lp_min_read: 'min read', lp_passed_title: 'Material completed', lp_passed_sub: 'Progress saved in your training program', lp_mark_passed: 'Mark as completed',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
     dash_overview: 'Overview', dash_title: 'Dashboard', balance: 'Balance',
@@ -3029,6 +3035,7 @@ window.addEventListener('resize', () => { if (document.getElementById('edu-conte
 // ============ ПЛАТНЫЕ ПРОГРАММЫ ОБУЧЕНИЯ ============
 const LP_LOCK = _svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/>');
 const LP_CHECK = _svg('<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>');
+const LP_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 function lpProgressBar(pct) { return `<div class="lp-track"><div class="lp-fill" style="width:${Math.max(2, pct)}%"></div></div>`; }
 async function renderLearning() {
   state.eduMode = 'paid';
@@ -3048,31 +3055,63 @@ async function renderLearning() {
     if (p.purchased) action = `<button class="btn soft sm" data-lp-open="${p.id}">${p.completed ? t('lp_open') : t('lp_continue')}</button>`;
     else if (locked) action = `<button class="btn ghost sm" disabled title="${t('lp_locked_hint')}">${t('lp_buy')}</button>`;
     else action = `<button class="btn sm" data-lp-buy="${p.id}">${t('lp_buy')} · ${p.price} <span class="lp-unit">${t('lp_tests_unit')}</span></button>`;
+    const trailerBtn = p.trailerUnlocked
+      ? `<button class="btn ghost sm lp-trailer-btn" data-lp-trailer="${p.id}">${LP_PLAY}${t('lp_trailer')}</button>`
+      : `<button class="btn ghost sm lp-trailer-btn" disabled title="${t('lp_trailer_locked')}">${LP_PLAY}${t('lp_trailer')}</button>`;
     const bar = p.purchased ? `<div class="lp-prog"><div class="lp-prog-h"><span>${t('lp_progress')}</span><span class="mono">${p.done}/${p.total} · ${p.pct}%</span></div>${lpProgressBar(p.pct)}</div>` : '';
     return `<div class="lp-card ${locked ? 'locked' : ''} reveal" style="animation-delay:${i * 60}ms">
       <div class="lp-card-top"><span class="lp-num">${p.order}</span><div class="lp-card-h"><b>${esc(p.title)}</b>${badge}</div></div>
       <p class="lp-desc">${esc(p.desc)}</p>
       <div class="lp-meta"><span>${p.sectionsCount} ${t('lp_sections')}</span><span class="lp-dot">·</span><span>${t('lp_price')}: <b>${p.price} ${t('lp_tests_unit')}</b></span></div>
       ${bar}
-      <div class="lp-actions">${action}</div>
+      <div class="lp-actions">${trailerBtn}${action}</div>
     </div>`;
   }).join('');
-  $('#main').innerHTML = `${head}<div class="lp-topbar reveal d2"><span class="muted">${t('lp_programs')}</span><span class="lp-balance">${t('lp_your_balance')}: <b>${data.balance}</b> ${t('lp_tests_unit')}</span></div><div class="lp-grid reveal d2">${cards}</div>`;
+  const balChip = `<button class="tests-chip" onclick="setView('balance')" title="${t('balance')}"><svg viewBox="0 0 24 24" fill="none" stroke="#43e0a0" stroke-width="1.9"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18" stroke-linecap="round"/></svg><b class="num">${data.balance}</b><span>${t('tests_word')}</span></button>`;
+  $('#main').innerHTML = `${head}<div class="lp-topbar reveal d2"><span class="muted">${t('lp_programs')}</span>${balChip}</div><div class="lp-grid reveal d2">${cards}</div>`;
   wireEduModes();
   $$('[data-lp-open]').forEach(b => b.onclick = () => openLearningProgram(b.dataset.lpOpen));
-  $$('[data-lp-buy]').forEach(b => b.onclick = () => buyLearning(b.dataset.lpBuy, progs.find(x => x.id === b.dataset.lpBuy)));
+  $$('[data-lp-buy]').forEach(b => b.onclick = () => buyLearning(progs.find(x => x.id === b.dataset.lpBuy), data.balance));
+  $$('[data-lp-trailer]').forEach(b => b.onclick = () => openTrailer(progs.find(x => x.id === b.dataset.lpTrailer)));
 }
-async function buyLearning(id, p) {
-  if (!confirm(tv('lp_buy_confirm', { t: p.title, n: p.price }))) return;
-  try {
-    const d = await api('/api/learning/' + id + '/buy', { method: 'POST', body: '{}' });
-    if (d.balance != null && state.user) state.user.balanceAvailable = d.balance;
-    toast(t('lp_bought'));
-    openLearningProgram(id);
-  } catch (e) {
-    if (/баланс|balance|salda/i.test(e.message)) { if (confirm(t('lp_not_enough') + '. ' + t('lp_topup') + '?')) setView('balance'); }
-    else toast(e.message);
-  }
+// Модалка подтверждения покупки (в дизайне портала, вместо системного confirm)
+function buyLearning(p, balance) {
+  const after = balance - p.price;
+  const enough = after >= 0;
+  openModal(`
+    <div class="lp-buy">
+      <div class="lp-buy-ic">${LP_LOCK}</div>
+      <h2 class="lp-buy-title">${t('lp_buy_title')}</h2>
+      <p class="lp-buy-name">«${esc(p.title)}»</p>
+      <div class="lp-buy-rows">
+        <div class="lp-buy-row"><span>${t('lp_price')}</span><b>${p.price} ${t('lp_tests_unit')}</b></div>
+        <div class="lp-buy-row"><span>${t('lp_your_balance')}</span><b>${balance} ${t('lp_tests_unit')}</b></div>
+        <div class="lp-buy-row ${enough ? '' : 'bad'}"><span>${t('lp_buy_after')}</span><b>${after} ${t('lp_tests_unit')}</b></div>
+      </div>
+      <div class="lp-buy-actions">
+        <button class="btn ghost" onclick="closeModal()">${t('lp_cancel')}</button>
+        ${enough
+      ? `<button class="btn" id="lp-buy-confirm">${tv('lp_buy_btn', { n: p.price })}</button>`
+      : `<button class="btn" onclick="closeModal();setView('balance')">${t('lp_topup')}</button>`}
+      </div>
+    </div>`);
+  const c = $('#lp-buy-confirm');
+  if (c) c.onclick = async () => {
+    c.disabled = true;
+    try {
+      const d = await api('/api/learning/' + p.id + '/buy', { method: 'POST', body: '{}' });
+      if (d.balance != null && state.user) state.user.balanceAvailable = d.balance;
+      closeModal(); toast(t('lp_bought')); openLearningProgram(p.id);
+    } catch (e) { toast(e.message); c.disabled = false; }
+  };
+}
+// Модалка бесплатного трейлера (видео по языку портала)
+function openTrailer(p) {
+  const url = p && p.trailer;
+  const body = url
+    ? `<video class="lp-trailer-video" src="${esc(url)}" controls autoplay playsinline controlslist="nodownload" oncontextmenu="return false"></video>`
+    : `<div class="lp-trailer-empty">${LP_PLAY}<span>${t('lp_trailer_soon')}</span></div>`;
+  openModal(`<div class="lp-trailer-modal"><h2 class="lp-trailer-h">${t('lp_trailer')} · «${esc(p.title)}»</h2>${body}</div>`, true);
 }
 async function openLearningProgram(id) {
   state.eduMode = 'paid';
@@ -3111,7 +3150,7 @@ async function openLearningProgram(id) {
   $('#lp-back').onclick = () => renderLearning();
   $$('[data-lp-open-sec]').forEach(b => b.onclick = () => {
     const s = p.sections.find(x => x.id === b.dataset.lpOpenSec);
-    if (s) openSecureReader(id, s);
+    if (s) openSecureReader(id, s, { title: p.title, order: p.order });
   });
   const go = $('#lp-quiz-go');
   if (go) go.onclick = async () => {
@@ -3129,31 +3168,48 @@ async function openLearningProgram(id) {
 
 // ---- Защищённый полноэкранный ридер материала (анти-копирование/скрин, водяной знак) ----
 let _secReader = null;
-function openSecureReader(programId, section) {
+function openSecureReader(programId, section, ctx) {
   closeSecureReader();
+  ctx = ctx || {};
   const email = (state.user && state.user.email) || '';
   const uidShort = ((state.user && state.user.id) || '').slice(0, 6);
   const stamp = new Date().toLocaleString();
   const token = Math.random().toString(36).slice(2, 8).toUpperCase();
-  const mark = esc((email || 'HR PRO AI') + (uidShort ? ' #' + uidShort : '') + ' · ' + stamp + ' · ' + token);
-  const wm = Array.from({ length: 55 }, () => `<span>${mark}</span>`).join('');
+  const wmText = esc((email || 'HR PRO AI') + (uidShort ? ' · #' + uidShort : '') + ' · ' + stamp + ' · ' + token);
+  const wm = Array.from({ length: 48 }, () => `<span>${wmText}</span>`).join('');
+  const plain = (section.html || '').replace(/<[^>]+>/g, ' ');
+  const readTime = Math.max(1, Math.round(plain.length / 900)) + ' ' + t('lp_min_read');
+  const moduleTag = (ctx.order ? t('lp_module') + ' ' + ctx.order : '') + (ctx.title ? (ctx.order ? ' · ' : '') + ctx.title : '');
+  const done = !!section.done;
   const ov = document.createElement('div');
-  ov.className = 'sec-reader';
+  ov.className = 'lm-body';
   ov.setAttribute('oncontextmenu', 'return false');
   ov.innerHTML = `
-    <div class="sec-reader-bar">
-      <div class="sec-reader-title">${LP_LOCK}<b>${esc(section.title)}</b></div>
-      <div class="sec-reader-actions">
-        ${section.done ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span>` : `<button class="btn sm" id="sec-done">${t('lp_mark_done')}</button>`}
-        <button class="btn ghost sm ic-btn" id="sec-close">${_svg('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>')}${t('lp_close')}</button>
+    <div class="lm-ambient" aria-hidden="true"><div class="lm-glow lm-glow1"></div><div class="lm-glow lm-glow2"></div><div class="lm-scan"></div></div>
+    <div class="lm-progress"><div class="lm-progress-fill" id="sec-read-fill" style="width:${done ? 100 : 0}%"></div></div>
+    <header class="lm-head">
+      <span class="lm-head-ic">${LP_LOCK}</span>
+      <div class="lm-head-t"><div class="lm-eyebrow">${t('lp_material')}</div><h1 class="lm-head-title">${esc(section.title)}</h1></div>
+      <div class="lm-head-r">
+        <span class="lm-pct" id="sec-read-pct">${done ? '100%' : '0%'}</span>
+        <button class="lm-passed ${done ? 'on' : ''}" id="sec-done" ${done ? '' : 'disabled'}><span class="lm-passed-dot"></span><span class="lm-passed-label">${done ? t('lp_done') : t('lp_read_to_end')}</span></button>
+        <button class="lm-close" id="sec-close">${_svg('<path d="M6 6l12 12M18 6L6 18"/>')}${t('lp_close')}</button>
       </div>
-    </div>
-    <div class="sec-reader-scroll">
-      <div class="sec-reader-guard" id="sec-guard">
-        <div class="sec-wm" aria-hidden="true">${wm}</div>
-        <article class="sec-reader-body">${section.html || ''}</article>
-      </div>
-      <div class="sec-reader-note">${t('lp_protected')}</div>
+    </header>
+    <div class="lm-scroll" id="sec-scroll">
+      <div class="lm-wm" aria-hidden="true"><div class="lm-wm-grid">${wm}</div></div>
+      <article class="lm-article">
+        <div class="lm-tag"><span class="lm-tag-dot"></span>${esc(moduleTag) || t('lp_material')}</div>
+        <h2 class="lm-title">${esc(section.title)}</h2>
+        <div class="lm-meta"><span class="lm-meta-i">${_svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>')}${readTime}</span><span class="lm-meta-dot"></span><span>${esc(ctx.title || 'HR PRO AI')}</span></div>
+        <div class="lm-content">${section.html || ''}</div>
+        <div class="lm-foot">
+          <div id="sec-foot-slot">${done
+      ? `<div class="lm-passed-banner"><span class="lm-passed-check">${LP_CHECK}</span><div><b>${t('lp_passed_title')}</b><span>${t('lp_passed_sub')}</span></div></div>`
+      : `<button class="lm-mark" id="sec-done-2" disabled>${LP_CHECK}${t('lp_read_to_end')}</button>`}</div>
+          <p class="lm-copyright">${LP_LOCK}${t('lp_protected')}</p>
+        </div>
+      </article>
     </div>
     <div class="sec-reader-shield" id="sec-shield"><div>${LP_LOCK}<span>${t('lp_hidden')}</span></div></div>`;
   document.body.appendChild(ov);
@@ -3190,12 +3246,37 @@ function openSecureReader(programId, section) {
   _secReader = { ov, onKey, onVis, onBlur, onFocus, onPrint, poll };
 
   ov.querySelector('#sec-close').onclick = () => closeSecureReader();
-  const doneBtn = ov.querySelector('#sec-done');
-  if (doneBtn) doneBtn.onclick = async () => {
-    doneBtn.disabled = true;
+  const doneBtns = [ov.querySelector('#sec-done'), ov.querySelector('#sec-done-2')].filter(Boolean);
+  const markDone = async (btn) => {
+    if (btn.disabled) return;
+    doneBtns.forEach(b => b.disabled = true);
     try { await api('/api/learning/' + programId + '/section/' + section.id, { method: 'POST', body: '{}' }); closeSecureReader(); openLearningProgram(programId); }
-    catch (e) { toast(e.message); doneBtn.disabled = false; }
+    catch (e) { toast(e.message); doneBtns.forEach(b => { b.disabled = false; }); }
   };
+  doneBtns.forEach(b => b.onclick = () => markDone(b));
+
+  // Трекинг чтения: раздел засчитывается только после доскролла материала до конца.
+  const scroller = ov.querySelector('#sec-scroll');
+  const fill = ov.querySelector('#sec-read-fill');
+  const pctEl = ov.querySelector('#sec-read-pct');
+  let reachedEnd = done;
+  const updateRead = () => {
+    if (!scroller) return;
+    const max = scroller.scrollHeight - scroller.clientHeight;
+    const pct = max <= 8 ? 100 : Math.min(100, Math.round(scroller.scrollTop / max * 100));
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (!reachedEnd && (max <= 8 || pct >= 99)) {
+      reachedEnd = true;
+      const h = ov.querySelector('#sec-done');
+      if (h) { h.disabled = false; h.classList.add('ready'); const lbl = h.querySelector('.lm-passed-label'); if (lbl) lbl.textContent = t('lp_mark_passed'); }
+      const f = ov.querySelector('#sec-done-2');
+      if (f) { f.disabled = false; f.classList.add('ready'); f.innerHTML = LP_CHECK + t('lp_mark_passed'); }
+    }
+  };
+  if (scroller) scroller.addEventListener('scroll', updateRead, { passive: true });
+  requestAnimationFrame(updateRead);
+  setTimeout(updateRead, 200);
 }
 function closeSecureReader() {
   if (!_secReader) return;

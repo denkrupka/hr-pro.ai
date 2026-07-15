@@ -19,12 +19,22 @@ const PROGRAMS = [
     desc: tri('Продукт должности, типология Виннер / Дуер / Вейтер и три ключевых вопроса, на которых строится весь отбор.',
       'Produkt stanowiska, typologia Winner / Doer / Waiter oraz trzy kluczowe pytania.',
       'Product of the role, the Winner / Doer / Waiter typology and the three key questions.'),
+    // Ссылки на видео-трейлер по языкам (mp4/HLS). Заполните URL — модалка проиграет нужный по языку портала.
+    trailer: tri('', '', ''),
     sections: [
       { id: 'product', title: tri('Продукт должности', 'Produkt stanowiska', 'Product of the role'),
         desc: tri('Что такое конечный продукт должности и почему это главный маркер результата.', 'Czym jest produkt końcowy stanowiska i dlaczego to główny marker.', 'What the end product of a role is and why it is the key marker.'), html: tri(
-        `<p>Любая должность существует ради конечного результата — <b>продукта должности</b>. Это не список обязанностей, а то, что остаётся «на выходе» и за что компания платит зарплату.</p>
-         <ul><li>Дворник → <b>чистый двор</b> (а не «подметание»).</li><li>Секретарь → <b>быстро соединённый с нужным сотрудником звонок</b>.</li><li>Продавец → <b>оплаченный и довольный клиент</b>.</li></ul>
-         <p>Кандидат, который умеет назвать продукт своей прошлой должности, мыслит результатом, а не процессом. Это первый и самый сильный маркер «виннера».</p>`) },
+        `<p style="margin:0 0 22px">Любая должность существует ради конечного результата — <strong>продукта должности</strong>. Это не список обязанностей, а то, что остаётся «на выходе» и за что компания платит зарплату.</p>
+         <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:12px">
+           <li style="display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-left:2px solid rgba(139,108,255,.55)"><span style="flex:none;margin-top:3px;width:8px;height:8px;border-radius:50%;background:#8b6cff;box-shadow:0 0 8px rgba(139,108,255,.6)"></span><span>Дворник → <strong>чистый двор</strong> <span style="color:#8b93ad">(а не «подметание»).</span></span></li>
+           <li style="display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-left:2px solid rgba(111,151,255,.55)"><span style="flex:none;margin-top:3px;width:8px;height:8px;border-radius:50%;background:#6f97ff;box-shadow:0 0 8px rgba(111,151,255,.6)"></span><span>Секретарь → <strong>быстро соединённый с нужным сотрудником звонок.</strong></span></li>
+           <li style="display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-left:2px solid rgba(67,224,160,.55)"><span style="flex:none;margin-top:3px;width:8px;height:8px;border-radius:50%;background:#43e0a0;box-shadow:0 0 8px rgba(67,224,160,.6)"></span><span>Продавец → <strong>оплаченный и довольный клиент.</strong></span></li>
+         </ul>
+         <p style="margin:0 0 8px">Кандидат, который умеет назвать продукт своей прошлой должности, мыслит результатом, а не процессом. Это первый и самый сильный маркер <strong>«виннера»</strong>.</p>
+         <div style="margin:36px 0 0;padding:22px 24px;border-radius:16px;background:linear-gradient(120deg,rgba(139,108,255,.09),rgba(111,151,255,.04));border:1px solid rgba(139,108,255,.2)">
+           <div style="display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#b3a4ff;margin-bottom:9px">✦ Как применять</div>
+           <p style="margin:0;font-size:16px;line-height:1.66;color:#d3d9ec">Просите кандидата назвать продукт его прошлой должности. Не должность, не обязанности — именно результат «на выходе». Ответ за 15 секунд отделяет виннера от вейтера.</p>
+         </div>`) },
       { id: 'typology', title: tri('Виннер, Дуер, Вейтер', 'Winner, Doer, Waiter', 'Winner, Doer, Waiter'),
         desc: tri('Три типа кандидатов по отношению к продукту и когда кто подходит.', 'Trzy typy kandydatów wobec produktu i kiedy kto pasuje.', 'Three candidate types by their relation to the product and who fits when.'), html: tri(
         `<p>Три типа по отношению к продукту:</p>
@@ -53,6 +63,7 @@ const PROGRAMS = [
     desc: tri('Как читать «Резалт», «Тулс», «Логис» и «Сэйлс» и превращать баллы в кадровое решение.',
       'Jak czytać Result, Tools, Logic i Sales oraz zamieniać wyniki w decyzję.',
       'How to read Result, Tools, Logic and Sales and turn scores into a decision.'),
+    trailer: tri('', '', ''),
     sections: [
       { id: 'result-tools', title: tri('Резалт и Тулс', 'Result i Tools', 'Result & Tools'),
         desc: tri('Как читать тип продуктивности и спектр инструментов мышления.', 'Jak czytać typ produktywności i spektrum narzędzi myślenia.', 'How to read the productivity type and the thinking-tools spectrum.'), html: tri(
@@ -83,6 +94,7 @@ const PROGRAMS = [
     desc: tri('Ситуационные кейсы на интервью, проверка «под давлением» и грамотный онбординг нового сотрудника.',
       'Kejsy sytuacyjne, sprawdzenie „pod presją” i wdrożenie nowego pracownika.',
       'Situational cases, checking under pressure and proper onboarding.'),
+    trailer: tri('', '', ''),
     sections: [
       { id: 'prep', title: tri('Подготовка к интервью', 'Przygotowanie', 'Preparation'),
         desc: tri('Что собрать и подготовить перед интервью.', 'Co zebrać i przygotować przed rozmową.', 'What to gather and prepare before the interview.'), html: tri(
@@ -121,11 +133,20 @@ function progressFor(user, p) {
   return { st, purchased, sectionsDone, done, total, allSectionsDone, quizPassed, completed, pct };
 }
 
+function prevProgram(p) {
+  return sortedPrograms().filter(x => x.order < p.order).sort((a, b) => b.order - a.order)[0] || null;
+}
 // Разблокирована ли программа к покупке: предыдущая по порядку должна быть ЗАВЕРШЕНА.
 function unlocked(user, p) {
-  const prev = sortedPrograms().filter(x => x.order < p.order).sort((a, b) => b.order - a.order)[0];
+  const prev = prevProgram(p);
   if (!prev) return true;
   return progressFor(user, prev).completed;
+}
+// Разблокирован ли ТРЕЙЛЕР: предыдущая программа должна быть КУПЛЕНА (необязательно завершена).
+function trailerUnlocked(user, p) {
+  const prev = prevProgram(p);
+  if (!prev) return true;
+  return progressFor(user, prev).purchased;
 }
 
 function listView(user, lang) {
@@ -138,6 +159,7 @@ function listView(user, lang) {
       purchased: pr.purchased, completed: pr.completed, quizPassed: pr.quizPassed,
       done: pr.done, total: pr.total, pct: pr.pct,
       unlocked: unlocked(user, p),
+      trailer: L(p.trailer, lang), trailerUnlocked: trailerUnlocked(user, p),
     };
   });
 }
@@ -171,4 +193,4 @@ function checkQuiz(p, answers) {
   return { correct, total: qs.length, pct, passed: pct >= p.quiz.passScore };
 }
 
-module.exports = { PROGRAMS, progOf, sortedPrograms, progressFor, unlocked, listView, detailView, checkQuiz, L };
+module.exports = { PROGRAMS, progOf, sortedPrograms, progressFor, unlocked, trailerUnlocked, listView, detailView, checkQuiz, L };
