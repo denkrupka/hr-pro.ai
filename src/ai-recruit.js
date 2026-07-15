@@ -10,7 +10,7 @@ const P = {
   // Заголовки анализа заявки
   a_profile: { ru: 'Профиль должности', pl: 'Profil stanowiska', en: 'Role profile' },
   a_target_performer: { ru: 'Целевой тип: Виннер. Руководящая должность — нужен только нацеленный на результат. Подчеркните в объявлении амбиции, высокие требования и рост.', pl: 'Typ docelowy: Winner. Stanowisko kierownicze — potrzebny wyłącznie nastawiony na wynik. W ogłoszeniu podkreśl ambicje, wysokie wymagania i rozwój.', en: 'Target type: Winner. A leadership role — only a results-driven person will do. In the ad, emphasise ambition, high standards and growth.' },
-  a_target_choice: { ru: 'Целевой тип: Виннер или Дуэр. Рядовая должность — подойдёт и нацеленный на результат Виннер, и надёжный исполнитель Дуэр; тип выберите при генерации объявления.', pl: 'Typ docelowy: Winner lub Doer. Stanowisko szeregowe — sprawdzi się zarówno nastawiony na wynik Winner, jak i solidny Doer; typ wybierz przy generowaniu ogłoszenia.', en: 'Target type: Winner or Doer. A rank-and-file role — both a results-driven Winner and a reliable Doer will fit; choose the type when generating the ad.' },
+  a_target_choice: { ru: 'Целевой тип: Виннер или Дуер. Рядовая должность — подойдёт и нацеленный на результат Виннер, и надёжный исполнитель Дуер; тип выберите при генерации объявления.', pl: 'Typ docelowy: Winner lub Doer. Stanowisko szeregowe — sprawdzi się zarówno nastawiony na wynik Winner, jak i solidny Doer; typ wybierz przy generowaniu ogłoszenia.', en: 'Target type: Winner or Doer. A rank-and-file role — both a results-driven Winner and a reliable Doer will fit; choose the type when generating the ad.' },
   a_traits: { ru: 'Ключевые качества для проверки тестом «Тулс»: ', pl: 'Kluczowe cechy do sprawdzenia testem „Tools”: ', en: 'Key traits to verify with the “Tools” test: ' },
   a_missing: { ru: 'Не заполнено: ', pl: 'Nie wypełniono: ', en: 'Not filled in: ' },
   a_warn_edu: { ru: 'Требование высшего образования — убедитесь, что оно действительно необходимо (методика советует избегать лишних барьеров).', pl: 'Wymóg wyższego wykształcenia — upewnij się, że jest naprawdę konieczny (metodyka zaleca unikać zbędnych barier).', en: 'Higher-education requirement — make sure it is truly necessary (the method advises avoiding needless barriers).' },
@@ -56,7 +56,7 @@ function requisitionAnalysis(form, lang) {
   const position = val(form, 'position') || '—';
   notes.push(TT('a_profile', lang) + ': ' + position + (val(form, 'product') ? ' — ' + val(form, 'product').slice(0, 140) : ''));
 
-  // Руководящая должность — всегда Виннер; рядовая — Виннер или Дуэр на выбор пользователя
+  // Руководящая должность — всегда Виннер; рядовая — Виннер или Дуер на выбор пользователя
   const boss = isBossPosition(position + ' ' + val(form, 'responsibilities'));
   notes.push(TT(boss ? 'a_target_performer' : 'a_target_choice', lang));
 

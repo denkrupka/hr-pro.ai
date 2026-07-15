@@ -265,7 +265,7 @@
 [data-theme="dark"] .vac-new:hover{background:rgba(139,108,255,.06);border-color:rgba(139,108,255,.5)}
 @media(max-width:900px){[data-theme="dark"] .vac-grid{grid-template-columns:1fr}}
 
-/* ============ Процесс найма: стрелки очередности + Виннер/Дуэр ============ */
+/* ============ Процесс найма: стрелки очередности + Виннер/Дуер ============ */
 .vp-ord{display:inline-flex;align-items:center;gap:5px;margin-right:10px;flex:none}
 .vp-ordn{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:12px;color:#8b93ad;min-width:14px;text-align:center}
 .vp-ord-b{width:26px;height:26px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);border-radius:8px;color:#c3cbe4;cursor:pointer;padding:0}

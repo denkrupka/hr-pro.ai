@@ -324,7 +324,7 @@ const RI18N = {
     vac_empty: 'Утверждённых вакансий пока нет. Утвердите заявку во вкладке «Заявки».',
     vac_config: 'Настроить', vac_open: 'Открыть', vac_ad: 'Объявление о вакансии',
     vac_ad_gen: 'Сгенерировать ИИ', vac_ad_manual: 'Или отредактируйте вручную:', vac_ad_target: 'Кого ищем',
-    vac_target_auto: 'Автоопределение', vac_target_performer: 'Виннер (на результат)', vac_target_executor: 'Дуэр (стабильность)',
+    vac_target_auto: 'Автоопределение', vac_target_performer: 'Виннер', vac_target_executor: 'Дуер',
     vac_target_boss_hint: 'Руководящая должность — всегда ищем Виннера',
     vac_stages: 'Этапы отбора', vac_knowledge: 'Проверка знаний', vac_motivation: 'Оценка мотивации',
     vac_publish: 'Опубликовать (создать анкету)', vac_published: 'Опубликована', vac_apply_link: 'Ссылка на анкету',
@@ -388,7 +388,7 @@ const RI18N = {
     vp_crit_h: 'Критерии отбора',
     vp_crit_hint: 'Отметьте, что критически важно для этой должности. Если критичный шаг не пройден, кандидат дальше по воронке не идёт: автоворонка останавливается, решение — отказ. Некритичный шаг остаётся в общей картине, но процесс не стопорит.',
     vp_crit_on: 'Критично: дальше не пропускаем', vp_crit_off: 'Не критично: процесс продолжается',
-    vp_crit_result: 'Продуктивность — фундамент методики: прошлые результаты человека не изменить. Если тест показывает не того, кто нужен (Виннер или Дуэр под задачу должности), пропускать кандидата дальше нет смысла.',
+    vp_crit_result: 'Продуктивность — фундамент методики: прошлые результаты человека не изменить. Если тест показывает не того, кто нужен (Виннер или Дуер под задачу должности), пропускать кандидата дальше нет смысла.',
     vp_crit_references: 'Референсы подтверждают факты из прошлого. Негативные или уклончивые отзывы бывших руководителей — серьёзный сигнал, что заявленных результатов не было.',
     vp_crit_tools: 'Один из важнейших тестов: личностные качества должны соответствовать требованиям должности из заявки. Быстро изменить качества нельзя — несоответствие лучше не пропускать.',
     vp_crit_motivation: 'Уровень мотивации можно поднять — это работа с вовлечённостью. Отсеивайте по мотивации только там, где сразу нужен человек с уровнем убеждения или долга.',
@@ -402,6 +402,7 @@ const RI18N = {
     wf_optional_h: 'Дополнительные оценки', wf_send_opt: 'Отправить тест',
     cand_title: 'Кандидаты', cand_search: 'Поиск по имени, email, телефону…', cand_empty: 'Кандидатов пока нет. Они появятся здесь после откликов на объявления.',
     cand_add: 'Добавить кандидата',
+    cand_import_cv: 'Импорт CV', cand_cv_parsing: 'ИИ читает резюме…', cand_cv_done: 'Импортировано: {n}', cand_cv_fail: 'Не распознано: {n}', cand_cv_none: 'Не удалось распознать ни одного файла', cand_cv_hint: 'PDF или фото резюме — ИИ распознает и создаст карточки',
     kn_pass_lbl: 'порог прохождения',
     cand_col_name: 'Кандидат', cand_col_vac: 'Вакансия', cand_col_stage: 'Этап', cand_col_tests: 'Тестов пройдено', cand_col_date: 'Добавлен',
     cand_all_vac: 'Все вакансии', cand_info: 'Данные кандидата', pipe_now: 'Сейчас здесь',
@@ -421,7 +422,7 @@ const RI18N = {
     vac_empty: 'Brak zatwierdzonych wakatów. Zatwierdź wniosek w zakładce „Wnioski”.',
     vac_config: 'Konfiguruj', vac_open: 'Otwórz', vac_ad: 'Ogłoszenie o pracę',
     vac_ad_gen: 'Generuj AI', vac_ad_manual: 'Lub edytuj ręcznie:', vac_ad_target: 'Kogo szukamy',
-    vac_target_auto: 'Automatycznie', vac_target_performer: 'Winner (na wynik)', vac_target_executor: 'Doer (stabilność)',
+    vac_target_auto: 'Automatycznie', vac_target_performer: 'Winner', vac_target_executor: 'Doer',
     vac_target_boss_hint: 'Stanowisko kierownicze — zawsze szukamy Winnera',
     vac_stages: 'Etapy selekcji', vac_knowledge: 'Sprawdzenie wiedzy', vac_motivation: 'Ocena motywacji',
     vac_publish: 'Opublikuj (utwórz ankietę)', vac_published: 'Opublikowany', vac_apply_link: 'Link do ankiety',
@@ -499,6 +500,7 @@ const RI18N = {
     wf_optional_h: 'Dodatkowe oceny', wf_send_opt: 'Wyślij test',
     cand_title: 'Kandydaci', cand_search: 'Szukaj po imieniu, e-mailu, telefonie…', cand_empty: 'Brak kandydatów. Pojawią się tu po zgłoszeniach z ogłoszeń.',
     cand_add: 'Dodaj kandydata',
+    cand_import_cv: 'Import CV', cand_cv_parsing: 'AI czyta CV…', cand_cv_done: 'Zaimportowano: {n}', cand_cv_fail: 'Nierozpoznane: {n}', cand_cv_none: 'Nie udało się rozpoznać żadnego pliku', cand_cv_hint: 'PDF lub zdjęcie CV — AI rozpozna i utworzy karty',
     kn_pass_lbl: 'próg zaliczenia',
     cand_col_name: 'Kandydat', cand_col_vac: 'Wakat', cand_col_stage: 'Etap', cand_col_tests: 'Testy zaliczone', cand_col_date: 'Dodano',
     cand_all_vac: 'Wszystkie wakaty', cand_info: 'Dane kandydata', pipe_now: 'Teraz tutaj',
@@ -518,7 +520,7 @@ const RI18N = {
     vac_empty: 'No approved vacancies yet. Approve a requisition in the “Requisitions” tab.',
     vac_config: 'Configure', vac_open: 'Open', vac_ad: 'Job ad',
     vac_ad_gen: 'Generate with AI', vac_ad_manual: 'Or edit manually:', vac_ad_target: 'Who we seek',
-    vac_target_auto: 'Auto-detect', vac_target_performer: 'Winner (results)', vac_target_executor: 'Doer (stability)',
+    vac_target_auto: 'Auto-detect', vac_target_performer: 'Winner', vac_target_executor: 'Doer',
     vac_target_boss_hint: 'Leadership role — we always look for a Winner',
     vac_stages: 'Selection stages', vac_knowledge: 'Knowledge check', vac_motivation: 'Motivation assessment',
     vac_publish: 'Publish (create form)', vac_published: 'Published', vac_apply_link: 'Application form link',
@@ -596,6 +598,7 @@ const RI18N = {
     wf_optional_h: 'Additional assessments', wf_send_opt: 'Send test',
     cand_title: 'Candidates', cand_search: 'Search by name, email, phone…', cand_empty: 'No candidates yet. They will appear here after applying to job ads.',
     cand_add: 'Add candidate',
+    cand_import_cv: 'Import CV', cand_cv_parsing: 'AI is reading the CV…', cand_cv_done: 'Imported: {n}', cand_cv_fail: 'Not recognized: {n}', cand_cv_none: 'Could not recognize any file', cand_cv_hint: 'PDF or a photo of a CV — AI will parse it and create cards',
     kn_pass_lbl: 'pass threshold',
     cand_col_name: 'Candidate', cand_col_vac: 'Vacancy', cand_col_stage: 'Stage', cand_col_tests: 'Tests passed', cand_col_date: 'Added',
     cand_all_vac: 'All vacancies', cand_info: 'Candidate details', pipe_now: 'Here now',
@@ -631,13 +634,32 @@ async function renderCandidates() {
       <div class="row" style="gap:10px;margin-bottom:14px;flex-wrap:wrap">
         <div class="search-wrap grow" style="flex:1;min-width:220px"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="cand-q" aria-label="${rt('cand_search')}" placeholder="${rt('cand_search')}"></div>
         <select class="field" id="cand-vac" style="max-width:240px">${vacOpts}</select>
+        <label class="btn ghost ic-btn" id="cand-cv-lbl" title="${rt('cand_cv_hint')}">${_svg('<path d="M14 3v5h5M9 13h6M9 17h6M8 3h6l5 5v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-linecap="round" stroke-linejoin="round"/>')}${rt('cand_import_cv')}<input type="file" id="cand-cv-inp" accept="application/pdf,image/*" multiple hidden></label>
         <button class="btn ic-btn" id="cand-add">${_svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>')}${rt('cand_add')}</button></div>
       <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_vac')}</th><th>${rt('cand_col_stage')}</th><th style="text-align:center">${rt('cand_col_tests')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="cand-rows"></tbody></table></div>
     </div>`;
   $('#cand-q').oninput = e => draw(e.target.value.toLowerCase().trim());
   $('#cand-vac').onchange = e => { candVacFilter = e.target.value; draw($('#cand-q').value.toLowerCase().trim()); };
   $('#cand-add').onclick = () => createCandidate(candVacFilter !== 'all' ? candVacFilter : null);
+  $('#cand-cv-inp').onchange = e => importCV(e.target.files, candVacFilter !== 'all' ? candVacFilter : null);
   draw('');
+}
+// Импорт CV: файлы → dataURL → edge (Claude vision) → карточки кандидатов
+function fileToDataUrl(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); }); }
+async function importCV(fileList, vacancyId) {
+  const files = [...(fileList || [])].slice(0, 20);
+  if (!files.length) return;
+  const lbl = $('#cand-cv-lbl'); if (lbl) lbl.classList.add('is-busy');
+  toast(rt('cand_cv_parsing'));
+  try {
+    const payload = [];
+    for (const f of files) { try { payload.push({ name: f.name, dataUrl: await fileToDataUrl(f) }); } catch (e) {} }
+    const r = await api('/api/candidates/import-cv', { method: 'POST', body: JSON.stringify({ files: payload, vacancyId }) });
+    const nOk = (r.created || []).length, nBad = (r.failed || []).length;
+    if (nOk) { toast(rt('cand_cv_done').replace('{n}', nOk) + (nBad ? ' · ' + rt('cand_cv_fail').replace('{n}', nBad) : '')); invalidateParts && invalidateParts(); renderCandidates(); }
+    else toast(rt('cand_cv_none'));
+  } catch (e) { toast((e && e.message) || rt('cand_cv_none')); }
+  finally { if (lbl) lbl.classList.remove('is-busy'); const inp = $('#cand-cv-inp'); if (inp) inp.value = ''; }
 }
 let recTab = 'applications';
 let recMeta = null;
@@ -998,9 +1020,9 @@ async function renderVacProcess(body, id) {
     return `<span class="vp-ord"><span class="vp-ordn">${i + 1}</span>
       <button class="vp-ord-b" data-vpord-up="${i}" ${i === 0 ? 'disabled' : ''} aria-label="Раньше">${_svg('<path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/>')}</button>
       <button class="vp-ord-b" data-vpord-dn="${i}" ${i === order.length - 1 ? 'disabled' : ''} aria-label="Позже">${_svg('<path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>')}</button></span>`; };
-  // Переключатель Виннер/Дуэр (тип цели вакансии) на этапе «Резалт»
+  // Переключатель Виннер/Дуер (тип цели вакансии) на этапе «Резалт»
   const targetSeg = () => { const cur = proc.target === 'executor' ? 'executor' : 'performer';
-    return `<span class="vp-seg"><button class="vp-seg-b ${cur === 'performer' ? 'on' : ''}" data-vptarget="performer">Виннер</button><button class="vp-seg-b ${cur === 'executor' ? 'on' : ''}" data-vptarget="executor">Дуэр</button></span>`; };
+    return `<span class="vp-seg"><button class="vp-seg-b ${cur === 'performer' ? 'on' : ''}" data-vptarget="performer">Виннер</button><button class="vp-seg-b ${cur === 'executor' ? 'on' : ''}" data-vptarget="executor">Дуер</button></span>`; };
   const stRow = (icon, iconCls, title, hint, swHtml, o) => `<div class="vp-row${o && o.ai ? ' vp-ai' : ''}${o && o.off ? ' off' : ''}">
       <span class="cstep-ic ${iconCls || ''}"${o && o.style ? ` style="${o.style}"` : ''}>${icon}</span>
       <div class="vp-t"><b>${title}</b>${hint ? `<span>${hint}</span>` : ''}</div>
@@ -1092,7 +1114,7 @@ async function renderVacProcess(body, id) {
   };
   $$('[data-vpord-up]', body).forEach(b => b.onclick = () => moveOrder(+b.dataset.vpordUp, -1));
   $$('[data-vpord-dn]', body).forEach(b => b.onclick = () => moveOrder(+b.dataset.vpordDn, 1));
-  // Виннер/Дуэр — цель вакансии
+  // Виннер/Дуер — цель вакансии
   $$('[data-vptarget]', body).forEach(b => b.onclick = async () => {
     if (b.classList.contains('on')) return;
     await api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify({ target: b.dataset.vptarget }) });
@@ -1237,7 +1259,7 @@ async function renderVacAdList(body, id) {
 }
 async function renderVacAdEditor(body, id) {
   const { vacancy } = await api('/api/vacancies/' + id + '/full');
-  // Руководящая должность — всегда ищем Виннера; рядовая — Виннер или Дуэр на выбор
+  // Руководящая должность — всегда ищем Виннера; рядовая — Виннер или Дуер на выбор
   const isBoss = /руковод|директор|начальн|заведующ|управляющ|главн|kierownik|dyrektor|szef|prezes|head|chief|director|team lead|supervisor|ceo|coo|cto/i.test(vacancy.name || '');
   const targetOpts = (isBoss ? [['performer', rt('vac_target_performer')]] : [['performer', rt('vac_target_performer')], ['executor', rt('vac_target_executor')]])
     .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('');
@@ -1875,10 +1897,10 @@ function stageList(byStage) {
   const entries = STAGES.map(s => ({ label: s.id, value: byStage[s.id] || 0, color: s.color || '#8b93ad' })).filter(e => e.value > 0);
   return `<div class="stlist">${entries.map(e => `<div class="stli"><span class="std" style="background:${e.color};box-shadow:0 0 8px ${e.color}"></span><span class="stl">${esc(tr(e.label))}</span><span class="stv mono">${e.value}</span></div>`).join('') || `<span class="muted">${t('no_data')}</span>`}</div>`;
 }
-// Бейдж «Виннер/Дуэр» (тип цели вакансии); пусто, если не задан
+// Бейдж «Виннер/Дуер» (тип цели вакансии); пусто, если не задан
 function targetBadge(target) {
   if (target === 'performer' || target === 'boss') return `<span class="tbadge win">${t('vac_target_performer') ? 'Виннер' : 'Виннер'}</span>`;
-  if (target === 'executor') return `<span class="tbadge duer">Дуэр</span>`;
+  if (target === 'executor') return `<span class="tbadge duer">Дуер</span>`;
   return '';
 }
 // Модалка отправки теста (кнопка «Отправить тест» в топбаре)
@@ -2909,9 +2931,11 @@ function eduFrameFit(f) {
   set(); [200, 600, 1200, 2200].forEach(ms => setTimeout(set, ms));
 }
 window.eduFrameFit = eduFrameFit;
+// видео-уроки: same-origin прокси /media/<name> → Supabase Storage (edge чинит Range/кэш)
+const MEDIA_BASE = '/media';
 function docVideo(type, kind, heading) {
   return `<div class="doc-video">${heading ? `<div class="dv-head">${_svg('<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>')}<span>${esc(heading)}</span></div>` : ''}
-    <video class="doc-vid" controls preload="metadata" src="/media/${type}_${kind}_${vidLang()}.mp4"></video></div>`;
+    <video class="doc-vid" controls preload="metadata" src="${MEDIA_BASE}/${type}_${kind}_${vidLang()}.mp4"></video></div>`;
 }
 async function renderEducation(slug) {
   const topics = (await api('/api/education?lang=' + LANG)).topics;
@@ -3160,7 +3184,7 @@ const FAQ = [
     ['Статусы кандидатов и письма', 'Каждому кандидату присваивается этап воронки: «Новый», «Собеседование», «Резерв», «Принят» или «Отказ». Этап отображается цветной пилюлей в таблице, подсвечивает строку слева и меняется в один клик — прямо из отчёта по тесту или из карточки кандидата. По этапам можно фильтровать список и строить воронку найма на дашборде. Тексты писем, которые получают кандидаты (приглашение на тест), полностью редактируются в разделе «Настройки → Шаблоны писем» отдельно для каждого языка.'],
     ['Статистика по кандидатам на вакансию', 'Рядом с вкладками вакансий есть иконка «Статистика вакансий» (значок графика). Она открывает таблицу с разбивкой по каждой вакансии: сколько всего кандидатов, сколько тестов пройдено и сколько ещё в ожидании. Более полная аналитика — на «Дашборде»: KPI (кандидаты, пройденные и ожидающие тесты, конверсия в найм), воронка найма, распределение по этапам, тесты по типам, приток новых кандидатов за 14 дней и топ вакансий по числу откликов.'],
     ['На чём основана система?', 'В основе — две проверенные методики. Оценка продуктивности построена на подходе Performia (типология сотрудников по реальным прошлым результатам), а оценка личности — на Оксфордском анализе личности (OCA/Exec-U-Test), который измеряет 10 черт характера. Продуктивность — главный фактор найма: её нельзя «дать» обучением, поэтому непродуктивный кандидат не интересен ни при каких обстоятельствах. Личность же оценивает не «хороший/плохой», а риск на конкретной должности и то, как этим человеком эффективнее управлять.'],
-    ['Что такое продуктивность', 'Продуктивность — это способность человека производить ценный конечный продукт своей должности и доводить дела до результата, а не имитировать деятельность. По типологии выделяют три типа: Виннер (сам видит проблему, находит и внедряет решение без давления), Дуэр (исполнитель — сделает, если подсказать и проконтролировать) и Вейтер (ждущий — тянет и останавливается при первом препятствии). Продуктивность врождённа и практически не меняется, поэтому прошлые измеримые результаты человека надёжно предсказывают будущие — именно это и оценивает тест «Резалт».'],
+    ['Что такое продуктивность', 'Продуктивность — это способность человека производить ценный конечный продукт своей должности и доводить дела до результата, а не имитировать деятельность. По типологии выделяют три типа: Виннер (сам видит проблему, находит и внедряет решение без давления), Дуер (исполнитель — сделает, если подсказать и проконтролировать) и Вейтер (ждущий — тянет и останавливается при первом препятствии). Продуктивность врождённа и практически не меняется, поэтому прошлые измеримые результаты человека надёжно предсказывают будущие — именно это и оценивает тест «Резалт».'],
     ['На чём основаны тесты «Резалт» / «Тулс» / «Сэйлс»?', '«Резалт» — сценарный тест из открытых вопросов о реальных прошлых достижениях; ключевые вопросы про продукт должности и измеримые результаты выявляют тип сотрудника. «Тулс» — классический Оксфордский анализ личности: 200 вопросов дают график из 10 точек A–J с зонами, синдромами (сочетаниями точек) и «плавающими» точками. «Сэйлс» оценивает 12 показателей продавца по трём блокам — внутренние качества, эффективность и отношения с клиентами. Все интерпретации, пороги зон (±32/±68) и синдромы соответствуют исходной методике.'],
     ['Достоверность результатов тестов', 'Достоверность обеспечивается несколькими механизмами. В «Тулсе» на каждую из 10 точек приходится по 20 вопросов, так что случайные ответы усредняются; отдельная точка D (Уверенность) служит индикатором надёжности всего результата, а встроенный детектор «случайного графика» отсекает тех, кто отвечал наугад. Слишком большое число ответов «Может быть» (более 50) отмечается как искажающее портрет. В «Резалте» открытые вопросы не дают спрятаться за заученными формулировками. Итог теста — это оценка риска и «инструкция по эксплуатации» сотрудника, а финальное решение всегда остаётся за рекрутёром.'],
     ['Как формируется цена?', 'Вы платите не за подписку, а за пройденные тесты: один тест — один кандидат. Баланс тестов пополняется пакетами, и чем больше пакет, тем ниже цена за один тест. Остаток баланса не сгорает и переносится на будущее. Забронированный, но не пройденный тест возвращается на баланс, если удалить отправку. Актуальные пакеты и цены — на странице «Баланс».'],
@@ -3184,7 +3208,7 @@ const FAQ = [
   ] },
   { cat: 'Вопросы по тестам', items: [
     ['Какой тест основной, на что опираться?', 'Основной и первый — «Резалт» (продуктивность): именно он отсеивает непродуктивных кандидатов, и опираться при найме нужно прежде всего на него. Затем «Тулс» (личность) — не для отсева, а для оценки риска и понимания, как управлять сотрудником. «Логис» (интеллект) добавляют для руководящих должностей, «Сэйлс» — для менеджеров по продажам. Правило: берём по продуктивности, риск оцениваем по личным качествам.'],
-    ['Тест «Резалт»', 'Сценарный performance-тест из открытых вопросов о реальных результатах кандидата на прошлой работе. По ответам определяется тип сотрудника — Виннер, Дуэр или Вейтер. Ключевые вопросы: №5 (как кандидат описывает продукт своей должности) и №7 (какие измеримые результаты он приводил). Виннеры чётко называют продукт и делятся цифрами; Вейтеры не понимают, что от них хотят, и не измеряют свою работу. Это первый фильтр найма.'],
+    ['Тест «Резалт»', 'Сценарный performance-тест из открытых вопросов о реальных результатах кандидата на прошлой работе. По ответам определяется тип сотрудника — Виннер, Дуер или Вейтер. Ключевые вопросы: №5 (как кандидат описывает продукт своей должности) и №7 (какие измеримые результаты он приводил). Виннеры чётко называют продукт и делятся цифрами; Вейтеры не понимают, что от них хотят, и не измеряют свою работу. Это первый фильтр найма.'],
     ['Тест «Тулс»', 'Оксфордский анализ личности: 200 вопросов формируют график из 10 точек A–J. Точки сгруппированы по трём блокам — «Быть» (A, B, C — внутреннее наполнение), «Делать» (E, F, G — эффективность) и «Иметь» (H, I, J — отношения), при этом точка D (Уверенность) выделена отдельно как индикатор достоверности. Отчёт показывает зоны (пороги ±32/±68), синдромы (сочетания точек), компульсивные точки и «плавающие» точки-молнии на B и E. Тест отвечает на вопрос, как характер поможет или помешает на конкретной должности.'],
     ['Тест «Сэйлс»', 'Тест для оценки менеджеров по продажам: 12 показателей, сгруппированных в три блока — внутренние качества (организованность, стрессоустойчивость, экспертность, преданность), эффективность (деловая хватка, результативность, настойчивость, перфекционизм) и отношения с клиентами (самоотдача, командная игра, привлечение, удержание). Результат — профиль продавца на графике 0–100 с интерпретацией по каждому показателю, показывающий, к какому типу продаж кандидат предрасположен.'],
     ['Тест «Логис»', 'Тест на интеллект (IQ) — до 80 вопросов, около 30 минут. Особенно важен для руководителей и ключевых должностей, где нужно быстро и безошибочно принимать решения. Результат — числовой коэффициент IQ и уровень (очень низкий → очень высокий) с расшифровкой и рекомендацией, подходит ли кандидат для задач, требующих аналитического мышления. IQ — только часть картины: оценивайте его вместе с продуктивностью и характером.'],

@@ -40,7 +40,7 @@ h1,h2{font-family:Manrope,Inter,sans-serif;margin:0}
 .spec .rl{font-size:12px;color:#8b93ad;margin-top:2px}
 .spec .badge{display:inline-flex;align-items:center;gap:7px;background:rgba(67,224,160,.12);color:#43e0a0;font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:999px;border:1px solid rgba(67,224,160,.3)}
 .spec .badge .b{width:7px;height:7px;border-radius:50%;background:#43e0a0;box-shadow:0 0 8px #43e0a0}
-.srow{display:grid;grid-template-columns:118px 1fr 42px;align-items:center;gap:10px;margin:9px 0}
+.srow{display:grid;grid-template-columns:138px 1fr 42px;align-items:center;gap:10px;margin:9px 0}
 .srow .sn{font-size:12px;font-weight:600;color:#c3cbe4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .srow .sn b{font-family:JetBrains Mono,monospace;margin-right:5px}
 .strack{position:relative;height:20px}
@@ -152,7 +152,7 @@ const I18N={
     brandLead:'Резюме показывает, кем человек хочет казаться. Наш ИИ читает четыре теста и собирает настоящий профиль.',
     trust:[{n:'4',l:'валидных теста'},{n:'10 мин',l:'на оценку'},{n:'5',l:'тестов в подарок'}],
     name:'Анна Ковальская',role:'Менеджер по продажам',badge:'Виннер',scaleLo:'низкий',scaleMid:'средний',scaleHi:'высокий',
-    trait_A:'Внимательность',trait_C:'Самоконтроль',trait_E:'Активность',trait_I:'Чуткость',
+    trait_A:'Внимательность',trait_B:'Позитивность',trait_C:'Самообладание',trait_D:'Уверенность',trait_E:'Активность',trait_F:'Настойчивость',trait_G:'Ответственность',trait_H:'Объективность',trait_I:'Чуткость',trait_J:'Общительность',
     loginTitle:'С возвращением',loginSub:'Войдите, чтобы продолжить оценку кандидатов.',
     regTitle:'Создайте аккаунт',regSub:'По одному бесплатному тесту каждого вида. Без карты, без обязательств.',
     tabLoginLabel:'Вход',tabRegLabel:'Регистрация',
@@ -170,7 +170,7 @@ const I18N={
     brandLead:'CV pokazuje, kim ktoś chce się wydawać. Nasze AI czyta cztery testy i tworzy prawdziwy profil.',
     trust:[{n:'4',l:'rzetelne testy'},{n:'10 min',l:'na ocenę'},{n:'5',l:'testów gratis'}],
     name:'Anna Kowalska',role:'Menedżer sprzedaży',badge:'Winner',scaleLo:'niski',scaleMid:'średni',scaleHi:'wysoki',
-    trait_A:'Uważność',trait_C:'Samokontrola',trait_E:'Aktywność',trait_I:'Empatia',
+    trait_A:'Uważność',trait_B:'Pozytywność',trait_C:'Opanowanie',trait_D:'Pewność siebie',trait_E:'Aktywność',trait_F:'Wytrwałość',trait_G:'Odpowiedzialność',trait_H:'Obiektywność',trait_I:'Empatia',trait_J:'Towarzyskość',
     loginTitle:'Witaj ponownie',loginSub:'Zaloguj się, aby kontynuować ocenę kandydatów.',
     regTitle:'Załóż konto',regSub:'Po jednym darmowym teście każdego rodzaju. Bez karty, bez zobowiązań.',
     tabLoginLabel:'Logowanie',tabRegLabel:'Rejestracja',
@@ -188,7 +188,7 @@ const I18N={
     brandLead:'A résumé shows who someone wants to seem. Our AI reads four tests and builds the real profile.',
     trust:[{n:'4',l:'validated tests'},{n:'10 min',l:'to assess'},{n:'5',l:'tests free'}],
     name:'Anna Kowalska',role:'Sales Manager',badge:'Winner',scaleLo:'low',scaleMid:'average',scaleHi:'high',
-    trait_A:'Attention',trait_C:'Self-control',trait_E:'Activity',trait_I:'Empathy',
+    trait_A:'Attention',trait_B:'Positivity',trait_C:'Composure',trait_D:'Confidence',trait_E:'Activity',trait_F:'Persistence',trait_G:'Responsibility',trait_H:'Objectivity',trait_I:'Empathy',trait_J:'Sociability',
     loginTitle:'Welcome back',loginSub:'Sign in to continue assessing candidates.',
     regTitle:'Create your account',regSub:'One free test of each type. No card, no commitment.',
     tabLoginLabel:'Sign in',tabRegLabel:'Sign up',
@@ -206,7 +206,7 @@ function pickLang(){const q=new URLSearchParams(location.search).get('lang');if(
 let LANG=pickLang(),MODE='login',SHOWPW=false;
 const t=k=>{const v=I18N[LANG]&&I18N[LANG][k];return v==null?(I18N.ru[k]!=null?I18N.ru[k]:k):v;};
 const P={net:[110,120,220],acc:[150,140,255]};
-const TRAITS=[['A',50,0],['C',-18,0],['E',94,1],['I',-56,0]];
+const TRAITS=[['A',50,0],['B',-18,0],['C',48,0],['D',60,0],['E',94,1],['F',32,0],['G',44,0],['H',22,0],['I',-56,0],['J',70,0]];
 const params=new URLSearchParams(location.search);
 const preEmail=params.get('email')||(function(){try{return localStorage.getItem('hp_lead_email')||'';}catch(e){return'';}})();
 

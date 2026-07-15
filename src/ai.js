@@ -6,12 +6,12 @@
 const L = {
   // категории продуктивности (отображение)
   cat_winner: { ru: 'Виннер', pl: 'Winner', en: 'Winner' },
-  cat_doer: { ru: 'Дуэр', pl: 'Doer', en: 'Doer' },
+  cat_doer: { ru: 'Дуер', pl: 'Doer', en: 'Doer' },
   cat_waiter: { ru: 'Вейтер', pl: 'Waiter', en: 'Waiter' },
   // resultHint вердикты
   v_waiter: { ru: 'Ожидающий (Waiter) — высокий риск, вероятен отказ', pl: 'Oczekujący (Waiter) — wysokie ryzyko, prawdopodobna odmowa', en: 'Waiter — high risk, likely a no' },
   v_winner: { ru: 'И у нас есть виннер', pl: 'A oto nasz Winner', en: 'And we have a Winner' },
-  v_doer: { ru: 'Дуэр (Doer) — полезный исполнитель под руководством', pl: 'Doer — przydatny pod kierownictwem', en: 'Doer — a useful performer under guidance' },
+  v_doer: { ru: 'Дуер (Doer) — полезный исполнитель под руководством', pl: 'Doer — przydatny pod kierownictwem', en: 'Doer — a useful performer under guidance' },
   // resultHint заметки
   n_q5_waiter: { ru: 'Вопрос о продукте: не может назвать продукт должности — характерный ответ «вейтера».', pl: 'Pytanie o produkt: nie potrafi nazwać produktu stanowiska — typowa odpowiedź „waitera”.', en: 'Product question: cannot name the product of the role — a typical “waiter” answer.' },
   n_q5_winner: { ru: 'Формулирует конечный продукт должности — ключевой признак «виннера».', pl: 'Formułuje produkt końcowy stanowiska — kluczowa cecha „winnera”.', en: 'Clearly names the end product of the role — a key “winner” trait.' },
@@ -112,12 +112,12 @@ function resultHint(test, lang) {
   } else if (q5role === 'winner' && plus >= 5 && minus <= 2) {
     category = 'Виннер'; catKey = 'cat_winner'; verdict = T('v_winner', lang); tone = 'win';
   } else {
-    category = 'Дуэр'; catKey = 'cat_doer'; verdict = T('v_doer', lang); tone = 'good';
+    category = 'Дуер'; catKey = 'cat_doer'; verdict = T('v_doer', lang); tone = 'good';
   }
 
   notes.unshift(T('n_type', lang, { cat: T(catKey, lang), plus, minus }));
   if (category === 'Виннер') notes.push(T('n_winner_desc', lang));
-  if (category === 'Дуэр') notes.push(T('n_doer_desc', lang));
+  if (category === 'Дуер') notes.push(T('n_doer_desc', lang));
   if (category === 'Вейтер') notes.push(T('n_waiter_desc', lang));
   notes.push(T('n_final', lang));
 

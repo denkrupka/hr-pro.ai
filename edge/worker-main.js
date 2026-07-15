@@ -8,6 +8,8 @@ import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanban
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
 import { guideCheck } from './guide-check.js';
+import { parseCV, cvSummary } from './cv-parse.js';
+import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
 import { PORTALS as JOB_PORTALS, connectionsOf as jpConns, isConnected as jpIsConnected } from './job-portals-data.js';
@@ -130,16 +132,29 @@ async function api(req, env, url) {
       en: { subj: 'Your hiring guide — HR PRO AI', eyebrow: 'Free guide', head: 'How to hire on data, not gut feeling',
         body: 'Thanks for your interest! Your practical guide is ready: the 4 tests, reading a spectrum profile, and 12 hiring mistakes that cost companies salaries. Open it below.', cta: 'Open the guide' },
     }[lang];
+    // демо-режим: welcome-письмо со «шагами» (как онбординг-макет) — для проверки дизайна
+    const WELCOME = {
+      ru: { subj: 'Ваш кабинет HR PRO AI готов', eyebrow: 'Добро пожаловать', head: 'Ваш кабинет HR PRO AI готов',
+        body: 'Здравствуйте, Денис!<br><br>Аккаунт создан — теперь вы можете отправлять кандидатам оценки и получать спектр-профили с рекомендацией ИИ. Вот три шага, чтобы начать за пару минут.',
+        cta: 'Открыть кабинет', note: 'На балансе уже 200 бесплатных тестов',
+        steps: [{ title: 'Пополните баланс', sub: '200 тестов уже начислены — этого хватит на первых кандидатов.' },
+          { title: 'Отправьте первую оценку', sub: 'Введите email кандидата, выберите тесты и нажмите «Отправить».' },
+          { title: 'Читайте спектр-профиль', sub: 'Как только кандидат пройдёт, ИИ соберёт отчёт с рекомендацией.' }] },
+    }[lang] || null;
     const resendKey = env.RESEND_API_KEY;
     if (resendKey) {
       try {
         const tok = await unsubToken(env.SECRET, email);
         const unsubUrl = `${base}/unsubscribe?e=${btoa(email)}&t=${tok}&lang=${lang}`;
-        const html = wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject: LEAD.subj, eyebrow: LEAD.eyebrow,
-          headline: LEAD.head, bodyHtml: LEAD.body, ctaUrl: guideUrl, ctaLabel: LEAD.cta });
+        const W = body.demo === 'welcome' && WELCOME ? WELCOME : null;
+        const html = W
+          ? wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject: W.subj, eyebrow: W.eyebrow, headline: W.head,
+              bodyHtml: W.body, steps: W.steps, ctaUrl: base + '/app', ctaLabel: W.cta, ctaNote: W.note })
+          : wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject: LEAD.subj, eyebrow: LEAD.eyebrow,
+              headline: LEAD.head, bodyHtml: LEAD.body, ctaUrl: guideUrl, ctaLabel: LEAD.cta });
         await fetch('https://api.resend.com/emails', { method: 'POST',
           headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: LEAD.subj, html }) });
+          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: (W ? W.subj : LEAD.subj), html }) });
       } catch (e) {}
     }
     return j({ ok: true });
@@ -552,6 +567,37 @@ async function api(req, env, url) {
     await S.upsert('participants', { id: x.id, data: x });
     return j({ participant: await participantView(x) });
   }
+  // Импорт CV: файлы (PDF/фото, base64 dataUrl) → Claude vision → карточки кандидатов
+  if (p === '/api/candidates/import-cv' && m === 'POST') {
+    if (!me) return needAuth();
+    const files = Array.isArray(body.files) ? body.files.slice(0, 20) : [];
+    if (!files.length) return j({ error: 'no_files' }, 400);
+    if (!env.ANTHROPIC_API_KEY) return j({ error: 'no_ai' }, 400);
+    const created = [], failed = [];
+    for (const f of files) {
+      const mm = /^data:([^;]+);base64,(.+)$/.exec(String(f.dataUrl || ''));
+      if (!mm) { failed.push({ name: f.name, error: 'bad_file' }); continue; }
+      const mime = mm[1].toLowerCase(), b64 = mm[2];
+      if (b64.length > 16 * 1024 * 1024) { failed.push({ name: f.name, error: 'too_big' }); continue; }
+      let block;
+      if (mime === 'application/pdf') block = { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } };
+      else if (/^image\/(png|jpe?g|webp|gif)$/.test(mime)) block = { type: 'image', source: { type: 'base64', media_type: mime === 'image/jpg' ? 'image/jpeg' : mime, data: b64 } };
+      else { failed.push({ name: f.name, error: 'unsupported' }); continue; }
+      const res = await parseCV(env, block);
+      if (res.error) { failed.push({ name: f.name, error: res.error }); continue; }
+      const d = res.data || {};
+      let cvUrl = null; try { cvUrl = await storeMedia(f.dataUrl, f.name, 15); } catch (e) {}
+      const x = { id: uid(12), userId: me.id, vacancyId: body.vacancyId || null,
+        name: String(d.name || '').slice(0, 60), surname: String(d.surname || '').slice(0, 60),
+        email: String(d.email || '').slice(0, 120), sex: '', age: d.age ? (Number(d.age) || null) : null,
+        tel: String(d.phone || '').slice(0, 40), city: String(d.city || '').slice(0, 60), stage: 'Без этапа',
+        comment: cvSummary(d, lang), color: '#FFFFFF', starred: false, cv: cvUrl, cvData: d, source: 'cv_import',
+        createdAt: new Date().toISOString() };
+      await S.upsert('participants', { id: x.id, data: x });
+      created.push(await participantView(x));
+    }
+    return j({ created, failed });
+  }
   let mP = p.match(/^\/api\/participants\/([\w-]+)$/);
   if (mP && me) {
     const cur = await S.one('participants', mP[1]);
@@ -870,6 +916,14 @@ async function api(req, env, url) {
     const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
     const tests = (await S.select('tests', `participant_id=eq.${part.id}&select=data`)).map(r => r.data);
     const wf = buildWorkflow(part, lang, vac, tests);
+    // Реальный ИИ-анализ результатов (Claude), кэш на записи теста; клиент рендерит как обычный analysis.
+    try {
+      const tgt = vac && (vac.target || (processOf(vac) || {}).target);
+      const targetLabel = tgt === 'executor' ? 'Дуер (стабильность, исполнитель)' : (tgt ? 'Виннер (нацелен на результат)' : null);
+      const allStages = [...(wf.stages || []), ...(wf.optional || [])];
+      const dirty = await enrichWorkflowAI(env, { stages: allStages, tests, lang, target: targetLabel, vacName: vac ? vac.name : '' });
+      for (const id of dirty) { const t = tests.find(x => x.id === id); if (t) await S.upsert('tests', { id: t.id, data: t }); }
+    } catch (e) { /* ИИ не критичен — остаётся эвристика */ }
     return j({ participant: await participantView(part), stages: wf.stages, decision: wf.decision,
       autoDecision: wf.autoDecision, column: wf.column, columnTitle: kanbanColTitle(wf.column, lang), optional: wf.optional,
       interviews: (part.workflow && part.workflow.interviews) || [] });
@@ -1174,6 +1228,13 @@ async function api(req, env, url) {
     const result = localizeResult(computeResult(test, part), test.type, lang);
     let hint = null;
     try { hint = resultHintFor(test, result, lang); } catch (e) { hint = null; }
+    try {
+      const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+      const tgt = vac && (vac.target || (processOf(vac) || {}).target);
+      const tl = tgt === 'executor' ? 'Дуер (стабильность, исполнитель)' : (tgt ? 'Виннер (нацелен на результат)' : null);
+      const ai = await aiHintForTest(env, { test, type: test.type, heuristic: hint, lang, target: tl, vacName: vac ? vac.name : '' });
+      hint = ai.hint; if (ai.dirty) await S.upsert('tests', { id: test.id, data: test });
+    } catch (e) {}
     return j({ test: { id: test.id, type: test.type, title: testTitleOf(test.type), status: test.status,
         knName: (test.knowledge && test.knowledge.name) || null, passScore: (test.knowledge && test.knowledge.passScore) || null,
         startedAt: test.startedAt, finishedAt: test.finishedAt, durationSec: test.durationSec, publicShare: test.publicShare, code: test.code },
@@ -1315,6 +1376,13 @@ async function api(req, env, url) {
     const part = await S.one('participants', test.participantId);
     const result = localizeResult(computeResult(test, part), test.type, lang);
     let hint = null; try { hint = resultHintFor(test, result, lang); } catch (e) {}
+    try {
+      const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+      const tgt = vac && (vac.target || (processOf(vac) || {}).target);
+      const tl = tgt === 'executor' ? 'Дуер (стабильность, исполнитель)' : (tgt ? 'Виннер (нацелен на результат)' : null);
+      const ai = await aiHintForTest(env, { test, type: test.type, heuristic: hint, lang, target: tl, vacName: vac ? vac.name : '' });
+      hint = ai.hint; if (ai.dirty) await S.upsert('tests', { id: test.id, data: test });
+    } catch (e) {}
     return j({ test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec },
       participant: part ? { name: part.name, surname: part.surname, age: part.age } : null, result, hint });
   }
@@ -1445,6 +1513,26 @@ export default {
       return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
     }
 
+    // Прокси видео-уроков из Supabase Storage (bucket media/edu) — same-origin + корректные Range/кэш.
+    // Supabase на bytes=0- отдаёт 206 без валидного Content-Range → нативный <video> в Chrome виснет на 0:00.
+    // Здесь форвардим Range и переписываем заголовки так, чтобы media-pipeline корректно стримил.
+    const mMedia = url.pathname.match(/^\/media\/([\w.\-]+\.mp4)$/);
+    if (mMedia) {
+      const supaBase = (env.SUPABASE_URL || '').replace(/\/+$/, '');
+      const src = `${supaBase}/storage/v1/object/public/media/edu/${mMedia[1]}`;
+      const range = req.headers.get('Range');
+      const upstream = await fetch(src, { headers: range ? { Range: range } : {} });
+      if (!upstream.ok && upstream.status !== 206) return new Response('Not found', { status: 404 });
+      const h = new Headers();
+      h.set('Content-Type', 'video/mp4');
+      h.set('Accept-Ranges', 'bytes');
+      // Частичные (206) ответы НЕ кэшируем публично — иначе Cloudflare может отдать байты одного
+      // диапазона на запрос другого (Range не входит в ключ кэша) и поток бьётся. Кэшируем только полный 200.
+      h.set('Cache-Control', upstream.status === 206 ? 'no-store' : 'public, max-age=86400');
+      const cl = upstream.headers.get('Content-Length'); if (cl) h.set('Content-Length', cl);
+      const cr = upstream.headers.get('Content-Range'); if (cr) h.set('Content-Range', cr);
+      return new Response(upstream.body, { status: upstream.status, headers: h });
+    }
     // HTML SPA-роуты — отдать содержимое нужного файла по clean-пути (без редиректа)
     for (const [re, clean] of HTML_MAP) {
       if (re.test(url.pathname)) {
