@@ -232,6 +232,11 @@ label.lbl{display:block;font-size:12.5px;font-weight:600;color:var(--muted);marg
 /* ---------------- table ---------------- */
 .table-wrap{overflow-x:auto;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--surface);box-shadow:var(--sh);margin-top:18px}
 table{width:100%;border-collapse:collapse;font-size:14px}
+/* таблица кандидатов — всегда влезает в окно без горизонтального скролла */
+.cand-table{table-layout:fixed;width:100%}
+.cand-table th,.cand-table td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cand-table th:first-child,.cand-table td:first-child{width:19%}
+.cand-table .col-cfg-th{width:40px}
 thead th{text-align:left;color:var(--muted);font-weight:600;font-size:12.5px;letter-spacing:.02em;
   padding:16px 14px;background:var(--surface-2);white-space:nowrap;position:sticky;top:0}
 thead th:first-child{border-top-left-radius:var(--r-lg)}

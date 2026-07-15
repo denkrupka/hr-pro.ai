@@ -1247,7 +1247,7 @@ async function renderVacAdEditor(body, id) {
       ${isBoss ? `<div class="muted" style="font-size:12px;margin-top:4px">${rt('vac_target_boss_hint')}</div>` : ''}</div>
       <button class="btn soft" id="vann-gen">${rt('vac_ad_gen')}</button></div>
     <label class="lbl">${rt('vac_ad_manual')}</label>
-    <textarea class="field" id="vann-text" rows="10" style="font-family:inherit">${esc(vacancy.adText || '')}</textarea>
+    <textarea class="field" id="vann-text" rows="16" style="font-family:inherit;min-height:340px">${esc(vacancy.adText || '')}</textarea>
     <div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">
       <button class="btn" id="vann-save">${rt('vac_save')}</button>
       <button class="btn soft" id="vann-publish">${vacancy.published ? rt('vac_published') + ' ✓' : rt('vac_publish')}</button></div>
@@ -1970,7 +1970,8 @@ const COLS = [
 const COL_KEY = { id: 'col_id', vacancy: 'pm_vacancy', stage: 'col_stage', sexage: 'col_sexage', tel: 'col_tel', result: 'col_result', logic: 'col_logic', date: 'col_date', city: 'col_city', comment: 'col_comment' };
 function colTh(c) { return t(COL_KEY[c.key] || ''); }
 function colVis() { try { return JSON.parse(localStorage.getItem('hp_cols')) || {}; } catch (_) { return {}; } }
-function colOn(key) { const v = colVis(); return key in v ? !!v[key] : key !== 'comment'; }
+const COL_DEFAULT_ON = ['vacancy', 'stage', 'tel', 'date']; // по умолчанию — только ключевые, чтобы таблица влезала без скролла
+function colOn(key) { const v = colVis(); return key in v ? !!v[key] : COL_DEFAULT_ON.includes(key); }
 function visibleCols() { return COLS.filter(c => colOn(c.key)); }
 function cellFor(key, p, ctx) {
   switch (key) {
@@ -2101,7 +2102,7 @@ async function renderHome() {
       <div class="search-wrap grow"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="search-box" aria-label="Поиск кандидатов" placeholder="${t('search')}"></div>
       <button class="btn ghost sm ic-btn" id="export-csv">${_svg('<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>')}${t('export_csv')}</button>
     </div>
-    <div class="table-wrap reveal d3"><table>
+    <div class="table-wrap reveal d3"><table class="cand-table">
       <thead><tr><th>${t('col_candidate')}</th>${visibleCols().map(c => `<th>${colTh(c)}</th>`).join('')}<th>${t('col_results')}</th><th class="col-cfg-th"><button id="col-cfg" title="Настройка столбцов" aria-label="Настройка столбцов">${_svg('<path d="M4 8h10M18 8h2M4 16h2M10 16h10" stroke-linecap="round"/><circle cx="16" cy="8" r="2.4"/><circle cx="8" cy="16" r="2.4"/>')}</button></th></tr></thead>
       <tbody id="rows"></tbody>
     </table></div>`;
