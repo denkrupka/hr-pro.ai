@@ -20,17 +20,20 @@ const PROGRAMS = [
       'Produkt stanowiska, typologia Winner / Doer / Waiter oraz trzy kluczowe pytania.',
       'Product of the role, the Winner / Doer / Waiter typology and the three key questions.'),
     sections: [
-      { id: 'product', title: tri('Продукт должности', 'Produkt stanowiska', 'Product of the role'), html: tri(
+      { id: 'product', title: tri('Продукт должности', 'Produkt stanowiska', 'Product of the role'),
+        desc: tri('Что такое конечный продукт должности и почему это главный маркер результата.', 'Czym jest produkt końcowy stanowiska i dlaczego to główny marker.', 'What the end product of a role is and why it is the key marker.'), html: tri(
         `<p>Любая должность существует ради конечного результата — <b>продукта должности</b>. Это не список обязанностей, а то, что остаётся «на выходе» и за что компания платит зарплату.</p>
          <ul><li>Дворник → <b>чистый двор</b> (а не «подметание»).</li><li>Секретарь → <b>быстро соединённый с нужным сотрудником звонок</b>.</li><li>Продавец → <b>оплаченный и довольный клиент</b>.</li></ul>
          <p>Кандидат, который умеет назвать продукт своей прошлой должности, мыслит результатом, а не процессом. Это первый и самый сильный маркер «виннера».</p>`) },
-      { id: 'typology', title: tri('Виннер, Дуер, Вейтер', 'Winner, Doer, Waiter', 'Winner, Doer, Waiter'), html: tri(
+      { id: 'typology', title: tri('Виннер, Дуер, Вейтер', 'Winner, Doer, Waiter', 'Winner, Doer, Waiter'),
+        desc: tri('Три типа кандидатов по отношению к продукту и когда кто подходит.', 'Trzy typy kandydatów wobec produktu i kiedy kto pasuje.', 'Three candidate types by their relation to the product and who fits when.'), html: tri(
         `<p>Три типа по отношению к продукту:</p>
          <ul><li><b>Виннер</b> — видит продукт, измеряет и сравнивает результаты, берёт ответственность, растёт.</li>
          <li><b>Дуер</b> — хороший исполнитель: производит продукт, но не формулирует его. Эффективен под руководством виннера.</li>
          <li><b>Вейтер</b> — избегает лишней работы и ответственности, «затирает» вместо конкретики. Высокий риск.</li></ul>
          <p>Для руководящих ролей ищем виннера, для линейных часто достаточно надёжного дуера.</p>`) },
-      { id: 'questions', title: tri('Три ключевых вопроса', 'Trzy kluczowe pytania', 'The three key questions'), html: tri(
+      { id: 'questions', title: tri('Три ключевых вопроса', 'Trzy kluczowe pytania', 'The three key questions'),
+        desc: tri('Три вопроса на финале и как отличать факты от красивых слов.', 'Trzy pytania na finale i jak odróżnić fakty od ładnych słów.', 'Three final-round questions and how to tell facts from nice words.'), html: tri(
         `<p>На финале задайте три вопроса и слушайте <b>факты</b>, а не намерения:</p>
          <ol><li>Какой продукт вы производили на прошлой должности?</li><li>Как вы измеряли и с чем сравнивали свой результат?</li><li>Как со временем менялся объём вашей работы и ответственности?</li></ol>
          <p>Красивые слова о будущем возвращайте в прошлое: «А как это было на последнем месте?» — и записывайте, кто может подтвердить факты.</p>`) },
@@ -51,13 +54,16 @@ const PROGRAMS = [
       'Jak czytać Result, Tools, Logic i Sales oraz zamieniać wyniki w decyzję.',
       'How to read Result, Tools, Logic and Sales and turn scores into a decision.'),
     sections: [
-      { id: 'result-tools', title: tri('Резалт и Тулс', 'Result i Tools', 'Result & Tools'), html: tri(
+      { id: 'result-tools', title: tri('Резалт и Тулс', 'Result i Tools', 'Result & Tools'),
+        desc: tri('Как читать тип продуктивности и спектр инструментов мышления.', 'Jak czytać typ produktywności i spektrum narzędzi myślenia.', 'How to read the productivity type and the thinking-tools spectrum.'), html: tri(
         `<p><b>Резалт</b> определяет тип продуктивности (виннер / дуер / вейтер) по открытым ответам. <b>Тулс</b> показывает спектр инструментов мышления: внимательность, уверенность, эффективность, отношения.</p>
          <p>Точка D (уверенность) — ключевой маркер надёжности. Смотрите не на отдельный показатель, а на общий силуэт спектра и синдромы.</p>`) },
-      { id: 'logic-sales', title: tri('Логис и Сэйлс', 'Logic i Sales', 'Logic & Sales'), html: tri(
+      { id: 'logic-sales', title: tri('Логис и Сэйлс', 'Logic i Sales', 'Logic & Sales'),
+        desc: tri('Уровень интеллекта под сложность роли и профиль продавца.', 'Poziom intelektu wobec złożoności roli i profil sprzedawcy.', 'Intelligence level for role complexity and the salesperson profile.'), html: tri(
         `<p><b>Логис</b> — уровень интеллекта (IQ). До 100 — простые решения, 100–120 — линейные роли, 120+ — руководящие и аналитические.</p>
          <p><b>Сэйлс</b> — профиль продавца по 12 показателям. Настойчивость и результативность важнее «мягких» шкал для активных продаж.</p>`) },
-      { id: 'decision', title: tri('Кадровое решение', 'Decyzja kadrowa', 'The hiring decision'), html: tri(
+      { id: 'decision', title: tri('Кадровое решение', 'Decyzja kadrowa', 'The hiring decision'),
+        desc: tri('Как собрать все сигналы в одно кадровое решение.', 'Jak zebrać wszystkie sygnały w jedną decyzję kadrową.', 'How to combine all signals into a single hiring decision.'), html: tri(
         `<p>Тесты — это отсев и подсказка, а не приговор. Сопоставляйте:</p>
          <ul><li>тип продуктивности (Резалт);</li><li>спектр качеств (Тулс);</li><li>интеллект под сложность роли (Логис);</li><li>опыт, мотивацию и референсы.</li></ul>
          <p>Финальное решение всегда за рекрутёром — после интервью и наведения справок.</p>`) },
@@ -78,11 +84,14 @@ const PROGRAMS = [
       'Kejsy sytuacyjne, sprawdzenie „pod presją” i wdrożenie nowego pracownika.',
       'Situational cases, checking under pressure and proper onboarding.'),
     sections: [
-      { id: 'prep', title: tri('Подготовка к интервью', 'Przygotowanie', 'Preparation'), html: tri(
+      { id: 'prep', title: tri('Подготовка к интервью', 'Przygotowanie', 'Preparation'),
+        desc: tri('Что собрать и подготовить перед интервью.', 'Co zebrać i przygotować przed rozmową.', 'What to gather and prepare before the interview.'), html: tri(
         `<p>Перед интервью соберите картину: результаты тестов, подсказку ИИ, зоны риска. Заранее выпишите 2–3 ситуационных кейса под конкретную роль.</p>`) },
-      { id: 'cases', title: tri('Ситуационные кейсы', 'Kejsy sytuacyjne', 'Situational cases'), html: tri(
+      { id: 'cases', title: tri('Ситуационные кейсы', 'Kejsy sytuacyjne', 'Situational cases'),
+        desc: tri('Ситуационные кейсы и проверка кандидата под давлением.', 'Kejsy sytuacyjne i sprawdzenie kandydata pod presją.', 'Situational cases and checking the candidate under pressure.'), html: tri(
         `<p>Вместо «расскажите о себе» давайте кейс: «Клиент недоволен и повышает голос — ваши действия?». Смотрите, как кандидат реагирует под давлением: жёстко/формально — риск; гибко и по существу — хороший знак.</p>`) },
-      { id: 'onboarding', title: tri('Онбординг', 'Onboarding', 'Onboarding'), html: tri(
+      { id: 'onboarding', title: tri('Онбординг', 'Onboarding', 'Onboarding'),
+        desc: tri('Первые недели: как быстро вывести новичка на результат.', 'Pierwsze tygodnie: jak szybko doprowadzić nowicjusza do wyniku.', 'The first weeks: how to get a newcomer to results fast.'), html: tri(
         `<p>Первые недели решают. Дайте новичку измеримый продукт должности, наставника-виннера и короткие циклы обратной связи. Так дуер быстро выходит на результат, а слабый профиль виден заранее.</p>`) },
     ],
     quiz: {
@@ -143,7 +152,7 @@ function detailView(user, id, lang) {
     unlocked: unlocked(user, p),
     done: pr.done, total: pr.total, pct: pr.pct, allSectionsDone: pr.allSectionsDone,
     sections: p.sections.map(s => ({
-      id: s.id, title: L(s.title, lang),
+      id: s.id, title: L(s.title, lang), desc: L(s.desc, lang),
       html: pr.purchased ? L(s.html, lang) : '',
       done: pr.sectionsDone.includes(s.id),
     })),

@@ -48,6 +48,7 @@ const I18N = {
     lp_quiz: 'Итоговый тест', lp_quiz_locked: 'Пройдите все разделы, чтобы открыть тест', lp_quiz_pass: 'Порог прохождения',
     lp_quiz_submit: 'Проверить', lp_quiz_passed: 'Тест сдан — программа завершена!', lp_quiz_failed: 'Не сдано. Повторите: верно {c} из {t} ({p}%)',
     lp_quiz_result: 'Результат: {c} из {t} ({p}%)', lp_pick_answer: 'Ответьте на все вопросы', lp_your_balance: 'Ваш баланс',
+    lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
@@ -100,6 +101,7 @@ const I18N = {
     lp_quiz: 'Test końcowy', lp_quiz_locked: 'Ukończ wszystkie rozdziały, aby odblokować test', lp_quiz_pass: 'Próg zaliczenia',
     lp_quiz_submit: 'Sprawdź', lp_quiz_passed: 'Test zdany — program ukończony!', lp_quiz_failed: 'Niezaliczone. Spróbuj ponownie: poprawnie {c} z {t} ({p}%)',
     lp_quiz_result: 'Wynik: {c} z {t} ({p}%)', lp_pick_answer: 'Odpowiedz na wszystkie pytania', lp_your_balance: 'Twoje saldo',
+    lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
@@ -152,6 +154,7 @@ const I18N = {
     lp_quiz: 'Final test', lp_quiz_locked: 'Complete all sections to unlock the test', lp_quiz_pass: 'Pass threshold',
     lp_quiz_submit: 'Check', lp_quiz_passed: 'Test passed — program completed!', lp_quiz_failed: 'Not passed. Try again: {c} of {t} correct ({p}%)',
     lp_quiz_result: 'Result: {c} of {t} ({p}%)', lp_pick_answer: 'Answer all questions', lp_your_balance: 'Your balance',
+    lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
     dash_overview: 'Overview', dash_title: 'Dashboard', balance: 'Balance',
@@ -3079,9 +3082,9 @@ async function openLearningProgram(id) {
   let d; try { d = await api('/api/learning/' + id + '?lang=' + LANG); } catch (e) { renderLearning(); return; }
   const p = d.program;
   const sections = p.sections.map((s, i) => `<div class="lp-sec ${s.done ? 'done' : ''}" id="lp-sec-${s.id}">
-      <div class="lp-sec-h"><span class="lp-sec-n">${s.done ? LP_CHECK : (i + 1)}</span><b>${esc(s.title)}</b></div>
-      <div class="lp-sec-body">${s.html || ''}</div>
-      <div class="lp-sec-foot">${s.done ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span>` : `<button class="btn soft sm" data-lp-sec="${s.id}">${t('lp_mark_done')}</button>`}</div>
+      <span class="lp-sec-n">${s.done ? LP_CHECK : (i + 1)}</span>
+      <div class="lp-sec-info"><b>${esc(s.title)}</b>${s.desc ? `<p class="lp-sec-desc">${esc(s.desc)}</p>` : ''}</div>
+      <div class="lp-sec-act">${s.done ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span>` : ''}<button class="btn ${s.done ? 'ghost' : 'soft'} sm" data-lp-open-sec="${s.id}">${t('lp_open')}</button></div>
     </div>`).join('');
   const quizLocked = !p.allSectionsDone;
   let quizHtml;
@@ -3106,10 +3109,9 @@ async function openLearningProgram(id) {
     </div>`;
   wireEduModes();
   $('#lp-back').onclick = () => renderLearning();
-  $$('[data-lp-sec]').forEach(b => b.onclick = async () => {
-    b.disabled = true;
-    try { await api('/api/learning/' + id + '/section/' + b.dataset.lpSec, { method: 'POST', body: '{}' }); openLearningProgram(id); }
-    catch (e) { toast(e.message); b.disabled = false; }
+  $$('[data-lp-open-sec]').forEach(b => b.onclick = () => {
+    const s = p.sections.find(x => x.id === b.dataset.lpOpenSec);
+    if (s) openSecureReader(id, s);
   });
   const go = $('#lp-quiz-go');
   if (go) go.onclick = async () => {
@@ -3124,6 +3126,85 @@ async function openLearningProgram(id) {
     } catch (e) { toast(e.message); go.disabled = false; }
   };
 }
+
+// ---- Защищённый полноэкранный ридер материала (анти-копирование/скрин, водяной знак) ----
+let _secReader = null;
+function openSecureReader(programId, section) {
+  closeSecureReader();
+  const email = (state.user && state.user.email) || '';
+  const stamp = new Date().toLocaleString();
+  const token = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const mark = esc((email || 'HR PRO AI') + ' · ' + stamp + ' · ' + token);
+  const wm = Array.from({ length: 100 }, () => `<span>${mark}</span>`).join('');
+  const ov = document.createElement('div');
+  ov.className = 'sec-reader';
+  ov.setAttribute('oncontextmenu', 'return false');
+  ov.innerHTML = `
+    <div class="sec-reader-bar">
+      <div class="sec-reader-title">${LP_LOCK}<b>${esc(section.title)}</b></div>
+      <div class="sec-reader-actions">
+        ${section.done ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span>` : `<button class="btn sm" id="sec-done">${t('lp_mark_done')}</button>`}
+        <button class="btn ghost sm ic-btn" id="sec-close">${_svg('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>')}${t('lp_close')}</button>
+      </div>
+    </div>
+    <div class="sec-reader-scroll">
+      <div class="sec-reader-guard" id="sec-guard">
+        <div class="sec-wm" aria-hidden="true">${wm}</div>
+        <article class="sec-reader-body">${section.html || ''}</article>
+      </div>
+      <div class="sec-reader-note">${t('lp_protected')}</div>
+    </div>
+    <div class="sec-reader-shield" id="sec-shield"><div>${LP_LOCK}<span>${t('lp_hidden')}</span></div></div>`;
+  document.body.appendChild(ov);
+  document.body.classList.add('sec-lock');
+
+  const stop = e => { e.preventDefault(); e.stopPropagation(); return false; };
+  const clearClip = () => { try { navigator.clipboard && navigator.clipboard.writeText(''); } catch (_) {} };
+  const onKey = e => {
+    const k = (e.key || '').toLowerCase();
+    if (e.key === 'PrintScreen') { clearClip(); showShield(true); setTimeout(() => showShield(false), 1200); return; }
+    if ((e.ctrlKey || e.metaKey) && ['c', 'x', 's', 'p', 'u', 'a'].includes(k)) return stop(e);
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(k)) return stop(e);
+    if (e.key === 'F12') return stop(e);
+  };
+  const showShield = on => { const s = ov.querySelector('#sec-shield'); if (s) s.classList.toggle('on', on); };
+  const onVis = () => showShield(document.hidden);
+  const onBlur = () => showShield(true);
+  const onFocus = () => showShield(false);
+  const onPrint = () => showShield(true);
+  ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(ev => ov.addEventListener(ev, stop));
+  document.addEventListener('keydown', onKey, true);
+  document.addEventListener('visibilitychange', onVis);
+  window.addEventListener('blur', onBlur);
+  window.addEventListener('focus', onFocus);
+  window.addEventListener('beforeprint', onPrint);
+  // опрос фокуса: если окно потеряло фокус (переключение на инструмент захвата) — прячем контент
+  const poll = setInterval(() => { if (!_secReader) return; showShield(!document.hasFocus() || document.hidden); }, 400);
+  _secReader = { ov, onKey, onVis, onBlur, onFocus, onPrint, poll };
+
+  ov.querySelector('#sec-close').onclick = () => closeSecureReader();
+  const doneBtn = ov.querySelector('#sec-done');
+  if (doneBtn) doneBtn.onclick = async () => {
+    doneBtn.disabled = true;
+    try { await api('/api/learning/' + programId + '/section/' + section.id, { method: 'POST', body: '{}' }); closeSecureReader(); openLearningProgram(programId); }
+    catch (e) { toast(e.message); doneBtn.disabled = false; }
+  };
+}
+function closeSecureReader() {
+  if (!_secReader) return;
+  const { ov, onKey, onVis, onBlur, onFocus, onPrint, poll } = _secReader;
+  document.removeEventListener('keydown', onKey, true);
+  document.removeEventListener('visibilitychange', onVis);
+  window.removeEventListener('blur', onBlur);
+  window.removeEventListener('focus', onFocus);
+  window.removeEventListener('beforeprint', onPrint);
+  clearInterval(poll);
+  ov.remove();
+  document.body.classList.remove('sec-lock');
+  _secReader = null;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && _secReader) closeSecureReader(); });
+
 async function renderSearch() {
   $('#main').innerHTML = `<div class="eyebrow reveal">Поиск</div><h1 class="page-h reveal d1" style="margin-top:10px">Найти кандидата</h1><div class="card reveal d2"><div class="search-wrap"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="gs" aria-label="Поиск кандидата" placeholder="Имя, email, телефон, город…" autofocus></div><div class="table-wrap" style="margin-top:16px;box-shadow:none"><table><thead><tr><th>Кандидат</th><th>Почта</th><th>Телефон</th><th>Город</th><th>Вакансия</th></tr></thead><tbody id="gs-rows"></tbody></table></div></div>`;
   await loadParticipantsAll();
