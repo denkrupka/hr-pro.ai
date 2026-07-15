@@ -12,7 +12,9 @@ const api = async (url, opts = {}) => {
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2400); };
 
-const state = { user: null, sections: [], activeSection: 'all', vacancies: [], activeVac: 'all', participants: [], view: 'home', eduSlug: null, langs: [] };
+const state = { user: null, sections: [], activeSection: 'all', vacancies: [], activeVac: 'all', participants: [], view: 'home', eduSlug: null, langs: [],
+  allVacancies: [], allParticipants: [], _vacsAt: 0, _partsAt: 0 };
+const DATA_TTL = 20000; // клиентский кэш вакансий/кандидатов: мгновенное переключение вкладок без сети
 const LANG_NAME = { ru: 'Русский', uk: 'Украи́нский', pl: 'Польский', en: 'Английский' };
 // ---- портальная локализация ----
 const LANG_NAME_I18N = {
@@ -1747,9 +1749,23 @@ async function handleCheckoutReturn(cid) {
 }
 
 async function loadSections() { state.sections = (await api('/api/sections')).sections; }
-async function loadVacancies() { state.vacancies = (await api('/api/vacancies?sectionId=' + encodeURIComponent(state.activeSection))).vacancies; }
-async function loadParticipants() { state.participants = (await api('/api/participants?vacancyId=' + encodeURIComponent(state.activeVac))).participants; }
-async function loadParticipantsAll() { state.participants = (await api('/api/participants?vacancyId=all')).participants; }
+async function loadVacancies(force) {
+  if (force || !state._vacsAt || Date.now() - state._vacsAt > DATA_TTL) {
+    state.allVacancies = (await api('/api/vacancies?sectionId=all')).vacancies; state._vacsAt = Date.now();
+  }
+  state.vacancies = state.activeSection === 'all' ? state.allVacancies.slice()
+    : state.allVacancies.filter(v => (v.sectionId || '') === state.activeSection);
+}
+async function loadParticipants(force) {
+  if (force || !state._partsAt || Date.now() - state._partsAt > DATA_TTL) {
+    state.allParticipants = (await api('/api/participants?vacancyId=all')).participants; state._partsAt = Date.now();
+  }
+  state.participants = state.activeVac === 'all' ? state.allParticipants.slice()
+    : state.allParticipants.filter(p => p.vacancyId === state.activeVac);
+}
+async function loadParticipantsAll() { state.allParticipants = (await api('/api/participants?vacancyId=all')).participants; state._partsAt = Date.now(); state.participants = state.allParticipants.slice(); }
+function invalidateParts() { state._partsAt = 0; }
+function invalidateVacs() { state._vacsAt = 0; }
 
 // ================= DASHBOARD =================
 const FUNNEL_COLORS = ['#3d6cd1', '#1fa8c9', '#c98a1e', '#5847b5', '#1f9d6b'];
@@ -1934,7 +1950,7 @@ async function dashSend() {
   const vacId = $('#vac-select').value, vac = state.vacancies.find(v => v.id === vacId);
   const lang = ($('#send-lang') && $('#send-lang').value) || 'ru';
   const btn = $('#dash-send'); btn.disabled = true; btn.textContent = 'Отправка…';
-  try { const d = await api('/api/tests/send', { method: 'POST', body: JSON.stringify({ emails, vacancyId: vacId, types: sendTypes.slice(), lang }) }); state.user = d.balance; showLinksModal(d.created, lang, vac ? vac.name : ''); renderDashboard(); }
+  try { const d = await api('/api/tests/send', { method: 'POST', body: JSON.stringify({ emails, vacancyId: vacId, types: sendTypes.slice(), lang }) }); state.user = d.balance; showLinksModal(d.created, lang, vac ? vac.name : ''); invalidateParts(); renderDashboard(); }
   catch (e) { toast(e.message); btn.disabled = false; btn.textContent = 'Отправить'; }
 }
 
@@ -2195,9 +2211,9 @@ function vacancyModal(id) {
     const body = { name, lang: $('#vm-lang').value, sectionId: $('#vm-sec') ? $('#vm-sec').value : (state.activeSection !== 'all' ? state.activeSection : null) };
     if (v) await api('/api/vacancies/' + id, { method: 'PUT', body: JSON.stringify(body) });
     else await api('/api/vacancies', { method: 'POST', body: JSON.stringify(body) });
-    await loadVacancies(); closeModal(); renderHome();
+    await loadVacancies(true); closeModal(); renderHome();
   };
-  const del = $('#vm-del'); if (del) del.onclick = async () => { if (!confirm(t('vm_del_confirm') + v.name + t('vm_del_tail'))) return; await api('/api/vacancies/' + id, { method: 'DELETE' }); state.activeVac = 'all'; await loadVacancies(); closeModal(); renderHome(); };
+  const del = $('#vm-del'); if (del) del.onclick = async () => { if (!confirm(t('vm_del_confirm') + v.name + t('vm_del_tail'))) return; await api('/api/vacancies/' + id, { method: 'DELETE' }); state.activeVac = 'all'; await loadVacancies(true); closeModal(); renderHome(); };
 }
 function manageVacancy(id) { vacancyModal(id); }
 async function addSection() { const name = prompt(t('sec_prompt')); if (!name) return; await api('/api/sections', { method: 'POST', body: JSON.stringify({ name: name.trim() }) }); await loadSections(); renderHome(); }
@@ -2208,7 +2224,7 @@ function manageSection(id) {
     <div class="row" style="margin-top:18px"><button class="btn" id="sec-save">${t('save')}</button><button class="btn ghost danger" id="sec-del">${t('sec_del_btn')}</button></div>`);
   $('#sec-name').focus();
   $('#sec-save').onclick = async () => { const name = $('#sec-name').value.trim(); if (!name) return toast(t('vm_need_name')); await api('/api/sections/' + id, { method: 'PUT', body: JSON.stringify({ name }) }); await loadSections(); closeModal(); renderHome(); };
-  $('#sec-del').onclick = async () => { if (!confirm(t('sec_del_confirm') + s.name + t('sec_del_tail'))) return; await api('/api/sections/' + id, { method: 'DELETE' }); state.activeSection = 'all'; await loadSections(); await loadVacancies(); closeModal(); renderHome(); };
+  $('#sec-del').onclick = async () => { if (!confirm(t('sec_del_confirm') + s.name + t('sec_del_tail'))) return; await api('/api/sections/' + id, { method: 'DELETE' }); state.activeSection = 'all'; await loadSections(); await loadVacancies(true); closeModal(); renderHome(); };
 }
 async function showVacStats() {
   const d = await api('/api/stats/vacancies');
@@ -2230,7 +2246,7 @@ async function sendTest() {
   const vac = state.vacancies.find(v => v.id === vacancyId);
   const lang = ($('#send-lang') && $('#send-lang').value) || 'ru';
   const btn = $('#send-btn'); btn.disabled = true; btn.textContent = 'Отправка…';
-  try { const d = await api('/api/tests/send', { method: 'POST', body: JSON.stringify({ emails, vacancyId, types, lang }) }); state.user = d.balance; showLinksModal(d.created, lang, vac ? vac.name : ''); $('#emails').value = ''; await renderHome(); }
+  try { const d = await api('/api/tests/send', { method: 'POST', body: JSON.stringify({ emails, vacancyId, types, lang }) }); state.user = d.balance; showLinksModal(d.created, lang, vac ? vac.name : ''); $('#emails').value = ''; invalidateParts(); await renderHome(); }
   catch (e) { toast(e.message); btn.disabled = false; btn.textContent = 'Отправить'; }
 }
 // Подстановка переменных: поддержка нового синтаксиса $var$ и старого {var}
@@ -2507,6 +2523,9 @@ async function sendCandidateTest(type) {
 async function refreshCandidateCard() {
   modalPart = (await api('/api/participants/' + modalPart.id)).participant;
   modalWf = await api('/api/participants/' + modalPart.id + '/workflow?lang=' + LANG).catch(() => null);
+  // держим клиентский кэш в актуальном виде после правок в карточке
+  const i = state.allParticipants.findIndex(p => p.id === modalPart.id);
+  if (i >= 0) state.allParticipants[i] = modalPart; else invalidateParts();
   renderCandidatePage();
 }
 function sendMoreBlock() {
@@ -2574,7 +2593,7 @@ function wirePhoneAgeMasks(telSel, ageSel) {
   const tel = $(telSel); if (tel) tel.addEventListener('input', () => { tel.value = tel.value.replace(/[^\d+\s()-]/g, '').replace(/(?!^)\+/g, ''); });
   const age = $(ageSel); if (age) age.addEventListener('input', () => { age.value = age.value.replace(/\D/g, '').slice(0, 2); });
 }
-async function deleteParticipant() { if (!confirm(t(`pm_del_confirm`))) return; const d = await api('/api/participants/' + modalPart.id, { method: 'DELETE' }); if (d.balance) state.user = d.balance; toast(t(`pm_deleted`)); if (candReturn) candReturn(); else setView('candidates'); }
+async function deleteParticipant() { if (!confirm(t(`pm_del_confirm`))) return; const d = await api('/api/participants/' + modalPart.id, { method: 'DELETE' }); if (d.balance) state.user = d.balance; toast(t(`pm_deleted`)); invalidateParts(); if (candReturn) candReturn(); else setView('candidates'); }
 
 // ================= REPORTS =================
 async function openReport(testId) {
