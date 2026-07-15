@@ -944,6 +944,42 @@ async function api(req, env, url) {
       else if (part.workflow.decision) part.workflow.decision = null;
     } else return j({ error: 'Неверная колонка' }, 400);
     await S.upsert('participants', { id: part.id, data: part });
+    // Письмо кандидату при смене статуса (не критично — не ломаем ответ при ошибке).
+    // Шаблоны статусов: rejected/interview/reserve/accepted. Из kanban-колонки мапим только те,
+    // что имеют явный смысл уведомления: rejected→rejected, hired→accepted.
+    try {
+      const STATUS_MAIL = { rejected: 'rejected', hired: 'accepted' };
+      const statusKey = STATUS_MAIL[col];
+      const resendKey = env.RESEND_API_KEY;
+      const unsubbed = Array.isArray(env.__unsub) && env.__unsub.includes(String(part.email || '').toLowerCase());
+      if (statusKey && part.email && resendKey && !unsubbed) {
+        const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+        const mailLang = (vac && vac.lang) || 'ru';
+        const gsCol = await settings();
+        const pick = (mt) => mt && mt.status && mt.status[statusKey] && (mt.status[statusKey][mailLang] || mt.status[statusKey].ru);
+        const tpl = pick(me.settings && me.settings.mailTemplates) || pick(gsCol.defaultMailTemplates);
+        if (tpl && (tpl.subject || tpl.body)) {
+          const name = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email;
+          const iv = (part.workflow.interviews || [])[0];
+          const vars = { name, candidate: name, client: me.name || '', company: me.company || '',
+            vac: vac ? vac.name : '', vacancy: vac ? vac.name : '', phone: part.tel || '',
+            date_interview: (iv && (iv.at || iv.date)) || '', id_part: part.id, link: '', button_link: '' };
+          const fill = str => String(str || '')
+            .replace(/\$(\w+)\$/g, (m2, k) => (vars[k] != null ? vars[k] : m2))
+            .replace(/\{(\w+)\}/g, (m2, k) => (vars[k] != null ? vars[k] : m2));
+          const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+          const tok = await unsubToken(env.SECRET, part.email);
+          const unsubUrl = `${base}/unsubscribe?e=${btoa(String(part.email).toLowerCase())}&t=${tok}&lang=${mailLang}`;
+          const subject = fill(tpl.subject) || (me.company || 'HR PRO AI');
+          const html = wrapEmailEdge({ lang: mailLang, baseUrl: base, unsubUrl, subject,
+            bodyHtml: fill(tpl.body).replace(/\n/g, '<br>') });
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST', headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [part.email], subject, html }),
+          });
+        }
+      }
+    } catch (e) { /* письмо о статусе не критично */ }
     return j({ ok: true });
   }
   let mGate = p.match(/^\/api\/participants\/([\w-]+)\/gate$/);

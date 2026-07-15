@@ -1,5 +1,6 @@
 // Админ-API портала для edge (/api/admin/*). Работает поверх Supabase REST (все клиенты).
 // requireAdmin выполняется вызывающей стороной (worker-main проверяет me.role==='admin').
+import { wrapEmailEdge } from './notify-edge.js';
 const dayKey = iso => String(iso || '').slice(0, 10);
 const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return d; };
 const within = (iso, days) => iso && new Date(iso) >= daysAgo(days);
@@ -380,8 +381,12 @@ export async function handleAdmin(p, m, ctx) {
       if (pKey === 'resend') {
         const key = env.RESEND_API_KEY || (gs.integrations && gs.integrations.resend && gs.integrations.resend.apiKey);
         if (!key) return j({ error: 'Resend не настроен' }, 400);
+        const subject = (gs.portalName || 'HR PRO AI') + ' — тест Resend';
+        const html = wrapEmailEdge({ lang: 'ru', baseUrl: (env.PORTAL_BASE_URL || url.origin), subject,
+          eyebrow: 'Проверка интеграции', headline: 'Resend подключён',
+          bodyHtml: 'Интеграция Resend работает корректно. Это тестовое письмо от портала HR PRO AI.' });
         const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [to || me.email], subject: (gs.portalName || 'HR PRO AI') + ' — тест Resend', text: 'Интеграция Resend работает.' }) });
+          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [to || me.email], subject, html }) });
         if (!r.ok) return j({ error: 'Resend: ' + r.status }, 502);
         return j({ ok: true, result: await r.json() });
       }
