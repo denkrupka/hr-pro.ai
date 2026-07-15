@@ -154,6 +154,17 @@ body.lp .lp-cta{max-width:var(--maxw);margin:40px auto 0;padding:0 40px 90px}
 .lang-switch{display:inline-flex;gap:3px;align-items:center}
 .lang-switch button{background:transparent;border:1px solid var(--line);color:var(--muted);font:700 11px/1 Inter,sans-serif;padding:5px 7px;border-radius:6px;cursor:pointer}
 .lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
+.lang-dd{position:relative;display:inline-block}
+.lang-dd-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(255,255,255,.16);color:#c3cbe4;font:700 12px Inter,sans-serif;padding:7px 10px;border-radius:8px;cursor:pointer}
+.lang-dd-btn .flg{font-size:14px;line-height:1}
+.lang-dd-car{font-size:10px;opacity:.7;transition:transform .2s}
+.lang-dd.open .lang-dd-car{transform:rotate(180deg)}
+.lang-dd-menu{position:absolute;top:calc(100% + 7px);right:0;min-width:158px;background:#12142e;border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:5px;display:none;flex-direction:column;gap:2px;z-index:60;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.lang-dd.open .lang-dd-menu{display:flex}
+.lang-dd-menu button{display:flex;align-items:center;gap:9px;background:transparent;border:0;color:#c3cbe4;font:600 13px Inter,sans-serif;padding:8px 10px;border-radius:7px;cursor:pointer;text-align:left;width:100%}
+.lang-dd-menu button:hover{background:rgba(255,255,255,.07);color:#fff}
+.lang-dd-menu button.on{background:var(--brand);color:#fff}
+.lang-dd-menu .flg{font-size:16px;line-height:1}
 /* logo — icon only, no background plate */
 .lp-logo .m{background:none;box-shadow:none;width:36px;height:36px}
 .lp-logo .m svg{width:36px;height:36px}
@@ -169,7 +180,7 @@ body.lp .lp-cta{max-width:var(--maxw);margin:40px auto 0;padding:0 40px 90px}
 .hd-blob{position:absolute;top:-160px;left:-60px;width:640px;height:520px;border-radius:50%;
   background:radial-gradient(ellipse at center,rgba(var(--hp-blob),.3),transparent 65%);filter:blur(30px);animation:glowPulse 7s ease-in-out infinite}
 #hd-net{position:absolute;inset:0;width:100%;height:100%;opacity:.7;pointer-events:none}
-.hd-inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:start;padding:36px 40px 44px}
+.hd-inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:start;padding:12px 40px 44px}
 .hd-pill{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border:1px solid rgba(139,150,255,.28);color:#b7c2ec;font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 15px;border-radius:999px}
 .hd-dot{width:8px;height:8px;border-radius:50%;background:var(--hp-dot);box-shadow:0 0 10px var(--hp-dot);animation:pulseDot 1.6s infinite}
 .hd-h1{font-family:'Manrope',sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(38px,5vw,56px);margin:22px 0 0;
@@ -428,7 +439,14 @@ body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
     <a href="#system" data-i18n="nav_system">Возможности</a>
     <a href="#pricing" data-i18n="nav_pricing">Цены</a>
     <a href="#faq" data-i18n="nav_faq">FAQ</a>
-    <span class="lang-switch" id="lang-switch"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></span>
+    <span class="lang-dd" id="lang-dd">
+      <button type="button" class="lang-dd-btn" id="lang-dd-btn"><span id="lang-dd-cur">RU</span><span class="lang-dd-car">▾</span></button>
+      <span class="lang-dd-menu" id="lang-switch">
+        <button data-lang="ru"><span class="flg">🇷🇺</span> Русский</button>
+        <button data-lang="pl"><span class="flg">🇵🇱</span> Polski</button>
+        <button data-lang="en"><span class="flg">🇬🇧</span> English</button>
+      </span>
+    </span>
     <a href="/login" class="btn ghost sm" data-i18n="nav_login">Войти</a>
     <a href="/login?mode=register" class="btn sm" data-i18n="nav_start">Начать бесплатно</a>
   </div>
@@ -961,7 +979,6 @@ body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
     </div>
   </div>
   <div class="foot-bottom">
-    <div class="fb-r" data-i18n="foot_tagline">© HR PRO AI · технология, которая чувствует людей</div>
     <div class="foot-langs"><span>RU</span><span>PL</span><span>EN</span></div>
   </div>
 </footer>
@@ -1446,8 +1463,15 @@ function applyLang(){
   document.title=t('page_title');
   renderHeroBars();renderPlans();renderFaq();renderPopBullets();
   document.querySelectorAll('#lang-switch button,#pop-lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  const FLG={ru:'🇷🇺',pl:'🇵🇱',en:'🇬🇧'},cur=document.getElementById('lang-dd-cur'),flg=document.getElementById('lang-dd-flag');
+  if(cur)cur.textContent=LANG.toUpperCase(); if(flg)flg.textContent=FLG[LANG]||'🌐';
 }
 document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+(function(){const dd=document.getElementById('lang-dd'),btn=document.getElementById('lang-dd-btn');
+  if(!dd||!btn)return;
+  btn.addEventListener('click',e=>{e.stopPropagation();dd.classList.toggle('open');});
+  dd.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>dd.classList.remove('open')));
+  document.addEventListener('click',()=>dd.classList.remove('open'));})();
 
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running';io.unobserve(e.target);}}));
 function bindReveal(nodes){nodes.forEach(el=>{const top=el.getBoundingClientRect().top;if(top>window.innerHeight){el.style.animationPlayState='paused';io.observe(el);}});}
