@@ -25,7 +25,7 @@ const EMAIL_I18N = {
 // Лого для писем — белый PNG (email-клиенты вырезают inline-SVG; белый гексагон виден на тёмной шапке).
 const ELOGO_IMG = (base, size) => `<img src="${base}/email/logo-white.png" width="${size}" height="${size}" alt="HR PRO AI" style="display:inline-block;vertical-align:middle;border:0">`;
 // Лого шапки — гексагон с нейро-узлами (по макету); футер использует простой ELOGO_IMG.
-const ELOGO_MARK = (base, size) => `<img src="${base}/email/logo-mark-white.png" width="${size}" height="${size}" alt="HR PRO AI" style="display:inline-block;vertical-align:middle;border:0">`;
+const ELOGO_MARK = (base, size) => `<img src="${base}/email/logo-net.png" width="${size}" height="${size}" alt="HR PRO AI" style="display:inline-block;vertical-align:middle;border:0">`;
 export async function unsubToken(secret, email) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('unsub:' + String(email || '').toLowerCase()));
