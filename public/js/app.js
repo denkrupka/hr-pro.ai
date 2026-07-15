@@ -1021,6 +1021,19 @@ async function renderVacProcess(body, id) {
       <div class="row" style="gap:10px;align-items:center">
         <button class="btn soft xs" id="vp-kn-add">+ ${rt('vp_kn_add')}</button>
         <span class="muted" style="font-size:12px;flex:1">${rt('vp_kn_hint')}</span></div></div>`;
+  // Рендер шага теста по ключу — чтобы шаги физически менялись местами по массиву order
+  const testBlock = key => {
+    if (key === 'result') return stRow(TEST_ICON.result, 'res-result', rt('vp_st_result'), '', ordArrows('result') + sw('stages.result', st.result !== false), { off: st.result === false })
+      + (st.result !== false ? aiRow('afterResult') : '')
+      + stRow(ICON_PHONE, '', rt('vp_st_references'), rt('vp_ref_hint'), sw('stages.references', st.references !== false), { off: st.references === false, style: 'background:#e4f6ec;color:#1f9d6b' });
+    if (key === 'tools') return stRow(TEST_ICON.tools, 'res-tools', rt('vp_st_tools'), '', ordArrows('tools') + sw('stages.tools', st.tools !== false), { off: st.tools === false })
+      + (st.tools !== false ? aiRow('afterTools') : '');
+    if (key === 'logic') return stRow(TEST_ICON.logic, 'res-logic', rt('vp_st_logic'), '', ordArrows('logic') + sw('optional.logic', !!op.logic), { off: !op.logic });
+    if (key === 'sales') return stRow(TEST_ICON.sales, 'res-sales', rt('vp_st_sales'), '', ordArrows('sales') + sw('optional.sales', !!op.sales), { off: !op.sales });
+    if (key === 'knowledge') return stRow(ICON_KNOWLEDGE, 'res-knowledge', rt('vp_st_knowledge'), '', ordArrows('knowledge') + sw('stages.knowledge', st.knowledge !== false), { off: st.knowledge === false })
+      + (st.knowledge !== false ? knList : '');
+    return '';
+  };
   body.innerHTML = `
     <div class="card" style="margin-bottom:14px"><div class="row" style="gap:16px;align-items:center">
       <div style="flex:1;min-width:0"><b style="font-size:15px">${rt('vp_auto')}</b>
@@ -1034,17 +1047,9 @@ async function renderVacProcess(body, id) {
       <p class="muted" style="margin:0 0 12px;font-size:12.5px">${rt('vp_stages_hint')}</p>
       <div class="vp-list">
         ${aiRow('first')}
-        ${stRow(TEST_ICON.result, 'res-result', rt('vp_st_result'), '', ordArrows('result') + sw('stages.result', st.result !== false), { off: st.result === false })}
-        ${st.result !== false ? aiRow('afterResult') : ''}
-        ${stRow(ICON_PHONE, '', rt('vp_st_references'), rt('vp_ref_hint'), sw('stages.references', st.references !== false), { off: st.references === false, style: 'background:#e4f6ec;color:#1f9d6b' })}
-        ${stRow(TEST_ICON.tools, 'res-tools', rt('vp_st_tools'), '', ordArrows('tools') + sw('stages.tools', st.tools !== false), { off: st.tools === false })}
-        ${st.tools !== false ? aiRow('afterTools') : ''}
-        ${stRow(TEST_ICON.logic, 'res-logic', rt('vp_st_logic'), '', ordArrows('logic') + sw('optional.logic', !!op.logic), { off: !op.logic })}
-        ${stRow(TEST_ICON.sales, 'res-sales', rt('vp_st_sales'), '', ordArrows('sales') + sw('optional.sales', !!op.sales), { off: !op.sales })}
+        ${order.map(testBlock).join('')}
         ${stRow(ICON_FLAME, '', rt('vp_st_motivation'), '', sw('stages.motivation', st.motivation !== false), { off: st.motivation === false, style: 'background:#fff0e6;color:#d3641e' })}
         ${st.motivation !== false ? aiRow('motivation') : ''}
-        ${stRow(ICON_KNOWLEDGE, 'res-knowledge', rt('vp_st_knowledge'), '', ordArrows('knowledge') + sw('stages.knowledge', st.knowledge !== false), { off: st.knowledge === false })}
-        ${st.knowledge !== false ? knList : ''}
       </div></div>
     <div class="card" style="margin-top:14px"><div class="cfg-h">${rt('vp_crit_h')}</div>
       <p class="muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.5">${rt('vp_crit_hint')}</p>
