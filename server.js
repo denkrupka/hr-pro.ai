@@ -11,6 +11,7 @@ const sales = require('./src/scoring/sales');
 const ai = require('./src/ai');
 const recruit = require('./src/recruitment');
 const air = require('./src/ai-recruit');
+const learn = require('./src/learning');
 const integ = require('./src/integrations');
 const { localizeResult } = require('./src/i18n-content');
 const RES_LANGS = ['ru', 'pl', 'en'];
@@ -1496,6 +1497,60 @@ app.get('/api/education/:slug', requireAuth, (req, res) => {
   const file = t && eduFile(t.slug, lang);
   if (!t || !fs.existsSync(file)) return res.status(404).json({ error: 'Материал не найден' });
   res.json({ topic: eduTopicView(t, lang), markdown: fs.readFileSync(file, 'utf8') });
+});
+
+// ---------- Платные программы обучения ----------
+function userBalanceAvail(u) { return (u.balanceTotal || 0) - (u.balancePending || 0); }
+app.get('/api/learning', requireAuth, (req, res) => {
+  const lang = pickLang(req);
+  res.json({ programs: learn.listView(req.user, lang), balance: userBalanceAvail(req.user) });
+});
+app.get('/api/learning/:id', requireAuth, (req, res) => {
+  const lang = pickLang(req);
+  const d = learn.detailView(req.user, req.params.id, lang);
+  if (!d) return res.status(404).json({ error: 'Программа не найдена' });
+  res.json({ program: d, balance: userBalanceAvail(req.user) });
+});
+app.post('/api/learning/:id/buy', requireAuth, (req, res) => {
+  const lang = pickLang(req);
+  const p = learn.progOf(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Программа не найдена' });
+  if (!learn.unlocked(req.user, p)) return res.status(403).json({ error: 'Сначала завершите предыдущую программу' });
+  if (learn.progressFor(req.user, p).purchased) return res.status(400).json({ error: 'Программа уже куплена' });
+  if (userBalanceAvail(req.user) < p.price) return res.status(402).json({ error: 'Недостаточно баланса', need: p.price });
+  req.user.balanceTotal = Math.max(0, (req.user.balanceTotal || 0) - p.price);
+  spendLots(req.user, p.price);
+  logBalance(req.user.id, -p.price, 'learning', { comment: 'Программа обучения: ' + learn.L(p.title, 'ru') });
+  req.user.learning = req.user.learning || {};
+  req.user.learning[p.id] = { boughtAt: nowISO(), sectionsDone: [], quizPassed: false, quizBest: 0, completedAt: null };
+  db().purchases.push({ id: uid(12), userId: req.user.id, kind: 'learning', programId: p.id, qty: 0, amount: p.price, method: 'balance', status: 'paid', createdAt: nowISO() });
+  save();
+  res.json({ ok: true, balance: userBalanceAvail(req.user), program: learn.detailView(req.user, p.id, lang) });
+});
+app.post('/api/learning/:id/section/:sid', requireAuth, (req, res) => {
+  const lang = pickLang(req);
+  const p = learn.progOf(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Программа не найдена' });
+  const st = req.user.learning && req.user.learning[p.id];
+  if (!st || !st.boughtAt) return res.status(403).json({ error: 'Программа не куплена' });
+  if (!p.sections.find(s => s.id === req.params.sid)) return res.status(404).json({ error: 'Раздел не найден' });
+  st.sectionsDone = st.sectionsDone || [];
+  if (!st.sectionsDone.includes(req.params.sid)) st.sectionsDone.push(req.params.sid);
+  save();
+  res.json({ ok: true, program: learn.detailView(req.user, p.id, lang) });
+});
+app.post('/api/learning/:id/quiz', requireAuth, (req, res) => {
+  const lang = pickLang(req);
+  const p = learn.progOf(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Программа не найдена' });
+  const st = req.user.learning && req.user.learning[p.id];
+  if (!st || !st.boughtAt) return res.status(403).json({ error: 'Программа не куплена' });
+  if (!learn.progressFor(req.user, p).allSectionsDone) return res.status(400).json({ error: 'Сначала пройдите все разделы' });
+  const r = learn.checkQuiz(p, (req.body && req.body.answers) || {});
+  st.quizBest = Math.max(st.quizBest || 0, r.pct);
+  if (r.passed) { st.quizPassed = true; if (!st.completedAt) st.completedAt = nowISO(); }
+  save();
+  res.json({ correct: r.correct, total: r.total, pct: r.pct, passed: r.passed, program: learn.detailView(req.user, p.id, lang) });
 });
 
 // ========== RECRUITMENT WORKFLOW ==========

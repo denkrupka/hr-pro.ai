@@ -39,6 +39,15 @@ const I18N = {
     nav_vacancies: 'Рекрутация', rec_applications: 'Заявки', rec_vacancies: 'Вакансии', nav_anketas: 'Анкеты', nav_candidates: 'Кандидаты', nav_tests: 'Тесты', nav_education: 'Обучение', nav_integrations: 'Интеграции', nav_balance: 'Баланс', nav_faq: 'FAQ', nav_settings: 'Настройки', nav_logout: 'Выйти', nav_theme: 'Тема',
     brand_tag: 'Технология, которая<br>чувствует людей', role_admin: 'Администратор',
     edu: 'Обучение', edu_kb: 'База знаний', edu_soon: 'Материалы готовятся.', loading: 'Загрузка…',
+    edu_free: 'Бесплатные', edu_paid: 'Платные', lp_programs: 'Программы обучения', lp_none: 'Программы скоро появятся.',
+    lp_price: 'Цена', lp_tests_unit: 'тестов', lp_sections: 'разделов', lp_progress: 'Прогресс', lp_locked: 'Заблокировано',
+    lp_locked_hint: 'Сначала завершите предыдущую программу', lp_buy: 'Купить', lp_open: 'Открыть', lp_continue: 'Продолжить',
+    lp_completed: 'Завершена', lp_purchased: 'Куплена', lp_not_enough: 'Недостаточно баланса', lp_topup: 'Пополнить',
+    lp_buy_confirm: 'Купить программу «{t}» за {n} тестов?', lp_bought: 'Программа куплена', lp_back: '← К программам',
+    lp_content: 'Содержание', lp_section: 'Раздел', lp_mark_done: 'Отметить пройденным', lp_done: 'Пройдено',
+    lp_quiz: 'Итоговый тест', lp_quiz_locked: 'Пройдите все разделы, чтобы открыть тест', lp_quiz_pass: 'Порог прохождения',
+    lp_quiz_submit: 'Проверить', lp_quiz_passed: 'Тест сдан — программа завершена!', lp_quiz_failed: 'Не сдано. Повторите: верно {c} из {t} ({p}%)',
+    lp_quiz_result: 'Результат: {c} из {t} ({p}%)', lp_pick_answer: 'Ответьте на все вопросы', lp_your_balance: 'Ваш баланс',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
@@ -82,6 +91,15 @@ const I18N = {
     nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj', nav_theme: 'Motyw',
     brand_tag: 'Technologia, która<br>czuje ludzi', role_admin: 'Administrator',
     edu: 'Szkolenia', edu_kb: 'Baza wiedzy', edu_soon: 'Materiały w przygotowaniu.', loading: 'Ładowanie…',
+    edu_free: 'Bezpłatne', edu_paid: 'Płatne', lp_programs: 'Programy szkoleniowe', lp_none: 'Programy wkrótce się pojawią.',
+    lp_price: 'Cena', lp_tests_unit: 'testów', lp_sections: 'rozdziałów', lp_progress: 'Postęp', lp_locked: 'Zablokowane',
+    lp_locked_hint: 'Najpierw ukończ poprzedni program', lp_buy: 'Kup', lp_open: 'Otwórz', lp_continue: 'Kontynuuj',
+    lp_completed: 'Ukończony', lp_purchased: 'Kupiony', lp_not_enough: 'Za mało salda', lp_topup: 'Doładuj',
+    lp_buy_confirm: 'Kupić program „{t}” za {n} testów?', lp_bought: 'Program kupiony', lp_back: '← Do programów',
+    lp_content: 'Spis treści', lp_section: 'Rozdział', lp_mark_done: 'Oznacz jako ukończony', lp_done: 'Ukończono',
+    lp_quiz: 'Test końcowy', lp_quiz_locked: 'Ukończ wszystkie rozdziały, aby odblokować test', lp_quiz_pass: 'Próg zaliczenia',
+    lp_quiz_submit: 'Sprawdź', lp_quiz_passed: 'Test zdany — program ukończony!', lp_quiz_failed: 'Niezaliczone. Spróbuj ponownie: poprawnie {c} z {t} ({p}%)',
+    lp_quiz_result: 'Wynik: {c} z {t} ({p}%)', lp_pick_answer: 'Odpowiedz na wszystkie pytania', lp_your_balance: 'Twoje saldo',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
@@ -125,6 +143,15 @@ const I18N = {
     nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out', nav_theme: 'Theme',
     brand_tag: 'Technology that<br>reads people', role_admin: 'Administrator',
     edu: 'Learning', edu_kb: 'Knowledge base', edu_soon: 'Materials are being prepared.', loading: 'Loading…',
+    edu_free: 'Free', edu_paid: 'Paid', lp_programs: 'Training programs', lp_none: 'Programs are coming soon.',
+    lp_price: 'Price', lp_tests_unit: 'tests', lp_sections: 'sections', lp_progress: 'Progress', lp_locked: 'Locked',
+    lp_locked_hint: 'Complete the previous program first', lp_buy: 'Buy', lp_open: 'Open', lp_continue: 'Continue',
+    lp_completed: 'Completed', lp_purchased: 'Purchased', lp_not_enough: 'Not enough balance', lp_topup: 'Top up',
+    lp_buy_confirm: 'Buy the program “{t}” for {n} tests?', lp_bought: 'Program purchased', lp_back: '← To programs',
+    lp_content: 'Contents', lp_section: 'Section', lp_mark_done: 'Mark as done', lp_done: 'Done',
+    lp_quiz: 'Final test', lp_quiz_locked: 'Complete all sections to unlock the test', lp_quiz_pass: 'Pass threshold',
+    lp_quiz_submit: 'Check', lp_quiz_passed: 'Test passed — program completed!', lp_quiz_failed: 'Not passed. Try again: {c} of {t} correct ({p}%)',
+    lp_quiz_result: 'Result: {c} of {t} ({p}%)', lp_pick_answer: 'Answer all questions', lp_your_balance: 'Your balance',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
     dash_overview: 'Overview', dash_title: 'Dashboard', balance: 'Balance',
@@ -169,6 +196,7 @@ const FAQ_CAT_KEY = { 'С чего начать': 'faqcat_start', 'Общие в
 function faqCat(name) { return t(FAQ_CAT_KEY[name] || '') !== (FAQ_CAT_KEY[name] || '') ? t(FAQ_CAT_KEY[name]) : name; }
 function testDesc(ty) { return t('desc_' + ty); }
 function t(k) { return (I18N[LANG] && I18N[LANG][k] != null) ? I18N[LANG][k] : (I18N.ru[k] != null ? I18N.ru[k] : k); }
+function tv(k, vars) { return String(t(k)).replace(/\{(\w+)\}/g, (m, n) => (vars && vars[n] != null ? vars[n] : m)); }
 // перевод серверных названий этапов/воронки (данные приходят на русском)
 const STAGE_I18N = {
   'Без этапа': { pl: 'Bez etapu', en: 'No stage' }, 'Новый': { pl: 'Nowy', en: 'New' },
@@ -2946,15 +2974,23 @@ function docVideo(type, kind, heading) {
   return `<div class="doc-video">${heading ? `<div class="dv-head">${_svg('<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>')}<span>${esc(heading)}</span></div>` : ''}
     <video class="doc-vid" controls preload="metadata" src="${MEDIA_BASE}/${type}_${kind}_${vidLang()}.mp4"></video></div>`;
 }
+function eduModeToggle() {
+  const m = state.eduMode || 'free';
+  return `<div class="edu-modes reveal d1"><button class="edu-mode ${m === 'free' ? 'on' : ''}" data-emode="free">${t('edu_free')}</button><button class="edu-mode ${m === 'paid' ? 'on' : ''}" data-emode="paid">${t('edu_paid')}</button></div>`;
+}
+function wireEduModes() { $$('[data-emode]').forEach(b => b.onclick = () => { const m = b.dataset.emode; if (m === (state.eduMode || 'free')) return; state.eduMode = m; m === 'paid' ? renderLearning() : renderEducation(); }); }
 async function renderEducation(slug) {
+  state.eduMode = 'free';
   const topics = (await api('/api/education?lang=' + LANG)).topics;
-  if (!topics.length) { $('#main').innerHTML = `<h1 class="page-h">${t('edu')}</h1><div class="card"><p class="muted">${t('edu_soon')}</p></div>`; return; }
+  const head = `<div class="eyebrow reveal">${t('edu_kb')}</div><h1 class="page-h reveal d1" style="margin-top:10px">${t('edu')}</h1>${eduModeToggle()}`;
+  if (!topics.length) { $('#main').innerHTML = `${head}<div class="card reveal d2"><p class="muted">${t('edu_soon')}</p></div>`; wireEduModes(); return; }
   const prev = state.eduSlug;
   const active = slug || (state.eduSlug && topics.find(t2 => t2.slug === state.eduSlug) ? state.eduSlug : topics[0].slug);
   if (active !== prev) eduTab = 'info';
   state.eduSlug = active;
   const menu = topics.map(tp => `<button class="edu-item ${tp.slug === active ? 'active' : ''}" data-slug="${tp.slug}"><span class="edu-ic">${EDU_SVG[tp.slug] || ''}</span><span>${esc(tp.title)}</span></button>`).join('');
-  $('#main').innerHTML = `<div class="eyebrow reveal">${t('edu_kb')}</div><h1 class="page-h reveal d1" style="margin-top:10px">${t('edu')}</h1><div class="edu-layout reveal d2"><div class="edu-nav">${menu}</div><div class="edu-main"><div class="edu-tabbar" id="edu-tabbar"></div><div class="card edu-content" id="edu-content"><p class="muted">${t('loading')}</p></div></div></div>`;
+  $('#main').innerHTML = `${head}<div class="edu-layout reveal d2"><div class="edu-nav">${menu}</div><div class="edu-main"><div class="edu-tabbar" id="edu-tabbar"></div><div class="card edu-content" id="edu-content"><p class="muted">${t('loading')}</p></div></div></div>`;
+  wireEduModes();
   $$('.edu-item').forEach(b => b.onclick = () => renderEducation(b.dataset.slug));
   const cfg = EDU_DOCS[active];
   const doc = await api('/api/education/' + active + '?lang=' + LANG).catch(() => ({ markdown: '' }));
@@ -2986,6 +3022,108 @@ function fitEduHeight() {
   setTimeout(apply, 60); // повтор после раскладки контента
 }
 window.addEventListener('resize', () => { if (document.getElementById('edu-content')) fitEduHeight(); });
+
+// ============ ПЛАТНЫЕ ПРОГРАММЫ ОБУЧЕНИЯ ============
+const LP_LOCK = _svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/>');
+const LP_CHECK = _svg('<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>');
+function lpProgressBar(pct) { return `<div class="lp-track"><div class="lp-fill" style="width:${Math.max(2, pct)}%"></div></div>`; }
+async function renderLearning() {
+  state.eduMode = 'paid';
+  const head = `<div class="eyebrow reveal">${t('edu_kb')}</div><h1 class="page-h reveal d1" style="margin-top:10px">${t('edu')}</h1>${eduModeToggle()}`;
+  $('#main').innerHTML = `${head}<div class="card reveal d2"><p class="muted">${t('loading')}</p></div>`;
+  wireEduModes();
+  let data; try { data = await api('/api/learning?lang=' + LANG); } catch (e) { return; }
+  if (state.eduMode !== 'paid') return; // пользователь переключился, пока грузилось
+  const progs = data.programs || [];
+  if (!progs.length) { $('#main').innerHTML = `${head}<div class="card reveal d2"><p class="muted">${t('lp_none')}</p></div>`; wireEduModes(); return; }
+  const cards = progs.map((p, i) => {
+    const locked = !p.unlocked && !p.purchased;
+    let badge = '', action = '';
+    if (p.completed) badge = `<span class="lp-badge done">${LP_CHECK}${t('lp_completed')}</span>`;
+    else if (p.purchased) badge = `<span class="lp-badge">${t('lp_purchased')}</span>`;
+    else if (locked) badge = `<span class="lp-badge lock">${LP_LOCK}${t('lp_locked')}</span>`;
+    if (p.purchased) action = `<button class="btn soft sm" data-lp-open="${p.id}">${p.completed ? t('lp_open') : t('lp_continue')}</button>`;
+    else if (locked) action = `<button class="btn ghost sm" disabled title="${t('lp_locked_hint')}">${t('lp_buy')}</button>`;
+    else action = `<button class="btn sm" data-lp-buy="${p.id}">${t('lp_buy')} · ${p.price} <span class="lp-unit">${t('lp_tests_unit')}</span></button>`;
+    const bar = p.purchased ? `<div class="lp-prog"><div class="lp-prog-h"><span>${t('lp_progress')}</span><span class="mono">${p.done}/${p.total} · ${p.pct}%</span></div>${lpProgressBar(p.pct)}</div>` : '';
+    return `<div class="lp-card ${locked ? 'locked' : ''} reveal" style="animation-delay:${i * 60}ms">
+      <div class="lp-card-top"><span class="lp-num">${p.order}</span><div class="lp-card-h"><b>${esc(p.title)}</b>${badge}</div></div>
+      <p class="lp-desc">${esc(p.desc)}</p>
+      <div class="lp-meta"><span>${p.sectionsCount} ${t('lp_sections')}</span><span class="lp-dot">·</span><span>${t('lp_price')}: <b>${p.price} ${t('lp_tests_unit')}</b></span></div>
+      ${bar}
+      <div class="lp-actions">${action}</div>
+    </div>`;
+  }).join('');
+  $('#main').innerHTML = `${head}<div class="lp-topbar reveal d2"><span class="muted">${t('lp_programs')}</span><span class="lp-balance">${t('lp_your_balance')}: <b>${data.balance}</b> ${t('lp_tests_unit')}</span></div><div class="lp-grid reveal d2">${cards}</div>`;
+  wireEduModes();
+  $$('[data-lp-open]').forEach(b => b.onclick = () => openLearningProgram(b.dataset.lpOpen));
+  $$('[data-lp-buy]').forEach(b => b.onclick = () => buyLearning(b.dataset.lpBuy, progs.find(x => x.id === b.dataset.lpBuy)));
+}
+async function buyLearning(id, p) {
+  if (!confirm(tv('lp_buy_confirm', { t: p.title, n: p.price }))) return;
+  try {
+    const d = await api('/api/learning/' + id + '/buy', { method: 'POST', body: '{}' });
+    if (d.balance != null && state.user) state.user.balanceAvailable = d.balance;
+    toast(t('lp_bought'));
+    openLearningProgram(id);
+  } catch (e) {
+    if (/баланс|balance|salda/i.test(e.message)) { if (confirm(t('lp_not_enough') + '. ' + t('lp_topup') + '?')) setView('balance'); }
+    else toast(e.message);
+  }
+}
+async function openLearningProgram(id) {
+  state.eduMode = 'paid';
+  const head = `<div class="eyebrow reveal">${t('edu_kb')}</div><h1 class="page-h reveal d1" style="margin-top:10px">${t('edu')}</h1>${eduModeToggle()}`;
+  $('#main').innerHTML = `${head}<div class="card reveal d2"><p class="muted">${t('loading')}</p></div>`;
+  wireEduModes();
+  let d; try { d = await api('/api/learning/' + id + '?lang=' + LANG); } catch (e) { renderLearning(); return; }
+  const p = d.program;
+  const sections = p.sections.map((s, i) => `<div class="lp-sec ${s.done ? 'done' : ''}" id="lp-sec-${s.id}">
+      <div class="lp-sec-h"><span class="lp-sec-n">${s.done ? LP_CHECK : (i + 1)}</span><b>${esc(s.title)}</b></div>
+      <div class="lp-sec-body">${s.html || ''}</div>
+      <div class="lp-sec-foot">${s.done ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span>` : `<button class="btn soft sm" data-lp-sec="${s.id}">${t('lp_mark_done')}</button>`}</div>
+    </div>`).join('');
+  const quizLocked = !p.allSectionsDone;
+  let quizHtml;
+  if (p.completed) {
+    quizHtml = `<div class="lp-quiz done"><div class="lp-quiz-h">${LP_CHECK}<b>${t('lp_quiz_passed')}</b></div></div>`;
+  } else if (quizLocked) {
+    quizHtml = `<div class="lp-quiz locked"><div class="lp-quiz-h">${LP_LOCK}<b>${t('lp_quiz')}</b></div><p class="muted">${t('lp_quiz_locked')}</p></div>`;
+  } else {
+    const qs = p.quiz.questions.map((q, qi) => `<div class="lp-q" data-qi="${qi}"><div class="lp-q-t"><b>${qi + 1}.</b> ${esc(q.q)}</div>
+      <div class="lp-opts">${q.opts.map((o, oi) => `<label class="lp-opt"><input type="radio" name="lpq${qi}" value="${oi}"><span>${esc(o)}</span></label>`).join('')}</div></div>`).join('');
+    quizHtml = `<div class="lp-quiz"><div class="lp-quiz-h"><b>${t('lp_quiz')}</b><span class="muted" style="font-size:13px">${t('lp_quiz_pass')}: ${p.quiz.passScore}%</span></div>
+      ${qs}<div id="lp-quiz-msg" class="lp-quiz-msg"></div><button class="btn" id="lp-quiz-go">${t('lp_quiz_submit')}</button></div>`;
+  }
+  $('#main').innerHTML = `${head}
+    <button class="lp-backlink reveal d2" id="lp-back">${t('lp_back')}</button>
+    <div class="lp-detail reveal d2">
+      <div class="lp-detail-head"><div><span class="lp-num big">${p.order}</span></div><div style="flex:1"><h2 class="lp-title">${esc(p.title)}</h2><p class="lp-desc">${esc(p.desc)}</p>
+        <div class="lp-prog"><div class="lp-prog-h"><span>${t('lp_progress')}</span><span class="mono">${p.done}/${p.total} · ${p.pct}%</span></div>${lpProgressBar(p.pct)}</div></div></div>
+      <h3 class="lp-sub">${t('lp_content')}</h3>
+      <div class="lp-secs">${sections}</div>
+      ${quizHtml}
+    </div>`;
+  wireEduModes();
+  $('#lp-back').onclick = () => renderLearning();
+  $$('[data-lp-sec]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try { await api('/api/learning/' + id + '/section/' + b.dataset.lpSec, { method: 'POST', body: '{}' }); openLearningProgram(id); }
+    catch (e) { toast(e.message); b.disabled = false; }
+  });
+  const go = $('#lp-quiz-go');
+  if (go) go.onclick = async () => {
+    const answers = {}; let missing = false;
+    p.quiz.questions.forEach((q, qi) => { const sel = document.querySelector(`input[name="lpq${qi}"]:checked`); if (!sel) missing = true; else answers[qi] = +sel.value; });
+    if (missing) { $('#lp-quiz-msg').textContent = t('lp_pick_answer'); $('#lp-quiz-msg').className = 'lp-quiz-msg warn'; return; }
+    go.disabled = true;
+    try {
+      const r = await api('/api/learning/' + id + '/quiz', { method: 'POST', body: JSON.stringify({ answers }) });
+      if (r.passed) { toast(t('lp_quiz_passed')); openLearningProgram(id); }
+      else { const m = $('#lp-quiz-msg'); m.textContent = tv('lp_quiz_failed', { c: r.correct, t: r.total, p: r.pct }); m.className = 'lp-quiz-msg bad'; go.disabled = false; }
+    } catch (e) { toast(e.message); go.disabled = false; }
+  };
+}
 async function renderSearch() {
   $('#main').innerHTML = `<div class="eyebrow reveal">Поиск</div><h1 class="page-h reveal d1" style="margin-top:10px">Найти кандидата</h1><div class="card reveal d2"><div class="search-wrap"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="gs" aria-label="Поиск кандидата" placeholder="Имя, email, телефон, город…" autofocus></div><div class="table-wrap" style="margin-top:16px;box-shadow:none"><table><thead><tr><th>Кандидат</th><th>Почта</th><th>Телефон</th><th>Город</th><th>Вакансия</th></tr></thead><tbody id="gs-rows"></tbody></table></div></div>`;
   await loadParticipantsAll();

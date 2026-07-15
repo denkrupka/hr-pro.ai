@@ -511,6 +511,78 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .edu-table td,.edu-table th{border:1px solid var(--line);padding:10px 13px;text-align:left}
 .edu-table tr:first-child td{background:var(--surface-2);font-weight:700}
 
+/* ---------------- Обучение: переключатель Бесплатные/Платные ---------------- */
+.edu-modes{display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;margin:14px 0 20px}
+.edu-modes .edu-mode{padding:9px 22px;border-radius:999px;font-weight:700;font-size:14px;color:var(--muted);transition:all var(--d1) var(--ease)}
+.edu-modes .edu-mode:hover{color:var(--text)}
+.edu-modes .edu-mode.on{background:linear-gradient(120deg,var(--brand),var(--brand-2));color:#fff;box-shadow:var(--sh-brand)}
+
+/* ---------------- Платные программы: список ---------------- */
+.lp-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:14px;flex-wrap:wrap}
+.lp-balance{font-size:14px;color:var(--text-2)}.lp-balance b{color:var(--text)}
+.lp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.lp-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;display:flex;flex-direction:column;gap:12px;transition:border-color var(--d1) var(--ease),transform var(--d1) var(--ease)}
+.lp-card:hover{border-color:var(--brand);transform:translateY(-3px)}
+.lp-card.locked{opacity:.72}
+.lp-card-top{display:flex;align-items:flex-start;gap:13px}
+.lp-num{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:16px;background:linear-gradient(120deg,var(--brand),var(--brand-2));color:#fff}
+.lp-num.big{width:44px;height:44px;font-size:20px;border-radius:14px}
+.lp-card-h{flex:1;display:flex;flex-direction:column;gap:6px}
+.lp-card-h b{font-size:16.5px;line-height:1.3;font-family:'Manrope',sans-serif}
+.lp-badge{display:inline-flex;align-items:center;gap:5px;align-self:flex-start;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:4px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.lp-badge svg{width:13px;height:13px}
+.lp-badge.done{background:rgba(18,184,134,.16);color:#12b886}
+.lp-badge.lock{background:var(--surface-2);color:var(--muted)}
+.lp-desc{color:var(--text-2);font-size:13.6px;line-height:1.55;margin:0}
+.lp-meta{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.lp-meta b{color:var(--text)}.lp-dot{opacity:.5}
+.lp-unit{font-weight:500;opacity:.85}
+.lp-prog{margin-top:2px}
+.lp-prog-h{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.lp-track{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.lp-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand-2));transition:width .5s var(--ease)}
+.lp-actions{margin-top:auto;display:flex;gap:8px}
+.lp-actions .btn{width:100%;justify-content:center}
+
+/* ---------------- Платные программы: детальная страница ---------------- */
+.lp-backlink{color:var(--muted);font-weight:650;font-size:14px;margin-bottom:14px;transition:color var(--d1) var(--ease)}
+.lp-backlink:hover{color:var(--brand)}
+.lp-detail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:26px 28px}
+.lp-detail-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:22px}
+.lp-title{margin:0 0 6px;font-size:23px;font-family:'Manrope',sans-serif}
+.lp-sub{font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--brand);margin:0 0 12px}
+.lp-secs{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.lp-sec{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;background:var(--surface-2)}
+.lp-sec.done{border-color:rgba(18,184,134,.35)}
+.lp-sec-h{display:flex;align-items:center;gap:11px;margin-bottom:8px}
+.lp-sec-n{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.lp-sec.done .lp-sec-n{background:rgba(18,184,134,.16);border-color:transparent;color:#12b886}
+.lp-sec-n svg{width:15px;height:15px}
+.lp-sec-h b{font-size:15.5px;font-family:'Manrope',sans-serif}
+.lp-sec-body{color:var(--text-2);line-height:1.65;font-size:14px;padding-left:37px}
+.lp-sec-body p{margin:9px 0}.lp-sec-body ul,.lp-sec-body ol{margin:9px 0;padding-left:20px}.lp-sec-body li{margin:5px 0}
+.lp-sec-body b{color:var(--text)}
+.lp-sec-foot{padding-left:37px;margin-top:12px}
+.lp-done-tag{display:inline-flex;align-items:center;gap:6px;color:#12b886;font-weight:700;font-size:13.5px}
+.lp-done-tag svg{width:16px;height:16px}
+.lp-quiz{border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;background:var(--surface-2)}
+.lp-quiz.locked,.lp-quiz.done{text-align:left}
+.lp-quiz.done{border-color:rgba(18,184,134,.35);background:rgba(18,184,134,.08)}
+.lp-quiz-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.lp-quiz-h b{font-size:17px;font-family:'Manrope',sans-serif}
+.lp-quiz-h svg{width:20px;height:20px;color:var(--muted)}
+.lp-quiz.done .lp-quiz-h svg{color:#12b886}
+.lp-q{margin:14px 0}
+.lp-q-t{font-size:14.5px;margin-bottom:9px;line-height:1.5}
+.lp-opts{display:flex;flex-direction:column;gap:7px}
+.lp-opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:var(--r-sm);cursor:pointer;transition:border-color var(--d1) var(--ease),background var(--d1) var(--ease);font-size:14px}
+.lp-opt:hover{border-color:var(--brand)}
+.lp-opt input{accent-color:var(--brand);width:17px;height:17px;flex:none}
+.lp-opt:has(input:checked){border-color:var(--brand);background:var(--brand-soft,rgba(124,92,255,.1))}
+.lp-quiz-msg{margin:12px 0;font-size:14px;font-weight:600;min-height:1px}
+.lp-quiz-msg.warn{color:var(--warn)}.lp-quiz-msg.bad{color:var(--bad)}
+@media(max-width:640px){.lp-grid{grid-template-columns:1fr}.lp-sec-body,.lp-sec-foot{padding-left:0}}
+
 /* ---------------- balance / pricing ---------------- */
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
 .plan{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:26px;position:relative;

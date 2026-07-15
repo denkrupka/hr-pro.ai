@@ -12,6 +12,7 @@ import { parseCV, cvSummary } from './cv-parse.js';
 import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
+import * as learn from '../src/learning.js';
 import { PORTALS as JOB_PORTALS, connectionsOf as jpConns, isConnected as jpIsConnected } from './job-portals-data.js';
 
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
@@ -1432,6 +1433,62 @@ async function api(req, env, url) {
       if (!topic || !c) return j({ error: 'Материал не найден' }, 404);
       const markdown = c[lang] || c.ru || '';
       return j({ topic: { slug: topic.slug, title: eduTitle(topic) }, markdown });
+    }
+  }
+
+  // ── ПЛАТНЫЕ ПРОГРАММЫ ОБУЧЕНИЯ ──
+  if (p === '/api/learning' || p.startsWith('/api/learning/')) {
+    if (!me) return needAuth();
+    const avail = (u) => (u.balanceTotal || 0) - (u.balancePending || 0);
+    if (p === '/api/learning' && m === 'GET') {
+      return j({ programs: learn.listView(me, lang), balance: avail(me) });
+    }
+    let mL = p.match(/^\/api\/learning\/([\w-]+)$/);
+    if (mL && m === 'GET') {
+      const d = learn.detailView(me, mL[1], lang);
+      if (!d) return j({ error: 'Программа не найдена' }, 404);
+      return j({ program: d, balance: avail(me) });
+    }
+    let mBuy = p.match(/^\/api\/learning\/([\w-]+)\/buy$/);
+    if (mBuy && m === 'POST') {
+      const prog = learn.progOf(mBuy[1]);
+      if (!prog) return j({ error: 'Программа не найдена' }, 404);
+      if (!learn.unlocked(me, prog)) return j({ error: 'Сначала завершите предыдущую программу' }, 403);
+      if (learn.progressFor(me, prog).purchased) return j({ error: 'Программа уже куплена' }, 400);
+      if (avail(me) < prog.price) return j({ error: 'Недостаточно баланса', need: prog.price }, 402);
+      me.balanceTotal = Math.max(0, (me.balanceTotal || 0) - prog.price);
+      spendLots(me, prog.price);
+      me.learning = me.learning || {};
+      me.learning[prog.id] = { boughtAt: new Date().toISOString(), sectionsDone: [], quizPassed: false, quizBest: 0, completedAt: null };
+      await saveUser(me);
+      await logBalance(me, -prog.price, 'learning', { comment: 'Программа обучения: ' + learn.L(prog.title, 'ru') });
+      await S.upsert('purchases', { id: uid(12), data: { id: uid(12), userId: me.id, kind: 'learning', programId: prog.id, qty: 0, amount: prog.price, method: 'balance', status: 'paid', createdAt: new Date().toISOString() } });
+      return j({ ok: true, balance: avail(me), program: learn.detailView(me, prog.id, lang) });
+    }
+    let mSec = p.match(/^\/api\/learning\/([\w-]+)\/section\/([\w-]+)$/);
+    if (mSec && m === 'POST') {
+      const prog = learn.progOf(mSec[1]);
+      if (!prog) return j({ error: 'Программа не найдена' }, 404);
+      const st = me.learning && me.learning[prog.id];
+      if (!st || !st.boughtAt) return j({ error: 'Программа не куплена' }, 403);
+      if (!prog.sections.find(s => s.id === mSec[2])) return j({ error: 'Раздел не найден' }, 404);
+      st.sectionsDone = st.sectionsDone || [];
+      if (!st.sectionsDone.includes(mSec[2])) st.sectionsDone.push(mSec[2]);
+      await saveUser(me);
+      return j({ ok: true, program: learn.detailView(me, prog.id, lang) });
+    }
+    let mQuiz = p.match(/^\/api\/learning\/([\w-]+)\/quiz$/);
+    if (mQuiz && m === 'POST') {
+      const prog = learn.progOf(mQuiz[1]);
+      if (!prog) return j({ error: 'Программа не найдена' }, 404);
+      const st = me.learning && me.learning[prog.id];
+      if (!st || !st.boughtAt) return j({ error: 'Программа не куплена' }, 403);
+      if (!learn.progressFor(me, prog).allSectionsDone) return j({ error: 'Сначала пройдите все разделы' }, 400);
+      const r = learn.checkQuiz(prog, (body && body.answers) || {});
+      st.quizBest = Math.max(st.quizBest || 0, r.pct);
+      if (r.passed) { st.quizPassed = true; if (!st.completedAt) st.completedAt = new Date().toISOString(); }
+      await saveUser(me);
+      return j({ correct: r.correct, total: r.total, pct: r.pct, passed: r.passed, program: learn.detailView(me, prog.id, lang) });
     }
   }
 
