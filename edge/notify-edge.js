@@ -14,13 +14,13 @@ const DEFAULT_SMS = {
 // ---------- Дизайн-обёртка письма (единый шаблон HR PRO AI) ----------
 const EMAIL_I18N = {
   ru: { eyebrow: 'Приглашение на оценку', tagline: 'Технология, которая чувствует людей', mission: 'Мы раскрываем личность, чтобы вы создавали сильные команды.', help: 'Помощь', privacy: 'Конфиденциальность', terms: 'Условия', unsub: 'Отписаться', cta: 'Начать оценку', rights: 'Все права защищены.',
-    legal: 'Вы получили это письмо, потому что участвуете в подборе через платформу HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
+    legal: 'Вы получили это письмо, потому что участвуете в подборе через платформу HR PRO AI.' },
   pl: { eyebrow: 'Zaproszenie do oceny', tagline: 'Technologia, która czuje ludzi', mission: 'Odkrywamy osobowość, abyś budował silne zespoły.', help: 'Pomoc', privacy: 'Prywatność', terms: 'Regulamin', unsub: 'Wypisz się', cta: 'Rozpocznij ocenę', rights: 'Wszelkie prawa zastrzeżone.',
-    legal: 'Otrzymujesz tę wiadomość, ponieważ bierzesz udział w rekrutacji przez platformę HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
+    legal: 'Otrzymujesz tę wiadomość, ponieważ bierzesz udział w rekrutacji przez platformę HR PRO AI.' },
   en: { eyebrow: 'Assessment invitation', tagline: 'Technology that reads people', mission: 'We reveal personality so you can build strong teams.', help: 'Help', privacy: 'Privacy', terms: 'Terms', unsub: 'Unsubscribe', cta: 'Start assessment', rights: 'All rights reserved.',
-    legal: 'You received this email because you are part of a hiring process on the HR PRO AI platform. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warsaw, Poland.' },
+    legal: 'You received this email because you are part of a hiring process on the HR PRO AI platform.' },
   uk: { eyebrow: 'Запрошення на оцінювання', tagline: 'Технологія, що відчуває людей', mission: 'Ми розкриваємо особистість, щоб ви створювали сильні команди.', help: 'Допомога', privacy: 'Конфіденційність', terms: 'Умови', unsub: 'Відписатися', cta: 'Почати оцінювання', rights: 'Усі права захищені.',
-    legal: 'Ви отримали цей лист, тому що берете участь у доборі через платформу HR PRO AI. HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa.' },
+    legal: 'Ви отримали цей лист, тому що берете участь у доборі через платформу HR PRO AI.' },
 };
 // Лого для писем — белый PNG (email-клиенты вырезают inline-SVG; белый гексагон виден на тёмной шапке).
 const ELOGO_IMG = (base, size) => `<img src="${base}/email/logo-white.png" width="${size}" height="${size}" alt="HR PRO AI" style="display:inline-block;vertical-align:middle;border:0">`;
