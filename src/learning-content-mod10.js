@@ -271,107 +271,727 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'В каком порядке подаются плюсы на шаге 2b и с чего важнее всего начинать?',
-            en: 'In what order are the pluses presented at step 2b, and what is most important to begin with?',
-            pl: 'W jakiej kolejności podaje się plusy na kroku 2b i od czego najważniej jest zaczynać?',
+            ru: 'Какова цель шага 2b на целом тесте?',
+            en: 'What is the goal of step 2b on the whole test?',
+            pl: 'Jaki jest cel kroku 2b na całym teście?',
           },
           opts: [
             {
-              ru: 'Сначала плюсы высоких точек, потом низких; начинать — с того, что очевидно и реально для человека и в чём вы сами уверены',
-              en: 'First the pluses of the high points, then the low ones; begin with what is obvious and real for the person and what you yourself are sure of',
-              pl: 'Najpierw plusy wysokich punktów, potem niskich; zaczynać — od tego, co oczywiste i realne dla człowieka i czego sami jesteście pewni',
+              ru: 'добиться одного улучшения, но говорить при этом о как можно большем числе плюсов',
+              en: 'to achieve one improvement, while speaking about as many pluses as possible',
+              pl: 'osiągnąć jedno usprawnienie, ale mówić przy tym o jak największej liczbie plusów',
             },
             {
-              ru: 'Строго по алфавиту точек, начиная с чувствительности',
-              en: 'Strictly in alphabetical order of the points, beginning with sensitivity',
-              pl: 'Ściśle według alfabetu punktów, zaczynając od wrażliwości',
+              ru: 'назвать все минусы сразу',
+              en: 'to name all the minuses at once',
+              pl: 'wymienić wszystkie minusy naraz',
             },
             {
-              ru: 'Сначала минусы, чтобы человек сразу понял, над чем работать',
-              en: 'First the minuses, so that the person immediately understands what to work on',
-              pl: 'Najpierw minusy, żeby człowiek od razu zrozumiał, nad czym pracować',
+              ru: 'обсудить только одну точку',
+              en: 'to discuss only one point',
+              pl: 'omówić tylko jeden punkt',
+            },
+            {
+              ru: 'быстро закончить беседу',
+              en: 'to finish the conversation quickly',
+              pl: 'szybko zakończyć rozmowę',
             },
           ],
           correct: 0,
         },
         {
           q: {
-            ru: 'Как правильно поступить со слабым тестом сотрудника?',
-            en: 'How should one correctly handle a weak test of an employee?',
-            pl: 'Jak prawidłowo postąpić ze słabym testem pracownika?',
+            ru: 'В каком порядке говорят о плюсах на шаге 2b?',
+            en: 'In what order do you speak about the pluses at step 2b?',
+            pl: 'W jakiej kolejności mówi się o plusach na kroku 2b?',
           },
           opts: [
             {
-              ru: 'Тестировать всех подряд, включая непродуктивных, — слабый тест поможет им увидеть проблемы',
-              en: 'Test everyone indiscriminately, including the unproductive — a weak test will help them see their problems',
-              pl: 'Testować wszystkich po kolei, w tym nieproduktywnych — słaby test pomoże im zobaczyć problemy',
+              ru: 'только о низких точках',
+              en: 'only about the low points',
+              pl: 'tylko o niskich punktach',
             },
             {
-              ru: 'Непродуктивных не тестировать (тест убьёт надежду); а если человек продуктивен, слабый тест — огромный плюс: он «плотник, что строит дома молотком и топором»',
-              en: 'Do not test the unproductive (the test will kill hope); and if the person is productive, a weak test is an enormous plus: he is the "carpenter who builds houses with a hammer and an axe"',
-              pl: 'Nieproduktywnych nie testować (test zabije nadzieję); a jeśli człowiek jest produktywny, słaby test to ogromny plus: to „cieśla, który buduje domy młotkiem i siekierą”',
+              ru: 'в случайном порядке',
+              en: 'in random order',
+              pl: 'w przypadkowej kolejności',
             },
             {
-              ru: 'Всегда пытаться «спасти» человека с тяжёлым тестом, разбирая его зависимости и депрессию',
-              en: 'Always try to "save" a person with a heavy test, working through his addictions and depression',
-              pl: 'Zawsze próbować „ratować” człowieka z ciężkim testem, omawiając jego uzależnienia i depresję',
+              ru: 'сначала плюсы высоких точек, потом плюсы низких; начиная с того, что очевидно и в чём вы сами уверены',
+              en: 'first the pluses of the high points, then the pluses of the low ones; beginning with what is obvious and what you yourself are sure of',
+              pl: 'najpierw plusy wysokich punktów, potem plusy niskich; zaczynając od tego, co oczywiste i czego sami jesteście pewni',
+            },
+            {
+              ru: 'сначала о минусах',
+              en: 'first about the minuses',
+              pl: 'najpierw o minusach',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Ключевая идея: что можно сказать по тесту, знаете:',
+            en: 'The key idea: what can be said about the test is known by:',
+            pl: 'Kluczowa myśl: co można powiedzieć na podstawie testu, wie:',
+          },
+          opts: [
+            {
+              ru: 'все вокруг',
+              en: 'everyone around',
+              pl: 'wszyscy dookoła',
+            },
+            {
+              ru: 'только вы сами (человек не знает, что вы «должны» сказать) — если по точке не уверены, просто не говорите о ней',
+              en: 'only you yourself (the person does not know what you are "supposed" to say) — if you are not sure about a point, simply do not speak about it',
+              pl: 'tylko wy sami (człowiek nie wie, co „powinniście" powiedzieć) — jeśli nie jesteście pewni punktu, po prostu o nim nie mówcie',
+            },
+            {
+              ru: 'сам человек',
+              en: 'the person himself',
+              pl: 'sam człowiek',
+            },
+            {
+              ru: 'любой коллега',
+              en: 'any colleague',
+              pl: 'każdy współpracownik',
             },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'В чём состоит правило «смазки» при переходе к минусам (шаги 3 и 4)?',
-            en: 'What does the "lubrication" rule consist of when moving on to the minuses (steps 3 and 4)?',
-            pl: 'Na czym polega zasada „smarowania” przy przechodzeniu do minusów (kroki 3 i 4)?',
+            ru: 'С каких точек обычно удобно начинать говорить о плюсах?',
+            en: 'From which points is it usually convenient to begin speaking about the pluses?',
+            pl: 'Od których punktów zwykle wygodnie jest zacząć mówić o plusach?',
           },
           opts: [
             {
-              ru: 'Перечислить сразу все минусы человека, чтобы ничего не упустить',
-              en: 'List all of the person\'s minuses at once, so as not to miss anything',
-              pl: 'Wymienić od razu wszystkie minusy człowieka, żeby niczego nie pominąć',
+              ru: 'с самых низких',
+              en: 'from the very lowest',
+              pl: 'od najniższych',
             },
             {
-              ru: 'Всегда, начиная разговор о минусе, сначала повторить пару фраз о плюсе той же точки — как масло, чтобы двигатель не заклинило',
-              en: 'Always, when beginning a conversation about a minus, first repeat a couple of phrases about the plus of the same point — like oil, so the engine does not seize up',
-              pl: 'Zawsze, zaczynając rozmowę o minusie, najpierw powtórzyć parę zdań o plusie tego samego punktu — jak olej, żeby silnik się nie zaciął',
+              ru: 'с точки D',
+              en: 'from point D',
+              pl: 'od punktu D',
             },
             {
-              ru: 'Говорить о минусе только письменно, чтобы человек не расстроился на месте',
-              en: 'Speak about the minus only in writing, so the person does not get upset on the spot',
-              pl: 'Mówić o minusie tylko na piśmie, żeby człowiek nie zdenerwował się na miejscu',
+              ru: 'с компульсивной чуткости',
+              en: 'from compulsive sensitivity',
+              pl: 'od kompulsywnej wrażliwości',
+            },
+            {
+              ru: 'с очевидных — A (внимание, планирование) и E (энергия, инициатива), а также J, если оно высокое',
+              en: 'from the obvious ones — A (attention, planning) and E (energy, initiative), as well as J, if it is high',
+              pl: 'od oczywistych — A (uwaga, planowanie) i E (energia, inicjatywa), a także J, jeśli jest wysokie',
             },
           ],
-          correct: 1,
+          correct: 3,
         },
         {
           q: {
-            ru: 'Что советуют человеку с низкой D и как об этом говорить?',
-            en: 'What is advised to a person with a low D, and how should it be spoken about?',
-            pl: 'Co doradza się człowiekowi z niskim D i jak o tym mówić?',
+            ru: 'Почему компульсивную чуткость оставляют на конец шага 2b?',
+            en: 'Why is compulsive sensitivity left for the end of step 2b?',
+            pl: 'Dlaczego kompulsywną wrażliwość zostawia się na koniec kroku 2b?',
           },
           opts: [
             {
-              ru: 'Не улыбаться при подчинённых, класть на весы замешательство людей, не делать обходов и подниматься знаниями; не называть это «низкой точкой D» в лицо, а говорить «с твоей непредсказуемостью»',
-              en: 'Not to smile in front of subordinates, to place people\'s confusion on the scales, not to make bypasses and to raise it by knowledge; not to call it a "low point D" to his face, but to say "with your unpredictability"',
-              pl: 'Nie uśmiechać się przy podwładnych, kłaść na szalę zamęt ludzi, nie robić obejść i podnosić się wiedzą; nie nazywać tego „niskim punktem D” wprost, lecz mówić „z twoją nieprzewidywalnością”',
+              ru: 'начав с неё (особенно при низком J или низкой H), сразу свалишься в разговор о минусах',
+              en: 'starting with it (especially with a low J or low H), you immediately slide into a conversation about the minuses',
+              pl: 'zaczynając od niej (zwłaszcza przy niskim J lub niskim H), od razu zsuniesz się w rozmowę o minusach',
             },
             {
-              ru: 'Прямо в лицо назвать «низкую точку D» и жёстко потребовать перестать менять решения',
-              en: 'Call it a "low point D" straight to his face and harshly demand that he stop changing decisions',
-              pl: 'Wprost w twarz nazwać „niski punkt D” i twardo zażądać, żeby przestał zmieniać decyzje',
+              ru: 'потому что это высокая точка',
+              en: 'because it is a high point',
+              pl: 'ponieważ to wysoki punkt',
             },
             {
-              ru: 'Посоветовать чаще делать обходы, чтобы ускорять дела в обход медленных коллег',
-              en: 'Advise him to make bypasses more often, to speed up matters around slow colleagues',
-              pl: 'Poradzić, żeby częściej robił obejścia, aby przyspieszać sprawy z pominięciem powolnych kolegów',
+              ru: 'потому что о ней вообще нельзя говорить',
+              en: 'because it must not be spoken about at all',
+              pl: 'ponieważ w ogóle nie wolno o niej mówić',
+            },
+            {
+              ru: 'потому что она неважна',
+              en: 'because it is unimportant',
+              pl: 'ponieważ jest nieważna',
             },
           ],
           correct: 0,
+        },
+        {
+          q: {
+            ru: 'Какие точки «обрезают» (не подают целиком как плюс)?',
+            en: 'Which points do you "trim" (not present in full as a plus)?',
+            pl: 'Które punkty „przycina się" (nie podaje w całości jako plus)?',
+          },
+          opts: [
+            {
+              ru: 'все низкие',
+              en: 'all the low ones',
+              pl: 'wszystkie niskie',
+            },
+            {
+              ru: 'все высокие',
+              en: 'all the high ones',
+              pl: 'wszystkie wysokie',
+            },
+            {
+              ru: 'только компульсивные (некомпульсивную не обрезают никогда)',
+              en: 'only the compulsive ones (a non-compulsive one is never trimmed)',
+              pl: 'tylko kompulsywne (niekompulsywnego nigdy się nie przycina)',
+            },
+            {
+              ru: 'никакие',
+              en: 'none',
+              pl: 'żadnych',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Почему нельзя халтурить на шаге 2b?',
+            en: 'Why must you not do a sloppy job at step 2b?',
+            pl: 'Dlaczego nie wolno partaczyć na kroku 2b?',
+          },
+          opts: [
+            {
+              ru: 'он самый короткий',
+              en: 'it is the shortest',
+              pl: 'jest najkrótszy',
+            },
+            {
+              ru: 'для этого человека всё это — впервые; вы «бьёте не в бровь, а в глаз»; это самый важный шаг',
+              en: 'for this person all of this is happening for the first time; you "hit the nail on the head"; it is the most important step',
+              pl: 'dla tego człowieka to wszystko dzieje się po raz pierwszy; „trafiacie w samo sedno"; to najważniejszy krok',
+            },
+            {
+              ru: 'его требует закон',
+              en: 'the law requires it',
+              pl: 'wymaga tego prawo',
+            },
+            {
+              ru: 'он второстепенный',
+              en: 'it is secondary',
+              pl: 'jest drugorzędny',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Насколько должна различаться пара точек, чтобы говорить о синдроме неэффективности?',
+            en: 'By how much must a pair of points differ in order to speak of an inefficiency syndrome?',
+            pl: 'O ile musi różnić się para punktów, żeby mówić o syndromie nieefektywności?',
+          },
+          opts: [
+            {
+              ru: 'достаточно любой разницы',
+              en: 'any difference is enough',
+              pl: 'wystarczy jakakolwiek różnica',
+            },
+            {
+              ru: 'ровно на 5 пунктов',
+              en: 'exactly by 5 points',
+              pl: 'dokładnie o 5 punktów',
+            },
+            {
+              ru: 'на 100 пунктов',
+              en: 'by 100 points',
+              pl: 'o 100 punktów',
+            },
+            {
+              ru: 'не меньше чем на 15 пунктов (разница в 5 пунктов — это «на одном уровне»)',
+              en: 'by no less than 15 points (a difference of 5 points is "on the same level")',
+              pl: 'nie mniej niż o 15 punktów (różnica 5 punktów to „na tym samym poziomie")',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Как подают плюс при синдроме лени?',
+            en: 'How is the plus presented in the case of a laziness syndrome?',
+            pl: 'Jak podaje się plus przy syndromie lenistwa?',
+          },
+          opts: [
+            {
+              ru: '«ты знаешь, что способен на большее»; а руководителю советуют работать над мотивацией',
+              en: '"you know that you are capable of more"; and the manager is advised to work on motivation',
+              pl: '„wiesz, że stać cię na więcej"; a kierownikowi doradza się pracę nad motywacją',
+            },
+            {
+              ru: '«ты ленивый»',
+              en: '"you are lazy"',
+              pl: '„jesteś leniwy"',
+            },
+            {
+              ru: '«тебе ничего нельзя поручить»',
+              en: '"nothing can be entrusted to you"',
+              pl: '„nic nie można ci powierzyć"',
+            },
+            {
+              ru: 'лучше промолчать',
+              en: 'it is better to stay silent',
+              pl: 'lepiej przemilczeć',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Как относиться к очень слабому, но продуктивному тесту?',
+            en: 'How should you regard a very weak but productive test?',
+            pl: 'Jak traktować bardzo słaby, ale produktywny test?',
+          },
+          opts: [
+            {
+              ru: 'сразу уволить человека',
+              en: 'fire the person immediately',
+              pl: 'od razu zwolnić człowieka',
+            },
+            {
+              ru: 'это безнадёжный случай',
+              en: 'it is a hopeless case',
+              pl: 'to przypadek beznadziejny',
+            },
+            {
+              ru: 'это огромный плюс: человек — «плотник, который строит дома молотком, топором и отвёрткой»',
+              en: 'it is an enormous plus: the person is a "carpenter who builds houses with a hammer, an axe and a screwdriver"',
+              pl: 'to ogromny plus: człowiek to „cieśla, który buduje domy młotkiem, siekierą i śrubokrętem"',
+            },
+            {
+              ru: 'это ошибка теста',
+              en: 'it is an error in the test',
+              pl: 'to błąd testu',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Почему не стоит тестировать непродуктивных сотрудников?',
+            en: 'Why should you not test unproductive employees?',
+            pl: 'Dlaczego nie warto testować nieproduktywnych pracowników?',
+          },
+          opts: [
+            {
+              ru: 'тест слишком дорогой',
+              en: 'the test is too expensive',
+              pl: 'test jest zbyt drogi',
+            },
+            {
+              ru: 'слабый тест убивает надежду, а уволить вы всё равно уволите — и все решат, что «за тест»',
+              en: 'a weak test kills hope, and you will fire them anyway — and everyone will decide it was "because of the test"',
+              pl: 'słaby test zabija nadzieję, a i tak zwolnicie — i wszyscy uznają, że „za test"',
+            },
+            {
+              ru: 'они не умеют читать',
+              en: 'they cannot read',
+              pl: 'nie umieją czytać',
+            },
+            {
+              ru: 'их тесты всегда высокие',
+              en: 'their tests are always high',
+              pl: 'ich testy są zawsze wysokie',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Стоит ли пытаться «спасать» людей с очень тяжёлыми тестами (зависимости, депрессия)?',
+            en: 'Should you try to "save" people with very heavy tests (addictions, depression)?',
+            pl: 'Czy warto próbować „ratować" ludzi z bardzo ciężkimi testami (uzależnienia, depresja)?',
+          },
+          opts: [
+            {
+              ru: 'да, это главная задача найма',
+              en: 'yes, it is the main task of hiring',
+              pl: 'tak, to główne zadanie rekrutacji',
+            },
+            {
+              ru: 'да, всегда',
+              en: 'yes, always',
+              pl: 'tak, zawsze',
+            },
+            {
+              ru: 'да, если тест низкий',
+              en: 'yes, if the test is low',
+              pl: 'tak, jeśli test jest niski',
+            },
+            {
+              ru: 'нет: это благородная, но совсем другая область, не входящая в задачи технологии найма, — без спецподготовки туда лучше не лезть',
+              en: 'no: it is a noble but entirely different field, not part of the tasks of the hiring technology — without special training it is better not to get into it',
+              pl: 'nie: to szlachetna, ale zupełnie inna dziedzina, nienależąca do zadań technologii rekrutacji — bez specjalnego przygotowania lepiej się w to nie wdawać',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'В аналогии со строительством, что соответствует «фундаменту и коммуникациям»?',
+            en: 'In the construction analogy, what corresponds to the "foundation and utilities"?',
+            pl: 'W analogii z budową, co odpowiada „fundamentowi i instalacjom"?',
+          },
+          opts: [
+            {
+              ru: 'шаг 2 (2a и 2b) — а всё прочее уже мелочь',
+              en: 'step 2 (2a and 2b) — and everything else is already a trifle',
+              pl: 'krok 2 (2a i 2b) — a cała reszta to już drobiazg',
+            },
+            {
+              ru: 'шаг 4',
+              en: 'step 4',
+              pl: 'krok 4',
+            },
+            {
+              ru: 'выбор цвета стен',
+              en: 'the choice of wall colour',
+              pl: 'wybór koloru ścian',
+            },
+            {
+              ru: 'разговор о минусах',
+              en: 'the conversation about the minuses',
+              pl: 'rozmowa o minusach',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Говорят ли на шагах 3 и 4 обо ВСЕХ минусах?',
+            en: 'At steps 3 and 4, do you speak about ALL the minuses?',
+            pl: 'Czy na krokach 3 i 4 mówi się o WSZYSTKICH minusach?',
+          },
+          opts: [
+            {
+              ru: 'да, обо всех обязательно',
+              en: 'yes, about all of them without fail',
+              pl: 'tak, o wszystkich obowiązkowo',
+            },
+            {
+              ru: 'да, но только руководителю',
+              en: 'yes, but only to the manager',
+              pl: 'tak, ale tylko kierownikowi',
+            },
+            {
+              ru: 'нет: задача — усилить человека по принципу постепенности (хоть в чём-то — уже хорошо)',
+              en: 'no: the task is to strengthen the person on the principle of gradualness (even in something — is already good)',
+              pl: 'nie: zadaniem jest wzmocnić człowieka na zasadzie stopniowości (choćby w czymś — już dobrze)',
+            },
+            {
+              ru: 'да, если минусов немного',
+              en: 'yes, if there are few minuses',
+              pl: 'tak, jeśli minusów jest niewiele',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'В чём состоит правило «смазки»?',
+            en: 'What does the "lubrication" rule consist of?',
+            pl: 'Na czym polega zasada „smarowania"?',
+          },
+          opts: [
+            {
+              ru: 'хвалить человека после беседы',
+              en: 'to praise the person after the conversation',
+              pl: 'chwalić człowieka po rozmowie',
+            },
+            {
+              ru: 'начиная разговор о минусе точки, сначала повторить пару фраз о плюсе той же точки',
+              en: 'when beginning a conversation about a minus of a point, first repeat a couple of phrases about the plus of the same point',
+              pl: 'zaczynając rozmowę o minusie punktu, najpierw powtórzyć parę zdań o plusie tego samego punktu',
+            },
+            {
+              ru: 'говорить только о плюсах',
+              en: 'to speak only about the pluses',
+              pl: 'mówić tylko o plusach',
+            },
+            {
+              ru: '«смазывать» формулировки лестью',
+              en: 'to "lubricate" the wording with flattery',
+              pl: '„smarować" sformułowania pochlebstwem',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какой приём применяют к компульсивной D на шагах 3–4?',
+            en: 'What technique is applied to a compulsive D at steps 3–4?',
+            pl: 'Jaką technikę stosuje się wobec kompulsywnego D na krokach 3–4?',
+          },
+          opts: [
+            {
+              ru: '«правило смазки»',
+              en: 'the "lubrication rule"',
+              pl: '„zasadę smarowania"',
+            },
+            {
+              ru: '«ассист»',
+              en: 'the "assist"',
+              pl: '„asystę"',
+            },
+            {
+              ru: 'молчание',
+              en: 'silence',
+              pl: 'milczenie',
+            },
+            {
+              ru: '«разворот упрямства»',
+              en: 'the "turnaround of stubbornness"',
+              pl: '„odwrócenie uporu"',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'В чём главный минус низкой D для бизнеса?',
+            en: 'What is the main downside of a low D for business?',
+            pl: 'Na czym polega główny minus niskiego D dla biznesu?',
+          },
+          opts: [
+            {
+              ru: 'человек вводит своих сотрудников в замешательство: комфортное для него число изменений для большинства — перебор',
+              en: 'the person throws his employees into confusion: the number of changes comfortable for him is too much for the majority',
+              pl: 'człowiek wprowadza swoich pracowników w zamęt: komfortowa dla niego liczba zmian dla większości to przesada',
+            },
+            {
+              ru: 'человек слишком осторожен',
+              en: 'the person is too cautious',
+              pl: 'człowiek jest zbyt ostrożny',
+            },
+            {
+              ru: 'человек не имеет своего мнения',
+              en: 'the person has no opinion of his own',
+              pl: 'człowiek nie ma własnego zdania',
+            },
+            {
+              ru: 'человек боится всего нового',
+              en: 'the person is afraid of everything new',
+              pl: 'człowiek boi się wszystkiego, co nowe',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Какой полушуточный, но полезный совет дают человеку с низкой D (шаг 4)?',
+            en: 'What half-joking but useful advice is given to a person with a low D (step 4)?',
+            pl: 'Jaką pół żartem, ale pożyteczną radę daje się człowiekowi z niskim D (krok 4)?',
+          },
+          opts: [
+            {
+              ru: '«улыбайся почаще подчинённым»',
+              en: '"smile at your subordinates more often"',
+              pl: '„uśmiechaj się częściej do podwładnych"',
+            },
+            {
+              ru: '«меняй планы каждый день»',
+              en: '"change your plans every day"',
+              pl: '„zmieniaj plany każdego dnia"',
+            },
+            {
+              ru: '«не улыбайся при подчинённых» — иначе, увидев улыбку, они понимают, что сейчас всё опять поменяется',
+              en: '"do not smile in front of your subordinates" — otherwise, seeing a smile, they realize that now everything is about to change again',
+              pl: '„nie uśmiechaj się przy podwładnych" — inaczej, widząc uśmiech, rozumieją, że zaraz wszystko znów się zmieni',
+            },
+            {
+              ru: '«никогда ничего не планируй»',
+              en: '"never plan anything"',
+              pl: '„nigdy niczego nie planuj"',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что предлагает сделать образ «весов изменений»?',
+            en: 'What does the image of the "scales of change" suggest doing?',
+            pl: 'Co proponuje zrobić obraz „wagi zmian"?',
+          },
+          opts: [
+            {
+              ru: 'всегда сворачивать при новой идее',
+              en: 'to always turn aside at a new idea',
+              pl: 'zawsze zbaczać przy nowym pomyśle',
+            },
+            {
+              ru: 'убрать «гирьку» любви к переменам и положить на чашу минусов замешательство, которое изменения вызывают у людей',
+              en: 'to remove the "weight" of the love of change and place on the minus pan the confusion that changes cause in people',
+              pl: 'zdjąć „odważnik" umiłowania zmian i położyć na szali minusów zamęt, który zmiany wywołują u ludzi',
+            },
+            {
+              ru: 'взвешивать только плюсы',
+              en: 'to weigh only the pluses',
+              pl: 'ważyć tylko plusy',
+            },
+            {
+              ru: 'не меняться никогда',
+              en: 'to never change',
+              pl: 'nigdy się nie zmieniać',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Второй крупный минус низкой D — это:',
+            en: 'The second major downside of a low D is:',
+            pl: 'Drugi duży minus niskiego D to:',
+          },
+          opts: [
+            {
+              ru: 'излишняя рутина',
+              en: 'excessive routine',
+              pl: 'nadmierna rutyna',
+            },
+            {
+              ru: 'молчаливость',
+              en: 'taciturnity',
+              pl: 'małomówność',
+            },
+            {
+              ru: 'высокая честность',
+              en: 'high honesty',
+              pl: 'wysoka uczciwość',
+            },
+            {
+              ru: 'обходы (человеку быстро надоедает делать одинаково, и он обходит того, через кого должно пройти дело)',
+              en: 'bypasses (the person quickly tires of doing things the same way and bypasses the one through whom the matter should pass)',
+              pl: 'obejścia (człowiekowi szybko nudzi się robić tak samo i omija tego, przez kogo sprawa powinna przejść)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Как повышается точка D?',
+            en: 'How is point D raised?',
+            pl: 'Jak podnosi się punkt D?',
+          },
+          opts: [
+            {
+              ru: 'знаниями/обучением: чем лучше человек знает своё дело, тем предсказуемее в нём действует',
+              en: 'by knowledge/training: the better a person knows his job, the more predictably he acts in it',
+              pl: 'wiedzą/szkoleniem: im lepiej człowiek zna swoją pracę, tym przewidywalniej w niej działa',
+            },
+            {
+              ru: 'критикой',
+              en: 'by criticism',
+              pl: 'krytyką',
+            },
+            {
+              ru: 'давлением',
+              en: 'by pressure',
+              pl: 'naciskiem',
+            },
+            {
+              ru: 'её нельзя повысить',
+              en: 'it cannot be raised',
+              pl: 'nie można go podnieść',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Когда уместны крепкие, жёсткие формулировки («это реально вредит компании»)?',
+            en: 'When are strong, harsh formulations ("this really harms the company") appropriate?',
+            pl: 'Kiedy stosowne są mocne, twarde sformułowania („to naprawdę szkodzi firmie")?',
+          },
+          opts: [
+            {
+              ru: 'всегда',
+              en: 'always',
+              pl: 'zawsze',
+            },
+            {
+              ru: 'при низкой ответственности',
+              en: 'with a low responsibility',
+              pl: 'przy niskiej odpowiedzialności',
+            },
+            {
+              ru: 'только при высокой ответственности (при низкой их надо убрать)',
+              en: 'only with a high responsibility (with a low one they must be removed)',
+              pl: 'tylko przy wysokiej odpowiedzialności (przy niskiej trzeba je usunąć)',
+            },
+            {
+              ru: 'никогда',
+              en: 'never',
+              pl: 'nigdy',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Как нельзя называть низкую D «в лоб»?',
+            en: 'How must you not name a low D "head-on"?',
+            pl: 'Jak nie wolno nazywać niskiego D „wprost"?',
+          },
+          opts: [
+            {
+              ru: '«с вашей импульсивностью»',
+              en: '"with your impulsiveness"',
+              pl: '„z waszą impulsywnością"',
+            },
+            {
+              ru: '«низкой точкой D» (для человека это непонятный термин — лучше «с вашей непредсказуемостью»)',
+              en: '"a low point D" (for the person this is an incomprehensible term — better "with your unpredictability")',
+              pl: '„niskim punktem D" (dla człowieka to niezrozumiały termin — lepiej „z waszą nieprzewidywalnością")',
+            },
+            {
+              ru: '«с вашей непредсказуемостью»',
+              en: '"with your unpredictability"',
+              pl: '„z waszą nieprzewidywalnością"',
+            },
+            {
+              ru: '«склонностью к новому»',
+              en: '"an inclination toward the new"',
+              pl: '„skłonnością do nowego"',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Когда ведут весь разговор о минусах?',
+            en: 'When do you conduct the whole conversation about the minuses?',
+            pl: 'Kiedy prowadzi się całą rozmowę o minusach?',
+          },
+          opts: [
+            {
+              ru: 'в самом начале беседы',
+              en: 'at the very beginning of the conversation',
+              pl: 'na samym początku rozmowy',
+            },
+            {
+              ru: 'до шага 2',
+              en: 'before step 2',
+              pl: 'przed krokiem 2',
+            },
+            {
+              ru: 'вместо шага 2b',
+              en: 'instead of step 2b',
+              pl: 'zamiast kroku 2b',
+            },
+            {
+              ru: 'только после хорошо сделанного шага 2b — когда человек уже знает, что вы ему друг, и слушает спокойно',
+              en: 'only after a well-done step 2b — when the person already knows that you are his friend and listens calmly',
+              pl: 'dopiero po dobrze wykonanym kroku 2b — gdy człowiek już wie, że jesteście jego przyjacielem, i słucha spokojnie',
+            },
+          ],
+          correct: 3,
         },
       ],
     },

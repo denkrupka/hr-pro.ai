@@ -295,104 +295,724 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'В чём суть приёма «разворот упрямства» при очень высокой D?',
-            en: 'What is the essence of the "reversing the stubbornness" technique when D is very high?',
-            pl: 'Na czym polega istota chwytu „odwrócenie uporu" przy bardzo wysokim D?',
+            ru: 'Три вершины треугольника АРО — это:',
+            en: 'The three vertices of the ARC triangle are:',
+            pl: 'Trzy wierzchołki trójkąta ARC to:',
           },
           opts: [
             {
-              ru: 'Установить «тебя нелегко изменить» и заявить, что человек всё знает и не изменится, — чтобы он сам начал возражать и настаивать, что способен измениться',
-              en: 'Establish "you\'re not easy to change" and declare that the person already knows everything and won\'t change — so that he himself begins to object and insist that he is capable of changing',
-              pl: 'Ustalić „niełatwo cię zmienić" i oświadczyć, że człowiek wszystko wie i się nie zmieni — żeby sam zaczął oponować i nalegać, że jest zdolny się zmienić',
+              ru: 'активность, реальность, ответственность',
+              en: 'activity, reality, responsibility',
+              pl: 'aktywność, rzeczywistość, odpowiedzialność',
             },
             {
-              ru: 'Прямо доказывать человеку, что он неправ, пока он не согласится',
-              en: 'Directly prove to the person that he is wrong until he agrees',
-              pl: 'Wprost udowadniać człowiekowi, że nie ma racji, aż się zgodzi',
+              ru: 'аффинити, реальность, общение',
+              en: 'affinity, reality, communication',
+              pl: 'affinity, rzeczywistość, komunikacja',
             },
             {
-              ru: 'Полностью избегать разговора о минусах, чтобы не спорить',
-              en: 'Completely avoid talking about the minuses in order not to argue',
-              pl: 'Całkowicie unikać rozmowy o minusach, żeby się nie spierać',
+              ru: 'внимание, реальность, общение',
+              en: 'attention, reality, communication',
+              pl: 'uwaga, rzeczywistość, komunikacja',
+            },
+            {
+              ru: 'аффинити, результат, обмен',
+              en: 'affinity, result, exchange',
+              pl: 'affinity, wynik, wymiana',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Аффинити — это:',
+            en: 'Affinity is:',
+            pl: 'Affinity to:',
+          },
+          opts: [
+            {
+              ru: 'согласие',
+              en: 'agreement',
+              pl: 'zgoda',
+            },
+            {
+              ru: 'обмен идеями',
+              en: 'an exchange of ideas',
+              pl: 'wymiana idei',
+            },
+            {
+              ru: 'понимание',
+              en: 'understanding',
+              pl: 'zrozumienie',
+            },
+            {
+              ru: 'степень дружеского расположения (в некотором смысле симпатия)',
+              en: 'the degree of friendly disposition (in a sense, liking)',
+              pl: 'stopień przyjaznego usposobienia (w pewnym sensie sympatia)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Реальность (в треугольнике АРО) — это:',
+            en: 'Reality (in the ARC triangle) is:',
+            pl: 'Rzeczywistość (w trójkącie ARC) to:',
+          },
+          opts: [
+            {
+              ru: 'согласие, то, с чем мы согласны (не обязательно то, что происходит на самом деле)',
+              en: 'agreement, that with which we agree (not necessarily what actually happens)',
+              pl: 'zgoda, to, z czym się zgadzamy (niekoniecznie to, co dzieje się naprawdę)',
+            },
+            {
+              ru: 'всегда то, что происходит на самом деле',
+              en: 'always that which actually happens',
+              pl: 'zawsze to, co dzieje się naprawdę',
+            },
+            {
+              ru: 'степень симпатии',
+              en: 'the degree of liking',
+              pl: 'stopień sympatii',
+            },
+            {
+              ru: 'обмен частицами',
+              en: 'an exchange of particles',
+              pl: 'wymiana cząstek',
             },
           ],
           correct: 0,
         },
         {
           q: {
-            ru: 'Что такое реальность в законе треугольника АРО?',
-            en: 'What is reality in the law of the ARC triangle?',
-            pl: 'Czym jest rzeczywistość w prawie trójkąta ARC?',
+            ru: 'Общение — это:',
+            en: 'Communication is:',
+            pl: 'Komunikacja to:',
           },
           opts: [
             {
-              ru: 'То, что происходит на самом деле, независимо от людей',
-              en: 'That which actually happens, independently of people',
-              pl: 'To, co dzieje się naprawdę, niezależnie od ludzi',
+              ru: 'только слова',
+              en: 'only words',
+              pl: 'tylko słowa',
             },
             {
-              ru: 'Согласие — то, с чем человек согласен, а не обязательно то, что происходит на самом деле',
-              en: 'Agreement — that with which a person agrees, and not necessarily that which actually happens',
-              pl: 'Zgoda — to, z czym człowiek się zgadza, a niekoniecznie to, co dzieje się naprawdę',
+              ru: 'степень симпатии',
+              en: 'the degree of liking',
+              pl: 'stopień sympatii',
             },
             {
-              ru: 'Степень дружеского расположения к чему-либо',
-              en: 'The degree of friendly disposition toward something',
-              pl: 'Stopień przyjaznego usposobienia do czegoś',
+              ru: 'обмен идеями или частицами, продукт которого — понимание',
+              en: 'an exchange of ideas or particles whose product is understanding',
+              pl: 'wymiana idei lub cząstek, której produktem jest zrozumienie',
+            },
+            {
+              ru: 'согласие с собеседником',
+              en: 'agreement with the interlocutor',
+              pl: 'zgoda z rozmówcą',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Чему равна площадь треугольника АРО?',
+            en: 'What does the area of the ARC triangle equal?',
+            pl: 'Czemu równa jest powierzchnia trójkąta ARC?',
+          },
+          opts: [
+            {
+              ru: 'аффинити',
+              en: 'affinity',
+              pl: 'affinity',
+            },
+            {
+              ru: 'пониманию',
+              en: 'understanding',
+              pl: 'zrozumieniu',
+            },
+            {
+              ru: 'реальности',
+              en: 'reality',
+              pl: 'rzeczywistości',
+            },
+            {
+              ru: 'общению',
+              en: 'communication',
+              pl: 'komunikacji',
             },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'С чего правильно начинать, когда вы хотите изменить реальность человека?',
-            en: 'Where is it correct to begin when you want to change a person\'s reality?',
-            pl: 'Od czego prawidłowo zaczynać, gdy chcecie zmienić rzeczywistość człowieka?',
+            ru: 'Первая часть закона АРО гласит, что:',
+            en: 'The first part of the ARC law states that:',
+            pl: 'Pierwsza część prawa ARC głosi, że:',
           },
           opts: [
             {
-              ru: 'Сразу убеждать его в своей правоте и говорить о своей реальности',
-              en: 'Immediately convince him of your rightness and talk about your reality',
-              pl: 'Od razu przekonywać go o swojej racji i mówić o swojej rzeczywistości',
+              ru: 'вершины не связаны между собой',
+              en: 'the vertices are not connected with one another',
+              pl: 'wierzchołki nie są ze sobą powiązane',
             },
             {
-              ru: 'С его реальности — с того, с чем он согласен, плавно разматывая её в свою сторону',
-              en: 'With his reality — with what he agrees with, smoothly unwinding it in your direction',
-              pl: 'Od jego rzeczywistości — od tego, z czym się zgadza, płynnie rozwijając ją w swoją stronę',
+              ru: 'важна только одна вершина',
+              en: 'only one vertex matters',
+              pl: 'ważny jest tylko jeden wierzchołek',
             },
             {
-              ru: 'С указания на его ошибки и минусы',
-              en: 'By pointing out his mistakes and minuses',
-              pl: 'Od wskazania jego błędów i minusów',
+              ru: 'чем больше общения, тем меньше аффинити',
+              en: 'the more communication, the less affinity',
+              pl: 'im więcej komunikacji, tym mniej affinity',
+            },
+            {
+              ru: 'три фактора неразрывно связаны: растёт один — растут и остальные, треугольник увеличивается',
+              en: 'the three factors are inseparably linked: as one grows, the others grow too, and the triangle enlarges',
+              pl: 'trzy czynniki są nierozerwalnie powiązane: rośnie jeden — rosną i pozostałe, trójkąt się powiększa',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Как правильно менять реальность другого человека?',
+            en: 'How does one correctly change another person\'s reality?',
+            pl: 'Jak prawidłowo zmieniać rzeczywistość drugiego człowieka?',
+          },
+          opts: [
+            {
+              ru: 'начать с ЕГО реальности (с того, с чем он согласен), плавно разматывая её в свою сторону',
+              en: 'begin with HIS reality (with what he agrees with), smoothly unwinding it in your direction',
+              pl: 'zacząć od JEGO rzeczywistości (od tego, z czym się zgadza), płynnie rozwijając ją w swoją stronę',
+            },
+            {
+              ru: 'сразу настойчиво убеждать его в своей правоте',
+              en: 'immediately and insistently convince him of your rightness',
+              pl: 'od razu natarczywie przekonywać go o swojej racji',
+            },
+            {
+              ru: 'надавить авторитетом',
+              en: 'press with authority',
+              pl: 'naciskać autorytetem',
+            },
+            {
+              ru: 'промолчать и подождать',
+              en: 'stay silent and wait',
+              pl: 'przemilczeć i poczekać',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что происходит, когда вы сразу заговариваете о своей реальности, с которой человек не согласен?',
+            en: 'What happens when you immediately start speaking about your reality, with which the person does not agree?',
+            pl: 'Co się dzieje, gdy od razu zaczynacie mówić o swojej rzeczywistości, z którą człowiek się nie zgadza?',
+          },
+          opts: [
+            {
+              ru: 'его реальность растёт',
+              en: 'his reality grows',
+              pl: 'jego rzeczywistość rośnie',
+            },
+            {
+              ru: 'ничего не меняется',
+              en: 'nothing changes',
+              pl: 'nic się nie zmienia',
+            },
+            {
+              ru: 'по закону АРО его реальность падает, треугольник сжимается, а с ним и понимание',
+              en: 'by the ARC law his reality falls, the triangle contracts, and understanding along with it',
+              pl: 'zgodnie z prawem ARC jego rzeczywistość spada, trójkąt się kurczy, a wraz z nim i zrozumienie',
+            },
+            {
+              ru: 'он сразу соглашается',
+              en: 'he agrees immediately',
+              pl: 'od razu się zgadza',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Приём «разворот упрямства» применяют, когда:',
+            en: 'The "reversing the stubbornness" technique is applied when:',
+            pl: 'Chwyt „odwrócenie uporu" stosuje się, gdy:',
+          },
+          opts: [
+            {
+              ru: 'точка D очень низкая',
+              en: 'point D is very low',
+              pl: 'punkt D jest bardzo niski',
+            },
+            {
+              ru: 'точка D очень высокая («торчит» выше всех) — человека крайне трудно изменить',
+              en: 'point D is very high (it "sticks out" above all) — the person is extremely difficult to change',
+              pl: 'punkt D jest bardzo wysoki („wystaje" ponad wszystkie) — człowieka niezwykle trudno zmienić',
+            },
+            {
+              ru: 'высокая активность',
+              en: 'activity is high',
+              pl: 'wysoka aktywność',
+            },
+            {
+              ru: 'низкая ответственность',
+              en: 'responsibility is low',
+              pl: 'niska odpowiedzialność',
             },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'Что помогает сделать человека с низкой настойчивостью (F) эффективнее?',
-            en: 'What helps make a person with low persistence (F) more effective?',
-            pl: 'Co pomaga uczynić człowieka z niską wytrwałością (F) bardziej efektywnym?',
+            ru: 'В чём суть приёма «разворот упрямства»?',
+            en: 'What is the essence of the "reversing the stubbornness" technique?',
+            pl: 'Na czym polega istota chwytu „odwrócenie uporu"?',
           },
           opts: [
             {
-              ru: 'Требовать от него больше напора и жёсткости',
-              en: 'Demand more thrust and toughness from him',
-              pl: 'Wymagać od niego więcej naporu i twardości',
+              ru: 'заставить человека замолчать',
+              en: 'force the person to fall silent',
+              pl: 'zmusić człowieka do milczenia',
             },
             {
-              ru: 'Давать ему как можно больше нового, чтобы он не скучал',
-              en: 'Give him as much of the new as possible so that he does not get bored',
-              pl: 'Dawać mu jak najwięcej nowego, żeby się nie nudził',
+              ru: 'согласиться со всем, что он говорит',
+              en: 'agree with everything he says',
+              pl: 'zgodzić się ze wszystkim, co mówi',
             },
             {
-              ru: 'Ориентация на результат: прояснить продукт должности и ожидаемый результат каждого задания',
-              en: 'Orientation toward the result: clarify the product of the position and the expected result of each task',
-              pl: 'Nastawienie na wynik: wyjaśnić produkt stanowiska i oczekiwany wynik każdego zadania',
+              ru: 'быстро назвать минусы',
+              en: 'quickly name the minuses',
+              pl: 'szybko wymienić minusy',
+            },
+            {
+              ru: 'установив «тебя нелегко изменить», подвести человека к тому, чтобы он сам начал настаивать, что способен измениться',
+              en: 'having established "you\'re not easy to change," lead the person to begin insisting himself that he is capable of changing',
+              pl: 'ustaliwszy „niełatwo cię zmienić", doprowadzić człowieka do tego, by sam zaczął nalegać, że jest zdolny się zmienić',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'По-настоящему низкая D — это:',
+            en: 'A truly low D is:',
+            pl: 'Naprawdę niskie D to:',
+          },
+          opts: [
+            {
+              ru: 'не плюс, а лишь иногда меньший вред; её подают как гибкость, но не выдают за достоинство',
+              en: 'not a plus, but merely sometimes a lesser harm; it is presented as flexibility, but not passed off as a virtue',
+              pl: 'nie plus, a jedynie czasem mniejsza szkoda; podaje się je jako elastyczność, ale nie przedstawia jako zaletę',
+            },
+            {
+              ru: 'всегда достоинство',
+              en: 'always a virtue',
+              pl: 'zawsze zaleta',
+            },
+            {
+              ru: 'признак высокого интеллекта',
+              en: 'a sign of high intelligence',
+              pl: 'oznaka wysokiej inteligencji',
+            },
+            {
+              ru: 'то же самое, что высокая D',
+              en: 'the same thing as a high D',
+              pl: 'to samo, co wysokie D',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Ключевой концепт точки E (активность) — это:',
+            en: 'The key concept of point E (activity) is:',
+            pl: 'Kluczowy koncept punktu E (aktywność) to:',
+          },
+          opts: [
+            {
+              ru: 'точка зрения',
+              en: 'point of view',
+              pl: 'punkt widzenia',
+            },
+            {
+              ru: 'прямота',
+              en: 'directness',
+              pl: 'bezpośredniość',
+            },
+            {
+              ru: 'энергия (много её или мало)',
+              en: 'energy (much of it or little)',
+              pl: 'energia (dużo jej czy mało)',
+            },
+            {
+              ru: 'согласие',
+              en: 'agreement',
+              pl: 'zgoda',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Компульсивная активность проявляется так, что человек:',
+            en: 'Compulsive activity manifests such that the person:',
+            pl: 'Kompulsywna aktywność przejawia się tak, że człowiek:',
+          },
+          opts: [
+            {
+              ru: 'любит сидеть и наблюдать',
+              en: 'likes to sit and observe',
+              pl: 'lubi siedzieć i obserwować',
+            },
+            {
+              ru: 'не может не двигаться и не сжигать энергию, ему нужно новое, а без нового он скучает',
+              en: 'cannot help but move and burn energy; he needs the new, and without the new he is bored',
+              pl: 'nie może się nie ruszać i nie spalać energii, potrzebuje nowego, a bez nowego się nudzi',
+            },
+            {
+              ru: 'избегает любой деятельности',
+              en: 'avoids any activity',
+              pl: 'unika wszelkiej działalności',
+            },
+            {
+              ru: 'не берётся ни за что',
+              en: 'takes on nothing',
+              pl: 'nie bierze się za nic',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Зачем точку E сравнивают с точкой D?',
+            en: 'Why is point E compared with point D?',
+            pl: 'Po co porównuje się punkt E z punktem D?',
+          },
+          opts: [
+            {
+              ru: 'чтобы узнать интеллект',
+              en: 'to find out intelligence',
+              pl: 'żeby poznać inteligencję',
+            },
+            {
+              ru: 'чтобы измерить чуткость',
+              en: 'to measure sensitivity',
+              pl: 'żeby zmierzyć wrażliwość',
+            },
+            {
+              ru: 'это делать не нужно',
+              en: 'this need not be done',
+              pl: 'nie trzeba tego robić',
+            },
+            {
+              ru: 'D показывает уровень известной области; если активность «торчит» выше D, человек любит начинать в новом',
+              en: 'D shows the level of the known area; if activity "sticks out" above D, the person likes to begin in the new',
+              pl: 'D pokazuje poziom znanego obszaru; jeśli aktywność „wystaje" ponad D, człowiek lubi zaczynać w nowym',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Ключевой концепт точки F (настойчивость) — это:',
+            en: 'The key concept of point F (persistence) is:',
+            pl: 'Kluczowy koncept punktu F (wytrwałość) to:',
+          },
+          opts: [
+            {
+              ru: 'прямота (действует прямо, демонстрирует потенциал «я смогу»)',
+              en: 'directness (acts directly, demonstrates the potential "I can do it")',
+              pl: 'bezpośredniość (działa wprost, demonstruje potencjał „dam radę")',
+            },
+            {
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
+            },
+            {
+              ru: 'расстояние до людей',
+              en: 'the distance to people',
+              pl: 'dystans do ludzi',
+            },
+            {
+              ru: 'контроль эмоций',
+              en: 'control of emotions',
+              pl: 'kontrola emocji',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Человек с высокой F:',
+            en: 'A person with high F:',
+            pl: 'Człowiek z wysokim F:',
+          },
+          opts: [
+            {
+              ru: 'действует осторожно и неэффективно',
+              en: 'acts cautiously and ineffectively',
+              pl: 'działa ostrożnie i nieefektywnie',
+            },
+            {
+              ru: 'вязнет в деталях вместо результата',
+              en: 'gets bogged down in details instead of the result',
+              pl: 'grzęźnie w szczegółach zamiast w wyniku',
+            },
+            {
+              ru: 'действует прямо, ориентирован на результат, доводит цикл до конца, быстро учится',
+              en: 'acts directly, is oriented toward the result, brings the cycle to completion, learns quickly',
+              pl: 'działa wprost, jest nastawiony na wynik, doprowadza cykl do końca, szybko się uczy',
+            },
+            {
+              ru: 'удерживает себя даже в том, чтобы показать мнение',
+              en: 'restrains himself even from showing an opinion',
+              pl: 'powstrzymuje się nawet od pokazania zdania',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Компульсивная настойчивость — это:',
+            en: 'Compulsive persistence is:',
+            pl: 'Kompulsywna wytrwałość to:',
+          },
+          opts: [
+            {
+              ru: 'идеальная настойчивость',
+              en: 'ideal persistence',
+              pl: 'idealna wytrwałość',
+            },
+            {
+              ru: 'когда «сломался регулятор мощности»: человек всё время «врубает» полный напор и «стреляет из пушки по воробьям»',
+              en: 'when the "power regulator has broken": the person constantly "switches on" full thrust and "shoots sparrows with a cannon"',
+              pl: 'gdy „zepsuł się regulator mocy": człowiek cały czas „włącza" pełny napór i „strzela z armaty do wróbli"',
+            },
+            {
+              ru: 'слишком слабый напор',
+              en: 'too weak a thrust',
+              pl: 'zbyt słaby napór',
+            },
+            {
+              ru: 'полное отсутствие напора',
+              en: 'a complete absence of thrust',
+              pl: 'całkowity brak naporu',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Прежде чем хвалить человека с высокой F за результаты, обязательно нужно:',
+            en: 'Before praising a person with high F for results, it is obligatory to:',
+            pl: 'Zanim pochwalicie człowieka z wysokim F za wyniki, obowiązkowo trzeba:',
+          },
+          opts: [
+            {
+              ru: 'сразу похвалить',
+              en: 'praise immediately',
+              pl: 'od razu pochwalić',
+            },
+            {
+              ru: 'назвать его минусы',
+              en: 'name his minuses',
+              pl: 'wymienić jego minusy',
+            },
+            {
+              ru: 'проверить точку E',
+              en: 'check point E',
+              pl: 'sprawdzić punkt E',
+            },
+            {
+              ru: 'посмотреть на точки B, G и H (те, что указывают тон): при низком тоне результаты, скорее всего, плачевные',
+              en: 'look at points B, G and H (those that indicate the tone): with a low tone the results are most likely deplorable',
+              pl: 'spojrzeć na punkty B, G i H (te, które wskazują ton): przy niskim tonie wyniki są najprawdopodobniej opłakane',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что помогает сделать человека с низкой F эффективнее?',
+            en: 'What helps make a person with low F more effective?',
+            pl: 'Co pomaga uczynić człowieka z niskim F bardziej efektywnym?',
+          },
+          opts: [
+            {
+              ru: 'ориентация на результат/продукт: прояснить продукт должности и ожидаемый результат каждого действия',
+              en: 'orientation toward the result/product: clarify the product of the position and the expected result of each action',
+              pl: 'nastawienie na wynik/produkt: wyjaśnić produkt stanowiska i oczekiwany wynik każdego działania',
+            },
+            {
+              ru: 'давление и постоянная критика',
+              en: 'pressure and constant criticism',
+              pl: 'nacisk i ciągła krytyka',
+            },
+            {
+              ru: 'больше рутины',
+              en: 'more routine',
+              pl: 'więcej rutyny',
+            },
+            {
+              ru: 'ничего не поможет',
+              en: 'nothing will help',
+              pl: 'nic nie pomoże',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Как положительно подать очень низкую F на шаге о плюсах?',
+            en: 'How does one positively present a very low F in the step about pluses?',
+            pl: 'Jak pozytywnie przedstawić bardzo niskie F na kroku o plusach?',
+          },
+          opts: [
+            {
+              ru: '«ты агрессивный»',
+              en: '"you are aggressive"',
+              pl: '„jesteś agresywny"',
+            },
+            {
+              ru: '«ты прорвёшься через всё»',
+              en: '"you will break through anything"',
+              pl: '„przebijesz się przez wszystko"',
+            },
+            {
+              ru: '«ты стараешься не делать ошибок, которых можно избежать; ты осторожен с людьми, стараешься быть приятным»',
+              en: '"you try not to make mistakes that can be avoided; you are careful with people, you try to be pleasant"',
+              pl: '„starasz się nie popełniać błędów, których można uniknąć; jesteś ostrożny z ludźmi, starasz się być miły"',
+            },
+            {
+              ru: 'лучше промолчать навсегда',
+              en: 'better to stay silent forever',
+              pl: 'lepiej przemilczeć na zawsze',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Если у человека высокая настойчивость, но противник не убегает, а держится, — что вступает в дело?',
+            en: 'If a person has high persistence, but the opponent does not flee and holds on — what comes into play?',
+            pl: 'Jeśli człowiek ma wysoką wytrwałość, ale przeciwnik nie ucieka, lecz się trzyma — co wchodzi do gry?',
+          },
+          opts: [
+            {
+              ru: 'активность',
+              en: 'activity',
+              pl: 'aktywność',
+            },
+            {
+              ru: 'ответственность (точка G); при низкой G «супермен» быстро начинает «скулить»',
+              en: 'responsibility (point G); with a low G the "superman" quickly begins to "whine"',
+              pl: 'odpowiedzialność (punkt G); przy niskim G „superman" szybko zaczyna „skomleć"',
+            },
+            {
+              ru: 'чуткость',
+              en: 'sensitivity',
+              pl: 'wrażliwość',
+            },
+            {
+              ru: 'объективность',
+              en: 'objectivity',
+              pl: 'obiektywność',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Реальность — это согласие. Какой практический вывод для бизнеса из этого следует?',
+            en: 'Reality is agreement. What practical conclusion for business follows from this?',
+            pl: 'Rzeczywistość to zgoda. Jaki praktyczny wniosek dla biznesu z tego wynika?',
+          },
+          opts: [
+            {
+              ru: 'убеждать людей силой',
+              en: 'convince people by force',
+              pl: 'przekonywać ludzi siłą',
+            },
+            {
+              ru: 'реальность вообще нельзя менять',
+              en: 'reality cannot be changed at all',
+              pl: 'rzeczywistości w ogóle nie można zmieniać',
+            },
+            {
+              ru: 'большая часть общения не связана с реальностью',
+              en: 'most communication is not connected with reality',
+              pl: 'większość komunikacji nie jest związana z rzeczywistością',
+            },
+            {
+              ru: 'большая часть общения с сотрудниками — это, по сути, изменение их реальности (донести цель, добиться согласия)',
+              en: 'most communication with employees is, in essence, changing their reality (convey the goal, achieve agreement)',
+              pl: 'większość komunikacji z pracownikami to w istocie zmiana ich rzeczywistości (przekazać cel, osiągnąć zgodę)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Почему человек, который не любит людей, на самом деле имеет к ним низкую реальность?',
+            en: 'Why does a person who does not like people in fact have a low reality toward them?',
+            pl: 'Dlaczego człowiek, który nie lubi ludzi, w rzeczywistości ma do nich niską rzeczywistość?',
+          },
+          opts: [
+            {
+              ru: 'он думает, что «все одинаковые», а это неправда, и по-настоящему с людьми не общается; узнать людей — значит перестать бояться',
+              en: 'he thinks that "everyone is the same," but that is untrue, and he does not truly communicate with people; to get to know people means to stop being afraid',
+              pl: 'myśli, że „wszyscy są tacy sami", a to nieprawda, i naprawdę z ludźmi się nie komunikuje; poznać ludzi znaczy przestać się bać',
+            },
+            {
+              ru: 'потому что у него мало денег',
+              en: 'because he has little money',
+              pl: 'ponieważ ma mało pieniędzy',
+            },
+            {
+              ru: 'потому что он глуп',
+              en: 'because he is stupid',
+              pl: 'ponieważ jest głupi',
+            },
+            {
+              ru: 'это никак не связано с реальностью',
+              en: 'this is in no way connected with reality',
+              pl: 'to w żaden sposób nie jest związane z rzeczywistością',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Как подать низкую D на шаге о плюсах?',
+            en: 'How does one present a low D in the step about pluses?',
+            pl: 'Jak przedstawić niskie D na kroku o plusach?',
+          },
+          opts: [
+            {
+              ru: '«ты твердолобый»',
+              en: '"you are hard-headed"',
+              pl: '„jesteś tępogłowy"',
+            },
+            {
+              ru: '«ты никогда не меняешься»',
+              en: '"you never change"',
+              pl: '„nigdy się nie zmieniasz"',
+            },
+            {
+              ru: '«ты готов рискнуть; тебе необязательно всё узнать, чтобы начать; тебя нелегко просчитать; ты можешь измениться, если надо»',
+              en: '"you are ready to take a risk; you do not need to learn everything to begin; you are not easy to figure out; you can change if needed"',
+              pl: '„jesteś gotów zaryzykować; nie musisz wszystkiego poznać, żeby zacząć; niełatwo cię rozgryźć; możesz się zmienić, jeśli trzeba"',
+            },
+            {
+              ru: 'лучше промолчать',
+              en: 'better to stay silent',
+              pl: 'lepiej przemilczeć',
             },
           ],
           correct: 2,

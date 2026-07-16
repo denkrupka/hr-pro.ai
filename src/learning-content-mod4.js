@@ -391,7 +391,7 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
@@ -400,46 +400,108 @@ module.exports = {
             pl: 'Komu ma sens przekazywać ocenę testu?',
           },
           opts: [
-            {
-              ru: 'Любому сотруднику независимо от результатов',
-              en: 'To any employee regardless of results',
-              pl: 'Każdemu pracownikowi niezależnie od wyników',
-            },
-            {
-              ru: 'Только продуктивным сотрудникам',
-              en: 'Only to productive employees',
-              pl: 'Tylko produktywnym pracownikom',
-            },
-            {
-              ru: 'В первую очередь непродуктивным — чтобы их «уговорить»',
-              en: 'First of all to the unproductive — to "talk them round"',
-              pl: 'Przede wszystkim nieproduktywnym — żeby ich „namówić”',
-            },
+            { ru: 'Любому сотруднику', en: 'To any employee', pl: 'Każdemu pracownikowi' },
+            { ru: 'Только продуктивным сотрудникам', en: 'Only to productive employees', pl: 'Tylko produktywnym pracownikom' },
+            { ru: 'Только руководителям', en: 'Only to managers', pl: 'Tylko kierownikom' },
+            { ru: 'Только новичкам', en: 'Only to newcomers', pl: 'Tylko nowicjuszom' },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'Что, по методике, стоит за каждой низкой точкой теста?',
-            en: 'According to the methodology, what stands behind every low point of the test?',
-            pl: 'Co, według metodyki, stoi za każdym niskim punktem testu?',
+            ru: 'Почему бесполезно предоставлять оценку тому, на кого навалился банк?',
+            en: 'Why is it useless to deliver an assessment to someone on whom the reactive mind has piled up?',
+            pl: 'Dlaczego bezużyteczne jest przekazywanie oceny komuś, na kogo napiętrzył się bank?',
           },
           opts: [
-            {
-              ru: 'Какая-то ложь',
-              en: 'Some lie',
-              pl: 'Jakiś fałsz',
-            },
-            {
-              ru: 'Недостаток образования',
-              en: 'A lack of education',
-              pl: 'Brak wykształcenia',
-            },
-            {
-              ru: 'Плохое настроение в день теста',
-              en: 'A bad mood on the day of the test',
-              pl: 'Zły nastrój w dniu testu',
-            },
+            { ru: 'Он слишком умён', en: 'He is too smart', pl: 'Jest zbyt inteligentny' },
+            { ru: 'У него нет пространства, картинки реактивного ума встают «стеной» и не дают ничего разглядеть', en: 'He has no space; the pictures of the reactive mind stand like a "wall" and let him see nothing', pl: 'Nie ma przestrzeni, obrazy reaktywnego umysłu stają „ścianą” i nie pozwalają niczego dostrzec' },
+            { ru: 'Он не умеет читать', en: 'He cannot read', pl: 'Nie umie czytać' },
+            { ru: 'Он всегда согласен', en: 'He always agrees', pl: 'Zawsze się zgadza' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое истина (по короткому определению)?',
+            en: 'What is truth (by the short definition)?',
+            pl: 'Czym jest prawda (według krótkiej definicji)?',
+          },
+          opts: [
+            { ru: 'То, что красиво звучит', en: 'What sounds beautiful', pl: 'To, co ładnie brzmi' },
+            { ru: 'То, что работает (в наибольшем числе случаев в своей области)', en: 'What works (in the greatest number of cases in its area)', pl: 'To, co działa (w największej liczbie przypadków w swojej dziedzinie)' },
+            { ru: 'То, что написано в книгах', en: 'What is written in books', pl: 'To, co napisano w książkach' },
+            { ru: 'Личное мнение начальника', en: 'The personal opinion of the boss', pl: 'Osobista opinia szefa' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое ложь в этом контексте?',
+            en: 'What is falsehood in this context?',
+            pl: 'Czym jest fałsz w tym kontekście?',
+          },
+          opts: [
+            { ru: 'Намеренный обман', en: 'Deliberate deception', pl: 'Celowe oszustwo' },
+            { ru: 'То, что не работает', en: 'What does not work', pl: 'To, co nie działa' },
+            { ru: 'Чужое мнение', en: 'Someone else\'s opinion', pl: 'Cudza opinia' },
+            { ru: 'Сложная идея', en: 'A complex idea', pl: 'Skomplikowana idea' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Как звучит идея Хаббарда о проблеме?',
+            en: 'How does Hubbard\'s idea about a problem read?',
+            pl: 'Jak brzmi idea Hubbarda o problemie?',
+          },
+          opts: [
+            { ru: '«Проблему нельзя решить»', en: '"A problem cannot be solved"', pl: '„Problemu nie da się rozwiązać”' },
+            { ru: '«Проблема, чтобы быть проблемой, должна содержать ложь»', en: '"A problem, in order to be a problem, must contain a lie"', pl: '„Problem, aby być problemem, musi zawierać fałsz”' },
+            { ru: '«Любая проблема — это ложь целиком»', en: '"Any problem is entirely a lie"', pl: '„Każdy problem to w całości fałsz”' },
+            { ru: '«Проблем не существует»', en: '"Problems do not exist"', pl: '„Problemy nie istnieją”' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что стоит за каждой низкой точкой теста?',
+            en: 'What stands behind every low point of the test?',
+            pl: 'Co stoi za każdym niskim punktem testu?',
+          },
+          opts: [
+            { ru: 'Высокий интеллект', en: 'High intelligence', pl: 'Wysoka inteligencja' },
+            { ru: 'Какая-то ложь', en: 'Some lie', pl: 'Jakiś fałsz' },
+            { ru: 'Усталость', en: 'Fatigue', pl: 'Zmęczenie' },
+            { ru: 'Хорошее качество', en: 'A good quality', pl: 'Dobra cecha' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что нужно, чтобы поднять человеку точку (сделать рациональнее)?',
+            en: 'What is needed to raise a person\'s point (to make him more rational)?',
+            pl: 'Co jest potrzebne, aby podnieść człowiekowi punkt (uczynić go bardziej racjonalnym)?',
+          },
+          opts: [
+            { ru: 'Чтобы он заучил правильный ответ', en: 'For him to memorize the correct answer', pl: 'Żeby wykuł poprawną odpowiedź' },
+            { ru: 'Чтобы он сам увидел истину — тогда ложь уйдёт', en: 'For him to see the truth himself — then the lie will go', pl: 'Żeby sam zobaczył prawdę — wtedy fałsz zniknie' },
+            { ru: 'Выдать ему готовый рецепт', en: 'To give him a ready-made recipe', pl: 'Dać mu gotową receptę' },
+            { ru: 'Наказать его', en: 'To punish him', pl: 'Ukarać go' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Способность по определению — это способность:',
+            en: 'Ability, by definition, is the ability to:',
+            pl: 'Zdolność z definicji to zdolność:',
+          },
+          opts: [
+            { ru: 'Наблюдать, принимать решения и действовать', en: 'Observe, make decisions and act', pl: 'Obserwować, podejmować decyzje i działać' },
+            { ru: 'Быстро говорить', en: 'Speak quickly', pl: 'Szybko mówić' },
+            { ru: 'Нравиться людям', en: 'Be liked by people', pl: 'Podobać się ludziom' },
+            { ru: 'Много знать', en: 'Know a lot', pl: 'Dużo wiedzieć' },
           ],
           correct: 0,
         },
@@ -450,48 +512,194 @@ module.exports = {
             pl: 'Co z trzech składników zdolności jest najważniejsze?',
           },
           opts: [
-            {
-              ru: 'Действовать',
-              en: 'To act',
-              pl: 'Działać',
-            },
-            {
-              ru: 'Принимать решения',
-              en: 'To make decisions',
-              pl: 'Podejmować decyzje',
-            },
-            {
-              ru: 'Наблюдать',
-              en: 'To observe',
-              pl: 'Obserwować',
-            },
+            { ru: 'Действовать', en: 'To act', pl: 'Działać' },
+            { ru: 'Принимать решения', en: 'To make decisions', pl: 'Podejmować decyzje' },
+            { ru: 'Наблюдать', en: 'To observe', pl: 'Obserwować' },
+            { ru: 'Все одинаково важны', en: 'All are equally important', pl: 'Wszystkie są tak samo ważne' },
           ],
           correct: 2,
         },
         {
           q: {
-            ru: 'Какая линия общения самая важная при оценке?',
-            en: 'Which line of communication is the most important during an assessment?',
-            pl: 'Która linia komunikacji jest najważniejsza podczas oceny?',
+            ru: 'Что значит «конфронтировать»?',
+            en: 'What does "to confront" mean?',
+            pl: 'Co znaczy „konfrontować”?',
           },
           opts: [
-            {
-              ru: 'То, что говорит оценщик (первая линия)',
-              en: 'What the assessor says (the first line)',
-              pl: 'To, co mówi oceniający (pierwsza linia)',
-            },
-            {
-              ru: 'То, что человек говорит вам (вторая линия)',
-              en: 'What the person says to you (the second line)',
-              pl: 'To, co człowiek mówi wam (druga linia)',
-            },
-            {
-              ru: 'Когда человек смотрит внутрь себя (третья линия)',
-              en: 'When the person looks inside himself (the third line)',
-              pl: 'Gdy człowiek patrzy w głąb siebie (trzecia linia)',
-            },
+            { ru: 'Спорить с человеком', en: 'To argue with a person', pl: 'Kłócić się z człowiekiem' },
+            { ru: 'Быть с чем-то лицом к лицу, не избегая и не уклоняясь, чувствуя себя комфортно', en: 'To be face to face with something, without avoiding or evading it, feeling comfortable', pl: 'Być z czymś twarzą w twarz, nie unikając i nie uchylając się, czując się komfortowo' },
+            { ru: 'Избегать неприятного', en: 'To avoid the unpleasant', pl: 'Unikać nieprzyjemnego' },
+            { ru: 'Нападать первым', en: 'To attack first', pl: 'Atakować pierwszym' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Где на шкале тонов находится конфронт?',
+            en: 'Where on the tone scale is confront located?',
+            pl: 'Gdzie na skali tonów znajduje się konfront?',
+          },
+          opts: [
+            { ru: 'Внизу шкалы', en: 'At the bottom of the scale', pl: 'Na dole skali' },
+            { ru: 'Наверху шкалы', en: 'At the top of the scale', pl: 'Na górze skali' },
+            { ru: 'Посередине', en: 'In the middle', pl: 'Pośrodku' },
+            { ru: 'Вне шкалы', en: 'Outside the scale', pl: 'Poza skalą' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Кого автор называет «простыми людьми»?',
+            en: 'Whom does the author call "simple people"?',
+            pl: 'Kogo autor nazywa „prostymi ludźmi”?',
+          },
+          opts: [
+            { ru: 'Низкотонных', en: 'Low-toned people', pl: 'Ludzi o niskim tonie' },
+            { ru: 'Высокотонных (они смотрят на всё сверху, конфронтируют)', en: 'High-toned people (they look at everything from above, they confront)', pl: 'Ludzi o wysokim tonie (patrzą na wszystko z góry, konfrontują)' },
+            { ru: 'Необразованных', en: 'Uneducated people', pl: 'Niewykształconych' },
+            { ru: 'Молчаливых', en: 'Silent people', pl: 'Milczących' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое состояние «может быть»?',
+            en: 'What is the state of "maybe"?',
+            pl: 'Czym jest stan „może być”?',
+          },
+          opts: [
+            { ru: 'Когда человек уверен в решении', en: 'When a person is sure of a decision', pl: 'Gdy człowiek jest pewny decyzji' },
+            { ru: 'Когда человек застрял в сомнении и не может принять решение', en: 'When a person is stuck in doubt and cannot make a decision', pl: 'Gdy człowiek utknął w wątpliwości i nie może podjąć decyzji' },
+            { ru: 'Когда человек счастлив', en: 'When a person is happy', pl: 'Gdy człowiek jest szczęśliwy' },
+            { ru: 'Когда человек занят рутиной', en: 'When a person is busy with routine', pl: 'Gdy człowiek jest zajęty rutyną' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Из-за чего возникает состояние «может быть»?',
+            en: 'What gives rise to the state of "maybe"?',
+            pl: 'Z czego powstaje stan „może być”?',
+          },
+          opts: [
+            { ru: 'Из-за плохого наблюдения (или неспособности наблюдать)', en: 'From poor observation (or inability to observe)', pl: 'Z powodu słabej obserwacji (lub niezdolności do obserwacji)' },
+            { ru: 'Из-за высокого интеллекта', en: 'From high intelligence', pl: 'Z powodu wysokiej inteligencji' },
+            { ru: 'Из-за хорошего настроения', en: 'From a good mood', pl: 'Z powodu dobrego nastroju' },
+            { ru: 'Из-за большого опыта', en: 'From great experience', pl: 'Z powodu dużego doświadczenia' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что такое страх по определению?',
+            en: 'What is fear by definition?',
+            pl: 'Czym jest strach z definicji?',
+          },
+          opts: [
+            { ru: 'Состояние отсутствия восприятия; нежелание конфронтировать', en: 'A state of absence of perception; unwillingness to confront', pl: 'Stan braku percepcji; niechęć do konfrontowania' },
+            { ru: 'Полезная эмоция для мотивации', en: 'A useful emotion for motivation', pl: 'Przydatna emocja do motywacji' },
+            { ru: 'Признак ума', en: 'A sign of intelligence', pl: 'Oznaka inteligencji' },
+            { ru: 'Высокий тон', en: 'A high tone', pl: 'Wysoki ton' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Допустим ли страх при предоставлении оценки теста?',
+            en: 'Is fear permissible when delivering a test assessment?',
+            pl: 'Czy strach jest dopuszczalny przy przekazywaniu oceny testu?',
+          },
+          opts: [
+            { ru: 'Да, страхом легче усилить человека', en: 'Yes, it is easier to strengthen a person through fear', pl: 'Tak, strachem łatwiej wzmocnić człowieka' },
+            { ru: 'Нет, страх недопустим ни в каком виде — страх и конфронт несовместимы', en: 'No, fear is inadmissible in any form — fear and confront are incompatible', pl: 'Nie, strach jest niedopuszczalny w żadnej postaci — strach i konfront są niezgodne' },
+            { ru: 'Допустим только для новичков', en: 'Permissible only for newcomers', pl: 'Dopuszczalny tylko dla nowicjuszy' },
+            { ru: 'Допустим только для руководителей', en: 'Permissible only for managers', pl: 'Dopuszczalny tylko dla kierowników' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что работает с тем, на кого навалился банк (непродуктивным)?',
+            en: 'What works with someone on whom the reactive mind has piled up (the unproductive)?',
+            pl: 'Co działa na tego, na kogo napiętrzył się bank (nieproduktywnego)?',
+          },
+          opts: [
+            { ru: 'Уговоры и оценка теста', en: 'Persuasion and a test assessment', pl: 'Namowy i ocena testu' },
+            { ru: 'Давление сильнее, чем давит банк (методы этического воздействия)', en: 'Pressure stronger than the reactive mind presses (methods of ethics influence)', pl: 'Nacisk silniejszy niż napiera bank (metody oddziaływania etycznego)' },
+            { ru: 'Повышение зарплаты', en: 'A pay raise', pl: 'Podwyżka pensji' },
+            { ru: 'Отпуск', en: 'A vacation', pl: 'Urlop' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Сколько линий общения есть у человека, которого мы усиливаем?',
+            en: 'How many lines of communication does the person we are strengthening have?',
+            pl: 'Ile linii komunikacji ma człowiek, którego wzmacniamy?',
+          },
+          opts: [
+            { ru: 'Одна', en: 'One', pl: 'Jedna' },
+            { ru: 'Две', en: 'Two', pl: 'Dwie' },
+            { ru: 'Три', en: 'Three', pl: 'Trzy' },
+            { ru: 'Пять', en: 'Five', pl: 'Pięć' },
           ],
           correct: 2,
+        },
+        {
+          q: {
+            ru: 'Какая линия общения самая важная?',
+            en: 'Which line of communication is the most important?',
+            pl: 'Która linia komunikacji jest najważniejsza?',
+          },
+          opts: [
+            { ru: 'Первая (то, что говорите вы)', en: 'The first (what you say)', pl: 'Pierwsza (to, co mówicie wy)' },
+            { ru: 'Вторая (то, что он говорит вам)', en: 'The second (what he says to you)', pl: 'Druga (to, co on mówi wam)' },
+            { ru: 'Третья (когда он смотрит внутрь себя, «разговаривает с банком»)', en: 'The third (when he looks inside himself, "talks with the reactive mind")', pl: 'Trzecia (gdy patrzy w głąb siebie, „rozmawia z bankiem”)' },
+            { ru: 'Все линии равны', en: 'All lines are equal', pl: 'Wszystkie linie są równe' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что должен сделать оценщик, когда человек «отчалил» (ушёл внутрь себя)?',
+            en: 'What must the assessor do when the person has "drifted off" (gone inside himself)?',
+            pl: 'Co powinien zrobić oceniający, gdy człowiek „odpłynął” (poszedł w głąb siebie)?',
+          },
+          opts: [
+            { ru: 'Говорить громче', en: 'Speak louder', pl: 'Mówić głośniej' },
+            { ru: 'Замолчать, даже если это случилось на полуслове', en: 'Fall silent, even if it happened mid-word', pl: 'Zamilknąć, nawet jeśli stało się to w pół słowa' },
+            { ru: 'Задать новый вопрос', en: 'Ask a new question', pl: 'Zadać nowe pytanie' },
+            { ru: 'Закончить беседу', en: 'End the conversation', pl: 'Zakończyć rozmowę' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему оценку теста не может выдать компьютер?',
+            en: 'Why can a computer not deliver a test assessment?',
+            pl: 'Dlaczego oceny testu nie może wydać komputer?',
+          },
+          opts: [
+            { ru: 'Компьютеры слишком медленные', en: 'Computers are too slow', pl: 'Komputery są zbyt wolne' },
+            { ru: 'Задача не выдать текст, а чтобы человек сам на что-то посмотрел и что-то увидел', en: 'The task is not to output text, but for the person himself to look at something and see something', pl: 'Zadaniem nie jest wydanie tekstu, lecz by człowiek sam na coś spojrzał i coś zobaczył' },
+            { ru: 'Компьютеры не умеют считать точки', en: 'Computers cannot count points', pl: 'Komputery nie umieją liczyć punktów' },
+            { ru: 'Это неправда, компьютер справится лучше', en: 'That is untrue, a computer will do better', pl: 'To nieprawda, komputer poradzi sobie lepiej' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему при найме страх не так мешает, как при оценке?',
+            en: 'Why does fear not interfere in hiring as much as in an assessment?',
+            pl: 'Dlaczego przy rekrutacji strach nie przeszkadza tak, jak przy ocenie?',
+          },
+          opts: [
+            { ru: 'При найме нам надо просто увидеть человека, а при оценке — усилить (а страх и усиление несовместимы)', en: 'In hiring we just need to see the person, but in an assessment — to strengthen him (and fear and strengthening are incompatible)', pl: 'Przy rekrutacji trzeba tylko zobaczyć człowieka, a przy ocenie — wzmocnić (a strach i wzmacnianie są niezgodne)' },
+            { ru: 'При найме страх вообще не влияет', en: 'In hiring fear has no effect at all', pl: 'Przy rekrutacji strach w ogóle nie wpływa' },
+            { ru: 'При оценке страх, наоборот, помогает', en: 'In an assessment fear, on the contrary, helps', pl: 'Przy ocenie strach, przeciwnie, pomaga' },
+            { ru: 'Разницы нет', en: 'There is no difference', pl: 'Nie ma różnicy' },
+          ],
+          correct: 0,
         },
       ],
     },

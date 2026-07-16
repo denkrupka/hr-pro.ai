@@ -421,6 +421,11 @@ const RI18N = {
     vp_ai_first: 'Звонок ИИ: первый контакт', vp_ai_afterResult: 'Звонок ИИ после «Резалта»', vp_ai_afterTools: 'Звонок ИИ после «Тулса»', vp_ai_motivation: 'Оценка мотивации в звонке с ИИ',
     vp_ai_references: 'Получение референсов с помощью ИИ', vp_ai_references_hint: 'ИИ сам звонит руководителям из «Резалта» и собирает справку',
     refai_btn: 'Звонок ИИ', refai_calling: 'ИИ звонит…', refai_hint: 'ИИ позвонит руководителю и соберёт референс', refai_started: 'ИИ звонит руководителю — справка появится после разговора', refai_done: 'Референс собран ИИ', refai_err: 'Не удалось запустить ИИ-звонок',
+    aicalls_btn: 'Звонки ИИ', aicalls_title: 'Звонки ИИ', aicalls_refresh: 'Обновить', aicalls_tab_active: 'Звонки', aicalls_tab_history: 'История',
+    aicalls_no_active: 'Активных звонков нет', aicalls_no_history: 'Завершённых звонков пока нет', aicalls_transcript: 'Транскрипция', aicalls_no_tr: 'Транскрипт пока недоступен',
+    aicalls_no_rec: 'Запись недоступна', aicalls_attempt: 'Попытка', aicalls_cont: 'дозвон', aicalls_calls: 'звонка(ов)', aicalls_answers: 'Собранные ответы', aicalls_remaining: 'осталось',
+    aic_st_calling: 'Идёт звонок', aic_st_analyzing: 'Анализ', aic_st_continuing: 'Перезвон', aic_st_done: 'Завершён', aic_st_failed: 'Не удалось',
+    wf_see_ai: 'Смотреть результат (звонок ИИ)', aic_result_title: 'Результат ИИ-звонка',
     vp_ai_note: 'Для звонков ИИ нужны подключённая интеграция звонков (Vapi) и телефон кандидата. Если интеграция не настроена, шаг тихо пропускается.',
     vp_kn_q: 'вопросов', vp_kn_add: 'Добавить тест знаний', vp_kn_setup: 'Настроить', vp_kn_blank: 'Тест',
     vp_kn_hint: 'Пустые тесты-болванки наполняются во вкладке «Проверка знаний» — и наоборот: созданные там тесты появляются в этом списке.',
@@ -521,6 +526,11 @@ const RI18N = {
     vp_ai_first: 'Telefon AI: pierwszy kontakt', vp_ai_afterResult: 'Telefon AI po „Result”', vp_ai_afterTools: 'Telefon AI po „Tools”', vp_ai_motivation: 'Ocena motywacji w rozmowie z AI',
     vp_ai_references: 'Zbieranie referencji przez AI', vp_ai_references_hint: 'AI samo dzwoni do przełożonych z „Result” i zbiera referencję',
     refai_btn: 'Telefon AI', refai_calling: 'AI dzwoni…', refai_hint: 'AI zadzwoni do przełożonego i zbierze referencję', refai_started: 'AI dzwoni do przełożonego — referencja pojawi się po rozmowie', refai_done: 'Referencja zebrana przez AI', refai_err: 'Nie udało się uruchomić telefonu AI',
+    aicalls_btn: 'Rozmowy AI', aicalls_title: 'Rozmowy AI', aicalls_refresh: 'Odśwież', aicalls_tab_active: 'Rozmowy', aicalls_tab_history: 'Historia',
+    aicalls_no_active: 'Brak aktywnych rozmów', aicalls_no_history: 'Brak zakończonych rozmów', aicalls_transcript: 'Transkrypcja', aicalls_no_tr: 'Transkrypcja niedostępna',
+    aicalls_no_rec: 'Nagranie niedostępne', aicalls_attempt: 'Próba', aicalls_cont: 'oddzwonienie', aicalls_calls: 'rozmów', aicalls_answers: 'Zebrane odpowiedzi', aicalls_remaining: 'pozostało',
+    aic_st_calling: 'Trwa rozmowa', aic_st_analyzing: 'Analiza', aic_st_continuing: 'Oddzwanianie', aic_st_done: 'Zakończono', aic_st_failed: 'Nieudane',
+    wf_see_ai: 'Zobacz wynik (rozmowa AI)', aic_result_title: 'Wynik rozmowy AI',
     vp_ai_note: 'Telefony AI wymagają podłączonej integracji połączeń (Vapi) i numeru telefonu kandydata. Bez integracji krok jest pomijany.',
     vp_kn_q: 'pytań', vp_kn_add: 'Dodaj test wiedzy', vp_kn_setup: 'Konfiguruj', vp_kn_blank: 'Test',
     vp_kn_hint: 'Puste testy uzupełnia się w zakładce „Sprawdzenie wiedzy” — i odwrotnie: testy utworzone tam pojawiają się na tej liście.',
@@ -621,6 +631,11 @@ const RI18N = {
     vp_ai_first: 'AI call: first contact', vp_ai_afterResult: 'AI call after “Result”', vp_ai_afterTools: 'AI call after “Tools”', vp_ai_motivation: 'Motivation assessed in an AI call',
     vp_ai_references: 'Collect references with AI', vp_ai_references_hint: 'AI calls the managers from “Result” itself and gathers the reference',
     refai_btn: 'AI call', refai_calling: 'AI is calling…', refai_hint: 'AI will call the manager and collect the reference', refai_started: 'AI is calling the manager — the reference will appear after the call', refai_done: 'Reference collected by AI', refai_err: 'Could not start the AI call',
+    aicalls_btn: 'AI calls', aicalls_title: 'AI calls', aicalls_refresh: 'Refresh', aicalls_tab_active: 'Calls', aicalls_tab_history: 'History',
+    aicalls_no_active: 'No active calls', aicalls_no_history: 'No completed calls yet', aicalls_transcript: 'Transcript', aicalls_no_tr: 'Transcript not available yet',
+    aicalls_no_rec: 'Recording unavailable', aicalls_attempt: 'Attempt', aicalls_cont: 'follow-up', aicalls_calls: 'calls', aicalls_answers: 'Collected answers', aicalls_remaining: 'remaining',
+    aic_st_calling: 'Calling', aic_st_analyzing: 'Analyzing', aic_st_continuing: 'Calling back', aic_st_done: 'Completed', aic_st_failed: 'Failed',
+    wf_see_ai: 'View result (AI call)', aic_result_title: 'AI call result',
     vp_ai_note: 'AI calls require the calls integration (Vapi) and the candidate’s phone number. Without the integration the step is silently skipped.',
     vp_kn_q: 'questions', vp_kn_add: 'Add knowledge test', vp_kn_setup: 'Configure', vp_kn_blank: 'Test',
     vp_kn_hint: 'Empty draft tests are filled in on the “Knowledge check” tab — and vice versa: tests created there show up in this list.',
@@ -2438,7 +2453,7 @@ function renderCandidatePage() {
       <span class="avatar" style="width:52px;height:52px;border-radius:15px;font-size:19px;background:${avColor(nm)}">${esc(initials(nm, p.email))}</span>
       <div style="flex:1;min-width:0"><h1 style="margin:0;font-size:25px">${esc(nm)}</h1>
         <div class="muted" style="font-size:13.5px">${esc(p.email || p.tel || '')}${p.vacancyName ? ' · ' + (p.vacancyId ? `<a href="#" class="rep-vac-link" onclick="openVacancyPage('${esc(p.vacancyId)}');return false"><b>${esc(p.vacancyName)}</b></a>` : esc(p.vacancyName)) : ''}</div></div>
-      ${stageBadge}${cvBtn}</div>
+      ${stageBadge}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button>${cvBtn}</div>
     ${wf ? `<div class="card cand-pipe-card reveal d1" style="margin-top:14px">${candidatePipeline(wf)}</div>` : ''}
     <div class="cand-grid reveal d2" style="margin-top:14px">
       <div class="card"><div class="cfg-h">${rt('cand_info')}</div>
@@ -2460,9 +2475,65 @@ function renderCandidatePage() {
         <div id="cand-steps">${candidateStepsPanel(wf)}</div>${sendMoreBlock()}</div>
     </div>`;
   $('#cand-back').onclick = () => candReturn();
+  const acb = $('#cand-aicalls'); if (acb) acb.onclick = () => openAiCallsModal(p.id);
   $('#save-part').onclick = saveParticipant; $('#del-part').onclick = deleteParticipant;
   wirePhoneAgeMasks('#f-tel', '#f-age');
   wireCandidateSteps(); wireSendMore();
+}
+// ---------- Модалка «Звонки ИИ»: журнал звонков кандидата (транскрипты, записи, результаты) ----------
+const AIC_STAT = { calling: ['sent', 'aic_st_calling'], analyzing: ['sent', 'aic_st_analyzing'], continuing: ['sent', 'aic_st_continuing'], done: ['done', 'aic_st_done'], failed: ['no', 'aic_st_failed'] };
+function aicIsActive(c) { return c.status !== 'done' && c.status !== 'failed'; }
+async function openAiCallsModal(pid) {
+  window.__aicPid = pid; window.__aicTab = 'active'; window.__aicData = null; window.__aicOpen = {};
+  mkDecodeModal(`<div class="aic-wrap">
+    <div class="aic-head"><h2>${ICON_PHONE} ${rt('aicalls_title')}</h2>
+      <button class="btn soft xs" id="aic-refresh">${rt('aicalls_refresh')}</button></div>
+    <div class="aic-tabs"><button class="aic-tab on" data-aictab="active">${rt('aicalls_tab_active')}</button><button class="aic-tab" data-aictab="history">${rt('aicalls_tab_history')}</button></div>
+    <div id="aic-body"><div class="aic-load"><span class="db-spin"></span></div></div></div>`, true);
+  $('#aic-refresh').onclick = () => refreshAiCalls(pid);
+  loadAiCalls(pid);
+}
+async function loadAiCalls(pid) {
+  try { window.__aicData = await api('/api/participants/' + pid + '/ai-calls'); renderAiCalls(); }
+  catch (e) { const b = $('#aic-body'); if (b) b.innerHTML = `<p class="muted" style="padding:16px">${esc(e.message)}</p>`; }
+}
+async function refreshAiCalls(pid) {
+  const r = $('#aic-refresh'); if (r) { r.disabled = true; r.innerHTML = '<span class="db-spin"></span>'; }
+  try { window.__aicData = await api('/api/participants/' + pid + '/ai-calls/refresh', { method: 'POST' }); renderAiCalls(); refreshCandidateCard(); }
+  catch (e) { toast(e.message); }
+  if (r) { r.disabled = false; r.textContent = rt('aicalls_refresh'); }
+}
+function renderAiCalls() {
+  const body = $('#aic-body'); if (!body) return;
+  const d = window.__aicData || { calls: [] };
+  $$('.aic-tab').forEach(b => { b.classList.toggle('on', b.dataset.aictab === window.__aicTab); b.onclick = () => { window.__aicTab = b.dataset.aictab; renderAiCalls(); }; });
+  const list = (d.calls || []).filter(c => window.__aicTab === 'active' ? aicIsActive(c) : !aicIsActive(c));
+  if (!list.length) { body.innerHTML = `<p class="muted" style="padding:22px;text-align:center">${rt(window.__aicTab === 'active' ? 'aicalls_no_active' : 'aicalls_no_history')}</p>`; return; }
+  body.innerHTML = list.map(aicCard).join('');
+  // Раскрытие транскриптов
+  $$('[data-aictr]').forEach(b => b.onclick = () => { const el = $('#' + b.dataset.aictr); if (el) { el.classList.toggle('open'); b.classList.toggle('on'); } });
+}
+function aicCard(c) {
+  const st = AIC_STAT[c.status] || ['', c.status];
+  const when = c.createdAt ? fmtDate(c.createdAt) : '';
+  const analysis = c.analysis && !c.analysis.complete && c.analysis.reason
+    ? `<div class="aic-cut">⚠ ${esc(c.analysis.reason)}${(c.analysis.remaining || []).length ? ' · ' + rt('aicalls_remaining') + ': ' + esc(c.analysis.remaining.join(', ')) : ''}</div>` : '';
+  const attempts = (c.attempts || []).map(a => {
+    const trId = 'aictr-' + c.id + '-' + a.n;
+    const meta = [a.durationSec != null ? fmtDur(a.durationSec) : '', a.endedReason ? esc(a.endedReason) : ''].filter(Boolean).join(' · ');
+    const audio = a.recordingUrl ? `<audio class="aic-audio" controls preload="none" src="${esc(a.recordingUrl)}"></audio>` : `<span class="muted" style="font-size:12px">${rt('aicalls_no_rec')}</span>`;
+    const tr = a.transcript ? `<button class="btn ghost xs" data-aictr="${trId}">${rt('aicalls_transcript')}</button><div class="aic-tr" id="${trId}"><pre>${esc(a.transcript)}</pre></div>` : `<span class="muted" style="font-size:12px">${rt('aicalls_no_tr')}</span>`;
+    return `<div class="aic-att"><div class="aic-att-h"><b>${rt('aicalls_attempt')} ${a.n}${a.continuation ? ' · ' + rt('aicalls_cont') : ''}</b>${meta ? `<span class="muted">${meta}</span>` : ''}</div>
+      <div class="aic-att-b">${audio}${tr}</div></div>`;
+  }).join('');
+  const answers = (c.answers || []).length
+    ? `<div class="aic-ans"><div class="aic-ans-h">${rt('aicalls_answers')}</div>${c.answers.map(a => `<div class="aic-qa"><span>${esc(a.label)}</span><b>${esc(a.value)}</b></div>`).join('')}</div>` : '';
+  const summary = c.summary ? `<div class="aic-sum">${esc(c.summary)}</div>` : '';
+  return `<div class="aic-card">
+    <div class="aic-card-h"><b>${esc(c.title)}</b><span class="cstep-st ${st[0]}">${rt(st[1])}</span></div>
+    <div class="aic-when">${esc(when)}${c.to ? ' · ' + esc(c.to) : ''}${(c.attempts || []).length > 1 ? ' · ' + (c.attempts.length) + ' ' + rt('aicalls_calls') : ''}</div>
+    ${analysis}${summary}${answers}
+    <div class="aic-atts">${attempts}</div></div>`;
 }
 function candidateStepsPanel(wf) {
   if (!wf) return `<p class="muted">${t('tp_none')}</p>`;
@@ -2516,15 +2587,22 @@ function candidateStepsPanel(wf) {
     // Тест отправлен и не пройден — снизу плашки ссылка на тест и кнопка «Скопировать»
     const linkRow = isTest && s.testCode && s.status !== 'done' && s.status !== 'none'
       ? `<div class="cstep-link"><span class="muted">${t('tp_link')}:</span><a href="${location.origin}/t/${s.testCode}" target="_blank">${location.origin}/t/${s.testCode}</a><button class="btn ghost xs ic-btn" onclick="copyLink('${location.origin}/t/${s.testCode}')">${ICON_COPY}${t('ak_copy')}</button></div>` : '';
+    // Кнопка «Смотреть результат (звонок ИИ)» — если по этапу ИИ собрал ответы
+    let seeAi = '';
+    if (s.aiResult && (s.aiResult.answers || []).length) {
+      window.__aicRes = window.__aicRes || [];
+      const idx = window.__aicRes.push({ title: s.title, res: s.aiResult }) - 1;
+      seeAi = `<button class="btn ghost xs" data-caires="${idx}" title="${rt('wf_see_ai')}">${AI_IC}</button>`;
+    }
     // Кнопка «пропустить шаг» — для обязательных этапов, которые ещё не пройдены
     const skipBtn = s.skipKey && s.passed == null && s.status !== 'done' && !s.done
       ? `<button class="btn ghost xs cstep-skip" data-cskip="${s.skipKey}" title="${rt('wf_skip')}">✕</button>` : '';
     return `<div class="cstep ${s.passed === true ? 'ok' : s.passed === false ? 'no' : ''}">
       <div class="cstep-row">${logo}
       <div class="cstep-main"><b>${esc(s.title)}</b>${s.analysis && s.analysis.verdict ? `<span class="cstep-ai">${esc(s.analysis.verdict)}</span>` : ''}</div>
-      ${stBadge(s)}<div class="cstep-act" style="display:flex;gap:5px">${act}${aiBtn}${skipBtn}</div></div>${linkRow}</div>`;
+      ${stBadge(s)}<div class="cstep-act" style="display:flex;gap:5px">${act}${seeAi}${aiBtn}${skipBtn}</div></div>${linkRow}</div>`;
   };
-  window.__cstepAI = [];
+  window.__cstepAI = []; window.__aicRes = [];
   const rows = [];
   wf.stages.forEach(s => {
     // Несколько тестов знаний — отдельная плашка на каждый
@@ -2542,7 +2620,7 @@ function candidateStepsPanel(wf) {
         rows.push(mkRow({ kind: 'references', key: 'references', refIndex: r.i, skipKey: 'references',
           title: s.title + ' · ' + nm2 + (r.contact.position ? ' (' + r.contact.position + ')' : '') + (r.contact.phone ? ' · ' + r.contact.phone : ''),
           done: r.done, passed: r.done ? r.tone !== 'low' : null,
-          analysis: r.verdict ? { verdict: r.verdict } : null,
+          analysis: r.verdict ? { verdict: r.verdict } : null, aiResult: r.aiResult,
           aiCall: s.aiCall, phone: r.phone, aiStatus: r.aiStatus }));
       });
     } else rows.push(mkRow(Object.assign({ skipKey: s.key }, s)));
@@ -2591,6 +2669,14 @@ function wireCandidateSteps() {
     openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">${AI_IC} ${esc(a.title)}</h2></div>
       <div class="ai-note tone-${a.analysis.tone || 'good'}"><div class="ai-h">${esc(a.analysis.verdict || '')}</div>
       ${(a.analysis.notes || []).length ? `<ul>${a.analysis.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}</div>`, true);
+  });
+  // «Смотреть результат (звонок ИИ)» — собранные ИИ ответы по этапу
+  $$('[data-caires]').forEach(b => b.onclick = () => {
+    const r = (window.__aicRes || [])[+b.dataset.caires]; if (!r) return;
+    const rows2 = (r.res.answers || []).map(a => `<div class="aic-qa"><span>${esc(a.label)}</span><b>${esc(a.value)}</b></div>`).join('');
+    openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">${AI_IC} ${rt('aic_result_title')}</h2><span class="tag">${esc(r.title)}</span></div>
+      ${r.res.summary ? `<div class="aic-sum" style="margin:0 0 12px">${esc(r.res.summary)}</div>` : ''}
+      <div class="aic-ans">${rows2}</div>`, true);
   });
   // Референсы и мотивация — модалки с вопросами (и прежними ответами)
   $$('[data-cform]').forEach(b => b.onclick = () => {

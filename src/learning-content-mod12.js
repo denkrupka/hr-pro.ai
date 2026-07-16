@@ -292,107 +292,727 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
             ru: 'На какие три зоны делятся десять точек теста?',
-            en: 'Into which three zones do the ten points of the test divide?',
+            en: 'Into which three zones are the ten points of the test divided?',
             pl: 'Na jakie trzy strefy dzieli się dziesięć punktów testu?',
           },
           opts: [
             {
-              ru: '«Быть» (A, B, C), «делать» (D, E, F, G) и «иметь» (H, I, J)',
-              en: '"Being" (A, B, C), "doing" (D, E, F, G), and "having" (H, I, J)',
-              pl: '„Być” (A, B, C), „robić” (D, E, F, G) i „mieć” (H, I, J)',
+              ru: 'плохие, средние, хорошие',
+              en: 'bad, medium, good',
+              pl: 'złe, średnie, dobre',
             },
             {
-              ru: '«Прошлое», «настоящее» и «будущее» — по времени ответа',
-              en: '"Past," "present," and "future" — by the time of the answer',
-              pl: '„Przeszłość”, „teraźniejszość” i „przyszłość” — według czasu odpowiedzi',
+              ru: 'низкие, средние, высокие',
+              en: 'low, medium, high',
+              pl: 'niskie, średnie, wysokie',
             },
             {
-              ru: '«Высокие», «средние» и «низкие» точки — по числовому уровню',
-              en: '"High," "medium," and "low" points — by numerical level',
-              pl: '„Wysokie”, „średnie” i „niskie” punkty — według poziomu liczbowego',
+              ru: 'A, B, C',
+              en: 'A, B, C',
+              pl: 'A, B, C',
+            },
+            {
+              ru: '«быть», «делать», «иметь»',
+              en: '"being," "doing," "having"',
+              pl: '„być”, „robić”, „mieć”',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Какие точки образуют зону «быть»?',
+            en: 'Which points make up the "being" zone?',
+            pl: 'Które punkty tworzą strefę „być”?',
+          },
+          opts: [
+            {
+              ru: 'первые три — A, B, C (внутренние качества, зависят только от самого человека)',
+              en: 'the first three — A, B, C (inner qualities that depend only on the person himself)',
+              pl: 'pierwsze trzy — A, B, C (cechy wewnętrzne, zależą tylko od samego człowieka)',
+            },
+            {
+              ru: 'D, E, F, G',
+              en: 'D, E, F, G',
+              pl: 'D, E, F, G',
+            },
+            {
+              ru: 'H, I, J',
+              en: 'H, I, J',
+              pl: 'H, I, J',
+            },
+            {
+              ru: 'все десять',
+              en: 'all ten',
+              pl: 'wszystkie dziesięć',
             },
           ],
           correct: 0,
         },
         {
           q: {
-            ru: 'Что означают соотношения D–E и E–F?',
-            en: 'What do the D–E and E–F ratios mean?',
-            pl: 'Co oznaczają stosunki D–E i E–F?',
+            ru: 'Зона «делать» — это:',
+            en: 'The "doing" zone is:',
+            pl: 'Strefa „robić” to:',
           },
           opts: [
             {
-              ru: 'Ничего особенного — точки читаются только по отдельности, соотношения не важны',
-              en: 'Nothing in particular — the points are read only separately, the ratios do not matter',
-              pl: 'Nic szczególnego — punkty czyta się tylko osobno, stosunki nie są ważne',
+              ru: 'A, B, C',
+              en: 'A, B, C',
+              pl: 'A, B, C',
             },
             {
-              ru: 'D выше E — тяга к рутине, E выше D (на 20+) — «новый»; E выше F — «бросает дела», F выше E — «ленивый»',
-              en: 'D higher than E — a pull toward routine, E higher than D (by 20+) — "new"; E higher than F — "abandons things," F higher than E — "lazy"',
-              pl: 'D wyższe od E — ciąg do rutyny, E wyższe od D (o 20+) — „nowy”; E wyższe od F — „porzuca sprawy”, F wyższe od E — „leniwy”',
+              ru: 'H, I, J',
+              en: 'H, I, J',
+              pl: 'H, I, J',
             },
             {
-              ru: 'Они показывают возраст и стаж кандидата',
-              en: 'They show the candidate\'s age and length of service',
-              pl: 'Pokazują wiek i staż kandydata',
-            },
-          ],
-          correct: 1,
-        },
-        {
-          q: {
-            ru: 'Что такое ПИН (потенциальный источник неприятностей)?',
-            en: 'What is PTS (a potential trouble source)?',
-            pl: 'Czym jest PŹK (potencjalne źródło kłopotów)?',
-          },
-          opts: [
-            {
-              ru: 'Точка D в компульсивной зоне — человек «обязан быть прав»',
-              en: 'Point D in the compulsive zone — the person is "obliged to be right"',
-              pl: 'Punkt D w strefie kompulsywnej — człowiek „musi mieć rację”',
+              ru: 'D, E, F, G — показатели эффективности',
+              en: 'D, E, F, G — indicators of effectiveness',
+              pl: 'D, E, F, G — wskaźniki efektywności',
             },
             {
-              ru: 'Одна высокая точка на фоне низких — карьерист',
-              en: 'One high point against low ones — the careerist',
-              pl: 'Jeden wysoki punkt na tle niskich — karierowicz',
-            },
-            {
-              ru: 'Две «молнии» сразу — плавают и настроение (B), и энергия (E); колебания складываются, обычно из-за подавления в окружении',
-              en: 'Two "lightning bolts" at once — both mood (B) and energy (E) float; the fluctuations add up, usually because of suppression in the environment',
-              pl: 'Dwie „błyskawice” od razu — pływają i nastrój (B), i energia (E); wahania się składają, zwykle z powodu tłumienia w otoczeniu',
+              ru: 'только точка D',
+              en: 'point D only',
+              pl: 'tylko punkt D',
             },
           ],
           correct: 2,
         },
         {
           q: {
-            ru: 'Какое сочетание точек описывает синдром «динамит»?',
-            en: 'What combination of points describes the "dynamite" syndrome?',
-            pl: 'Jakie połączenie punktów opisuje syndrom „dynamit”?',
+            ru: 'Зона «иметь» (отношения с другими людьми) — это:',
+            en: 'The "having" zone (relationships with other people) is:',
+            pl: 'Strefa „mieć” (relacje z innymi ludźmi) to:',
           },
           opts: [
             {
-              ru: 'Низкая внимательность, низкое самообладание, нежелание отвечать и высокая настойчивость — человек легко «взрывается»',
-              en: 'Low attentiveness, low self-possession, unwillingness to answer, and high persistence — the person easily "explodes"',
-              pl: 'Niska uważność, niskie panowanie nad sobą, niechęć do odpowiadania i wysoka wytrwałość — człowiek łatwo „wybucha”',
+              ru: 'A, B, C',
+              en: 'A, B, C',
+              pl: 'A, B, C',
             },
             {
-              ru: 'Высокая позитивность, чуткость и общительность при низкой настойчивости — «приятный и милый»',
-              en: 'High positivity, sensitivity, and sociability with low persistence — "the pleasant and nice one"',
-              pl: 'Wysoka pozytywność, wrażliwość i towarzyskość przy niskiej wytrwałości — „przyjemny i miły”',
+              ru: 'H, I, J',
+              en: 'H, I, J',
+              pl: 'H, I, J',
             },
             {
-              ru: 'Все показатели в высокой зоне на одном уровне — «очень эффективный»',
-              en: 'All indicators in the high zone at the same level — "very effective"',
-              pl: 'Wszystkie wskaźniki w wysokiej strefie na jednym poziomie — „bardzo efektywny”',
+              ru: 'D, E, F',
+              en: 'D, E, F',
+              pl: 'D, E, F',
+            },
+            {
+              ru: 'только точка G',
+              en: 'point G only',
+              pl: 'tylko punkt G',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Кто такой «результатник-карьерист» в терминах зон?',
+            en: 'Who is the "result-driven careerist" in terms of the zones?',
+            pl: 'Kim jest „karierowicz nastawiony na wynik” w kategoriach stref?',
+          },
+          opts: [
+            {
+              ru: 'человек со слабой зоной «делать»',
+              en: 'a person with a weak "doing" zone',
+              pl: 'człowiek ze słabą strefą „robić”',
+            },
+            {
+              ru: 'человек с очень сильной зоной «быть»',
+              en: 'a person with a very strong "being" zone',
+              pl: 'człowiek z bardzo silną strefą „być”',
+            },
+            {
+              ru: 'человек без всякой зоны «иметь»',
+              en: 'a person without any "having" zone at all',
+              pl: 'człowiek bez żadnej strefy „mieć”',
+            },
+            {
+              ru: 'сильная зона «делать», но плохо в «быть» и напряжённо в «иметь» — «весь за результат, а остальное потом»',
+              en: 'a strong "doing" zone, but poor in "being" and tense in "having" — "all about the result, and everything else later"',
+              pl: 'silna strefa „robić”, ale słabo w „być” i napięcie w „mieć” — „cały nastawiony na wynik, a reszta później”',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что означает соотношение «активность (E) выше уверенности (D) не меньше чем на 20 пунктов»?',
+            en: 'What does the ratio "activity (E) higher than certainty (D) by at least 20 points" mean?',
+            pl: 'Co oznacza stosunek „aktywność (E) wyższa od pewności (D) o co najmniej 20 punktów”?',
+          },
+          opts: [
+            {
+              ru: 'система выведет, что человек «новый»: любит новое, начинать получается лучше, чем работать в рутине',
+              en: 'the system concludes that the person is "new": he likes novelty, and starting works out better for him than working in routine',
+              pl: 'system uzna, że człowiek jest „nowy”: lubi nowość, zaczynanie wychodzi mu lepiej niż praca w rutynie',
+            },
+            {
+              ru: 'человек консервативен',
+              en: 'the person is conservative',
+              pl: 'człowiek jest konserwatywny',
+            },
+            {
+              ru: 'человек ленив',
+              en: 'the person is lazy',
+              pl: 'człowiek jest leniwy',
+            },
+            {
+              ru: 'тест недействителен',
+              en: 'the test is invalid',
+              pl: 'test jest nieważny',
             },
           ],
           correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что означает «активность выше настойчивости» (E > F)?',
+            en: 'What does "activity higher than persistence" (E > F) mean?',
+            pl: 'Co oznacza „aktywność wyższa od wytrwałości” (E > F)?',
+          },
+          opts: [
+            {
+              ru: 'человек ленивый',
+              en: 'the person is lazy',
+              pl: 'człowiek jest leniwy',
+            },
+            {
+              ru: 'человек очень эффективен',
+              en: 'the person is very effective',
+              pl: 'człowiek jest bardzo efektywny',
+            },
+            {
+              ru: 'человек может «бросать дела»: многое начинает, но не доводит до конца',
+              en: 'the person may "abandon things": he starts a lot but does not see it through',
+              pl: 'człowiek może „porzucać sprawy”: wiele zaczyna, ale nie doprowadza do końca',
+            },
+            {
+              ru: 'человек консервативен',
+              en: 'the person is conservative',
+              pl: 'człowiek jest konserwatywny',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что означает «настойчивость выше активности» (F > E)?',
+            en: 'What does "persistence higher than activity" (F > E) mean?',
+            pl: 'Co oznacza „wytrwałość wyższa od aktywności” (F > E)?',
+          },
+          opts: [
+            {
+              ru: 'человек «бросает дела»',
+              en: 'the person "abandons things"',
+              pl: 'człowiek „porzuca sprawy”',
+            },
+            {
+              ru: 'человек «ленивый»: довести до конца может, но энергии мало, поэтому мало начинает',
+              en: 'the person is "lazy": he can see things through, but has little energy, so he begins little',
+              pl: 'człowiek jest „leniwy”: doprowadzić do końca potrafi, ale energii ma mało, więc mało zaczyna',
+            },
+            {
+              ru: 'человек тянется к новому',
+              en: 'the person is drawn to the new',
+              pl: 'człowiek ciągnie do nowego',
+            },
+            {
+              ru: 'человек нервный',
+              en: 'the person is nervous',
+              pl: 'człowiek jest nerwowy',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какие две точки могут «плавать» (отмечаются «молнией»)?',
+            en: 'Which two points can "float" (are marked with a "lightning bolt")?',
+            pl: 'Które dwa punkty mogą „pływać” (oznaczane „błyskawicą”)?',
+          },
+          opts: [
+            {
+              ru: 'A и B',
+              en: 'A and B',
+              pl: 'A i B',
+            },
+            {
+              ru: 'D и G',
+              en: 'D and G',
+              pl: 'D i G',
+            },
+            {
+              ru: 'H и J',
+              en: 'H and J',
+              pl: 'H i J',
+            },
+            {
+              ru: 'настроение (B) и энергия (E)',
+              en: 'mood (B) and energy (E)',
+              pl: 'nastrój (B) i energia (E)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что такое ПИН?',
+            en: 'What is a PTS?',
+            pl: 'Czym jest PŹK?',
+          },
+          opts: [
+            {
+              ru: 'когда на тесте сразу две «молнии» (плавают и настроение, и энергия) — «волны складываются», человек будто притягивает неприятности',
+              en: 'when the test has two "lightning bolts" at once (both mood and energy float) — the "waves add up," and the person seems to attract trouble',
+              pl: 'gdy na teście od razu są dwie „błyskawice” (pływają i nastrój, i energia) — „fale się składają”, człowiek jakby przyciąga kłopoty',
+            },
+            {
+              ru: 'очень высокая точка',
+              en: 'a very high point',
+              pl: 'bardzo wysoki punkt',
+            },
+            {
+              ru: 'синоним компульсивности',
+              en: 'a synonym for compulsiveness',
+              pl: 'synonim kompulsywności',
+            },
+            {
+              ru: 'название зоны теста',
+              en: 'the name of a test zone',
+              pl: 'nazwa strefy testu',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что особенно опасно при ПИН?',
+            en: 'What is especially dangerous in a PTS?',
+            pl: 'Co jest szczególnie niebezpieczne przy PŹK?',
+          },
+          opts: [
+            {
+              ru: 'высокая энергия',
+              en: 'high energy',
+              pl: 'wysoka energia',
+            },
+            {
+              ru: 'хорошее настроение',
+              en: 'a good mood',
+              pl: 'dobry nastrój',
+            },
+            {
+              ru: '«дно» — момент, когда у человека нет ни настроения, ни энергии',
+              en: 'the "bottom" — the moment when the person has neither mood nor energy',
+              pl: '„dno” — moment, gdy człowiek nie ma ani nastroju, ani energii',
+            },
+            {
+              ru: 'высокая D',
+              en: 'a high D',
+              pl: 'wysokie D',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Синдром «обязан быть правым» загорается, когда:',
+            en: 'The "obliged to be right" syndrome lights up when:',
+            pl: 'Syndrom „musi mieć rację” zapala się, gdy:',
+          },
+          opts: [
+            {
+              ru: 'точка D самая низкая',
+              en: 'point D is the lowest',
+              pl: 'punkt D jest najniższy',
+            },
+            {
+              ru: 'уверенность (D) — самая высокая точка, в высокой зоне и выше всех остальных',
+              en: 'certainty (D) is the highest point, in the high zone and above all the rest',
+              pl: 'pewność (D) jest najwyższym punktem, w wysokiej strefie i powyżej wszystkich pozostałych',
+            },
+            {
+              ru: 'высокая активность',
+              en: 'high activity',
+              pl: 'wysoka aktywność',
+            },
+            {
+              ru: 'низкая ответственность',
+              en: 'low responsibility',
+              pl: 'niska odpowiedzialność',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Кто такой «карьерист» по тесту?',
+            en: 'Who is the "careerist" according to the test?',
+            pl: 'Kim jest „karierowicz” według testu?',
+          },
+          opts: [
+            {
+              ru: 'человек с сильной зоной «иметь»',
+              en: 'a person with a strong "having" zone',
+              pl: 'człowiek z silną strefą „mieć”',
+            },
+            {
+              ru: 'человек, который ценит отношения',
+              en: 'a person who values relationships',
+              pl: 'człowiek, który ceni relacje',
+            },
+            {
+              ru: 'человек с плавающими точками',
+              en: 'a person with floating points',
+              pl: 'człowiek z pływającymi punktami',
+            },
+            {
+              ru: 'восходящий график с сильной зоной «делать», кто думает прежде всего о себе и работе («быть, а не иметь»)',
+              en: 'an ascending graph with a strong "doing" zone, who thinks above all about himself and work ("being, not having")',
+              pl: 'rosnący wykres z silną strefą „robić”, kto myśli przede wszystkim o sobie i pracy („być, a nie mieć”)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Синдром «Обвиняющий» — это сочетание:',
+            en: 'The "Accuser" syndrome is a combination of:',
+            pl: 'Syndrom „Oskarżający” to połączenie:',
+          },
+          opts: [
+            {
+              ru: 'низкой объективности, низкой ответственности и очень высокой настойчивости',
+              en: 'low objectivity, low responsibility, and very high persistence',
+              pl: 'niskiej obiektywności, niskiej odpowiedzialności i bardzo wysokiej wytrwałości',
+            },
+            {
+              ru: 'высокой чуткости и низкой общительности',
+              en: 'high sensitivity and low sociability',
+              pl: 'wysokiej wrażliwości i niskiej towarzyskości',
+            },
+            {
+              ru: 'высокой активности и низкой внимательности',
+              en: 'high activity and low attentiveness',
+              pl: 'wysokiej aktywności i niskiej uważności',
+            },
+            {
+              ru: 'высокой ответственности и высокой D',
+              en: 'high responsibility and high D',
+              pl: 'wysokiej odpowiedzialności i wysokiego D',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Синдром «Плюшевый мишка» — это:',
+            en: 'The "Teddy Bear" syndrome is:',
+            pl: 'Syndrom „Pluszowy miś” to:',
+          },
+          opts: [
+            {
+              ru: 'низкая объективность + высокая настойчивость',
+              en: 'low objectivity + high persistence',
+              pl: 'niska obiektywność + wysoka wytrwałość',
+            },
+            {
+              ru: 'высокая активность + низкая внимательность',
+              en: 'high activity + low attentiveness',
+              pl: 'wysoka aktywność + niska uważność',
+            },
+            {
+              ru: 'очень высокая чуткость при очень низкой общительности (человека «используют», «вытирают о него ноги»)',
+              en: 'very high sensitivity with very low sociability (the person is "used," people "wipe their feet on him")',
+              pl: 'bardzo wysoka wrażliwość przy bardzo niskiej towarzyskości (człowiek jest „wykorzystywany”, „wyciera się o niego nogi”)',
+            },
+            {
+              ru: 'все показатели на одном высоком уровне',
+              en: 'all indicators at the same high level',
+              pl: 'wszystkie wskaźniki na jednym wysokim poziomie',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Синдром «Рассеянный» — это:',
+            en: 'The "Absent-minded" syndrome is:',
+            pl: 'Syndrom „Roztargniony” to:',
+          },
+          opts: [
+            {
+              ru: 'высокая объективность + высокая внимательность',
+              en: 'high objectivity + high attentiveness',
+              pl: 'wysoka obiektywność + wysoka uważność',
+            },
+            {
+              ru: 'высокая активность при очень низкой внимательности (много действий, но человек путается, забывает, теряет нить)',
+              en: 'high activity with very low attentiveness (a lot of action, but the person gets confused, forgets, loses the thread)',
+              pl: 'wysoka aktywność przy bardzo niskiej uważności (dużo działań, ale człowiek się gubi, zapomina, traci wątek)',
+            },
+            {
+              ru: 'высокая настойчивость при низкой ответственности',
+              en: 'high persistence with low responsibility',
+              pl: 'wysoka wytrwałość przy niskiej odpowiedzialności',
+            },
+            {
+              ru: 'высокая ответственность + высокая D',
+              en: 'high responsibility + high D',
+              pl: 'wysoka odpowiedzialność + wysokie D',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Синдром «Педант» — это сочетание:',
+            en: 'The "Pedant" syndrome is a combination of:',
+            pl: 'Syndrom „Pedant” to połączenie:',
+          },
+          opts: [
+            {
+              ru: 'низкой объективности и низкой ответственности',
+              en: 'low objectivity and low responsibility',
+              pl: 'niskiej obiektywności i niskiej odpowiedzialności',
+            },
+            {
+              ru: 'высокой активности и низкой внимательности',
+              en: 'high activity and low attentiveness',
+              pl: 'wysokiej aktywności i niskiej uważności',
+            },
+            {
+              ru: 'очень высокой чуткости и низкой общительности',
+              en: 'very high sensitivity and low sociability',
+              pl: 'bardzo wysokiej wrażliwości i niskiej towarzyskości',
+            },
+            {
+              ru: 'высокой объективности вместе с высокой внимательностью (строг, дотошен, критичен к деталям)',
+              en: 'high objectivity together with high attentiveness (strict, meticulous, critical of details)',
+              pl: 'wysokiej obiektywności wraz z wysoką uważnością (surowy, drobiazgowy, krytyczny wobec detali)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'В синдроме «Динамит» что задаёт длину «шнура»?',
+            en: 'In the "Dynamite" syndrome, what sets the length of the "fuse"?',
+            pl: 'W syndromie „Dynamit” co wyznacza długość „lontu”?',
+          },
+          opts: [
+            {
+              ru: 'внимательность (A) — насколько далеко человек просчитывает последствия',
+              en: 'attentiveness (A) — how far ahead the person calculates the consequences',
+              pl: 'uważność (A) — jak daleko człowiek przewiduje konsekwencje',
+            },
+            {
+              ru: 'настойчивость (F)',
+              en: 'persistence (F)',
+              pl: 'wytrwałość (F)',
+            },
+            {
+              ru: 'ответственность (G)',
+              en: 'responsibility (G)',
+              pl: 'odpowiedzialność (G)',
+            },
+            {
+              ru: 'самообладание (C)',
+              en: 'self-possession (C)',
+              pl: 'panowanie nad sobą (C)',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'В синдроме «Динамит» что показывает ответственность (G)?',
+            en: 'In the "Dynamite" syndrome, what does responsibility (G) show?',
+            pl: 'W syndromie „Dynamit” co pokazuje odpowiedzialność (G)?',
+          },
+          opts: [
+            {
+              ru: 'длину шнура',
+              en: 'the length of the fuse',
+              pl: 'długość lontu',
+            },
+            {
+              ru: 'силу взрыва',
+              en: 'the force of the explosion',
+              pl: 'siłę wybuchu',
+            },
+            {
+              ru: '«сухость системы» — саму вероятность того, что «рванёт»',
+              en: 'the "dryness of the system" — the very probability that it will "go off"',
+              pl: '„suchość systemu” — samo prawdopodobieństwo tego, że „wybuchnie”',
+            },
+            {
+              ru: 'число «искр»',
+              en: 'the number of "sparks"',
+              pl: 'liczbę „iskier”',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Синдром «Лучшего» — это:',
+            en: 'The "Best" syndrome is:',
+            pl: 'Syndrom „Najlepszego” to:',
+          },
+          opts: [
+            {
+              ru: 'все показатели высокие',
+              en: 'all indicators are high',
+              pl: 'wszystkie wskaźniki są wysokie',
+            },
+            {
+              ru: 'очень высокая настойчивость при очень низкой ответственности: доводит дела до конца, но стремится сделать всё идеально, чтобы не подвергнуться критике',
+              en: 'very high persistence with very low responsibility: he sees things through, but strives to do everything perfectly so as not to be exposed to criticism',
+              pl: 'bardzo wysoka wytrwałość przy bardzo niskiej odpowiedzialności: doprowadza sprawy do końca, ale dąży do zrobienia wszystkiego idealnie, aby nie narazić się na krytykę',
+            },
+            {
+              ru: 'высокая чуткость + низкая общительность',
+              en: 'high sensitivity + low sociability',
+              pl: 'wysoka wrażliwość + niska towarzyskość',
+            },
+            {
+              ru: 'высокая активность + высокая ответственность',
+              en: 'high activity + high responsibility',
+              pl: 'wysoka aktywność + wysoka odpowiedzialność',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Синдром «Очень эффективен» — это:',
+            en: 'The "Very Effective" syndrome is:',
+            pl: 'Syndrom „Bardzo efektywny” to:',
+          },
+          opts: [
+            {
+              ru: 'одна точка резко выделяется',
+              en: 'one point stands out sharply',
+              pl: 'jeden punkt wyraźnie się wyróżnia',
+            },
+            {
+              ru: 'две плавающие точки',
+              en: 'two floating points',
+              pl: 'dwa pływające punkty',
+            },
+            {
+              ru: 'низкая объективность + высокая настойчивость',
+              en: 'low objectivity + high persistence',
+              pl: 'niska obiektywność + wysoka wytrwałość',
+            },
+            {
+              ru: 'все показатели в высокой зоне и примерно на одном уровне (колебания в пределах 10 пунктов) — на таких людей можно делать ставку',
+              en: 'all indicators in the high zone and roughly at the same level (fluctuations within 10 points) — such people can be bet on',
+              pl: 'wszystkie wskaźniki w wysokiej strefie i mniej więcej na jednym poziomie (wahania w granicach 10 punktów) — na takich ludzi można postawić',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Синдром «Инициативный» — это сочетание:',
+            en: 'The "Initiative-taking" syndrome is a combination of:',
+            pl: 'Syndrom „Inicjatywny” to połączenie:',
+          },
+          opts: [
+            {
+              ru: 'высокой активности с высокой ответственностью (любит отвечать за свои дела и при этом сам начинает действовать)',
+              en: 'high activity with high responsibility (he likes to answer for his own affairs and at the same time starts acting on his own)',
+              pl: 'wysokiej aktywności z wysoką odpowiedzialnością (lubi odpowiadać za swoje sprawy i przy tym sam zaczyna działać)',
+            },
+            {
+              ru: 'высокой активности с нежеланием отвечать',
+              en: 'high activity with an unwillingness to answer',
+              pl: 'wysokiej aktywności z niechęcią do odpowiadania',
+            },
+            {
+              ru: 'низкой активности с высокой ответственностью',
+              en: 'low activity with high responsibility',
+              pl: 'niskiej aktywności z wysoką odpowiedzialnością',
+            },
+            {
+              ru: 'высокой чуткости с низкой общительностью',
+              en: 'high sensitivity with low sociability',
+              pl: 'wysokiej wrażliwości z niską towarzyskością',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Синдром «Недостаточно инициативный» — это:',
+            en: 'The "Insufficiently proactive" syndrome is:',
+            pl: 'Syndrom „Niewystarczająco inicjatywny” to:',
+          },
+          opts: [
+            {
+              ru: 'все показатели низкие',
+              en: 'all indicators are low',
+              pl: 'wszystkie wskaźniki są niskie',
+            },
+            {
+              ru: 'высокая ответственность при низкой активности',
+              en: 'high responsibility with low activity',
+              pl: 'wysoka odpowiedzialność przy niskiej aktywności',
+            },
+            {
+              ru: 'высокая активность, но человек не любит отвечать и не выносит давления — сам, без влияния извне, действовать не станет',
+              en: 'high activity, but the person does not like to answer and cannot bear pressure — he will not act on his own, without outside influence',
+              pl: 'wysoka aktywność, ale człowiek nie lubi odpowiadać i nie znosi presji — sam, bez wpływu z zewnątrz, nie zacznie działać',
+            },
+            {
+              ru: 'очень высокая настойчивость',
+              en: 'very high persistence',
+              pl: 'bardzo wysoka wytrwałość',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Какому соотношению точек соответствует синдром неэффективности, а какому — синдром лени?',
+            en: 'Which ratio of points corresponds to the syndrome of ineffectiveness, and which to the syndrome of laziness?',
+            pl: 'Któremu stosunkowi punktów odpowiada syndrom nieefektywności, a któremu — syndrom lenistwa?',
+          },
+          opts: [
+            {
+              ru: 'неэффективность: F>E; лень: E>F',
+              en: 'ineffectiveness: F>E; laziness: E>F',
+              pl: 'nieefektywność: F>E; lenistwo: E>F',
+            },
+            {
+              ru: 'неэффективность: активность выше настойчивости (E>F); лень: наоборот (F>E)',
+              en: 'ineffectiveness: activity higher than persistence (E>F); laziness: the opposite (F>E)',
+              pl: 'nieefektywność: aktywność wyższa od wytrwałości (E>F); lenistwo: odwrotnie (F>E)',
+            },
+            {
+              ru: 'оба — это E>F',
+              en: 'both are E>F',
+              pl: 'oba to E>F',
+            },
+            {
+              ru: 'они не связаны с соотношением точек',
+              en: 'they are not related to the ratio of points',
+              pl: 'nie są związane ze stosunkiem punktów',
+            },
+          ],
+          correct: 1,
         },
       ],
     },

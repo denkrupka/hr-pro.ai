@@ -429,79 +429,484 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'Почему нового сотрудника опасно только «закармливать» входящим потоком (зарплатой и обучением)?',
-            en: 'Why is it dangerous to only "overfeed" a new employee with inflow (salary and training)?',
-            pl: 'Dlaczego niebezpiecznie jest jedynie „zakarmiać" nowego pracownika przepływem przychodzącym (pensją i szkoleniem)?',
+            ru: 'Почему автор даёт не «готовые рецепты», а принципы?',
+            en: 'Why does the author give not "ready-made recipes" but principles?',
+            pl: 'Dlaczego autor daje nie „gotowe recepty", lecz zasady?',
           },
           opts: [
             {
-              ru: 'Он привыкнет к лёгкой жизни и перестанет учиться',
-              en: 'He will get used to an easy life and stop learning',
-              pl: 'Przyzwyczai się do lekkiego życia i przestanie się uczyć',
+              ru: 'рецепты слишком дороги',
+              en: 'recipes are too expensive',
+              pl: 'recepty są zbyt drogie',
             },
             {
-              ru: 'Без исходящего потока обмен нарушается, и человек, восстанавливая его, начинает обесценивать компанию',
-              en: 'Without outflow the exchange is disrupted, and the person, restoring it, begins to devalue the company',
-              pl: 'Bez przepływu wychodzącego wymiana się zaburza, i człowiek, przywracając ją, zaczyna obniżać wartość firmy',
+              ru: 'готовый рецепт сработал в одной компании и не обязательно сработает в другой, ведь у каждой своя специфика',
+              en: 'a ready-made recipe worked in one company and will not necessarily work in another, since each has its own specifics',
+              pl: 'gotowa recepta zadziałała w jednej firmie i niekoniecznie zadziała w innej, bo każda ma swoją specyfikę',
             },
             {
-              ru: 'Компания тратит слишком много денег на его зарплату',
-              en: 'The company spends too much money on his salary',
-              pl: 'Firma wydaje zbyt dużo pieniędzy na jego pensję',
+              ru: 'принципы легче заучить',
+              en: 'principles are easier to memorize',
+              pl: 'zasady łatwiej zapamiętać',
+            },
+            {
+              ru: 'рецептов не существует',
+              en: 'recipes do not exist',
+              pl: 'recepty nie istnieją',
             },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'Почему ноль — не самый плохой вариант найма?',
-            en: 'Why is zero not the worst hiring outcome?',
-            pl: 'Dlaczego zero to nie najgorszy wariant rekrutacji?',
+            ru: 'Как звучит принцип Хаббарда о производстве и боевом духе?',
+            en: 'How does Hubbard\'s principle about production and morale sound?',
+            pl: 'Jak brzmi zasada Hubbarda o produkcji i morale?',
           },
           opts: [
             {
-              ru: 'Потому что на нуле удержаться легко и это безопасно для компании',
-              en: 'Because it is easy to hold at zero and it is safe for the company',
-              pl: 'Ponieważ na zerze łatwo się utrzymać i to bezpieczne dla firmy',
+              ru: '«Боевой дух — основа производства»',
+              en: '"Morale is the basis of production"',
+              pl: '„Morale jest podstawą produkcji"',
             },
             {
-              ru: 'Потому что ноль всегда лучше, чем плюс бесконечность',
-              en: 'Because zero is always better than plus infinity',
-              pl: 'Ponieważ zero jest zawsze lepsze niż plus nieskończoność',
+              ru: '«Производство — основа боевого духа»',
+              en: '"Production is the basis of morale"',
+              pl: '„Produkcja jest podstawą morale"',
             },
             {
-              ru: 'Потому что появившийся сотрудник почти не может остаться на нуле: он либо приносит пользу, либо вред — вплоть до минус бесконечности',
-              en: 'Because an employee who has appeared can hardly stay at zero: he either brings benefit or harm — down to minus infinity',
-              pl: 'Ponieważ pojawiony pracownik prawie nie może zostać na zerze: albo przynosi pożytek, albo szkodę — aż po minus nieskończoność',
+              ru: '«Дух и производство не связаны»',
+              en: '"Morale and production are not connected"',
+              pl: '„Morale i produkcja nie są powiązane"',
+            },
+            {
+              ru: '«Производство важнее людей»',
+              en: '"Production is more important than people"',
+              pl: '„Produkcja jest ważniejsza niż ludzie"',
             },
           ],
-          correct: 2,
+          correct: 1,
         },
         {
           q: {
-            ru: 'Что такое состояние несуществования?',
-            en: 'What is the state of non-existence?',
-            pl: 'Czym jest stan nieistnienia?',
+            ru: 'Кого автор называет продуктивными людьми?',
+            en: 'Whom does the author call productive people?',
+            pl: 'Kogo autor nazywa produktywnymi ludźmi?',
           },
           opts: [
             {
-              ru: 'Состояние только что поставленного на должность сотрудника или только что открывшейся компании — их совсем недавно ещё не было',
-              en: 'The state of an employee only just placed in a position or of a company that has only just opened — quite recently they did not yet exist',
-              pl: 'Stan dopiero co postawionego na stanowisku pracownika albo dopiero co otwartej firmy — całkiem niedawno jeszcze ich nie było',
+              ru: 'только виннеров',
+              en: 'only winners',
+              pl: 'tylko winnerów',
             },
             {
-              ru: 'Состояние сотрудника, которого собираются уволить',
-              en: 'The state of an employee who is about to be dismissed',
-              pl: 'Stan pracownika, którego zamierza się zwolnić',
+              ru: 'виннеров и дуеров (причём дуеров намного больше)',
+              en: 'winners and doers (and there are far more doers)',
+              pl: 'winnerów i doerów (przy czym doerów jest znacznie więcej)',
             },
             {
-              ru: 'Состояние компании, которая обанкротилась и прекратила работу',
-              en: 'The state of a company that has gone bankrupt and ceased operating',
-              pl: 'Stan firmy, która zbankrutowała i zaprzestała działalności',
+              ru: 'только руководителей',
+              en: 'only managers',
+              pl: 'tylko kierowników',
+            },
+            {
+              ru: 'только тех, у кого высокий интеллект',
+              en: 'only those with high intelligence',
+              pl: 'tylko tych, którzy mają wysoką inteligencję',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Когда человек чувствует себя хорошо (гордо, комфортно)?',
+            en: 'When does a person feel good (proud, comfortable)?',
+            pl: 'Kiedy człowiek czuje się dobrze (dumnie, komfortowo)?',
+          },
+          opts: [
+            {
+              ru: 'когда долго отдыхает',
+              en: 'when he rests for a long time',
+              pl: 'kiedy długo odpoczywa',
+            },
+            {
+              ru: 'когда производит исходящий поток, полезный кому-то',
+              en: 'when he produces an outflow useful to someone',
+              pl: 'kiedy wytwarza przepływ wychodzący pożyteczny dla kogoś',
+            },
+            {
+              ru: 'когда только получает',
+              en: 'when he only receives',
+              pl: 'kiedy tylko otrzymuje',
+            },
+            {
+              ru: 'когда ничего не делает',
+              en: 'when he does nothing',
+              pl: 'kiedy nic nie robi',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'В чём «ловушка входящего потока» для новичка?',
+            en: 'What is the "inflow trap" for a newcomer?',
+            pl: 'Na czym polega „pułapka przepływu przychodzącego" dla nowicjusza?',
+          },
+          opts: [
+            {
+              ru: 'он получает слишком большую зарплату',
+              en: 'he receives too large a salary',
+              pl: 'otrzymuje zbyt dużą pensję',
+            },
+            {
+              ru: 'он получает зарплату и обучение (входящий), но не отдаёт исходящего — обмен нарушается, банк наваливается',
+              en: 'he receives salary and training (inflow) but gives no outflow — the exchange is disrupted, the bank piles up',
+              pl: 'otrzymuje pensję i szkolenie (przepływ przychodzący), ale nie oddaje wychodzącego — wymiana się zaburza, bank się nawarstwia',
+            },
+            {
+              ru: 'ему не платят вовсе',
+              en: 'he is not paid at all',
+              pl: 'nie płacą mu wcale',
+            },
+            {
+              ru: 'он слишком много работает',
+              en: 'he works too much',
+              pl: 'pracuje zbyt dużo',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какую главную ошибку управленцев по отношению к людям называет автор?',
+            en: 'What main mistake of managers toward people does the author name?',
+            pl: 'Jaki główny błąd kierowników wobec ludzi wymienia autor?',
+          },
+          opts: [
+            {
+              ru: 'излишнюю строгость',
+              en: 'excessive strictness',
+              pl: 'nadmierną surowość',
+            },
+            {
+              ru: '«терпение и надежду» (терпение отсутствия пользы и надежду, что она появится)',
+              en: '"patience and hope" (patience with the absence of benefit and hope that it will appear)',
+              pl: '„cierpliwość i nadzieję" (cierpliwość wobec braku pożytku i nadzieję, że się pojawi)',
+            },
+            {
+              ru: 'слишком высокую зарплату',
+              en: 'too high a salary',
+              pl: 'zbyt wysoką pensję',
+            },
+            {
+              ru: 'частые увольнения',
+              en: 'frequent dismissals',
+              pl: 'częste zwolnienia',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что нужно сделать с новичком в первые дни, чтобы не «загубить» его?',
+            en: 'What should be done with a newcomer in the first days so as not to "ruin" him?',
+            pl: 'Co należy zrobić z nowicjuszem w pierwszych dniach, żeby go nie „zmarnować"?',
+          },
+          opts: [
+            {
+              ru: 'только обучать целыми днями',
+              en: 'only train him whole days long',
+              pl: 'tylko szkolić całymi dniami',
+            },
+            {
+              ru: 'с первого дня дать хоть какую-то полезную работу, обучать не больше полдня',
+              en: 'from the first day give at least some useful work, train no more than half a day',
+              pl: 'od pierwszego dnia dać choćby jakąś pożyteczną pracę, szkolić nie dłużej niż pół dnia',
+            },
+            {
+              ru: 'отправить в отпуск',
+              en: 'send him on vacation',
+              pl: 'wysłać na urlop',
+            },
+            {
+              ru: 'сразу поставить руководителем',
+              en: 'immediately make him a manager',
+              pl: 'od razu ustanowić go kierownikiem',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'В каком состоянии находится только что вышедший на должность сотрудник?',
+            en: 'In what state is an employee who has just taken up a position?',
+            pl: 'W jakim stanie znajduje się pracownik, który dopiero co objął stanowisko?',
+          },
+          opts: [
+            {
+              ru: 'в замешательстве',
+              en: 'in confusion',
+              pl: 'w zamęcie',
+            },
+            {
+              ru: 'в несуществовании',
+              en: 'in non-existence',
+              pl: 'w nieistnieniu',
+            },
+            {
+              ru: 'в могуществе',
+              en: 'in power',
+              pl: 'w potędze',
+            },
+            {
+              ru: 'в опасности',
+              en: 'in danger',
+              pl: 'w niebezpieczeństwie',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какое состояние самое низкое, а какое самое высокое?',
+            en: 'Which state is the lowest and which is the highest?',
+            pl: 'Który stan jest najniższy, a który najwyższy?',
+          },
+          opts: [
+            {
+              ru: 'низшее — опасность, высшее — обмен',
+              en: 'lowest — danger, highest — exchange',
+              pl: 'najniższy — niebezpieczeństwo, najwyższy — wymiana',
+            },
+            {
+              ru: 'низшее — замешательство, высшее — могущество',
+              en: 'lowest — confusion, highest — power',
+              pl: 'najniższy — zamęt, najwyższy — potęga',
+            },
+            {
+              ru: 'низшее — несуществование, высшее — опасность',
+              en: 'lowest — non-existence, highest — danger',
+              pl: 'najniższy — nieistnienie, najwyższy — niebezpieczeństwo',
+            },
+            {
+              ru: 'низшее — рутина, высшее — новое',
+              en: 'lowest — routine, highest — new',
+              pl: 'najniższy — rutyna, najwyższy — nowe',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему «ноль» — не худший вариант найма?',
+            en: 'Why is "zero" not the worst hiring outcome?',
+            pl: 'Dlaczego „zero" to nie najgorszy wariant rekrutacji?',
+          },
+          opts: [
+            {
+              ru: 'потому что ноль — это идеал',
+              en: 'because zero is the ideal',
+              pl: 'ponieważ zero to ideał',
+            },
+            {
+              ru: 'потому что появившийся человек либо приносит пользу, либо вред; худшее — «минус бесконечность»',
+              en: 'because a person who has appeared either brings benefit or harm; the worst is "minus infinity"',
+              pl: 'ponieważ pojawiony człowiek albo przynosi pożytek, albo szkodę; najgorsze to „minus nieskończoność"',
+            },
+            {
+              ru: 'потому что ноль невозможно измерить',
+              en: 'because zero cannot be measured',
+              pl: 'ponieważ zera nie da się zmierzyć',
+            },
+            {
+              ru: 'это неверно, ноль как раз худший',
+              en: 'this is wrong, zero is precisely the worst',
+              pl: 'to nieprawda, zero jest właśnie najgorsze',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Сколько шагов в формуле несуществования?',
+            en: 'How many steps are in the formula of non-existence?',
+            pl: 'Ile kroków ma formuła nieistnienia?',
+          },
+          opts: [
+            {
+              ru: 'два',
+              en: 'two',
+              pl: 'dwa',
+            },
+            {
+              ru: 'четыре',
+              en: 'four',
+              pl: 'cztery',
+            },
+            {
+              ru: 'шесть',
+              en: 'six',
+              pl: 'sześć',
+            },
+            {
+              ru: 'десять',
+              en: 'ten',
+              pl: 'dziesięć',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Как правильно звучит третий шаг формулы несуществования?',
+            en: 'How does the third step of the formula of non-existence correctly sound?',
+            pl: 'Jak prawidłowo brzmi trzeci krok formuły nieistnienia?',
+          },
+          opts: [
+            {
+              ru: '«выясните, что требуется от вас»',
+              en: '"find out what is required of you"',
+              pl: '„wyjaśnijcie, czego się od was wymaga"',
+            },
+            {
+              ru: '«выясните, что требуется или чего хотят» (без слов «от вас»)',
+              en: '"find out what is required or wanted" (without the words "of you")',
+              pl: '„wyjaśnijcie, czego się wymaga albo czego chcą" (bez słów „od was")',
+            },
+            {
+              ru: '«сделайте так, как привыкли»',
+              en: '"do it the way you are used to"',
+              pl: '„zróbcie tak, jak przywykliście"',
+            },
+            {
+              ru: '«дождитесь указаний»',
+              en: '"wait for instructions"',
+              pl: '„poczekajcie na wskazówki"',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Второе название формулы несуществования:',
+            en: 'The second name of the formula of non-existence:',
+            pl: 'Druga nazwa formuły nieistnienia:',
+          },
+          opts: [
+            {
+              ru: 'формула опасности',
+              en: 'the formula of danger',
+              pl: 'formuła niebezpieczeństwa',
+            },
+            {
+              ru: 'формула для нового поста (нового сотрудника)',
+              en: 'the formula for a new post (a new employee)',
+              pl: 'formuła dla nowego stanowiska (nowego pracownika)',
+            },
+            {
+              ru: 'формула обмена',
+              en: 'the formula of exchange',
+              pl: 'formuła wymiany',
+            },
+            {
+              ru: 'формула могущества',
+              en: 'the formula of power',
+              pl: 'formuła potęgi',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'В опасности порядок действий такой:',
+            en: 'In danger the order of actions is as follows:',
+            pl: 'W niebezpieczeństwie kolejność działań jest taka:',
+          },
+          opts: [
+            {
+              ru: 'сначала анализировать причину, потом справляться с ситуацией',
+              en: 'first analyze the cause, then handle the situation',
+              pl: 'najpierw analizować przyczynę, potem radzić sobie z sytuacją',
+            },
+            {
+              ru: 'сначала обойти привычку и справиться с самой опасностью, потом анализировать причину и принимать правила',
+              en: 'first bypass the habit and handle the danger itself, then analyze the cause and adopt rules',
+              pl: 'najpierw obejść nawyk i poradzić sobie z samym niebezpieczeństwem, potem analizować przyczynę i przyjmować zasady',
+            },
+            {
+              ru: 'ничего не делать и ждать',
+              en: 'do nothing and wait',
+              pl: 'nic nie robić i czekać',
+            },
+            {
+              ru: 'сразу вводить новые правила на будущее',
+              en: 'immediately introduce new rules for the future',
+              pl: 'od razu wprowadzać nowe zasady na przyszłość',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое треугольник ЗОК?',
+            en: 'What is the KRC triangle?',
+            pl: 'Czym jest trójkąt WOK?',
+          },
+          opts: [
+            {
+              ru: 'знание, ответственность, контроль',
+              en: 'knowledge, responsibility, control',
+              pl: 'wiedza, odpowiedzialność, kontrola',
+            },
+            {
+              ru: 'закон, обмен, качество',
+              en: 'law, exchange, quality',
+              pl: 'prawo, wymiana, jakość',
+            },
+            {
+              ru: 'знание, обмен, коммуникация',
+              en: 'knowledge, exchange, communication',
+              pl: 'wiedza, wymiana, komunikacja',
+            },
+            {
+              ru: 'забота, ответственность, качество',
+              en: 'care, responsibility, quality',
+              pl: 'troska, odpowiedzialność, jakość',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что такое «обход»?',
+            en: 'What is a "bypass"?',
+            pl: 'Czym jest „obejście"?',
+          },
+          opts: [
+            {
+              ru: 'когда кто-то без ведома ответственного вторгается в область, за которую тот отвечает',
+              en: 'when someone, without the responsible person\'s knowledge, intrudes into the area for which that person is responsible',
+              pl: 'gdy ktoś bez wiedzy osoby odpowiedzialnej wtargnie w obszar, za który ta odpowiada',
+            },
+            {
+              ru: 'обучение нового сотрудника',
+              en: 'the training of a new employee',
+              pl: 'szkolenie nowego pracownika',
+            },
+            {
+              ru: 'способ повысить зарплату',
+              en: 'a way to raise a salary',
+              pl: 'sposób na podwyższenie pensji',
+            },
+            {
+              ru: 'вид рутины',
+              en: 'a type of routine',
+              pl: 'rodzaj rutyny',
             },
           ],
           correct: 0,
@@ -514,19 +919,204 @@ module.exports = {
           },
           opts: [
             {
-              ru: 'Обходить нельзя никого и никогда — это всегда ошибка',
-              en: 'One must never bypass anyone — it is always a mistake',
-              pl: 'Nikogo i nigdy nie wolno obchodzić — to zawsze błąd',
+              ru: 'никак не связаны',
+              en: 'not connected in any way',
+              pl: 'w żaden sposób nie powiązane',
             },
             {
-              ru: 'Обход приводит к опасности, а опасность приводит к обходу: человека, который уже в опасности, обойти необходимо',
-              en: 'A bypass leads to danger, and danger leads to a bypass: a person who is already in danger must be bypassed',
-              pl: 'Obejście prowadzi do niebezpieczeństwa, a niebezpieczeństwo prowadzi do obejścia: człowieka, który już jest w niebezpieczeństwie, obejść trzeba koniecznie',
+              ru: 'обход приводит к опасности, а опасность приводит к обходу',
+              en: 'a bypass leads to danger, and danger leads to a bypass',
+              pl: 'obejście prowadzi do niebezpieczeństwa, a niebezpieczeństwo prowadzi do obejścia',
             },
             {
-              ru: 'Обход и опасность никак не связаны между собой',
-              en: 'Bypass and danger are not connected in any way',
-              pl: 'Obejście i niebezpieczeństwo nie są ze sobą w żaden sposób powiązane',
+              ru: 'обход всегда полезен',
+              en: 'a bypass is always beneficial',
+              pl: 'obejście zawsze jest pożyteczne',
+            },
+            {
+              ru: 'опасность устраняет обход',
+              en: 'danger eliminates the bypass',
+              pl: 'niebezpieczeństwo eliminuje obejście',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Можно ли обходить человека?',
+            en: 'May one bypass a person?',
+            pl: 'Czy można obchodzić człowieka?',
+          },
+          opts: [
+            {
+              ru: 'обходить нельзя никого и никогда',
+              en: 'one must never bypass anyone',
+              pl: 'nikogo i nigdy nie wolno obchodzić',
+            },
+            {
+              ru: 'нельзя обходить того, кто НЕ в опасности; но если он уже в опасности — обойти необходимо',
+              en: 'one must not bypass someone who is NOT in danger; but if he is already in danger — a bypass is necessary',
+              pl: 'nie wolno obchodzić tego, kto NIE jest w niebezpieczeństwie; ale jeśli już jest w niebezpieczeństwie — obejść trzeba koniecznie',
+            },
+            {
+              ru: 'обходить можно любого в любой момент',
+              en: 'one may bypass anyone at any moment',
+              pl: 'obchodzić można każdego w dowolnym momencie',
+            },
+            {
+              ru: 'обходить можно только руководителей',
+              en: 'one may bypass only managers',
+              pl: 'obchodzić można tylko kierowników',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что показывает шкала «знать — не знать — думаю, что знаю»?',
+            en: 'What does the scale "to know — not to know — I think I know" show?',
+            pl: 'Co pokazuje skala „wiedzieć — nie wiedzieć — myślę, że wiem"?',
+          },
+          opts: [
+            {
+              ru: 'что «думаю, что знаю» — самая высокая ступень',
+              en: 'that "I think I know" is the highest rung',
+              pl: 'że „myślę, że wiem" to najwyższy szczebel',
+            },
+            {
+              ru: 'что «думаю, что знаю» — самая низкая ступень, лишь маскирующаяся под высокую',
+              en: 'that "I think I know" is the lowest rung, merely masquerading as a high one',
+              pl: 'że „myślę, że wiem" to najniższy szczebel, jedynie udający wysoki',
+            },
+            {
+              ru: 'что все ступени равны',
+              en: 'that all rungs are equal',
+              pl: 'że wszystkie szczeble są równe',
+            },
+            {
+              ru: 'уровень интеллекта',
+              en: 'the level of intelligence',
+              pl: 'poziom inteligencji',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что должен сделать человек, входя на новую должность (по формуле несуществования)?',
+            en: 'What must a person do when entering a new position (according to the formula of non-existence)?',
+            pl: 'Co powinien zrobić człowiek, wchodząc na nowe stanowisko (według formuły nieistnienia)?',
+          },
+          opts: [
+            {
+              ru: 'сразу навести свои порядки',
+              en: 'immediately impose his own order',
+              pl: 'od razu zaprowadzić swoje porządki',
+            },
+            {
+              ru: 'временно отложить всё, что он знает, признать, что специфики компании не знает, и начать узнавать',
+              en: 'temporarily set aside everything he knows, admit that he does not know the company\'s specifics, and begin to find out',
+              pl: 'tymczasowo odłożyć wszystko, co wie, przyznać, że nie zna specyfiki firmy, i zacząć się dowiadywać',
+            },
+            {
+              ru: 'никого ни о чём не спрашивать',
+              en: 'ask no one about anything',
+              pl: 'nikogo o nic nie pytać',
+            },
+            {
+              ru: 'уволить слабых сотрудников',
+              en: 'dismiss the weak employees',
+              pl: 'zwolnić słabych pracowników',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое «шляпа» сотрудника?',
+            en: 'What is an employee\'s "hat"?',
+            pl: 'Czym jest „kapelusz" pracownika?',
+          },
+          opts: [
+            {
+              ru: 'элемент дресс-кода',
+              en: 'an element of the dress code',
+              pl: 'element dress code\'u',
+            },
+            {
+              ru: 'описание должности (инструкция по посту)',
+              en: 'a description of the position (a post instruction)',
+              pl: 'opis stanowiska (instrukcja stanowiskowa)',
+            },
+            {
+              ru: 'премия',
+              en: 'a bonus',
+              pl: 'premia',
+            },
+            {
+              ru: 'название теста',
+              en: 'the name of a test',
+              pl: 'nazwa testu',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Пример «плюс бесконечности» от одного найма в модуле — это:',
+            en: 'The example of "plus infinity" from a single hire in the module is:',
+            pl: 'Przykład „plus nieskończoności" z jednej rekrutacji w module to:',
+          },
+          opts: [
+            {
+              ru: 'трейдер, обанкротивший банк',
+              en: 'a trader who bankrupted a bank',
+              pl: 'trader, który doprowadził bank do bankructwa',
+            },
+            {
+              ru: 'инженер, придумавший упаковку Tetra Pak и сделавший компанию мировым лидером',
+              en: 'an engineer who invented the Tetra Pak package and made the company a world leader',
+              pl: 'inżynier, który wymyślił opakowanie Tetra Pak i uczynił firmę światowym liderem',
+            },
+            {
+              ru: 'уволенный бухгалтер',
+              en: 'a dismissed accountant',
+              pl: 'zwolniony księgowy',
+            },
+            {
+              ru: 'курьер',
+              en: 'a courier',
+              pl: 'kurier',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Чем отличается продуктивный человек от того, на кого «навалился банк»?',
+            en: 'How does a productive person differ from one on whom "the bank has piled up"?',
+            pl: 'Czym różni się produktywny człowiek od tego, na kogo „nawalił się bank"?',
+          },
+          opts: [
+            {
+              ru: 'ничем',
+              en: 'in nothing',
+              pl: 'niczym',
+            },
+            {
+              ru: 'продуктивный приносит пользу через обмен, а тот, на кого навалился банк, пользы не приносит',
+              en: 'a productive person brings benefit through exchange, while the one on whom the bank has piled up brings no benefit',
+              pl: 'produktywny przynosi pożytek poprzez wymianę, a ten, na kogo nawalił się bank, pożytku nie przynosi',
+            },
+            {
+              ru: 'продуктивный всегда молчит',
+              en: 'a productive person is always silent',
+              pl: 'produktywny zawsze milczy',
+            },
+            {
+              ru: 'продуктивный не любит работать',
+              en: 'a productive person does not like to work',
+              pl: 'produktywny nie lubi pracować',
             },
           ],
           correct: 1,

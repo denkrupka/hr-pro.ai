@@ -119,104 +119,560 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'Что означает ключевой концепт точки D?',
-            en: 'What does the key concept of point D mean?',
-            pl: 'Co oznacza kluczowy koncept punktu D?',
+            ru: 'Какой ключевой концепт у точки D?',
+            en: 'What is the key concept of point D?',
+            pl: 'Jaki jest kluczowy koncept punktu D?',
+          },
+          opts: [
+            { ru: 'энергия', en: 'energy', pl: 'energia' },
+            { ru: 'предсказуемость', en: 'predictability', pl: 'przewidywalność' },
+            { ru: 'чуткость', en: 'sensitivity', pl: 'wrażliwość' },
+            { ru: 'объективность', en: 'objectivity', pl: 'obiektywność' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Уверенность точки D — это:',
+            en: 'The certainty of point D is:',
+            pl: 'Pewność punktu D to:',
           },
           opts: [
             {
-              ru: 'Насколько человек хороший и умный',
-              en: 'How good and smart a person is',
-              pl: 'Na ile człowiek jest dobry i mądry',
+              ru: 'та же уверенность в себе, что и в первых трёх точках',
+              en: 'the same self-assurance as in the first three points',
+              pl: 'ta sama pewność siebie, co w pierwszych trzech punktach',
             },
             {
-              ru: 'Насколько человек предсказуем и последователен',
-              en: 'How predictable and consistent a person is',
-              pl: 'Na ile człowiek jest przewidywalny i konsekwentny',
+              ru: 'уверенность в смысле предсказуемости и последовательности',
+              en: 'certainty in the sense of predictability and consistency',
+              pl: 'pewność w sensie przewidywalności i konsekwencji',
             },
             {
-              ru: 'Насколько человек уверен в себе',
-              en: 'How self-assured a person is',
-              pl: 'Na ile człowiek jest pewny siebie',
+              ru: 'уверенность в своих знаниях',
+              en: 'confidence in one’s knowledge',
+              pl: 'pewność swojej wiedzy',
+            },
+            { ru: 'смелость', en: 'courage', pl: 'odwaga' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Человек с высокой D — это человек:',
+            en: 'A person with a high D is a person who is:',
+            pl: 'Człowiek z wysokim D to człowiek:',
+          },
+          opts: [
+            { ru: 'импульсивный', en: 'impulsive', pl: 'impulsywny' },
+            {
+              ru: 'последовательный и предсказуемый',
+              en: 'consistent and predictable',
+              pl: 'konsekwentny i przewidywalny',
+            },
+            { ru: 'агрессивный', en: 'aggressive', pl: 'agresywny' },
+            { ru: 'ленивый', en: 'lazy', pl: 'leniwy' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Человек с низкой D — это человек:',
+            en: 'A person with a low D is a person who is:',
+            pl: 'Człowiek z niskim D to człowiek:',
+          },
+          opts: [
+            { ru: 'предсказуемый', en: 'predictable', pl: 'przewidywalny' },
+            {
+              ru: 'импульсивный (действует под влиянием неожиданных импульсов)',
+              en: 'impulsive (acts under the influence of unexpected impulses)',
+              pl: 'impulsywny (działa pod wpływem nieoczekiwanych impulsów)',
+            },
+            {
+              ru: 'обязательно нечестный',
+              en: 'necessarily dishonest',
+              pl: 'koniecznie nieuczciwy',
+            },
+            {
+              ru: 'обязательно глупый',
+              en: 'necessarily stupid',
+              pl: 'koniecznie głupi',
             },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'Что значит «надёжный» применительно к высокой D?',
-            en: 'What does "reliable" mean in relation to a high D?',
-            pl: 'Co znaczy „niezawodny" w odniesieniu do wysokiego D?',
+            ru: 'Какое пороговое значение особенно важно для точки D?',
+            en: 'Which threshold value is especially important for point D?',
+            pl: 'Która wartość progowa jest szczególnie ważna dla punktu D?',
           },
           opts: [
-            {
-              ru: 'Хороший, честный, добрый человек',
-              en: 'A good, honest, kind person',
-              pl: 'Dobry, uczciwy, życzliwy człowiek',
-            },
-            {
-              ru: 'Предсказуемый: мы знаем, чего от него ждать',
-              en: 'Predictable: we know what to expect of him',
-              pl: 'Przewidywalny: wiemy, czego się po nim spodziewać',
-            },
-            {
-              ru: 'Человек, который никогда не ошибается',
-              en: 'A person who never makes mistakes',
-              pl: 'Człowiek, który nigdy się nie myli',
-            },
+            { ru: '0', en: '0', pl: '0' },
+            { ru: '50', en: '50', pl: '50' },
+            { ru: '32', en: '32', pl: '32' },
+            { ru: '100', en: '100', pl: '100' },
           ],
-          correct: 1,
+          correct: 2,
         },
         {
           q: {
-            ru: 'Что особенного в рубеже 32 у точки D?',
-            en: 'What is special about the 32 threshold of point D?',
-            pl: 'Co jest szczególnego w progu 32 punktu D?',
+            ru: 'Если D равна 32 или выше, то:',
+            en: 'If D is equal to 32 or higher, then:',
+            pl: 'Jeśli D jest równe 32 lub wyższe, to:',
           },
           opts: [
             {
-              ru: 'D 32 и выше — уже характеристики высокой D, ниже — тяготение к низкой',
-              en: 'D of 32 and higher already means characteristics of a high D, below it — gravitation toward a low one',
-              pl: 'D 32 i wyżej — to już charakterystyki wysokiego D, niżej — ciążenie ku niskiemu',
+              ru: 'это уже характеристики высокой D',
+              en: 'these are already characteristics of a high D',
+              pl: 'to już charakterystyki wysokiego D',
             },
             {
-              ru: 'Это граница между хорошим и плохим сотрудником',
-              en: 'It is the boundary between a good and a bad employee',
-              pl: 'To granica między dobrym a złym pracownikiem',
+              ru: 'это всегда низкая D',
+              en: 'this is always a low D',
+              pl: 'to zawsze niskie D',
             },
             {
-              ru: 'Ниже 32 тест вообще недействителен',
-              en: 'Below 32 the test is invalid altogether',
-              pl: 'Poniżej 32 test jest w ogóle nieważny',
+              ru: 'тест недействителен',
+              en: 'the test is invalid',
+              pl: 'test jest nieważny',
+            },
+            {
+              ru: 'человек всегда импульсивен',
+              en: 'the person is always impulsive',
+              pl: 'człowiek jest zawsze impulsywny',
             },
           ],
           correct: 0,
         },
         {
           q: {
-            ru: 'Кому идеально подходит сочетание «активность ниже D»?',
-            en: 'For whom is the combination "activity lower than D" ideal?',
-            pl: 'Komu idealnie pasuje połączenie „aktywność niższa od D"?',
+            ru: '«Надёжный» применительно к точке D означает:',
+            en: '"Reliable" in relation to point D means:',
+            pl: '„Niezawodny" w odniesieniu do punktu D oznacza:',
+          },
+          opts: [
+            { ru: 'хороший', en: 'good', pl: 'dobry' },
+            {
+              ru: 'предсказуемый (мы знаем, чего ожидать)',
+              en: 'predictable (we know what to expect)',
+              pl: 'przewidywalny (wiemy, czego się spodziewać)',
+            },
+            { ru: 'честный', en: 'honest', pl: 'uczciwy' },
+            { ru: 'добрый', en: 'kind', pl: 'życzliwy' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Сотрудник, который всегда ворует, с точки зрения точки D:',
+            en: 'An employee who always steals, from the standpoint of point D, is:',
+            pl: 'Pracownik, który zawsze kradnie, z punktu widzenia punktu D, jest:',
           },
           opts: [
             {
-              ru: 'Десантнику и «открывателю офисов»',
-              en: 'A paratrooper and an "office-opener"',
-              pl: 'Spadochroniarzowi i „otwieraczowi biur"',
+              ru: 'непредсказуем и потому ненадёжен',
+              en: 'unpredictable and therefore unreliable',
+              pl: 'nieprzewidywalny i dlatego niepewny',
             },
             {
-              ru: 'Бухгалтеру и работе с большим объёмом рутины',
-              en: 'An accountant and work with a large amount of routine',
-              pl: 'Księgowemu i pracy z dużą ilością rutyny',
+              ru: 'предсказуем и в этом смысле «надёжен», хотя это плохо',
+              en: 'predictable and in this sense "reliable", though that is bad',
+              pl: 'przewidywalny i w tym sensie „niezawodny", choć to złe',
             },
             {
-              ru: 'Импульсивному руководителю крупной компании',
-              en: 'An impulsive manager of a large company',
-              pl: 'Impulsywnemu kierownikowi dużej firmy',
+              ru: 'имеет высокую честность',
+              en: 'has high honesty',
+              pl: 'ma wysoką uczciwość',
+            },
+            {
+              ru: 'имеет очень низкую D',
+              en: 'has a very low D',
+              pl: 'ma bardzo niskie D',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему высокая D особенно важна именно для руководителя?',
+            en: 'Why is a high D especially important precisely for a manager?',
+            pl: 'Dlaczego wysokie D jest szczególnie ważne właśnie dla kierownika?',
+          },
+          opts: [
+            {
+              ru: 'руководителю не нужно ничего планировать',
+              en: 'a manager does not need to plan anything',
+              pl: 'kierownik nie musi niczego planować',
+            },
+            {
+              ru: 'чем больше компания, тем сильнее его импульсивность «штормит» подчинённых',
+              en: 'the larger the company, the more his impulsiveness "storms" his subordinates',
+              pl: 'im większa firma, tym mocniej jego impulsywność „sztormuje" podwładnych',
+            },
+            {
+              ru: 'руководители не должны менять решений вообще',
+              en: 'managers must not change decisions at all',
+              pl: 'kierownicy nie powinni w ogóle zmieniać decyzji',
+            },
+            {
+              ru: 'это неважно для руководителя',
+              en: 'it is unimportant for a manager',
+              pl: 'to nieważne dla kierownika',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Человек с высокой D по отношению к изменениям:',
+            en: 'A person with a high D, in relation to changes:',
+            pl: 'Człowiek z wysokim D w stosunku do zmian:',
+          },
+          opts: [
+            {
+              ru: 'обожает частые перемены',
+              en: 'adores frequent changes',
+              pl: 'uwielbia częste zmiany',
+            },
+            {
+              ru: 'более консервативен, не любит частых изменений',
+              en: 'is more conservative, does not like frequent changes',
+              pl: 'jest bardziej konserwatywny, nie lubi częstych zmian',
+            },
+            {
+              ru: 'меняет всё каждый день',
+              en: 'changes everything every day',
+              pl: 'zmienia wszystko codziennie',
+            },
+            {
+              ru: 'не замечает изменений',
+              en: 'does not notice changes',
+              pl: 'nie zauważa zmian',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Как относится к рутине человек с низкой D?',
+            en: 'How does a person with a low D relate to routine?',
+            pl: 'Jak odnosi się do rutyny człowiek z niskim D?',
+          },
+          opts: [
+            {
+              ru: 'прекрасно справляется и любит её',
+              en: 'copes splendidly and loves it',
+              pl: 'świetnie sobie radzi i ją lubi',
+            },
+            {
+              ru: 'ненавидит рутину (там нет нового)',
+              en: 'hates routine (there is nothing new there)',
+              pl: 'nienawidzi rutyny (nie ma tam nowego)',
+            },
+            {
+              ru: 'не различает рутину и новое',
+              en: 'does not distinguish routine from the new',
+              pl: 'nie rozróżnia rutyny i nowego',
+            },
+            {
+              ru: 'рутина его успокаивает',
+              en: 'routine calms him',
+              pl: 'rutyna go uspokaja',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Подход «узнать прежде чем делать» характерен для:',
+            en: 'The approach "find out before doing" is characteristic of:',
+            pl: 'Podejście „dowiedzieć się, zanim zrobisz" jest charakterystyczne dla:',
+          },
+          opts: [
+            { ru: 'низкой D', en: 'a low D', pl: 'niskiego D' },
+            { ru: 'высокой D', en: 'a high D', pl: 'wysokiego D' },
+            { ru: 'любой D', en: 'any D', pl: 'każdego D' },
+            {
+              ru: 'только для руководителей',
+              en: 'managers only',
+              pl: 'tylko kierowników',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Подход «попробовать до того, как узнать» характерен для:',
+            en: 'The approach "try before finding out" is characteristic of:',
+            pl: 'Podejście „spróbować, zanim się dowiesz" jest charakterystyczne dla:',
+          },
+          opts: [
+            { ru: 'высокой D', en: 'a high D', pl: 'wysokiego D' },
+            { ru: 'низкой D', en: 'a low D', pl: 'niskiego D' },
+            { ru: 'средней D', en: 'a medium D', pl: 'średniego D' },
+            {
+              ru: 'компульсивной D',
+              en: 'a compulsive D',
+              pl: 'kompulsywnego D',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Единственный относительный плюс низкой D:',
+            en: 'The only relative plus of a low D:',
+            pl: 'Jedyny względny plus niskiego D:',
+          },
+          opts: [
+            {
+              ru: 'высокая честность',
+              en: 'high honesty',
+              pl: 'wysoka uczciwość',
+            },
+            {
+              ru: 'гибкость — такого человека легче изменить, он проще переносит перемены',
+              en: 'flexibility — such a person is easier to change, he tolerates changes more easily',
+              pl: 'elastyczność — takiego człowieka łatwiej zmienić, łatwiej znosi zmiany',
+            },
+            {
+              ru: 'высокая надёжность',
+              en: 'high reliability',
+              pl: 'wysoka niezawodność',
+            },
+            {
+              ru: 'хорошее планирование',
+              en: 'good planning',
+              pl: 'dobre planowanie',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что показывает средняя D?',
+            en: 'What does a medium D show?',
+            pl: 'Co pokazuje średnie D?',
+          },
+          opts: [
+            {
+              ru: '«один день так, другой день эдак» (полная непредсказуемость)',
+              en: '"one day this way, another day that way" (complete unpredictability)',
+              pl: '„jeden dzień tak, drugi inaczej" (całkowita nieprzewidywalność)',
+            },
+            {
+              ru: 'что человек где-то посередине по предсказуемости (с поправкой на порог 32)',
+              en: 'that the person is somewhere in the middle in predictability (with an adjustment for the 32 threshold)',
+              pl: 'że człowiek jest gdzieś pośrodku pod względem przewidywalności (z poprawką na próg 32)',
+            },
+            {
+              ru: 'что человек всегда предсказуем',
+              en: 'that the person is always predictable',
+              pl: 'że człowiek jest zawsze przewidywalny',
+            },
+            {
+              ru: 'что тест заполнен неверно',
+              en: 'that the test was filled out incorrectly',
+              pl: 'że test wypełniono nieprawidłowo',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Очень высокая D становится проблемой, когда:',
+            en: 'A very high D becomes a problem when:',
+            pl: 'Bardzo wysokie D staje się problemem, gdy:',
+          },
+          opts: [
+            {
+              ru: 'остальные точки тоже очень высокие',
+              en: 'the other points are also very high',
+              pl: 'pozostałe punkty też są bardzo wysokie',
+            },
+            {
+              ru: 'остальные точки существенно ниже (D «торчит башней»)',
+              en: 'the other points are substantially lower (D "sticks up like a tower")',
+              pl: 'pozostałe punkty są istotnie niższe (D „sterczy wieżą")',
+            },
+            {
+              ru: 'активность высокая',
+              en: 'activity is high',
+              pl: 'aktywność jest wysoka',
+            },
+            {
+              ru: 'она никогда не бывает проблемой',
+              en: 'it is never a problem',
+              pl: 'nigdy nie jest problemem',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему человек с очень высокой D и низкими остальными точками труден?',
+            en: 'Why is a person with a very high D and low other points difficult?',
+            pl: 'Dlaczego człowiek z bardzo wysokim D i niskimi pozostałymi punktami jest trudny?',
+          },
+          opts: [
+            {
+              ru: 'он слишком часто меняет решения',
+              en: 'he changes his decisions too often',
+              pl: 'zbyt często zmienia decyzje',
+            },
+            {
+              ru: 'он уверен, что видит всё правильно, и не меняется даже там, где надо',
+              en: 'he is certain that he sees everything correctly and does not change even where he should',
+              pl: 'jest pewny, że widzi wszystko prawidłowo, i nie zmienia się nawet tam, gdzie trzeba',
+            },
+            {
+              ru: 'он не имеет своего мнения',
+              en: 'he has no opinion of his own',
+              pl: 'nie ma własnego zdania',
+            },
+            {
+              ru: 'он боится ответственности',
+              en: 'he is afraid of responsibility',
+              pl: 'boi się odpowiedzialności',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Точку D по сравнению с другими точками теста:',
+            en: 'Point D, compared with the other points of the test:',
+            pl: 'Punkt D w porównaniu z innymi punktami testu:',
+          },
+          opts: [
+            {
+              ru: 'легче всего понизить',
+              en: 'is the easiest to lower',
+              pl: 'najłatwiej obniżyć',
+            },
+            {
+              ru: 'труднее всего понизить',
+              en: 'is the hardest to lower',
+              pl: 'najtrudniej obniżyć',
+            },
+            {
+              ru: 'невозможно измерить',
+              en: 'is impossible to measure',
+              pl: 'nie da się zmierzyć',
+            },
+            {
+              ru: 'не нужно учитывать',
+              en: 'need not be taken into account',
+              pl: 'nie trzeba uwzględniać',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что сравнивают с точкой D, чтобы понять тягу человека к новому?',
+            en: 'What is compared with point D to understand a person’s pull toward the new?',
+            pl: 'Co porównuje się z punktem D, aby zrozumieć ciągotę człowieka do nowego?',
+          },
+          opts: [
+            { ru: 'точку A', en: 'point A', pl: 'punkt A' },
+            { ru: 'активность (E)', en: 'activity (E)', pl: 'aktywność (E)' },
+            { ru: 'точку G', en: 'point G', pl: 'punkt G' },
+            { ru: 'точку J', en: 'point J', pl: 'punkt J' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Сочетание «активность выше D (при D не ниже 32)» — это:',
+            en: 'The combination "activity higher than D (with D not below 32)" is:',
+            pl: 'Połączenie „aktywność wyższa od D (przy D nie niższym niż 32)" to:',
+          },
+          opts: [
+            {
+              ru: 'человек рвётся в новое, но сначала разузнаёт (гармоничное сочетание)',
+              en: 'a person strains toward the new, but first finds out (a harmonious combination)',
+              pl: 'człowiek rwie się w nowe, ale najpierw się rozeznaje (harmonijne połączenie)',
+            },
+            {
+              ru: 'человек ненавидит любое новое',
+              en: 'a person who hates anything new',
+              pl: 'człowiek nienawidzący wszystkiego nowego',
+            },
+            {
+              ru: '«десантник быстрого реагирования» без подготовки',
+              en: 'a "rapid-response paratrooper" without preparation',
+              pl: '„desantowiec szybkiego reagowania" bez przygotowania',
+            },
+            {
+              ru: 'человек, который ничего не делает',
+              en: 'a person who does nothing',
+              pl: 'człowiek, który nic nie robi',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Сочетание «активность ниже D» подходит для:',
+            en: 'The combination "activity lower than D" suits:',
+            pl: 'Połączenie „aktywność niższa od D" pasuje do:',
+          },
+          opts: [
+            {
+              ru: 'бухгалтера и работы с большим объёмом рутины',
+              en: 'an accountant and work with a large amount of routine',
+              pl: 'księgowego i pracy z dużą ilością rutyny',
+            },
+            {
+              ru: 'должности, где постоянно новое',
+              en: 'a position where there is constantly something new',
+              pl: 'stanowiska, gdzie stale jest nowe',
+            },
+            {
+              ru: 'первопроходца-десантника',
+              en: 'a pioneer-paratrooper',
+              pl: 'pioniera-spadochroniarza',
+            },
+            {
+              ru: 'никакой должности',
+              en: 'no position at all',
+              pl: 'żadnego stanowiska',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Почему при низкой D остальным точкам теста трудно доверять?',
+            en: 'Why, with a low D, is it hard to trust the other points of the test?',
+            pl: 'Dlaczego przy niskim D trudno ufać pozostałym punktom testu?',
+          },
+          opts: [
+            {
+              ru: 'потому что человек глупый',
+              en: 'because the person is stupid',
+              pl: 'ponieważ człowiek jest głupi',
+            },
+            {
+              ru: 'потому что при низкой D человек непредсказуем и может измениться, и его тест «плавает»',
+              en: 'because with a low D the person is unpredictable and can change, and his test "floats"',
+              pl: 'ponieważ przy niskim D człowiek jest nieprzewidywalny i może się zmienić, a jego test „pływa"',
+            },
+            {
+              ru: 'потому что тест сделан плохо',
+              en: 'because the test is made poorly',
+              pl: 'ponieważ test jest źle zrobiony',
+            },
+            {
+              ru: 'доверять как раз легко',
+              en: 'it is in fact easy to trust',
+              pl: 'ufać jest właśnie łatwo',
             },
           ],
           correct: 1,

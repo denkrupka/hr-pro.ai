@@ -640,8 +640,38 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
+        {
+          q: {
+            ru: 'Личностные качества — это:',
+            en: 'Personal qualities are:',
+            pl: 'Cechy osobowości to:',
+          },
+          opts: [
+            {
+              ru: 'единственный фактор, по которому оценивают кандидата',
+              en: 'the only factor by which a candidate is assessed',
+              pl: 'jedyny czynnik, według którego ocenia się kandydata',
+            },
+            {
+              ru: 'один из четырёх факторов оценки кандидата в найме',
+              en: 'one of the four factors for assessing a candidate in hiring',
+              pl: 'jeden z czterech czynników oceny kandydata w rekrutacji',
+            },
+            {
+              ru: 'фактор, который важен только для руководителей',
+              en: 'a factor that matters only for managers',
+              pl: 'czynnik, który jest ważny tylko dla kierowników',
+            },
+            {
+              ru: 'синоним продуктивности',
+              en: 'a synonym for productivity',
+              pl: 'synonim produktywności',
+            },
+          ],
+          correct: 1,
+        },
         {
           q: {
             ru: 'Что показывает тест ЛОГИС?',
@@ -650,97 +680,623 @@ module.exports = {
           },
           opts: [
             {
-              ru: 'Насколько быстро и хорошо человек соображает (но не в какую сторону и не насколько продуктивен)',
-              en: 'How quickly and well a person thinks (but not in which direction, nor how productive they are)',
-              pl: 'Jak szybko i dobrze człowiek myśli (ale nie w którą stronę ani jak bardzo jest produktywny)',
+              ru: 'насколько человек предсказуем',
+              en: 'how predictable a person is',
+              pl: 'jak przewidywalny jest człowiek',
             },
             {
-              ru: 'Продуктивность человека в прошлом и настоящем',
-              en: 'A person\'s productivity in the past and present',
-              pl: 'Produktywność człowieka w przeszłości i teraźniejszości',
+              ru: 'уровень энергии человека',
+              en: 'a person\'s energy level',
+              pl: 'poziom energii człowieka',
             },
             {
-              ru: 'Способность человека вести людей за собой',
-              en: 'A person\'s ability to lead others behind them',
-              pl: 'Zdolność człowieka do prowadzenia ludzi za sobą',
-            },
-          ],
-          correct: 0,
-        },
-        {
-          q: {
-            ru: 'Чем аналитический ум отличается от реактивного?',
-            en: 'How does the analytical mind differ from the reactive mind?',
-            pl: 'Czym umysł analityczny różni się od reaktywnego?',
-          },
-          opts: [
-            {
-              ru: 'Реактивный ум быстрее анализирует картинки и делает выводы на будущее',
-              en: 'The reactive mind analyzes pictures faster and draws conclusions for the future',
-              pl: 'Umysł reaktywny szybciej analizuje obrazy i wyciąga wnioski na przyszłość',
+              ru: 'насколько хорошо и быстро человек соображает (интеллект)',
+              en: 'how well and quickly a person thinks (intelligence)',
+              pl: 'jak dobrze i szybko człowiek myśli (inteligencja)',
             },
             {
-              ru: 'Картинками аналитического ума мы управляем, а реактивными — почти нет; реактивный действует по принципу «A равно A»',
-              en: 'We control the pictures of the analytical mind, but the reactive ones almost not at all; the reactive mind operates on the principle "A equals A"',
-              pl: 'Obrazami umysłu analitycznego zarządzamy, a reaktywnymi — prawie nie; reaktywny działa według zasady „A równa się A"',
-            },
-            {
-              ru: 'Аналитический ум хранит боль и бессознательность, а реактивный — только цвет и звук',
-              en: 'The analytical mind stores pain and unconsciousness, while the reactive one — only color and sound',
-              pl: 'Umysł analityczny przechowuje ból i nieprzytomność, a reaktywny — tylko kolor i dźwięk',
-            },
-          ],
-          correct: 1,
-        },
-        {
-          q: {
-            ru: 'Что, согласно закону обмена, удерживает банк в стороне от человека?',
-            en: 'According to the law of exchange, what keeps the bank away from the person?',
-            pl: 'Co, zgodnie z prawem wymiany, utrzymuje bank z dala od człowieka?',
-          },
-          opts: [
-            {
-              ru: 'Побольше входящего потока — чтобы человек получал больше, чем даёт',
-              en: 'More inflow — so that the person receives more than they give',
-              pl: 'Więcej przepływu przychodzącego — żeby człowiek dostawał więcej, niż daje',
-            },
-            {
-              ru: 'Высокий уровень интеллекта и хорошие лидерские качества',
-              en: 'A high level of intelligence and good leadership qualities',
-              pl: 'Wysoki poziom inteligencji i dobre cechy przywódcze',
-            },
-            {
-              ru: 'Обмен, при котором сохраняются и исходящие, и входящие потоки (важен баланс)',
-              en: 'Exchange in which both the outflows and the inflows are preserved (balance is what matters)',
-              pl: 'Wymiana, przy której zachowane są i przepływy wychodzące, i przychodzące (ważny jest balans)',
+              ru: 'насколько человек чуток к другим',
+              en: 'how sensitive a person is to others',
+              pl: 'jak bardzo człowiek jest wrażliwy na innych',
             },
           ],
           correct: 2,
         },
         {
           q: {
-            ru: 'О чём говорят последние три точки теста Тулс?',
-            en: 'What do the last three points of the Tools Test speak of?',
-            pl: 'O czym mówią ostatnie trzy punkty Testu Tools?',
+            ru: 'Почему нельзя строить весь отбор только на тесте интеллекта?',
+            en: 'Why can\'t the entire selection be based on the intelligence test alone?',
+            pl: 'Dlaczego nie można opierać całej selekcji wyłącznie na teście inteligencji?',
           },
           opts: [
             {
-              ru: 'Сколько у человека времени и каково его обладание (в том числе взаимоотношения с людьми)',
-              en: 'How much time a person has and what their havingness is like (including relationships with people)',
-              pl: 'Ile człowiek ma czasu i jakie jest jego posiadanie (w tym relacje z ludźmi)',
+              ru: 'потому что тест слишком сложный',
+              en: 'because the test is too difficult',
+              pl: 'ponieważ test jest zbyt trudny',
             },
             {
-              ru: 'Сколько у человека пространства и насколько ему комфортно с самим собой',
-              en: 'How much space a person has and how comfortable they are with themselves',
-              pl: 'Ile człowiek ma przestrzeni i jak bardzo jest mu komfortowo z samym sobą',
+              ru: 'потому что ЛОГИС не показывает, в какую сторону человек соображает, и не показывает продуктивность',
+              en: 'because LOGIS does not show in which direction a person thinks, nor does it show productivity',
+              pl: 'ponieważ LOGIS nie pokazuje, w którą stronę człowiek myśli, ani nie pokazuje produktywności',
             },
             {
-              ru: 'Сколько у человека энергии и как он ведёт себя, когда энергия направлена против него',
-              en: 'How much energy a person has and how they behave when the energy is directed against them',
-              pl: 'Ile człowiek ma energii i jak się zachowuje, gdy energia skierowana jest przeciw niemu',
+              ru: 'потому что умные люди всегда непродуктивны',
+              en: 'because smart people are always unproductive',
+              pl: 'ponieważ inteligentni ludzie są zawsze nieproduktywni',
+            },
+            {
+              ru: 'потому что интеллект не влияет на работу вообще',
+              en: 'because intelligence has no effect on work at all',
+              pl: 'ponieważ inteligencja w ogóle nie wpływa na pracę',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какое значение коэффициента интеллекта считается примерно средним?',
+            en: 'Which intelligence quotient value is considered roughly average?',
+            pl: 'Jaka wartość ilorazu inteligencji jest uważana za mniej więcej średnią?',
+          },
+          opts: [
+            { ru: '60', en: '60', pl: '60' },
+            { ru: '80', en: '80', pl: '80' },
+            { ru: '100', en: '100', pl: '100' },
+            { ru: '135', en: '135', pl: '135' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Для какой из должностей высокое воспроизведение (точность передачи устных указаний) наиболее критично?',
+            en: 'For which position is high reproduction (accuracy in relaying verbal instructions) most critical?',
+            pl: 'Dla którego stanowiska wysokie odtwarzanie (dokładność przekazywania ustnych poleceń) jest najbardziej krytyczne?',
+          },
+          opts: [
+            {
+              ru: 'продавец в магазине',
+              en: 'a shop salesperson',
+              pl: 'sprzedawca w sklepie',
+            },
+            {
+              ru: 'личный помощник, заместитель, переводчик, пилот',
+              en: 'a personal assistant, deputy, interpreter, pilot',
+              pl: 'osobisty asystent, zastępca, tłumacz, pilot',
+            },
+            {
+              ru: 'грузчик',
+              en: 'a loader',
+              pl: 'ładowacz',
+            },
+            {
+              ru: 'уборщик',
+              en: 'a cleaner',
+              pl: 'sprzątacz',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему человек с низким воспроизведением может быть отличным водителем, но не пилотом?',
+            en: 'Why can a person with low reproduction be an excellent driver but not a pilot?',
+            pl: 'Dlaczego człowiek z niskim odtwarzaniem może być świetnym kierowcą, ale nie pilotem?',
+          },
+          opts: [
+            {
+              ru: 'водителям воспроизведение не нужно вовсе, а пилотам нужно очень высокое',
+              en: 'drivers do not need reproduction at all, while pilots need very high reproduction',
+              pl: 'kierowcy w ogóle nie potrzebują odtwarzania, a piloci potrzebują bardzo wysokiego',
+            },
+            {
+              ru: 'автомобиль прост в управлении, а в самолёте множество рычагов и в разных ситуациях надо делать разное',
+              en: 'a car is simple to operate, while an aircraft has many levers and in different situations different actions are required',
+              pl: 'samochód jest prosty w obsłudze, a w samolocie jest wiele dźwigni i w różnych sytuacjach trzeba robić co innego',
+            },
+            {
+              ru: 'пилоты умнее водителей',
+              en: 'pilots are smarter than drivers',
+              pl: 'piloci są mądrzejsi od kierowców',
+            },
+            {
+              ru: 'это миф, разницы нет',
+              en: 'it is a myth, there is no difference',
+              pl: 'to mit, nie ma różnicy',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Из скольких вопросов состоит Тест Тулс?',
+            en: 'How many questions does the Tools Test consist of?',
+            pl: 'Z ilu pytań składa się Test Tools?',
+          },
+          opts: [
+            { ru: '20', en: '20', pl: '20' },
+            { ru: '100', en: '100', pl: '100' },
+            { ru: '200', en: '200', pl: '200' },
+            { ru: '500', en: '500', pl: '500' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Сколько «точек» (показателей) измеряет Тест Тулс?',
+            en: 'How many "points" (indicators) does the Tools Test measure?',
+            pl: 'Ile „punktów" (wskaźników) mierzy Test Tools?',
+          },
+          opts: [
+            { ru: '5', en: '5', pl: '5' },
+            { ru: '10', en: '10', pl: '10' },
+            { ru: '12', en: '12', pl: '12' },
+            { ru: '20', en: '20', pl: '20' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Сколько диапазонов у каждой точки теста?',
+            en: 'How many ranges does each point of the test have?',
+            pl: 'Ile zakresów ma każdy punkt testu?',
+          },
+          opts: [
+            {
+              ru: 'два (низкий и высокий)',
+              en: 'two (low and high)',
+              pl: 'dwa (niski i wysoki)',
+            },
+            {
+              ru: 'три (низкий, средний, высокий)',
+              en: 'three (low, medium, high)',
+              pl: 'trzy (niski, średni, wysoki)',
+            },
+            {
+              ru: 'пять (очень низкий, низкий, средний, высокий, очень высокий)',
+              en: 'five (very low, low, medium, high, very high)',
+              pl: 'pięć (bardzo niski, niski, średni, wysoki, bardzo wysoki)',
+            },
+            {
+              ru: 'десять',
+              en: 'ten',
+              pl: 'dziesięć',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Какая точка на бланке стоит особняком (выделена отдельно)?',
+            en: 'Which point on the form stands apart (highlighted separately)?',
+            pl: 'Który punkt na formularzu stoi osobno (wyróżniony oddzielnie)?',
+          },
+          opts: [
+            { ru: 'A', en: 'A', pl: 'A' },
+            { ru: 'C', en: 'C', pl: 'C' },
+            { ru: 'D', en: 'D', pl: 'D' },
+            { ru: 'J', en: 'J', pl: 'J' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Как называется модель разума, которую изложил Рон Хаббард?',
+            en: 'What is the name of the model of the mind set out by Ron Hubbard?',
+            pl: 'Jak nazywa się model umysłu przedstawiony przez Rona Hubbarda?',
+          },
+          opts: [
+            {
+              ru: 'психоанализ',
+              en: 'psychoanalysis',
+              pl: 'psychoanaliza',
+            },
+            {
+              ru: 'дианетика',
+              en: 'dianetics',
+              pl: 'dianetyka',
+            },
+            {
+              ru: 'соционика',
+              en: 'socionics',
+              pl: 'socjonika',
+            },
+            {
+              ru: 'бихевиоризм',
+              en: 'behaviorism',
+              pl: 'behawioryzm',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Разумность по определению — это способность:',
+            en: 'Intelligence, by definition, is the ability to:',
+            pl: 'Rozumność z definicji to zdolność do:',
+          },
+          opts: [
+            {
+              ru: 'быстро считать в уме',
+              en: 'do quick mental arithmetic',
+              pl: 'szybkiego liczenia w pamięci',
+            },
+            {
+              ru: 'распознавать различия, сходства и тождества',
+              en: 'recognize differences, similarities and identities',
+              pl: 'rozpoznawania różnic, podobieństw i tożsamości',
+            },
+            {
+              ru: 'запоминать большие объёмы информации',
+              en: 'memorize large amounts of information',
+              pl: 'zapamiętywania dużych ilości informacji',
+            },
+            {
+              ru: 'убеждать других людей',
+              en: 'persuade other people',
+              pl: 'przekonywania innych ludzi',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Чем лучше человек является специалистом в какой-то области, тем:',
+            en: 'The better a person is a specialist in some field, the:',
+            pl: 'Im lepszym specjalistą w danej dziedzinie jest człowiek, tym:',
+          },
+          opts: [
+            {
+              ru: 'меньше различий он замечает',
+              en: 'fewer differences they notice',
+              pl: 'mniej różnic zauważa',
+            },
+            {
+              ru: 'больше различий он видит',
+              en: 'more differences they see',
+              pl: 'więcej różnic widzi',
+            },
+            {
+              ru: 'меньше он этой областью интересуется',
+              en: 'less they are interested in this field',
+              pl: 'mniej interesuje się tą dziedziną',
+            },
+            {
+              ru: 'хуже он работает',
+              en: 'worse they work',
+              pl: 'gorzej pracuje',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Картинками какого ума человек управляет легко (выбирает и убирает по желанию)?',
+            en: 'The pictures of which mind does a person control easily (selecting and removing them at will)?',
+            pl: 'Obrazami którego umysłu człowiek zarządza łatwo (wybiera i usuwa je do woli)?',
+          },
+          opts: [
+            {
+              ru: 'реактивного',
+              en: 'the reactive mind',
+              pl: 'reaktywnego',
+            },
+            {
+              ru: 'аналитического',
+              en: 'the analytical mind',
+              pl: 'analitycznego',
+            },
+            {
+              ru: 'обоими одинаково',
+              en: 'both equally',
+              pl: 'obydwoma jednakowo',
+            },
+            {
+              ru: 'ни тем, ни другим',
+              en: 'neither one nor the other',
+              pl: 'ani jednym, ani drugim',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Чем реактивная картинка отличается от аналитической?',
+            en: 'How does a reactive picture differ from an analytical one?',
+            pl: 'Czym obraz reaktywny różni się od analitycznego?',
+          },
+          opts: [
+            {
+              ru: 'в ней нет цвета и звука',
+              en: 'it has no color or sound',
+              pl: 'nie ma w nim koloru ani dźwięku',
+            },
+            {
+              ru: 'в ней дополнительно записаны боль и бессознательность',
+              en: 'it additionally records pain and unconsciousness',
+              pl: 'dodatkowo zapisane są w nim ból i nieprzytomność',
+            },
+            {
+              ru: 'она хранится в мозге',
+              en: 'it is stored in the brain',
+              pl: 'jest przechowywany w mózgu',
+            },
+            {
+              ru: 'она всегда приятная',
+              en: 'it is always pleasant',
+              pl: 'jest zawsze przyjemny',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Как называется отдельная реактивная картинка (в примере с мужем и женой)?',
+            en: 'What is a single reactive picture called (in the example with the husband and wife)?',
+            pl: 'Jak nazywa się pojedynczy obraz reaktywny (w przykładzie z mężem i żoną)?',
+          },
+          opts: [
+            {
+              ru: 'инграмма',
+              en: 'an engram',
+              pl: 'engram',
+            },
+            {
+              ru: 'обмен',
+              en: 'an exchange',
+              pl: 'wymiana',
+            },
+            {
+              ru: 'точка',
+              en: 'a point',
+              pl: 'punkt',
+            },
+            {
+              ru: 'тождество',
+              en: 'an identity',
+              pl: 'tożsamość',
             },
           ],
           correct: 0,
+        },
+        {
+          q: {
+            ru: 'По какому принципу устроен реактивный ум?',
+            en: 'On what principle is the reactive mind built?',
+            pl: 'Według jakiej zasady zbudowany jest umysł reaktywny?',
+          },
+          opts: [
+            {
+              ru: 'он видит все различия предельно точно',
+              en: 'it sees all differences with utmost precision',
+              pl: 'widzi wszystkie różnice niezwykle dokładnie',
+            },
+            {
+              ru: '«A равно A равно A» — всё равно всему, различий он не видит',
+              en: '"A equals A equals A" — everything is equal to everything, it sees no differences',
+              pl: '„A równa się A równa się A" — wszystko jest równe wszystkiemu, nie widzi różnic',
+            },
+            {
+              ru: 'он работает только во сне',
+              en: 'it works only during sleep',
+              pl: 'działa tylko podczas snu',
+            },
+            {
+              ru: 'он подчиняется человеку по первому желанию',
+              en: 'it obeys the person on their first wish',
+              pl: 'podporządkowuje się człowiekowi na pierwsze życzenie',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое «банк»?',
+            en: 'What is the "bank"?',
+            pl: 'Czym jest „bank"?',
+          },
+          opts: [
+            {
+              ru: 'место, где хранят деньги компании',
+              en: 'the place where the company\'s money is kept',
+              pl: 'miejsce, gdzie przechowuje się pieniądze firmy',
+            },
+            {
+              ru: 'синоним реактивного ума (хранилище реактивных картинок)',
+              en: 'a synonym for the reactive mind (a storage of reactive pictures)',
+              pl: 'synonim umysłu reaktywnego (magazyn obrazów reaktywnych)',
+            },
+            {
+              ru: 'название теста',
+              en: 'the name of a test',
+              pl: 'nazwa testu',
+            },
+            {
+              ru: 'синоним аналитического ума',
+              en: 'a synonym for the analytical mind',
+              pl: 'synonim umysłu analitycznego',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что нужно человеку, чтобы удерживать реактивные картинки «на расстоянии»?',
+            en: 'What does a person need in order to keep reactive pictures "at a distance"?',
+            pl: 'Czego potrzebuje człowiek, aby utrzymywać obrazy reaktywne „na dystans"?',
+          },
+          opts: [
+            {
+              ru: 'деньги',
+              en: 'money',
+              pl: 'pieniądze',
+            },
+            {
+              ru: 'энергия (при недосыпе и голоде её становится меньше)',
+              en: 'energy (with lack of sleep and hunger there is less of it)',
+              pl: 'energia (przy niewyspaniu i głodzie jest jej mniej)',
+            },
+            {
+              ru: 'высокий интеллект',
+              en: 'high intelligence',
+              pl: 'wysoka inteligencja',
+            },
+            {
+              ru: 'хорошее настроение',
+              en: 'a good mood',
+              pl: 'dobry nastrój',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Точная формулировка закона: что создаёт вокруг человека пространство и удерживает банк в стороне?',
+            en: 'The exact wording of the law: what creates space around a person and keeps the bank away?',
+            pl: 'Dokładne sformułowanie prawa: co tworzy wokół człowieka przestrzeń i utrzymuje bank z dala?',
+          },
+          opts: [
+            {
+              ru: 'большое количество исходящего потока',
+              en: 'a large amount of outflow',
+              pl: 'duża ilość przepływu wychodzącego',
+            },
+            {
+              ru: 'обмен, при котором сохраняются и исходящий, и входящий потоки',
+              en: 'exchange in which both the outflow and the inflow are preserved',
+              pl: 'wymiana, przy której zachowane są i przepływ wychodzący, i przychodzący',
+            },
+            {
+              ru: 'отсутствие любых потоков',
+              en: 'the absence of any flows',
+              pl: 'brak jakichkolwiek przepływów',
+            },
+            {
+              ru: 'только входящий поток',
+              en: 'only the inflow',
+              pl: 'tylko przepływ przychodzący',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что происходит с банком, если обмен нарушается?',
+            en: 'What happens to the bank if the exchange is disrupted?',
+            pl: 'Co dzieje się z bankiem, jeśli wymiana zostaje zaburzona?',
+          },
+          opts: [
+            {
+              ru: 'банк исчезает',
+              en: 'the bank disappears',
+              pl: 'bank znika',
+            },
+            {
+              ru: 'банк приближается, а если обмена нет вовсе — обрушивается на человека',
+              en: 'the bank moves closer, and if there is no exchange at all — it collapses onto the person',
+              pl: 'bank zbliża się, a jeśli wymiany nie ma wcale — spada na człowieka',
+            },
+            {
+              ru: 'с банком ничего не происходит',
+              en: 'nothing happens to the bank',
+              pl: 'z bankiem nic się nie dzieje',
+            },
+            {
+              ru: 'банк отодвигается ещё дальше',
+              en: 'the bank moves even further away',
+              pl: 'bank odsuwa się jeszcze dalej',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Можно ли навредить, отдавая (давая) больше, чем получаешь?',
+            en: 'Can one cause harm by giving more than one receives?',
+            pl: 'Czy można zaszkodzić, dając więcej, niż się otrzymuje?',
+          },
+          opts: [
+            {
+              ru: 'нет, чем больше отдаёшь, тем лучше',
+              en: 'no, the more you give, the better',
+              pl: 'nie, im więcej dajesz, tym lepiej',
+            },
+            {
+              ru: 'да, нарушение обмена вредит в любую сторону — важен баланс',
+              en: 'yes, disrupting the exchange is harmful in either direction — balance is what matters',
+              pl: 'tak, zaburzenie wymiany szkodzi w każdą stronę — ważny jest balans',
+            },
+            {
+              ru: 'это невозможно',
+              en: 'this is impossible',
+              pl: 'to jest niemożliwe',
+            },
+            {
+              ru: 'только если речь о деньгах',
+              en: 'only when it comes to money',
+              pl: 'tylko jeśli chodzi o pieniądze',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что показывают первые три точки теста (A, B, C)?',
+            en: 'What do the first three points of the test (A, B, C) show?',
+            pl: 'Co pokazują pierwsze trzy punkty testu (A, B, C)?',
+          },
+          opts: [
+            {
+              ru: 'сколько у человека времени',
+              en: 'how much time a person has',
+              pl: 'ile człowiek ma czasu',
+            },
+            {
+              ru: 'сколько у человека энергии',
+              en: 'how much energy a person has',
+              pl: 'ile człowiek ma energii',
+            },
+            {
+              ru: 'сколько у человека пространства (и категорию «быть»)',
+              en: 'how much space a person has (and the "being" category)',
+              pl: 'ile człowiek ma przestrzeni (oraz kategorię „być")',
+            },
+            {
+              ru: 'уровень интеллекта',
+              en: 'the level of intelligence',
+              pl: 'poziom inteligencji',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что такое обладание (по определению из модуля)?',
+            en: 'What is havingness (according to the definition from the module)?',
+            pl: 'Czym jest posiadanie (zgodnie z definicją z modułu)?',
+          },
+          opts: [
+            {
+              ru: 'количество имущества у человека',
+              en: 'the amount of property a person owns',
+              pl: 'ilość majątku, jaki człowiek posiada',
+            },
+            {
+              ru: 'способность иметь',
+              en: 'the ability to have',
+              pl: 'zdolność do posiadania',
+            },
+            {
+              ru: 'размер зарплаты',
+              en: 'the size of the salary',
+              pl: 'wysokość wynagrodzenia',
+            },
+            {
+              ru: 'число друзей',
+              en: 'the number of friends',
+              pl: 'liczba przyjaciół',
+            },
+          ],
+          correct: 1,
         },
       ],
     },

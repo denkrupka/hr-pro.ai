@@ -328,105 +328,355 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'Почему нельзя делать вывод о найме на основании одного лишь «Тест Тулс»?',
-            en: 'Why can\'t a hiring conclusion be drawn on the basis of the "Tools Test" alone?',
-            pl: 'Dlaczego nie można wyciągnąć wniosku o rekrutacji na podstawie samego „Test Tools"?',
+            ru: 'Что измеряет «Тест Тулс»?',
+            en: 'What does the "Tools Test" measure?',
+            pl: 'Co mierzy „Test Tools"?',
           },
           opts: [
-            {
-              ru: 'Потому что тест слишком короткий — всего 20 вопросов на все десять точек вместе',
-              en: 'Because the test is too short — only 20 questions for all ten points together',
-              pl: 'Ponieważ test jest zbyt krótki — tylko 20 pytań na wszystkie dziesięć punktów razem',
-            },
-            {
-              ru: 'Потому что «Тест Тулс» работает только в связке с тестом продуктивности: человек может быть милым и внимательным, но не давать результата, а результат первичен',
-              en: 'Because the "Tools Test" works only in tandem with the productivity test: a person may be nice and attentive but not produce a result, and the result is primary',
-              pl: 'Ponieważ „Test Tools" działa tylko w parze z testem produktywności: człowiek może być miły i uważny, ale nie dawać rezultatu, a rezultat jest pierwszorzędny',
-            },
-            {
-              ru: 'Потому что показатели «Тест Тулс» никогда не меняются и не отражают текущее состояние человека',
-              en: 'Because the indicators of the "Tools Test" never change and do not reflect the person\'s current state',
-              pl: 'Ponieważ wskaźniki „Test Tools" nigdy się nie zmieniają i nie odzwierciedlają bieżącego stanu człowieka',
-            },
+            { ru: 'Уровень интеллекта', en: 'The level of intelligence', pl: 'Poziom inteligencji' },
+            { ru: 'Личную эффективность по десяти показателям («инструментам»)', en: 'Personal effectiveness across ten indicators ("tools")', pl: 'Efektywność osobistą według dziesięciu wskaźników („narzędzi")' },
+            { ru: 'Продуктивность в прошлом', en: 'Productivity in the past', pl: 'Produktywność w przeszłości' },
+            { ru: 'Уровень образования', en: 'The level of education', pl: 'Poziom wykształcenia' },
           ],
           correct: 1,
         },
         {
           q: {
-            ru: 'Что такое компульсивная (очень высокая) точка?',
-            en: 'What is a compulsive (very high) point?',
-            pl: 'Czym jest punkt kompulsywny (bardzo wysoki)?',
+            ru: 'Из скольких вопросов состоит тест и как они распределены?',
+            en: 'How many questions does the test consist of and how are they distributed?',
+            pl: 'Z ilu pytań składa się test i jak są rozłożone?',
           },
           opts: [
-            {
-              ru: 'Точка, которую человек намеренно завысил, обманывая тест',
-              en: 'A point that the person deliberately inflated, deceiving the test',
-              pl: 'Punkt, który człowiek celowo zawyżył, oszukując test',
-            },
-            {
-              ru: 'Точка в среднем, «нормальном» диапазоне, где качество проявляется гармонично',
-              en: 'A point in the medium, "normal" range, where the quality manifests harmoniously',
-              pl: 'Punkt w średnim, „normalnym" zakresie, gdzie cecha przejawia się harmonijnie',
-            },
-            {
-              ru: 'Когда человек на все 20 вопросов ответил «только так, обязательно» — поведение ощущается как вынужденное, и человек «не может не», иначе испытывает стресс',
-              en: 'When a person answered all 20 questions "only this way, without fail" — behavior is felt as forced, and the person "cannot not," otherwise experiences stress',
-              pl: 'Gdy człowiek na wszystkie 20 pytań odpowiedział „tylko tak, koniecznie" — zachowanie odczuwane jest jako wymuszone, i człowiek „nie może nie", inaczej odczuwa stres',
-            },
+            { ru: '100 вопросов, по 10 на точку', en: '100 questions, 10 per point', pl: '100 pytań, po 10 na punkt' },
+            { ru: '50 вопросов на весь тест', en: '50 questions for the whole test', pl: '50 pytań na cały test' },
+            { ru: '20 вопросов на весь тест', en: '20 questions for the whole test', pl: '20 pytań na cały test' },
+            { ru: '200 вопросов — по 20 на каждую из 10 точек', en: '200 questions — 20 for each of the 10 points', pl: '200 pytań — po 20 na każdy z 10 punktów' },
           ],
-          correct: 2,
+          correct: 3,
         },
         {
           q: {
-            ru: 'Почему вывод «он безответственный» по низкой точке G — ложный?',
-            en: 'Why is the conclusion "he\'s irresponsible" based on a low point G false?',
-            pl: 'Dlaczego wniosek „jest nieodpowiedzialny" na podstawie niskiego punktu G jest fałszywy?',
+            ru: 'С чем «Тест Тулс» работает только в связке?',
+            en: 'With what does the "Tools Test" work only in tandem?',
+            pl: 'Z czym „Test Tools" działa tylko w parze?',
           },
           opts: [
-            {
-              ru: 'Потому что точка G — коммуникативная: человек просто не любит отвечать перед другими и держать давление, но своё дело может делать прекрасно',
-              en: 'Because point G is communicative: the person simply does not like to answer to others and withstand pressure, but may do his job splendidly',
-              pl: 'Ponieważ punkt G jest komunikacyjny: człowiek po prostu nie lubi odpowiadać przed innymi i trzymać nacisku, ale swoją sprawę może robić wspaniale',
-            },
-            {
-              ru: 'Потому что точка G вообще не измеряется тестом и её значение случайно',
-              en: 'Because point G is not measured by the test at all and its value is random',
-              pl: 'Ponieważ punkt G w ogóle nie jest mierzony przez test i jego wartość jest przypadkowa',
-            },
-            {
-              ru: 'Потому что низкая G всегда означает высокую настойчивость, а значит человек всё доводит до конца',
-              en: 'Because a low G always means high persistence, and therefore the person sees everything through',
-              pl: 'Ponieważ niski G zawsze oznacza wysoką wytrwałość, a więc człowiek wszystko doprowadza do końca',
-            },
+            { ru: 'С тестом продуктивности («Тест Резалт») — решать по одному «Тест Тулс» нельзя', en: 'With the productivity test ("Result Test") — one cannot decide on the "Tools Test" alone', pl: 'Z testem produktywności („Test Result") — nie można decydować na podstawie samego „Test Tools"' },
+            { ru: 'С тестом на интеллект', en: 'With an intelligence test', pl: 'Z testem na inteligencję' },
+            { ru: 'Ни с чем', en: 'With nothing', pl: 'Z niczym' },
+            { ru: 'С тестом на лидерство', en: 'With a leadership test', pl: 'Z testem na przywództwo' },
           ],
           correct: 0,
         },
         {
           q: {
-            ru: 'Что важно помнить о названии точки J (общительность)?',
-            en: 'What is important to remember about the name of point J (sociability)?',
-            pl: 'Co ważne jest pamiętać o nazwie punktu J (towarzyskość)?',
+            ru: '«Тест Тулс» — это:',
+            en: 'The "Tools Test" is:',
+            pl: '„Test Tools" to:',
           },
           opts: [
-            {
-              ru: 'Что высокая общительность гарантирует хорошего продавца, а низкая — плохого',
-              en: 'That high sociability guarantees a good salesperson, and low — a bad one',
-              pl: 'Że wysoka towarzyskość gwarantuje dobrego sprzedawcę, a niska — złego',
-            },
-            {
-              ru: 'Что имя точки обманчиво: низкая общительность не означает, что человек плохо общается — при высокой внимательности и стрессоустойчивости он может быть отличным специалистом',
-              en: 'That the point\'s name is deceptive: low sociability does not mean the person communicates badly — with high attentiveness and stress resistance he can be an excellent specialist',
-              pl: 'Że nazwa punktu jest myląca: niska towarzyskość nie oznacza, że człowiek źle się komunikuje — przy wysokiej uważności i odporności na stres może być doskonałym specjalistą',
-            },
-            {
-              ru: 'Что общительность важнее всех остальных девяти точек вместе взятых',
-              en: 'That sociability is more important than all the other nine points combined',
-              pl: 'Że towarzyskość jest ważniejsza niż wszystkie pozostałe dziewięć punktów razem wzięte',
-            },
+            { ru: 'Постоянная, неизменная характеристика человека', en: 'A constant, unchanging characteristic of a person', pl: 'Stała, niezmienna charakterystyka człowieka' },
+            { ru: 'Прогноз будущего', en: 'A forecast of the future', pl: 'Prognoza przyszłości' },
+            { ru: '«Фотография личности на момент времени» — показатели могут меняться от настроения и обстоятельств', en: 'A "snapshot of the personality at a point in time" — the indicators can change with mood and circumstances', pl: '„Fotografia osobowości w danym momencie" — wskaźniki mogą się zmieniać w zależności od nastroju i okoliczności' },
+            { ru: 'Медицинский диагноз', en: 'A medical diagnosis', pl: 'Diagnoza medyczna' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что обязательно указывают в тесте и почему?',
+            en: 'What must be indicated in the test and why?',
+            pl: 'Co koniecznie podaje się w teście i dlaczego?',
+          },
+          opts: [
+            { ru: 'Только имя кандидата', en: 'Only the candidate\'s name', pl: 'Tylko imię kandydata' },
+            { ru: 'Достоверные пол и возраст — от них зависит, какие нормативные показатели берутся для расчёта', en: 'Accurate sex and age — the normative indicators used for calculation depend on them', pl: 'Prawdziwą płeć i wiek — od nich zależy, jakie wskaźniki normatywne bierze się do obliczeń' },
+            { ru: 'Только должность', en: 'Only the position', pl: 'Tylko stanowisko' },
+            { ru: 'Ничего указывать не нужно', en: 'Nothing needs to be indicated', pl: 'Niczego nie trzeba podawać' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какие три задачи решает тест?',
+            en: 'What three tasks does the test solve?',
+            pl: 'Jakie trzy zadania rozwiązuje test?',
+          },
+          opts: [
+            { ru: 'Только выбор кандидата', en: 'Only the selection of a candidate', pl: 'Tylko wybór kandydata' },
+            { ru: 'Только увольнение', en: 'Only dismissal', pl: 'Tylko zwolnienie' },
+            { ru: 'Диагностику болезней', en: 'The diagnosis of illnesses', pl: 'Diagnostykę chorób' },
+            { ru: 'Определить сильные/слабые стороны; выбрать лучшего из нескольких; работать с уже нанятыми', en: 'To determine strengths/weaknesses; to choose the best of several; to work with those already hired', pl: 'Określić mocne/słabe strony; wybrać najlepszego z kilku; pracować z już zatrudnionymi' },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что означает компульсивная (очень высокая) точка?',
+            en: 'What does a compulsive (very high) point mean?',
+            pl: 'Co oznacza punkt kompulsywny (bardzo wysoki)?',
+          },
+          opts: [
+            { ru: 'Человек на все 20 вопросов ответил «только так, обязательно» — без этого он не может, иначе стресс', en: 'The person answered all 20 questions "only this way, without fail" — he cannot do without it, otherwise stress', pl: 'Człowiek na wszystkie 20 pytań odpowiedział „tylko tak, koniecznie" — bez tego nie może, inaczej stres' },
+            { ru: 'Человек ответил случайно', en: 'The person answered at random', pl: 'Człowiek odpowiedział przypadkowo' },
+            { ru: 'Точка недействительна', en: 'The point is invalid', pl: 'Punkt jest nieważny' },
+            { ru: 'Человек не понял вопросов', en: 'The person did not understand the questions', pl: 'Człowiek nie zrozumiał pytań' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Точка A (внимательность) при высоком значении означает, что человек:',
+            en: 'Point A (attentiveness) at a high value means that the person:',
+            pl: 'Punkt A (uważność) przy wysokiej wartości oznacza, że człowiek:',
+          },
+          opts: [
+            { ru: 'Рассеян и неорганизован', en: 'Is scattered and disorganized', pl: 'Jest rozproszony i niezorganizowany' },
+            { ru: 'Не умеет планировать', en: 'Cannot plan', pl: 'Nie umie planować' },
+            { ru: 'Хорошо концентрируется, планирует, «предугадывает» ожидания', en: 'Concentrates well, plans, "anticipates" expectations', pl: 'Dobrze się koncentruje, planuje, „przewiduje" oczekiwania' },
+            { ru: 'Не следит за собой', en: 'Does not take care of himself', pl: 'Nie dba o siebie' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что означает «молния» на точке B (или E)?',
+            en: 'What does a "lightning bolt" on point B (or E) mean?',
+            pl: 'Co oznacza „błyskawica" na punkcie B (lub E)?',
+          },
+          opts: [
+            { ru: 'Очень высокое значение', en: 'A very high value', pl: 'Bardzo wysoką wartość' },
+            { ru: 'Плавающую точку — настроение (или энергия) может меняться «как американские горки», обычно под подавлением', en: 'A floating point — mood (or energy) can change "like a roller coaster," usually under suppression', pl: 'Punkt pływający — nastrój (lub energia) może się zmieniać „jak kolejka górska", zwykle pod tłumieniem' },
+            { ru: 'Ошибку заполнения', en: 'A filling-in error', pl: 'Błąd wypełnienia' },
+            { ru: 'Компульсивность', en: 'Compulsiveness', pl: 'Kompulsywność' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Кто такие «подавляющие личности»?',
+            en: 'Who are "suppressive personalities"?',
+            pl: 'Kim są „osobowości tłumiące"?',
+          },
+          opts: [
+            { ru: 'Большинство людей', en: 'The majority of people', pl: 'Większość ludzi' },
+            { ru: 'Все руководители', en: 'All managers', pl: 'Wszyscy kierownicy' },
+            { ru: 'Продуктивные сотрудники', en: 'Productive employees', pl: 'Produktywni pracownicy' },
+            { ru: 'Примерно 3% людей, которые снижают чужую уверенность и «притапливают» того, кто начинает расти', en: 'About 3% of people who lower others\' confidence and "push down" the one who starts to grow', pl: 'Około 3% ludzi, którzy obniżają cudzą pewność siebie i „przytapiają" tego, kto zaczyna rosnąć' },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Точка D (уверенность): какое значение — важный порог?',
+            en: 'Point D (confidence): what value is an important threshold?',
+            pl: 'Punkt D (pewność siebie): jaka wartość jest ważnym progiem?',
+          },
+          opts: [
+            { ru: '32 (ниже — точка низкая, и тесту такого человека не стоит сильно доверять)', en: '32 (below it the point is low, and one should not trust the test of such a person much)', pl: '32 (poniżej punkt jest niski i testowi takiego człowieka nie warto zbytnio ufać)' },
+            { ru: '0', en: '0', pl: '0' },
+            { ru: '50', en: '50', pl: '50' },
+            { ru: '100', en: '100', pl: '100' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Компульсивная D включает синдром:',
+            en: 'A compulsive D includes the syndrome of:',
+            pl: 'Kompulsywne D obejmuje syndrom:',
+          },
+          opts: [
+            { ru: '«Плюшевого мишки»', en: 'The "teddy bear"', pl: '„Pluszowego misia"' },
+            { ru: '«Карьериста»', en: 'The "careerist"', pl: '„Karierowicza"' },
+            { ru: '«Обязан быть правым» — человек стоит на своём до конца и может строить выводы даже на ложных данных', en: '"Must be right" — the person stands his ground to the end and may build conclusions even on false data', pl: '„Musi mieć rację" — człowiek stoi przy swoim do końca i może budować wnioski nawet na fałszywych danych' },
+            { ru: '«Динамита»', en: 'The "dynamite"', pl: '„Dynamitu"' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Точка E (активность) при низком значении: человек:',
+            en: 'Point E (activity) at a low value: the person:',
+            pl: 'Punkt E (aktywność) przy niskiej wartości: człowiek:',
+          },
+          opts: [
+            { ru: 'Энергичен и инициативен', en: 'Is energetic and proactive', pl: 'Jest energiczny i inicjatywny' },
+            { ru: 'Пассивен, мало энергии, не любит движение и новое (энергию будто «выкачали»)', en: 'Is passive, low on energy, dislikes movement and the new (as if the energy was "pumped out")', pl: 'Jest pasywny, ma mało energii, nie lubi ruchu i nowości (energię jakby „wypompowano")' },
+            { ru: 'Постоянно тянется к новому', en: 'Is constantly drawn to the new', pl: 'Stale ciągnie do nowości' },
+            { ru: 'Не может усидеть на месте', en: 'Cannot sit still', pl: 'Nie może usiedzieć w miejscu' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Компульсивная активность («энерджайзер») означает, что человек:',
+            en: 'Compulsive activity (the "energizer") means that the person:',
+            pl: 'Kompulsywna aktywność („energizer") oznacza, że człowiek:',
+          },
+          opts: [
+            { ru: 'Любит рутину', en: 'Likes routine', pl: 'Lubi rutynę' },
+            { ru: 'Не берётся ни за что', en: 'Does not take on anything', pl: 'Nie bierze się za nic' },
+            { ru: 'Экономит энергию', en: 'Conserves energy', pl: 'Oszczędza energię' },
+            { ru: 'Не может не действовать, тянется к новому и может менять даже то, что уже работает; в колл-центре не удержится', en: 'Cannot not act, is drawn to the new and may change even what already works; will not last in a call center', pl: 'Nie może nie działać, ciągnie do nowości i może zmieniać nawet to, co już działa; w call center się nie utrzyma' },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Точка F (настойчивость) при высоком значении: человек:',
+            en: 'Point F (persistence) at a high value: the person:',
+            pl: 'Punkt F (wytrwałość) przy wysokiej wartości: człowiek:',
+          },
+          opts: [
+            { ru: 'Напорист, действует прямо, ориентирован на результат, доводит дела до конца', en: 'Is assertive, acts directly, is result-oriented, sees things through to the end', pl: 'Jest napastliwy, działa wprost, nastawiony na rezultat, doprowadza sprawy do końca' },
+            { ru: 'Осторожен и неэффективен', en: 'Is cautious and ineffective', pl: 'Jest ostrożny i nieskuteczny' },
+            { ru: 'Действует «из-за угла»', en: 'Acts "from around the corner"', pl: 'Działa „zza rogu"' },
+            { ru: 'Медленно учится', en: 'Learns slowly', pl: 'Uczy się wolno' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Компульсивная настойчивость означает, что человек:',
+            en: 'Compulsive persistence means that the person:',
+            pl: 'Kompulsywna wytrwałość oznacza, że człowiek:',
+          },
+          opts: [
+            { ru: 'Слишком осторожен', en: 'Is too cautious', pl: 'Jest zbyt ostrożny' },
+            { ru: 'Не ориентирован на результат', en: 'Is not result-oriented', pl: 'Nie jest nastawiony na rezultat' },
+            { ru: 'Применяет больше силы, чем нужно («выбивает дверь» вместо того чтобы подождать, «пережигает» клиентов)', en: 'Applies more force than needed (kicks the door in instead of waiting, "burns out" clients)', pl: 'Stosuje więcej siły niż trzeba („wyważa drzwi" zamiast poczekać, „przepala" klientów)' },
+            { ru: 'Вообще не действует', en: 'Does not act at all', pl: 'W ogóle nie działa' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Точка G (ответственность) — о чём она НЕ говорит?',
+            en: 'Point G (responsibility) — what does it NOT tell about?',
+            pl: 'Punkt G (odpowiedzialność) — o czym NIE mówi?',
+          },
+          opts: [
+            { ru: 'Любит ли человек, когда с него спрашивают', en: 'Whether the person likes being held to account', pl: 'Czy człowiek lubi, gdy się go rozlicza' },
+            { ru: 'О том, «ответственный человек или безответственный» (вывод «безответственный» — ложный)', en: 'Whether a "person is responsible or irresponsible" (the conclusion "irresponsible" is false)', pl: 'O tym, „czy człowiek jest odpowiedzialny czy nieodpowiedzialny" (wniosek „nieodpowiedzialny" jest fałszywy)' },
+            { ru: 'Способен ли принять и уладить критику', en: 'Whether he is able to accept and resolve criticism', pl: 'Czy jest w stanie przyjąć i załagodzić krytykę' },
+            { ru: 'Избегает ли давления', en: 'Whether he avoids pressure', pl: 'Czy unika nacisku' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Компульсивная ответственность — это:',
+            en: 'Compulsive responsibility is:',
+            pl: 'Kompulsywna odpowiedzialność to:',
+          },
+          opts: [
+            { ru: '«Плюшевый мишка»', en: 'The "teddy bear"', pl: '„Pluszowy miś"' },
+            { ru: '«Динамит»', en: 'The "dynamite"', pl: '„Dynamit"' },
+            { ru: '«Энерджайзер»', en: 'The "energizer"', pl: '„Energizer"' },
+            { ru: '«Шахматист» — просчитывает, что сказать и сделать, относится к людям как к фигурам на доске', en: 'The "chess player" — calculates what to say and do, treats people like pieces on a board', pl: '„Szachista" — kalkuluje, co powiedzieć i zrobić, traktuje ludzi jak figury na szachownicy' },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Точка H (объективность) при высоком значении: человек:',
+            en: 'Point H (objectivity) at a high value: the person:',
+            pl: 'Punkt H (obiektywność) przy wysokiej wartości: człowiek:',
+          },
+          opts: [
+            { ru: 'Справедлив, ориентирован на согласие и решение, легко сотрудничает, хорошо расставляет приоритеты в тактике с людьми', en: 'Is fair, oriented toward agreement and solutions, cooperates easily, prioritizes well in tactics with people', pl: 'Jest sprawiedliwy, nastawiony na zgodę i rozwiązanie, łatwo współpracuje, dobrze ustala priorytety w taktyce z ludźmi' },
+            { ru: 'Постоянно спорит', en: 'Constantly argues', pl: 'Ciągle się kłóci' },
+            { ru: 'Фокусируется на ошибках', en: 'Focuses on mistakes', pl: 'Skupia się na błędach' },
+            { ru: '«Не душка»', en: 'Is "not a sweetheart"', pl: 'Jest „nie do lubienia"' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Для каких ролей особенно ценна высокая объективность (H)?',
+            en: 'For which roles is high objectivity (H) especially valuable?',
+            pl: 'Dla jakich ról szczególnie cenna jest wysoka obiektywność (H)?',
+          },
+          opts: [
+            { ru: 'Для грузчика и токаря', en: 'For a loader and a turner', pl: 'Dla ładowacza i tokarza' },
+            { ru: 'Для программиста', en: 'For a programmer', pl: 'Dla programisty' },
+            { ru: 'Для судьи, адвоката, дипломата, переговорщика, PR- или HR-менеджера', en: 'For a judge, lawyer, diplomat, negotiator, PR or HR manager', pl: 'Dla sędziego, adwokata, dyplomaty, negocjatora, menedżera PR lub HR' },
+            { ru: 'Она нигде не нужна', en: 'It is needed nowhere', pl: 'Nigdzie nie jest potrzebna' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Точка I (чуткость) при низком значении: человек:',
+            en: 'Point I (sensitivity) at a low value: the person:',
+            pl: 'Punkt I (wrażliwość) przy niskiej wartości: człowiek:',
+          },
+          opts: [
+            { ru: 'Душевен и любит помогать', en: 'Is warm-hearted and likes to help', pl: 'Jest serdeczny i lubi pomagać' },
+            { ru: 'Закрыт и холоден, держит дистанцию, редко благодарит, видит в основном свою точку зрения', en: 'Is closed and cold, keeps distance, rarely thanks, sees mainly his own point of view', pl: 'Jest zamknięty i chłodny, trzyma dystans, rzadko dziękuje, widzi głównie swój punkt widzenia' },
+            { ru: 'Легко проявляет чувства', en: 'Easily shows feelings', pl: 'Łatwo okazuje uczucia' },
+            { ru: 'Создаёт близкие отношения', en: 'Builds close relationships', pl: 'Tworzy bliskie relacje' },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Компульсивная чуткость опасна тем, что:',
+            en: 'Compulsive sensitivity is dangerous in that:',
+            pl: 'Kompulsywna wrażliwość jest niebezpieczna tym, że:',
+          },
+          opts: [
+            { ru: 'Человек всем подряд отказывает', en: 'The person refuses everyone indiscriminately', pl: 'Człowiek odmawia wszystkim po kolei' },
+            { ru: 'Человек холоден', en: 'The person is cold', pl: 'Człowiek jest chłodny' },
+            { ru: 'Человек не замечает чужих чувств', en: 'The person does not notice others\' feelings', pl: 'Człowiek nie zauważa cudzych uczuć' },
+            { ru: 'Человек не может отказать (говорит «да», отложив своё) — такого опасно ставить на ресепшен', en: 'The person cannot refuse (says "yes," setting aside his own) — it is risky to place such a person at reception', pl: 'Człowiek nie potrafi odmówić (mówi „tak", odkładając swoje) — takiego niebezpiecznie stawiać na recepcji' },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что важно помнить про точку J (общительность)?',
+            en: 'What is important to remember about point J (sociability)?',
+            pl: 'Co ważne jest pamiętać o punkcie J (towarzyskość)?',
+          },
+          opts: [
+            { ru: 'Её имя обманчиво: низкая общительность не означает, что человек плохо общается', en: 'Its name is deceptive: low sociability does not mean the person communicates badly', pl: 'Jej nazwa jest myląca: niska towarzyskość nie oznacza, że człowiek źle się komunikuje' },
+            { ru: 'Низкое J всегда значит плохое общение', en: 'A low J always means poor communication', pl: 'Niskie J zawsze oznacza słabą komunikację' },
+            { ru: 'Высокое J всегда значит хорошее общение', en: 'A high J always means good communication', pl: 'Wysokie J zawsze oznacza dobrą komunikację' },
+            { ru: 'J — самая важная точка теста', en: 'J is the most important point of the test', pl: 'J to najważniejszy punkt testu' },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Куда чаще идут люди с низкой общительностью (J)?',
+            en: 'Where do people with low sociability (J) more often go?',
+            pl: 'Dokąd częściej trafiają ludzie z niską towarzyskością (J)?',
+          },
+          opts: [
+            { ru: 'В ведущие и рекрутеры', en: 'Into hosting and recruiting', pl: 'Na prowadzących i rekruterów' },
+            { ru: 'В менеджеры по продажам', en: 'Into sales management', pl: 'Na menedżerów sprzedaży' },
+            { ru: 'В работу с машинами и предметами (программист, токарь)', en: 'Into work with machines and objects (programmer, turner)', pl: 'Do pracy z maszynami i przedmiotami (programista, tokarz)' },
+            { ru: 'В публичные профессии', en: 'Into public-facing professions', pl: 'Do zawodów publicznych' },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Пример из модуля: программист с общительностью около −90 оказался:',
+            en: 'Example from the module: a programmer with sociability around −90 turned out to be:',
+            pl: 'Przykład z modułu: programista z towarzyskością około −90 okazał się:',
+          },
+          opts: [
+            { ru: 'Плохим работником', en: 'A bad employee', pl: 'Złym pracownikiem' },
+            { ru: 'Идеальным программистом — при высокой внимательности и стрессоустойчивости он не отвлекается и не бросает дела', en: 'An ideal programmer — with high attentiveness and stress resistance he does not get distracted and does not abandon tasks', pl: 'Idealnym programistą — przy wysokiej uważności i odporności na stres nie rozprasza się i nie porzuca spraw' },
+            { ru: 'Уволен за некомпетентность', en: 'Fired for incompetence', pl: 'Zwolniony za niekompetencję' },
+            { ru: 'Переведён в отдел продаж', en: 'Transferred to the sales department', pl: 'Przeniesiony do działu sprzedaży' },
           ],
           correct: 1,
         },

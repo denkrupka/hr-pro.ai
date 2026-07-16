@@ -16,6 +16,7 @@ const integ = require('./src/integrations');
 const aiDecodeRoutes = require('./src/ai-decode-routes');
 const refai = require('./src/references-ai');
 const aiCallPrompts = require('./src/ai-call-prompts');
+const callLog = require('./src/ai-call-log');
 const { localizeResult } = require('./src/i18n-content');
 const RES_LANGS = ['ru', 'pl', 'en'];
 const pickLang = req => { const l = (req.query && req.query.lang) || ''; return RES_LANGS.includes(l) ? l : 'ru'; };
@@ -685,14 +686,17 @@ function aiCallFor(owner, p, vac, kind) {
     const lang = vac.lang || 'ru';
     const nm = ((p.name || '') + ' ' + (p.surname || '')).trim() || 'кандидат';
     // Официальные промты HR-PRO.AI (по типу звонка). Агент только собирает ответы и уточняет.
-    const task = aiCallPrompts.candidatePrompt(kind, {
+    const vars = {
       candidate: nm, position: vac.name, company: owner.company || '', language: lang,
       recruiter: [owner.name, owner.surname].filter(Boolean).join(' '),
       company_mission: (vac.mission || (owner.settings && owner.settings.companyMission) || ''),
-    });
+      agent_name: aiCallPrompts.agentName(lang),
+    };
+    const task = aiCallPrompts.candidatePrompt(kind, vars);
     const first = aiCallPrompts.firstMessage('candidate', lang === 'de' ? 'en' : lang, { candidate: nm, company: owner.company || '' });
-    integ.startCall(owner.settings, { to: p.tel, task, firstMessage: first, language: lang })
-      .then(r => { if (r && r.skipped) return; console.log('[vapi:auto]', kind, p.id); })
+    // Записываем звонок в журнал кандидата (транскрипт/запись/анализ подтянутся при обновлении).
+    callLog.startCall(owner.settings, p, { kind, to: p.tel, lang, task, firstMessage: first, vars }, save)
+      .then(r => { if (r && r.skipped) return; console.log('[vapi:auto]', kind, p.id, r.callId || ''); })
       .catch(e => console.error('[vapi:auto]', kind, e.message));
   } catch (e) { console.error('[vapi:auto]', e.message); }
 }
@@ -1979,14 +1983,21 @@ app.post('/api/participants/:id/references/ai-call', requireAuth, async (req, re
     company: req.user.company || '', recruiter: [req.user.name, req.user.surname].filter(Boolean).join(' '),
   });
   try {
-    const r = await integ.startCall(req.user.settings, {
-      to: contact.phone, task: iv.systemPrompt, firstMessage: iv.firstMessage, language: lang,
-      structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt,
-    });
+    const supervisor = [contact.name, contact.surname].filter(Boolean).join(' ').trim();
+    const vars = {
+      candidate: ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат',
+      supervisor, company: req.user.company || '', language: lang, agent_name: aiCallPrompts.agentName(lang),
+    };
+    const r = await callLog.startCall(req.user.settings, p, {
+      kind: 'references', refIndex, to: contact.phone, lang,
+      task: iv.systemPrompt, firstMessage: iv.firstMessage,
+      structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt, vars,
+    }, save);
     if (r.skipped) return res.status(503).json({ error: r.reason || 'ИИ-звонки не настроены' });
-    p.workflow = p.workflow || {}; p.workflow.references = p.workflow.references || {}; p.workflow.references.multi = p.workflow.references.multi || {};
+    // Совместимость со старым отображением этапа: пометим контакт как «звонок идёт».
+    p.workflow.references = p.workflow.references || {}; p.workflow.references.multi = p.workflow.references.multi || {};
     const cur = p.workflow.references.multi[refIndex] || {};
-    cur.aiCall = { callId: r.callId, status: 'calling', startedAt: nowISO() };
+    cur.aiCall = { callId: r.callId, status: 'calling', startedAt: nowISO(), entryId: r.entry.id };
     p.workflow.references.multi[refIndex] = cur;
     save();
     res.json({ status: 'calling', callId: r.callId });
@@ -1995,23 +2006,42 @@ app.post('/api/participants/:id/references/ai-call', requireAuth, async (req, re
 app.get('/api/participants/:id/references/ai-call/:refIndex', requireAuth, async (req, res) => {
   const p = db().participants.find(x => x.id === req.params.id && x.userId === req.user.id);
   if (!p) return res.status(404).json({ error: 'Не найдено' });
-  const refIndex = req.params.refIndex;
-  const cur = p.workflow && p.workflow.references && p.workflow.references.multi && p.workflow.references.multi[refIndex];
-  const ai = cur && cur.aiCall;
-  if (!ai || !ai.callId) return res.json({ status: 'none' });
-  if (ai.status === 'done') return res.json({ status: 'done', summary: ai.summary || '', filled: cur.answers ? Object.keys(cur.answers).length : 0 });
+  const refIndex = String(req.params.refIndex);
+  const log = (p.workflow && p.workflow.aiCallLog) || [];
+  // Актуальная запись референса по этому контакту.
+  const entry = log.filter(e => e.kind === 'references' && String(e.refIndex) === refIndex)
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))[0];
+  if (!entry) {
+    const cur = p.workflow && p.workflow.references && p.workflow.references.multi && p.workflow.references.multi[refIndex];
+    if (cur && cur.answers) return res.json({ status: 'done', summary: (cur.aiCall && cur.aiCall.summary) || '', filled: Object.keys(cur.answers).length });
+    return res.json({ status: 'none' });
+  }
   try {
-    const call = await integ.getCall(req.user.settings, ai.callId);
-    if (call.skipped) return res.json({ status: ai.status || 'calling' });
-    const ended = call.status === 'ended' || !!call.endedReason;
-    if (!ended) return res.json({ status: 'calling', vapiStatus: call.status });
-    const parsed = refai.parseCall(call);            // structuredData → answers, + summary/transcript
-    cur.answers = Object.assign({}, cur.answers || {}, parsed.answers);
-    cur.at = nowISO();
-    cur.aiCall = Object.assign({}, ai, { status: 'done', summary: parsed.summary, transcript: parsed.transcript, doneAt: nowISO(), endedReason: call.endedReason });
-    save();
-    res.json({ status: 'done', summary: parsed.summary || '', filled: parsed.filled });
-  } catch (e) { res.json({ status: ai.status || 'calling', error: e.message }); }
+    if (!callLog.isFinal(entry)) await callLog.refreshEntry(req.user.settings, p, entry, save);
+    const cur = p.workflow.references && p.workflow.references.multi && p.workflow.references.multi[refIndex];
+    const filled = cur && cur.answers ? Object.keys(cur.answers).length : (entry.filled || 0);
+    const st = entry.status === 'done' ? 'done' : (entry.status === 'failed' ? 'error' : 'calling');
+    res.json({ status: st, summary: entry.summary || '', filled, attempts: (entry.attempts || []).length });
+  } catch (e) { res.json({ status: (entry && entry.status) || 'calling', error: e.message }); }
+});
+// ---------- Единый журнал ИИ-звонков кандидата (модалка «Звонки ИИ») ----------
+// Список всех звонков (этапы + попытки, транскрипты, записи, извлечённые ответы).
+app.get('/api/participants/:id/ai-calls', requireAuth, (req, res) => {
+  const p = db().participants.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!p) return res.status(404).json({ error: 'Не найдено' });
+  const vac = db().vacancies.find(v => v.id === p.vacancyId && v.userId === p.userId);
+  const lang = (vac && vac.lang) || 'ru';
+  res.json({ calls: callLog.publicView(p, lang), motivation: (p.workflow && p.workflow.aiMotivation) || null });
+});
+// Обновить все незавершённые звонки: подтянуть транскрипты/записи, анализ, докрутка, агрегация.
+app.post('/api/participants/:id/ai-calls/refresh', requireAuth, async (req, res) => {
+  const p = db().participants.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!p) return res.status(404).json({ error: 'Не найдено' });
+  const vac = db().vacancies.find(v => v.id === p.vacancyId && v.userId === p.userId);
+  const lang = (vac && vac.lang) || 'ru';
+  try { await callLog.refreshAll(req.user.settings, p, save); }
+  catch (e) { return res.status(502).json({ error: e.message }); }
+  res.json({ calls: callLog.publicView(p, lang), motivation: (p.workflow && p.workflow.aiMotivation) || null });
 });
 // ---------- Собеседования (несколько карточек на кандидата) ----------
 app.post('/api/participants/:id/interviews', requireAuth, (req, res) => {
@@ -2119,6 +2149,16 @@ function buildWorkflow(p, lang) {
       st.done = !!(m && m.level);
       st.level = m ? m.level : null;
       if (m && m.level) { st.analysis = air.motivationAnalysis(m.level, lang); st.suggested = (recruit.MOTIVATION_LEVELS.find(x => x.key === m.level) || {}).score >= 2; }
+      // Мотивация, собранная ИИ-звонком (5 вопросов) — для кнопки «Смотреть результат».
+      const am = wf.aiMotivation;
+      if (am && am.answers && Object.keys(am.answers).some(k => (am.answers[k] || '').trim())) {
+        const labels = callLog.labelsOf('afterResult', lang);
+        st.aiResult = {
+          summary: am.summary || '', at: am.at || null, attempts: am.attempts || 1,
+          answers: Object.entries(am.answers).filter(([, v]) => (v || '').trim())
+            .map(([k, v]) => ({ label: labels[k] || k, value: v })),
+        };
+      }
       st.passed = gates[key] !== undefined ? gates[key] : (st.done ? st.suggested : null);
     } else if (key === 'references') {
       const rf = wf.references || {};
@@ -2138,6 +2178,15 @@ function buildWorkflow(p, lang) {
           const r = { i, contact: c, done: filled || aiDone, phone: c.phone || '', aiStatus: (m.aiCall && m.aiCall.status) || null };
           if (aiDone) { r.verdict = (m.aiCall.summary || 'Референс собран ИИ').slice(0, 200); r.tone = 'good'; r.aiSummary = m.aiCall.summary || ''; }
           else if (filled) { const an = air.referencesAnalysis(m.answers, lang); r.verdict = an.verdict; r.tone = an.tone; }
+          // Полные собранные ответы референса — для кнопки «Смотреть результат».
+          if (m.answers && Object.keys(m.answers).some(k => (m.answers[k] || '').toString().trim())) {
+            const labels = callLog.labelsOf('references', lang);
+            r.aiResult = {
+              summary: (m.aiCall && m.aiCall.summary) || '', by: aiDone ? 'ai' : 'manual',
+              answers: Object.entries(m.answers).filter(([, v]) => (v || '').toString().trim())
+                .map(([k, v]) => ({ label: labels[k] || k, value: String(v) })),
+            };
+          }
           return r;
         });
         st.done = st.refs.every(r => r.done);

@@ -322,107 +322,727 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'Почему беседу по тесту нельзя вести в том же порядке, в каком мы изучаем тест для себя?',
-            en: 'Why can the conversation about the test not be conducted in the same order in which we study the test for ourselves?',
-            pl: 'Dlaczego rozmowy o teście nie można prowadzić w tej samej kolejności, w jakiej studiujemy test dla siebie?',
+            ru: 'Почему люди не спешат говорить о том, что у них по-настоящему болит?',
+            en: 'Why are people in no hurry to talk about what truly hurts them?',
+            pl: 'Dlaczego ludzie nie spieszą się z mówieniem o tym, co ich naprawdę boli?',
           },
           opts: [
             {
-              ru: 'Так дольше и утомительнее для оценщика.',
-              en: 'It takes longer and is more tiring for the assessor.',
-              pl: 'Tak jest dłużej i bardziej męcząco dla oceniającego.',
+              ru: 'Их раньше уже задевали те, кто заговаривал об этом (по некомпетентности или с дурными намерениями).',
+              en: 'They have already been hurt by those who broached the subject earlier (out of incompetence or with bad intentions).',
+              pl: 'Ranili ich już wcześniej ci, którzy zaczynali o tym mówić (przez niekompetencję lub w złych zamiarach).',
             },
             {
-              ru: 'Начав с синдромов и минусов, вы предстаёте врагом, и человек закрывается, а не раскрывается.',
-              en: 'Starting with syndromes and minuses, you appear as an enemy, and the person closes up rather than opens up.',
-              pl: 'Zaczynając od syndromów i minusów, jawisz się jako wróg, i człowiek zamyka się, a nie otwiera.',
+              ru: 'Им нечего сказать.',
+              en: 'They have nothing to say.',
+              pl: 'Nie mają nic do powiedzenia.',
             },
             {
-              ru: 'Порядок изучения запрещён технологией.',
-              en: 'The order of study is forbidden by the technology.',
-              pl: 'Kolejność studiowania jest zakazana przez technologię.',
-            },
-          ],
-          correct: 1,
-        },
-        {
-          q: {
-            ru: 'Что является продуктом (целью) шага 2 — самого важного шага оценки?',
-            en: 'What is the product (goal) of step 2 — the most important step of the assessment?',
-            pl: 'Co jest produktem (celem) kroku 2 — najważniejszego kroku oceny?',
-          },
-          opts: [
-            {
-              ru: 'Найти у человека главный минус и прямо назвать его.',
-              en: 'To find the person\'s main minus and name it directly.',
-              pl: 'Znaleźć u człowieka główny minus i wprost go nazwać.',
+              ru: 'Они любят обсуждать свои проблемы.',
+              en: 'They love to discuss their problems.',
+              pl: 'Lubią omawiać swoje problemy.',
             },
             {
-              ru: 'Быстро заполнить и убрать тестовый бланк.',
-              en: 'To quickly fill out and put away the test form.',
-              pl: 'Szybko wypełnić i schować arkusz testowy.',
-            },
-            {
-              ru: 'Человек доверяет вам, видит в вас друга и сам хочет обсудить свои минусы.',
-              en: 'The person trusts you, sees a friend in you, and himself wants to discuss his minuses.',
-              pl: 'Człowiek wam ufa, widzi w was przyjaciela i sam chce omówić swoje minusy.',
-            },
-          ],
-          correct: 2,
-        },
-        {
-          q: {
-            ru: 'Если человек не может принять решение или начать действовать, куда всегда возвращается оценщик?',
-            en: 'If a person cannot make a decision or begin to act, where does the assessor always go back to?',
-            pl: 'Jeśli człowiek nie może podjąć decyzji albo zacząć działać, dokąd zawsze wraca oceniający?',
-          },
-          opts: [
-            {
-              ru: 'К наблюдению — значит, человек что-то недостаточно рассмотрел.',
-              en: 'To observation — it means the person has not examined something sufficiently.',
-              pl: 'Do obserwacji — to znaczy, że człowiek czegoś niewystarczająco się przyjrzał.',
-            },
-            {
-              ru: 'К минусам — надо назвать ещё несколько минусов.',
-              en: 'To the minuses — a few more minuses need to be named.',
-              pl: 'Do minusów — trzeba nazwać jeszcze kilka minusów.',
-            },
-            {
-              ru: 'К похвале — надо ещё дольше говорить о плюсах.',
-              en: 'To praise — one must talk about the pluses for even longer.',
-              pl: 'Do pochwały — trzeba jeszcze dłużej mówić o plusach.',
+              ru: 'Им это прямо запрещено.',
+              en: 'It is directly forbidden to them.',
+              pl: 'Jest im to wprost zakazane.',
             },
           ],
           correct: 0,
         },
         {
           q: {
-            ru: 'Как правильно относиться к продуктивному сотруднику с плохим тестом?',
-            en: 'How should one correctly treat a productive employee with a bad test?',
-            pl: 'Jak właściwie odnosić się do produktywnego pracownika ze złym testem?',
+            ru: 'Порядок изучения теста и порядок предоставления оценки — это:',
+            en: 'The order of studying the test and the order of delivering the assessment are:',
+            pl: 'Kolejność studiowania testu i kolejność przekazywania oceny to:',
           },
           opts: [
             {
-              ru: 'Уволить или наказать его из-за плохого теста.',
-              en: 'Fire or punish him because of the bad test.',
-              pl: 'Zwolnić albo ukarać go z powodu złego testu.',
+              ru: 'Один и тот же порядок.',
+              en: 'One and the same order.',
+              pl: 'Jedna i ta sama kolejność.',
             },
             {
-              ru: 'Никогда не обижать: тест — благодарность, увольняют только за плохие результаты работы.',
-              en: 'Never offend him: the test is a token of thanks; one fires only for bad work results.',
-              pl: 'Nigdy nie krzywdzić: test to podziękowanie, zwalnia się tylko za złe wyniki pracy.',
+              ru: 'Почти одинаковые порядки.',
+              en: 'Almost identical orders.',
+              pl: 'Prawie identyczne kolejności.',
             },
             {
-              ru: 'Перевести его на менее ответственную должность.',
-              en: 'Transfer him to a less responsible position.',
-              pl: 'Przenieść go na mniej odpowiedzialne stanowisko.',
+              ru: 'Два совершенно разных порядка.',
+              en: 'Two completely different orders.',
+              pl: 'Dwie zupełnie różne kolejności.',
+            },
+            {
+              ru: 'Несуществующие понятия.',
+              en: 'Nonexistent concepts.',
+              pl: 'Nieistniejące pojęcia.',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'В каком порядке изучают тест для себя (до беседы)?',
+            en: 'In what order do you study the test for yourself (before the conversation)?',
+            pl: 'W jakiej kolejności studiuje się test dla siebie (przed rozmową)?',
+          },
+          opts: [
+            {
+              ru: 'Сначала каждая точка, потом синдромы.',
+              en: 'First each point, then the syndromes.',
+              pl: 'Najpierw każdy punkt, potem syndromy.',
+            },
+            {
+              ru: 'Сначала синдромы (основной, вторичный, дополнительные), затем тон, и лишь в конце каждая точка.',
+              en: 'First the syndromes (main, secondary, additional), then the tone, and only at the end each point.',
+              pl: 'Najpierw syndromy (główny, wtórny, dodatkowe), następnie ton, i dopiero na końcu każdy punkt.',
+            },
+            {
+              ru: 'В произвольном порядке.',
+              en: 'In an arbitrary order.',
+              pl: 'W dowolnej kolejności.',
+            },
+            {
+              ru: 'Только по точке D.',
+              en: 'Only by point D.',
+              pl: 'Tylko według punktu D.',
             },
           ],
           correct: 1,
+        },
+        {
+          q: {
+            ru: 'Почему нельзя предоставлять оценку в том же порядке, в каком изучают тест (начиная с минусов)?',
+            en: 'Why can the assessment not be delivered in the same order in which the test is studied (starting with the minuses)?',
+            pl: 'Dlaczego nie można przekazywać oceny w tej samej kolejności, w jakiej studiuje się test (zaczynając od minusów)?',
+          },
+          opts: [
+            {
+              ru: 'Это слишком быстро.',
+              en: 'It is too fast.',
+              pl: 'To zbyt szybko.',
+            },
+            {
+              ru: 'Так требует закон.',
+              en: 'The law requires it.',
+              pl: 'Tak wymaga prawo.',
+            },
+            {
+              ru: 'Человек не знает терминов.',
+              en: 'The person does not know the terms.',
+              pl: 'Człowiek nie zna terminów.',
+            },
+            {
+              ru: 'О том, что болит, человек говорит только с другом, а начав с минусов, вы становитесь для него врагом.',
+              en: 'A person talks about what hurts only with a friend, and by starting with the minuses you become his enemy.',
+              pl: 'O tym, co boli, człowiek mówi tylko z przyjacielem, a zaczynając od minusów, stajesz się dla niego wrogiem.',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Кого человек считает другом, а кого врагом (в терминах точки H)?',
+            en: 'Whom does a person consider a friend, and whom an enemy (in terms of point H)?',
+            pl: 'Kogo człowiek uważa za przyjaciela, a kogo za wroga (w kategoriach punktu H)?',
+          },
+          opts: [
+            {
+              ru: 'Друг — тот, кто громче говорит.',
+              en: 'A friend is the one who speaks louder.',
+              pl: 'Przyjaciel to ten, kto mówi głośniej.',
+            },
+            {
+              ru: 'Высокая H (смотрит на плюсы, стремится к согласию) — друг, низкая H (тычет в минусы) — враг.',
+              en: 'High H (looks at the pluses, strives for agreement) is a friend, low H (pokes at the minuses) is an enemy.',
+              pl: 'Wysokie H (patrzy na plusy, dąży do zgody) to przyjaciel, niskie H (wytyka minusy) to wróg.',
+            },
+            {
+              ru: 'Враг — тот, у кого низкий интеллект.',
+              en: 'An enemy is the one with low intelligence.',
+              pl: 'Wróg to ten, kto ma niską inteligencję.',
+            },
+            {
+              ru: 'Это определяется точкой E.',
+              en: 'This is determined by point E.',
+              pl: 'Określa to punkt E.',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'В чём суть шага 1?',
+            en: 'What is the essence of step 1?',
+            pl: 'Na czym polega istota kroku 1?',
+          },
+          opts: [
+            {
+              ru: 'Вступить в контакт — просто начать общение парой фраз.',
+              en: 'Establish contact — simply start the conversation with a couple of phrases.',
+              pl: 'Nawiązać kontakt — po prostu zacząć rozmowę paroma zdaniami.',
+            },
+            {
+              ru: 'Сразу назвать все минусы.',
+              en: 'Immediately name all the minuses.',
+              pl: 'Od razu wymienić wszystkie minusy.',
+            },
+            {
+              ru: 'Заполнить бланк теста.',
+              en: 'Fill out the test form.',
+              pl: 'Wypełnić arkusz testu.',
+            },
+            {
+              ru: 'Позвонить консультанту.',
+              en: 'Call the consultant.',
+              pl: 'Zadzwonić do konsultanta.',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что полезно напомнить человеку на шаге 1?',
+            en: 'What is it useful to remind the person of at step 1?',
+            pl: 'Co warto przypomnieć człowiekowi na kroku 1?',
+          },
+          opts: [
+            {
+              ru: 'Что по тесту его могут уволить.',
+              en: 'That he can be fired based on the test.',
+              pl: 'Że na podstawie testu można go zwolnić.',
+            },
+            {
+              ru: 'Список его слабых точек.',
+              en: 'A list of his weak points.',
+              pl: 'Listę jego słabych punktów.',
+            },
+            {
+              ru: 'Зачем вы проводите тестирование: тест — для продуктивных, это благодарность, и по тесту не увольняют.',
+              en: 'Why you are conducting the testing: the test is for the productive, it is a token of thanks, and no one is fired based on it.',
+              pl: 'Po co przeprowadzasz testowanie: test jest dla produktywnych, to podziękowanie, i na jego podstawie się nie zwalnia.',
+            },
+            {
+              ru: 'Размер возможных штрафов.',
+              en: 'The size of possible fines.',
+              pl: 'Wysokość możliwych kar.',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'На какие две части делится шаг 2?',
+            en: 'Into which two parts is step 2 divided?',
+            pl: 'Na jakie dwie części dzieli się krok 2?',
+          },
+          opts: [
+            {
+              ru: 'Шаги 1 и 3.',
+              en: 'Steps 1 and 3.',
+              pl: 'Kroki 1 i 3.',
+            },
+            {
+              ru: '2a и 2b.',
+              en: '2a and 2b.',
+              pl: '2a i 2b.',
+            },
+            {
+              ru: 'Плюсы и зарплата.',
+              en: 'Pluses and salary.',
+              pl: 'Plusy i wynagrodzenie.',
+            },
+            {
+              ru: 'A и B.',
+              en: 'A and B.',
+              pl: 'A i B.',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что делают на шаге 2a?',
+            en: 'What is done at step 2a?',
+            pl: 'Co robi się na kroku 2a?',
+          },
+          opts: [
+            {
+              ru: 'Сразу переходят к минусам.',
+              en: 'They immediately move on to the minuses.',
+              pl: 'Od razu przechodzą do minusów.',
+            },
+            {
+              ru: 'Заканчивают беседу.',
+              en: 'They end the conversation.',
+              pl: 'Kończą rozmowę.',
+            },
+            {
+              ru: 'Выдают готовое решение.',
+              en: 'They hand out a ready-made solution.',
+              pl: 'Wydają gotowe rozwiązanie.',
+            },
+            {
+              ru: 'Улаживают всё, что мешает (страх, недовольство), и объясняют, что показывает тест.',
+              en: 'They handle everything that gets in the way (fear, dissatisfaction) and explain what the test shows.',
+              pl: 'Rozładowują wszystko, co przeszkadza (strach, niezadowolenie), i wyjaśniają, co pokazuje test.',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что нужно уладить почти всегда, даже если это не выглядит проблемой?',
+            en: 'What must be handled almost always, even if it does not look like a problem?',
+            pl: 'Co trzeba rozładować prawie zawsze, nawet jeśli nie wygląda to na problem?',
+          },
+          opts: [
+            {
+              ru: 'Вопрос отпуска.',
+              en: 'The question of vacation.',
+              pl: 'Kwestię urlopu.',
+            },
+            {
+              ru: 'Размер премии.',
+              en: 'The size of the bonus.',
+              pl: 'Wysokość premii.',
+            },
+            {
+              ru: 'Недоверие человека к тесту.',
+              en: 'The person\'s distrust of the test.',
+              pl: 'Nieufność człowieka do testu.',
+            },
+            {
+              ru: 'График работы.',
+              en: 'The work schedule.',
+              pl: 'Grafik pracy.',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что показывает тест (по определению из модуля)?',
+            en: 'What does the test show (by the definition from the module)?',
+            pl: 'Co pokazuje test (według definicji z modułu)?',
+          },
+          opts: [
+            {
+              ru: 'Самого человека целиком.',
+              en: 'The person himself as a whole.',
+              pl: 'Samego człowieka w całości.',
+            },
+            {
+              ru: 'Его будущее.',
+              en: 'His future.',
+              pl: 'Jego przyszłość.',
+            },
+            {
+              ru: 'Его зарплату.',
+              en: 'His salary.',
+              pl: 'Jego wynagrodzenie.',
+            },
+            {
+              ru: 'Его инструменты (решения) и их рациональность — но не его самого, а лишь набор инструментов.',
+              en: 'His tools (solutions) and their rationality — not himself, but only a set of tools.',
+              pl: 'Jego narzędzia (rozwiązania) i ich racjonalność — ale nie jego samego, lecz tylko zestaw narzędzi.',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'В метафоре с двумя плотниками кого берут на работу на самом деле?',
+            en: 'In the metaphor of the two carpenters, whom do you actually hire?',
+            pl: 'W metaforze o dwóch cieślach kogo tak naprawdę przyjmuje się do pracy?',
+          },
+          opts: [
+            {
+              ru: 'Того, кто уже построил дома (продуктивного), а не обязательно того, у кого полный набор инструментов.',
+              en: 'The one who has already built houses (the productive one), not necessarily the one with a full set of tools.',
+              pl: 'Tego, kto już zbudował domy (produktywnego), a niekoniecznie tego, kto ma pełen zestaw narzędzi.',
+            },
+            {
+              ru: 'Того, у кого больше инструментов.',
+              en: 'The one who has more tools.',
+              pl: 'Tego, kto ma więcej narzędzi.',
+            },
+            {
+              ru: 'Того, кто дешевле просит.',
+              en: 'The one who asks for less money.',
+              pl: 'Tego, kto żąda mniej.',
+            },
+            {
+              ru: 'Того, кто моложе.',
+              en: 'The one who is younger.',
+              pl: 'Tego, kto jest młodszy.',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что первично при найме?',
+            en: 'What is primary in hiring?',
+            pl: 'Co jest pierwszorzędne przy rekrutacji?',
+          },
+          opts: [
+            {
+              ru: 'Тест на интеллект.',
+              en: 'The intelligence test.',
+              pl: 'Test na inteligencję.',
+            },
+            {
+              ru: 'Интервью на продуктивность — реальные результаты в прошлом (тест вспомогателен).',
+              en: 'The productivity interview — real results in the past (the test is auxiliary).',
+              pl: 'Rozmowa o produktywności — realne wyniki w przeszłości (test jest pomocniczy).',
+            },
+            {
+              ru: 'Внешний вид кандидата.',
+              en: 'The candidate\'s appearance.',
+              pl: 'Wygląd kandydata.',
+            },
+            {
+              ru: 'Тест Тулс.',
+              en: 'The Tools test.',
+              pl: 'Test Tools.',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Если человек боится теста из-за прошлого опыта, приём в том, чтобы:',
+            en: 'If a person is afraid of the test because of past experience, the technique is to:',
+            pl: 'Jeśli człowiek boi się testu z powodu przeszłego doświadczenia, chwyt polega na tym, aby:',
+          },
+          opts: [
+            {
+              ru: 'Надавить на него.',
+              en: 'Put pressure on him.',
+              pl: 'Nacisnąć na niego.',
+            },
+            {
+              ru: 'Отменить оценку.',
+              en: 'Cancel the assessment.',
+              pl: 'Odwołać ocenę.',
+            },
+            {
+              ru: '«Разъединить» прошлую компанию и нашу (реактивный ум «объединил» их по принципу A=A=A).',
+              en: '"Separate" the previous company from ours (the reactive mind "lumped" them together on the principle A=A=A).',
+              pl: '„Rozdzielić" poprzednią firmę i naszą (umysł reaktywny „połączył" je według zasady A=A=A).',
+            },
+            {
+              ru: 'Настоять на своём.',
+              en: 'Insist on your own way.',
+              pl: 'Postawić na swoim.',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Как нужно держаться, пока вы что-то объясняете на шаге 2?',
+            en: 'How should you hold yourself while explaining something at step 2?',
+            pl: 'Jak należy się trzymać, dopóki coś wyjaśniasz na kroku 2?',
+          },
+          opts: [
+            {
+              ru: 'Будто у вас самого высокая правильность оценки — во всём искать согласие, а не поправлять.',
+              en: 'As if you yourself had high correctness of evaluation — seek agreement in everything rather than correct.',
+              pl: 'Jakbyś sam miał wysoką poprawność oceny — we wszystkim szukać zgody, a nie poprawiać.',
+            },
+            {
+              ru: 'Поправлять каждую неточность человека.',
+              en: 'Correct every inaccuracy of the person.',
+              pl: 'Poprawiać każdą nieścisłość człowieka.',
+            },
+            {
+              ru: 'Всё время молчать.',
+              en: 'Stay silent the whole time.',
+              pl: 'Cały czas milczeć.',
+            },
+            {
+              ru: 'Спорить с человеком.',
+              en: 'Argue with the person.',
+              pl: 'Spierać się z człowiekiem.',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что делают на шаге 2b?',
+            en: 'What is done at step 2b?',
+            pl: 'Co robi się na kroku 2b?',
+          },
+          opts: [
+            {
+              ru: 'Быстро называют один минус.',
+              en: 'They quickly name one minus.',
+              pl: 'Szybko wymieniają jeden minus.',
+            },
+            {
+              ru: 'Прощаются.',
+              en: 'They say goodbye.',
+              pl: 'Żegnają się.',
+            },
+            {
+              ru: 'Заполняют документы.',
+              en: 'They fill out documents.',
+              pl: 'Wypełniają dokumenty.',
+            },
+            {
+              ru: 'Долго и подробно говорят о плюсах человека.',
+              en: 'They talk at length and in detail about the person\'s pluses.',
+              pl: 'Długo i szczegółowo mówią o plusach człowieka.',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Верно ли, что главное в оценке — найти минус и назвать его?',
+            en: 'Is it true that the main thing in an assessment is to find a minus and name it?',
+            pl: 'Czy prawdą jest, że najważniejsze w ocenie to znaleźć minus i go nazwać?',
+          },
+          opts: [
+            {
+              ru: 'Да, это самое важное.',
+              en: 'Yes, this is the most important thing.',
+              pl: 'Tak, to najważniejsze.',
+            },
+            {
+              ru: 'Нет: это второстепенно; назвав минус первым, вы лишь встанете в ряд тех, кто уже тыкал в него.',
+              en: 'No: it is secondary; by naming the minus first, you only join the row of those who have already poked at it.',
+              pl: 'Nie: to drugorzędne; nazywając minus jako pierwszy, tylko dołączasz do grona tych, którzy już go wytykali.',
+            },
+            {
+              ru: 'Да, но только у руководителей.',
+              en: 'Yes, but only for managers.',
+              pl: 'Tak, ale tylko u kierowników.',
+            },
+            {
+              ru: 'Да, если минус всего один.',
+              en: 'Yes, if there is only one minus.',
+              pl: 'Tak, jeśli minus jest tylko jeden.',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Работает ли пустая похвала «какой ты хороший»?',
+            en: 'Does empty praise "what a good person you are" work?',
+            pl: 'Czy działa pusta pochwała „jaki jesteś dobry"?',
+          },
+          opts: [
+            {
+              ru: 'Нет: нужен компетентный разговор именно о ЕГО плюсах, которые видно на тесте.',
+              en: 'No: what is needed is a competent conversation about precisely HIS pluses, which are visible on the test.',
+              pl: 'Nie: potrzebna jest kompetentna rozmowa właśnie o JEGO plusach, które widać na teście.',
+            },
+            {
+              ru: 'Да, это лучший приём.',
+              en: 'Yes, it is the best technique.',
+              pl: 'Tak, to najlepszy chwyt.',
+            },
+            {
+              ru: 'Да, если повторить много раз.',
+              en: 'Yes, if repeated many times.',
+              pl: 'Tak, jeśli powtórzyć wiele razy.',
+            },
+            {
+              ru: 'Да, для новичков.',
+              en: 'Yes, for newcomers.',
+              pl: 'Tak, dla nowicjuszy.',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Как говорить о низкой точке с точки зрения плюса?',
+            en: 'How do you talk about a low point from the standpoint of a plus?',
+            pl: 'Jak mówić o niskim punkcie z punktu widzenia plusa?',
+          },
+          opts: [
+            {
+              ru: 'Промолчать.',
+              en: 'Stay silent.',
+              pl: 'Przemilczeć.',
+            },
+            {
+              ru: 'Честно назвать её минусом.',
+              en: 'Honestly name it a minus.',
+              pl: 'Szczerze nazwać go minusem.',
+            },
+            {
+              ru: 'Описать самооправдание человека — то, чем он сам себе объясняет это поведение.',
+              en: 'Describe the person\'s self-justification — the way he explains this behavior to himself.',
+              pl: 'Opisać samousprawiedliwienie człowieka — to, czym sam sobie tłumaczy to zachowanie.',
+            },
+            {
+              ru: 'Сравнить его с коллегами.',
+              en: 'Compare him with colleagues.',
+              pl: 'Porównać go z kolegami.',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Почему шаги 2a и 2b самые важные?',
+            en: 'Why are steps 2a and 2b the most important?',
+            pl: 'Dlaczego kroki 2a i 2b są najważniejsze?',
+          },
+          opts: [
+            {
+              ru: 'Они самые короткие.',
+              en: 'They are the shortest.',
+              pl: 'Są najkrótsze.',
+            },
+            {
+              ru: 'Их требует закон.',
+              en: 'The law requires them.',
+              pl: 'Wymaga ich prawo.',
+            },
+            {
+              ru: 'С них удобно начинать.',
+              en: 'It is convenient to start with them.',
+              pl: 'Wygodnie od nich zaczynać.',
+            },
+            {
+              ru: 'Друзьям прощают ошибки, а от врагов не принимают помощь: сделав шаг 2 хорошо, получаешь прощение за всё остальное.',
+              en: 'Friends are forgiven their mistakes, and from enemies help is not accepted: by doing step 2 well, you are forgiven everything else.',
+              pl: 'Przyjaciołom wybacza się błędy, a od wrogów nie przyjmuje się pomocy: robiąc krok 2 dobrze, otrzymujesz przebaczenie za całą resztę.',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Каков продукт шага 2 (когда можно переходить к минусам)?',
+            en: 'What is the product of step 2 (when you may move on to the minuses)?',
+            pl: 'Jaki jest produkt kroku 2 (kiedy można przejść do minusów)?',
+          },
+          opts: [
+            {
+              ru: 'Человек молчит и хмурится.',
+              en: 'The person is silent and frowns.',
+              pl: 'Człowiek milczy i marszczy brwi.',
+            },
+            {
+              ru: 'Человек доверяет, видит в вас друга, согласен и сам хочет обсудить свои минусы.',
+              en: 'The person trusts you, sees a friend in you, agrees, and himself wants to discuss his minuses.',
+              pl: 'Człowiek ufa, widzi w tobie przyjaciela, zgadza się i sam chce omówić swoje minusy.',
+            },
+            {
+              ru: 'Человек заплатил.',
+              en: 'The person has paid.',
+              pl: 'Człowiek zapłacił.',
+            },
+            {
+              ru: 'Прошло пятнадцать минут.',
+              en: 'Fifteen minutes have passed.',
+              pl: 'Minęło piętnaście minut.',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что нужно, чтобы человек «отчалил» (ушёл внутрь себя) и вы могли замолчать?',
+            en: 'What is needed for the person to "cast off" (go inside himself) so that you can fall silent?',
+            pl: 'Co jest potrzebne, aby człowiek „odpłynął" (poszedł w głąb siebie) i abyś mógł zamilknąć?',
+          },
+          opts: [
+            {
+              ru: 'Действительно говорить о его тесте и его минусах.',
+              en: 'To genuinely talk about his test and his minuses.',
+              pl: 'Naprawdę mówić o jego teście i jego minusach.',
+            },
+            {
+              ru: 'Говорить о погоде и его часах.',
+              en: 'To talk about the weather and his watch.',
+              pl: 'Mówić o pogodzie i jego zegarku.',
+            },
+            {
+              ru: 'Громко задавать вопросы.',
+              en: 'To ask questions loudly.',
+              pl: 'Głośno zadawać pytania.',
+            },
+            {
+              ru: 'Дать ему подержать бланк.',
+              en: 'To let him hold the form.',
+              pl: 'Dać mu potrzymać arkusz.',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Чьи это решение, действия и последствия (шаг 4)?',
+            en: 'Whose decision, actions, and consequences are these (step 4)?',
+            pl: 'Czyja to decyzja, działania i konsekwencje (krok 4)?',
+          },
+          opts: [
+            {
+              ru: 'Оценщика.',
+              en: 'The assessor\'s.',
+              pl: 'Oceniającego.',
+            },
+            {
+              ru: 'Компании.',
+              en: 'The company\'s.',
+              pl: 'Firmy.',
+            },
+            {
+              ru: 'Руководителя.',
+              en: 'The manager\'s.',
+              pl: 'Kierownika.',
+            },
+            {
+              ru: 'Самого человека («не спрашивай моего одобрения, я тебе не господь бог»).',
+              en: 'The person\'s own ("don\'t ask for my approval, I am not your Lord God").',
+              pl: 'Samego człowieka („nie pytaj o moją aprobatę, nie jestem twoim panem bogiem").',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Когда заканчивать оценку?',
+            en: 'When should the assessment be ended?',
+            pl: 'Kiedy kończyć ocenę?',
+          },
+          opts: [
+            {
+              ru: 'Когда назовёшь все минусы.',
+              en: 'When you have named all the minuses.',
+              pl: 'Gdy wymienisz wszystkie minusy.',
+            },
+            {
+              ru: 'Ровно через час.',
+              en: 'Exactly after an hour.',
+              pl: 'Dokładnie po godzinie.',
+            },
+            {
+              ru: 'Получив хотя бы одно небольшое, но настоящее улучшение; главная ошибка оценщиков — говорить слишком много.',
+              en: 'Having obtained at least one small but genuine improvement; the main mistake of assessors is talking too much.',
+              pl: 'Uzyskawszy choćby jedno niewielkie, ale prawdziwe polepszenie; główny błąd oceniających to mówić zbyt dużo.',
+            },
+            {
+              ru: 'Когда человек заплачет.',
+              en: 'When the person cries.',
+              pl: 'Gdy człowiek się rozpłacze.',
+            },
+          ],
+          correct: 2,
         },
       ],
     },

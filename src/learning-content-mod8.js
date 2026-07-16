@@ -280,107 +280,697 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'Что такое ключевой концепт точки G — устойчивость экстраверсии?',
-            en: 'What is the key concept of point G — the stability of extroversion?',
-            pl: 'Czym jest kluczowy koncept punktu G — stabilność ekstrawersji?',
+            ru: 'Ключевой концепт точки G (ответственность) — это:',
+            en: 'The key concept of point G (responsibility) is:',
+            pl: 'Kluczowy koncept punktu G (odpowiedzialność) to:',
           },
           opts: [
             {
-              ru: 'Насколько устойчиво человек смотрит наружу и какой силой надо на него надавить, чтобы он начал смотреть внутрь себя',
-              en: 'How steadily a person looks outward and with what force one has to press on him for him to begin looking inside himself',
-              pl: 'Na ile stabilnie człowiek patrzy na zewnątrz i jaką siłą trzeba na niego nacisnąć, żeby zaczął patrzeć w głąb siebie',
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
             },
             {
-              ru: 'Насколько человек общителен и любит быть в центре внимания',
-              en: 'How sociable a person is and whether he likes being the center of attention',
-              pl: 'Na ile człowiek jest towarzyski i lubi być w centrum uwagi',
+              ru: 'точка зрения',
+              en: 'a point of view',
+              pl: 'punkt widzenia',
             },
             {
-              ru: 'Сколько энергии у человека и любит ли он физические движения',
-              en: 'How much energy a person has and whether he likes physical movement',
-              pl: 'Ile człowiek ma energii i czy lubi ruch fizyczny',
+              ru: 'прямота',
+              en: 'directness',
+              pl: 'bezpośredniość',
+            },
+            {
+              ru: 'устойчивость экстраверсии — насколько устойчиво человек смотрит наружу',
+              en: 'the stability of extroversion — how steadily a person looks outward',
+              pl: 'stabilność ekstrawersji — na ile stabilnie człowiek patrzy na zewnątrz',
             },
           ],
-          correct: 0,
+          correct: 3,
         },
         {
           q: {
-            ru: 'Как правильно понимать полную ответственность по Хаббарду?',
-            en: 'How should full responsibility be correctly understood according to Hubbard?',
-            pl: 'Jak prawidłowo rozumieć pełną odpowiedzialność według Hubbarda?',
+            ru: 'В модели «пушки» экстраверсия — это:',
+            en: 'In the "cannon" model, extroversion is:',
+            pl: 'W modelu „armaty” ekstrawersja to:',
           },
           opts: [
             {
-              ru: 'Это готовность взять на себя вину и корить себя за случившееся',
-              en: 'It is a willingness to take the blame and reproach oneself for what happened',
-              pl: 'To gotowość, żeby wziąć na siebie winę i ganić siebie za to, co się stało',
+              ru: 'взгляд внутрь себя',
+              en: 'a look inside oneself',
+              pl: 'spojrzenie w głąb siebie',
             },
             {
-              ru: 'Это не вина, а признание того, что являешься причиной, — взгляд наружу, на последствия и на то, как всё исправить',
-              en: 'It is not guilt but acknowledging that one is cause — a look outward, at the consequences and at how to put everything right',
-              pl: 'To nie wina, lecz uznanie, że jest się przyczyną — spojrzenie na zewnątrz, na następstwa i na to, jak wszystko naprawić',
+              ru: 'отсутствие энергии',
+              en: 'an absence of energy',
+              pl: 'brak energii',
             },
             {
-              ru: 'Это способность переложить последствия своих действий на других',
-              en: 'It is the ability to shift the consequences of one\'s actions onto others',
-              pl: 'To zdolność przerzucania następstw swoich działań na innych',
-            },
-          ],
-          correct: 1,
-        },
-        {
-          q: {
-            ru: 'Чем на самом деле является низкая ответственность (низкая G)?',
-            en: 'What is low responsibility (a low G) really?',
-            pl: 'Czym w rzeczywistości jest niska odpowiedzialność (niskie G)?',
-          },
-          opts: [
-            {
-              ru: 'Безответственностью: такому человеку ничего нельзя поручить',
-              en: 'Irresponsibility: such a person cannot be entrusted with anything',
-              pl: 'Nieodpowiedzialnością: takiemu człowiekowi nic nie można powierzyć',
+              ru: '«пушка», направленная наружу',
+              en: 'a "cannon" pointed outward',
+              pl: '„armata” skierowana na zewnątrz',
             },
             {
-              ru: 'Признаком того, что человеку нельзя доверять',
-              en: 'A sign that the person cannot be trusted',
-              pl: 'Oznaką tego, że człowiekowi nie można ufać',
-            },
-            {
-              ru: 'Ранимостью: человек старается сделать всё безупречно, ему просто больно, когда на него давят или критикуют',
-              en: 'Vulnerability: the person tries to do everything flawlessly, it simply hurts him when he is pressured or criticized',
-              pl: 'Wrażliwością: człowiek stara się zrobić wszystko nienagannie, po prostu jest mu boleśnie, gdy się na niego naciska albo krytykuje',
+              ru: 'страх',
+              en: 'fear',
+              pl: 'strach',
             },
           ],
           correct: 2,
         },
         {
           q: {
-            ru: 'Что нельзя говорить человеку с низкой ответственностью и почему?',
-            en: 'What must not be said to a person with low responsibility, and why?',
-            pl: 'Czego nie wolno mówić człowiekowi z niską odpowiedzialnością i dlaczego?',
+            ru: 'Что происходит с «пушкой», когда человек не готов конфронтировать встречную энергию (критику, давление)?',
+            en: 'What happens to the "cannon" when a person is not ready to confront incoming energy (criticism, pressure)?',
+            pl: 'Co dzieje się z „armatą”, gdy człowiek nie jest gotów konfrontować napływającej energii (krytyki, nacisku)?',
           },
           opts: [
             {
-              ru: 'Что у него низкая ответственность — он поймёт это как «безответственный», а это неправда, и он справедливо не согласится',
-              en: 'That he has low responsibility — he will understand it as "irresponsible," and this is untrue, so he will justifiably disagree',
-              pl: 'Że ma niską odpowiedzialność — zrozumie to jako „nieodpowiedzialny”, a to nieprawda, i słusznie się nie zgodzi',
+              ru: 'пушка стреляет ещё дальше',
+              en: 'the cannon shoots even farther',
+              pl: 'armata strzela jeszcze dalej',
             },
             {
-              ru: 'Что он берёт на себя максимум ответственности — это его обидит',
-              en: 'That he takes on the maximum of responsibility — this will offend him',
-              pl: 'Że bierze na siebie maksimum odpowiedzialności — to go urazi',
+              ru: 'пушка разворачивается внутрь (человек интровертируется)',
+              en: 'the cannon turns inward (the person introverts)',
+              pl: 'armata odwraca się do wewnątrz (człowiek się introwertuje)',
             },
             {
-              ru: 'Что он не любит несправедливую критику — это разоблачит его слабость',
-              en: 'That he doesn\'t like unfair criticism — this will expose his weakness',
-              pl: 'Że nie lubi niesprawiedliwej krytyki — to zdemaskuje jego słabość',
+              ru: 'пушка исчезает',
+              en: 'the cannon disappears',
+              pl: 'armata znika',
+            },
+            {
+              ru: 'ничего не происходит',
+              en: 'nothing happens',
+              pl: 'nic się nie dzieje',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Как Хаббард определил суть ответственности?',
+            en: 'How did Hubbard define the essence of responsibility?',
+            pl: 'Jak Hubbard określił istotę odpowiedzialności?',
+          },
+          opts: [
+            {
+              ru: 'готовность иметь дело с энергией; ещё короче — «способность удерживать»',
+              en: 'a willingness to deal with energy; more briefly — "the ability to hold"',
+              pl: 'gotowość do radzenia sobie z energią; jeszcze krócej — „zdolność utrzymywania”',
+            },
+            {
+              ru: 'способность обвинять себя',
+              en: 'the ability to blame oneself',
+              pl: 'zdolność obwiniania siebie',
+            },
+            {
+              ru: 'умение избегать давления',
+              en: 'the skill of avoiding pressure',
+              pl: 'umiejętność unikania nacisku',
+            },
+            {
+              ru: 'количество взятых обязательств',
+              en: 'the number of commitments taken on',
+              pl: 'liczba wziętych zobowiązań',
             },
           ],
           correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что показывает точка A применительно к низкой ответственности (модель «макарон»)?',
+            en: 'What does point A show in relation to low responsibility (the "macaroni" model)?',
+            pl: 'Co pokazuje punkt A w odniesieniu do niskiej odpowiedzialności (model „makaronu”)?',
+          },
+          opts: [
+            {
+              ru: 'как долго длится боль',
+              en: 'how long the pain lasts',
+              pl: 'jak długo trwa ból',
+            },
+            {
+              ru: 'уровень энергии',
+              en: 'the level of energy',
+              pl: 'poziom energii',
+            },
+            {
+              ru: 'силу «взрыва»',
+              en: 'the force of the "explosion"',
+              pl: 'siłę „wybuchu”',
+            },
+            {
+              ru: 'сколько «макарон» в пушке — то есть насколько человеку больно, когда пушка разворачивается внутрь',
+              en: 'how much "macaroni" is in the cannon — that is, how painful it is for the person when the cannon turns inward',
+              pl: 'ile „makaronu” jest w armacie — czyli na ile boleśnie jest człowiekowi, gdy armata odwraca się do wewnątrz',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что показывает точка B в этой же модели?',
+            en: 'What does point B show in this same model?',
+            pl: 'Co pokazuje punkt B w tym samym modelu?',
+          },
+          opts: [
+            {
+              ru: 'силу боли',
+              en: 'the intensity of the pain',
+              pl: 'siłę bólu',
+            },
+            {
+              ru: 'количество «макарон»',
+              en: 'the amount of "macaroni"',
+              pl: 'ilość „makaronu”',
+            },
+            {
+              ru: 'как долго длится состояние (при хорошей B человек восстанавливается быстро)',
+              en: 'how long the state lasts (with a good B the person recovers quickly)',
+              pl: 'jak długo trwa stan (przy dobrym B człowiek odbudowuje się szybko)',
+            },
+            {
+              ru: 'уровень интеллекта',
+              en: 'the level of intelligence',
+              pl: 'poziom inteligencji',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'В чём разница между «ответом» и «реакцией»?',
+            en: 'What is the difference between a "response" and a "reaction"?',
+            pl: 'Na czym polega różnica między „odpowiedzią” a „reakcją”?',
+          },
+          opts: [
+            {
+              ru: 'это одно и то же',
+              en: 'they are one and the same',
+              pl: 'to jedno i to samo',
+            },
+            {
+              ru: 'ответ рационален (банк удержан в стороне), реакция идёт «через банк» — искажённо и неадекватно',
+              en: 'a response is rational (the bank is held aside), a reaction goes "through the bank" — distorted and inadequate',
+              pl: 'odpowiedź jest racjonalna (bank utrzymany z boku), reakcja idzie „przez bank” — zniekształcona i nieadekwatna',
+            },
+            {
+              ru: 'реакция всегда лучше ответа',
+              en: 'a reaction is always better than a response',
+              pl: 'reakcja jest zawsze lepsza od odpowiedzi',
+            },
+            {
+              ru: 'ответ всегда неадекватен',
+              en: 'a response is always inadequate',
+              pl: 'odpowiedź jest zawsze nieadekwatna',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Как Хаббард определяет полную ответственность?',
+            en: 'How does Hubbard define full responsibility?',
+            pl: 'Jak Hubbard definiuje pełną odpowiedzialność?',
+          },
+          opts: [
+            {
+              ru: '«это не вина, это признание того, что являешься причиной»',
+              en: '"it is not guilt, it is acknowledging that one is cause"',
+              pl: '„to nie wina, to uznanie, że jest się przyczyną”',
+            },
+            {
+              ru: 'это способность винить себя сильнее всех',
+              en: 'it is the ability to blame oneself more than anyone',
+              pl: 'to zdolność obwiniania siebie bardziej niż wszyscy',
+            },
+            {
+              ru: 'это готовность рвать на себе волосы',
+              en: 'it is a readiness to tear one\'s hair out',
+              pl: 'to gotowość, żeby rwać na sobie włosy',
+            },
+            {
+              ru: 'это количество взятых обязательств',
+              en: 'it is the number of commitments taken on',
+              pl: 'to liczba wziętych zobowiązań',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Почему человек, который винит и корит себя, НЕ проявляет ответственность?',
+            en: 'Why does a person who blames and reproaches himself NOT show responsibility?',
+            pl: 'Dlaczego człowiek, który wini i gani siebie, NIE przejawia odpowiedzialności?',
+          },
+          opts: [
+            {
+              ru: 'потому что он слишком спокоен',
+              en: 'because he is too calm',
+              pl: 'ponieważ jest zbyt spokojny',
+            },
+            {
+              ru: 'потому что он смотрит наружу',
+              en: 'because he looks outward',
+              pl: 'ponieważ patrzy na zewnątrz',
+            },
+            {
+              ru: 'потому что он не чувствует вины',
+              en: 'because he feels no guilt',
+              pl: 'ponieważ nie czuje winy',
+            },
+            {
+              ru: 'потому что он смотрит внутрь, а ответственность — это смотреть наружу (на последствия и как исправить)',
+              en: 'because he looks inward, and responsibility means looking outward (at the consequences and at how to put things right)',
+              pl: 'ponieważ patrzy do wewnątrz, a odpowiedzialność to patrzeć na zewnątrz (na następstwa i jak naprawić)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Как звучит одна из лучших цитат Хаббарда о выходе из трудностей?',
+            en: 'How does one of Hubbard\'s best quotes about getting out of difficulties go?',
+            pl: 'Jak brzmi jeden z najlepszych cytatów Hubbarda o wychodzeniu z trudności?',
+          },
+          opts: [
+            {
+              ru: '«сначала обойди проблему»',
+              en: '"first go around the problem"',
+              pl: '„najpierw obejdź problem”',
+            },
+            {
+              ru: '«жди, и всё пройдёт само»',
+              en: '"wait, and everything will pass on its own"',
+              pl: '„czekaj, a wszystko samo przejdzie”',
+            },
+            {
+              ru: '«путь из — это путь через» (развернуться лицом, сконфронтировать и пройти сквозь)',
+              en: '"the way out is the way through" (turn to face it, confront it, and pass through)',
+              pl: '„droga na zewnątrz to droga przez” (odwrócić się twarzą, skonfrontować i przejść na wskroś)',
+            },
+            {
+              ru: '«избегай неприятного»',
+              en: '"avoid the unpleasant"',
+              pl: '„unikaj nieprzyjemnego”',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Низкая G — это:',
+            en: 'A low G is:',
+            pl: 'Niskie G to:',
+          },
+          opts: [
+            {
+              ru: 'безответственность',
+              en: 'irresponsibility',
+              pl: 'nieodpowiedzialność',
+            },
+            {
+              ru: 'ранимость, а не безответственность: человек старается сделать всё безупречно, чтобы его не критиковали',
+              en: 'vulnerability, not irresponsibility: the person tries to do everything flawlessly so that he will not be criticized',
+              pl: 'wrażliwość, a nie nieodpowiedzialność: człowiek stara się zrobić wszystko nienagannie, żeby go nie krytykowano',
+            },
+            {
+              ru: 'лень',
+              en: 'laziness',
+              pl: 'lenistwo',
+            },
+            {
+              ru: 'глупость',
+              en: 'stupidity',
+              pl: 'głupota',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Где низкая ответственность тяжелее всего?',
+            en: 'Where is low responsibility hardest of all?',
+            pl: 'Gdzie niska odpowiedzialność jest najcięższa?',
+          },
+          opts: [
+            {
+              ru: 'в работе с людьми (люди критикуют куда больше, чем документы или мебель)',
+              en: 'in working with people (people criticize far more than documents or furniture do)',
+              pl: 'w pracy z ludźmi (ludzie krytykują o wiele bardziej niż dokumenty czy meble)',
+            },
+            {
+              ru: 'в работе с документами',
+              en: 'in working with documents',
+              pl: 'w pracy z dokumentami',
+            },
+            {
+              ru: 'в работе с техникой',
+              en: 'in working with machinery',
+              pl: 'w pracy z techniką',
+            },
+            {
+              ru: 'она везде одинаково тяжела',
+              en: 'it is equally hard everywhere',
+              pl: 'jest wszędzie jednakowo ciężka',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Почему нелепо отвергать бухгалтера из-за низкой ответственности?',
+            en: 'Why is it absurd to reject an accountant because of low responsibility?',
+            pl: 'Dlaczego niedorzeczne jest odrzucać księgowego z powodu niskiej odpowiedzialności?',
+          },
+          opts: [
+            {
+              ru: 'бухгалтеры всегда безответственны',
+              en: 'accountants are always irresponsible',
+              pl: 'księgowi są zawsze nieodpowiedzialni',
+            },
+            {
+              ru: 'ответственность бухгалтеру важнее всего',
+              en: 'responsibility is most important of all for an accountant',
+              pl: 'odpowiedzialność jest dla księgowego najważniejsza',
+            },
+            {
+              ru: 'её у бухгалтера нельзя измерить',
+              en: 'it cannot be measured in an accountant',
+              pl: 'u księgowego nie można jej zmierzyć',
+            },
+            {
+              ru: 'в работе с документами ответственность почти не важна — там на человека не давят и не критикуют, как в работе с людьми',
+              en: 'in working with documents responsibility is almost unimportant — there a person is not pressured or criticized as in working with people',
+              pl: 'w pracy z dokumentami odpowiedzialność jest prawie nieważna — tam na człowieka nie naciska się i nie krytykuje jak w pracy z ludźmi',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Компульсивная ответственность проявляется так, что человек:',
+            en: 'Compulsive responsibility manifests such that the person:',
+            pl: 'Kompulsywna odpowiedzialność przejawia się tak, że człowiek:',
+          },
+          opts: [
+            {
+              ru: 'полностью отключается при слабом давлении',
+              en: 'switches off completely under weak pressure',
+              pl: 'całkowicie się wyłącza przy słabym nacisku',
+            },
+            {
+              ru: 'вообще не видит последствий',
+              en: 'does not see consequences at all',
+              pl: 'w ogóle nie widzi następstw',
+            },
+            {
+              ru: 'должен видеть последствия, всё их рассчитывает — и начинает манипулировать, «дёргая за ниточки»',
+              en: 'must see the consequences, calculates them all — and begins to manipulate, "pulling the strings"',
+              pl: 'musi widzieć następstwa, wszystkie je oblicza — i zaczyna manipulować, „pociągając za sznurki”',
+            },
+            {
+              ru: 'никогда не производит впечатление',
+              en: 'never makes an impression',
+              pl: 'nigdy nie robi wrażenia',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что происходит с компульсивной ответственностью при очень сильном давлении?',
+            en: 'What happens to compulsive responsibility under very strong pressure?',
+            pl: 'Co dzieje się z kompulsywną odpowiedzialnością przy bardzo silnym nacisku?',
+          },
+          opts: [
+            {
+              ru: 'она плавно интровертируется «по чуть-чуть»',
+              en: 'it introverts smoothly, "little by little"',
+              pl: 'płynnie się introwertuje „po trochu”',
+            },
+            {
+              ru: 'регулятора нет, только выключатель: человек не интровертируется постепенно, а отключается полностью («делайте что хотите, я ничего не знаю»)',
+              en: 'there is no regulator, only an on/off switch: the person does not introvert gradually but switches off completely ("do what you want, I know nothing")',
+              pl: 'nie ma regulatora, tylko włącznik: człowiek nie introwertuje się stopniowo, lecz wyłącza się całkowicie („róbcie co chcecie, ja nic nie wiem”)',
+            },
+            {
+              ru: 'она только усиливается',
+              en: 'it only intensifies',
+              pl: 'tylko się wzmacnia',
+            },
+            {
+              ru: 'ничего не происходит',
+              en: 'nothing happens',
+              pl: 'nic się nie dzieje',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Чего человеку с компульсивной ответственностью не хватает, чтобы сказать прямо?',
+            en: 'What does a person with compulsive responsibility lack in order to speak directly?',
+            pl: 'Czego brakuje człowiekowi z kompulsywną odpowiedzialnością, żeby powiedzieć wprost?',
+          },
+          opts: [
+            {
+              ru: 'конфронта — поэтому его огромная «ответственность» оборачивается слабостью (он манипулирует)',
+              en: 'confront — that is why his enormous "responsibility" turns into weakness (he manipulates)',
+              pl: 'konfrontu — dlatego jego ogromna „odpowiedzialność” obraca się słabością (manipuluje)',
+            },
+            {
+              ru: 'интеллекта',
+              en: 'intelligence',
+              pl: 'inteligencji',
+            },
+            {
+              ru: 'энергии',
+              en: 'energy',
+              pl: 'energii',
+            },
+            {
+              ru: 'времени',
+              en: 'time',
+              pl: 'czasu',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Первое и главное правило: человеку с низкой ответственностью нельзя:',
+            en: 'The first and main rule: a person with low responsibility must not be:',
+            pl: 'Pierwsza i główna zasada: człowiekowi z niską odpowiedzialnością nie wolno:',
+          },
+          opts: [
+            {
+              ru: 'давать никаких заданий',
+              en: 'given any tasks at all',
+              pl: 'dawać żadnych zadań',
+            },
+            {
+              ru: 'говорить о плюсах',
+              en: 'told about his strengths',
+              pl: 'mówić o plusach',
+            },
+            {
+              ru: 'вообще доверять',
+              en: 'trusted at all',
+              pl: 'w ogóle ufać',
+            },
+            {
+              ru: 'говорить, что у него низкая ответственность (он поймёт это как «безответственный», а это ещё и неправда)',
+              en: 'told that he has low responsibility (he will understand it as "irresponsible," and it is untrue besides)',
+              pl: 'mówić, że ma niską odpowiedzialność (zrozumie to jako „nieodpowiedzialny”, a do tego to nieprawda)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Как положительно подать низкую ответственность на шаге о плюсах?',
+            en: 'How should low responsibility be presented positively at the step about strengths?',
+            pl: 'Jak pozytywnie przedstawić niską odpowiedzialność na kroku o plusach?',
+          },
+          opts: [
+            {
+              ru: '«ты безответственный»',
+              en: '"you are irresponsible"',
+              pl: '„jesteś nieodpowiedzialny”',
+            },
+            {
+              ru: '«тебе нельзя доверять»',
+              en: '"you cannot be trusted"',
+              pl: '„nie można ci ufać”',
+            },
+            {
+              ru: '«ты не любишь несправедливую критику; берёшь на себя максимум ответственности; стараешься быть безупречным»',
+              en: '"you dislike unfair criticism; you take on the maximum of responsibility; you strive to be flawless"',
+              pl: '„nie lubisz niesprawiedliwej krytyki; bierzesz na siebie maksimum odpowiedzialności; starasz się być nienaganny”',
+            },
+            {
+              ru: 'лучше промолчать навсегда',
+              en: 'better to stay silent forever',
+              pl: 'lepiej zamilczeć na zawsze',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Как говорят о высокой ответственности?',
+            en: 'How is high responsibility spoken of?',
+            pl: 'Jak mówi się o wysokiej odpowiedzialności?',
+          },
+          opts: [
+            {
+              ru: '«тебе нельзя ничего поручить»',
+              en: '"you cannot be entrusted with anything"',
+              pl: '„nic nie można ci powierzyć”',
+            },
+            {
+              ru: '«у тебя внутри стальной стержень, в обороне ты монстр; мало кто видел твою спину, когда ты убегаешь»',
+              en: '"you have a steel core inside, in defense you are a monster; few have seen your back as you run away"',
+              pl: '„masz w środku stalowy rdzeń, w obronie jesteś potworem; mało kto widział twoje plecy, gdy uciekasz”',
+            },
+            {
+              ru: '«ты слишком раним»',
+              en: '"you are too vulnerable"',
+              pl: '„jesteś zbyt wrażliwy”',
+            },
+            {
+              ru: '«ты манипулятор»',
+              en: '"you are a manipulator"',
+              pl: '„jesteś manipulatorem”',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Какой практический совет даёт модуль по посадке в напряжённой ситуации с ранимым человеком (низкая G)?',
+            en: 'What practical advice does the module give on seating in a tense situation with a vulnerable person (low G)?',
+            pl: 'Jaką praktyczną radę daje moduł co do posadzenia w napiętej sytuacji z wrażliwym człowiekiem (niskie G)?',
+          },
+          opts: [
+            {
+              ru: 'не садиться напротив (это напоминает тех, кто давил), а сесть рядом и обсуждать «что с этим делать», а не «кто виноват»',
+              en: 'not to sit opposite (it reminds him of those who pressured him), but to sit beside him and discuss "what to do about it" rather than "who is to blame"',
+              pl: 'nie siadać naprzeciwko (to przypomina tych, którzy naciskali), lecz usiąść obok i omawiać „co z tym zrobić”, a nie „kto winny”',
+            },
+            {
+              ru: 'сесть строго напротив',
+              en: 'to sit strictly opposite',
+              pl: 'usiąść dokładnie naprzeciwko',
+            },
+            {
+              ru: 'вести разговор только стоя',
+              en: 'to conduct the conversation only while standing',
+              pl: 'prowadzić rozmowę tylko na stojąco',
+            },
+            {
+              ru: 'не разговаривать с ним вовсе',
+              en: 'not to talk to him at all',
+              pl: 'w ogóle z nim nie rozmawiać',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Что стоит объяснить толстокожему руководителю ранимого сотрудника (низкая G)?',
+            en: 'What is worth explaining to the thick-skinned manager of a vulnerable employee (low G)?',
+            pl: 'Co warto wyjaśnić gruboskórnemu kierownikowi wrażliwego pracownika (niskie G)?',
+          },
+          opts: [
+            {
+              ru: '«поручай ей самых злых клиентов»',
+              en: '"assign her the angriest clients"',
+              pl: '„powierzaj jej najbardziej wściekłych klientów”',
+            },
+            {
+              ru: '«дави на неё посильнее»',
+              en: '"pressure her harder"',
+              pl: '„naciskaj na nią mocniej”',
+            },
+            {
+              ru: '«критикуй её почаще»',
+              en: '"criticize her more often"',
+              pl: '„krytykuj ją częściej”',
+            },
+            {
+              ru: '«все люди разные: тебе критика по барабану, а для неё это как нож; не дави, не ругай и не подставляй под критику»',
+              en: '"people are all different: criticism means nothing to you, but for her it is like a knife; don\'t pressure, don\'t scold, and don\'t expose her to criticism"',
+              pl: '„wszyscy ludzie są różni: tobie krytyka jest obojętna, a dla niej to jak nóż; nie naciskaj, nie strofuj i nie wystawiaj na krytykę”',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Обижается ли манипулятор (компульсивная G), когда его прямо «раскусывают»?',
+            en: 'Does a manipulator (compulsive G) take offense when he is "seen through" directly?',
+            pl: 'Czy manipulator (kompulsywne G) obraża się, gdy zostaje wprost „rozgryziony”?',
+          },
+          opts: [
+            {
+              ru: 'да, сильно обижается и увольняется',
+              en: 'yes, he takes great offense and quits',
+              pl: 'tak, bardzo się obraża i odchodzi',
+            },
+            {
+              ru: 'да, подаёт в суд',
+              en: 'yes, he takes it to court',
+              pl: 'tak, podaje do sądu',
+            },
+            {
+              ru: 'нет — наоборот, ему интересно, что его «раскусили»',
+              en: 'no — on the contrary, he is intrigued that he was "seen through"',
+              pl: 'nie — przeciwnie, jest mu ciekawie, że go „rozgryziono”',
+            },
+            {
+              ru: 'он этого просто не замечает',
+              en: 'he simply does not notice it',
+              pl: 'po prostu tego nie zauważa',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Если суммировать: что показывает точка A вместе с G, а что — точка B?',
+            en: 'To sum up: what does point A show together with G, and what does point B show?',
+            pl: 'Podsumowując: co pokazuje punkt A razem z G, a co — punkt B?',
+          },
+          opts: [
+            {
+              ru: 'A — длительность, B — силу',
+              en: 'A — duration, B — intensity',
+              pl: 'A — czas trwania, B — siłę',
+            },
+            {
+              ru: 'A — насколько человеку больно при низкой ответственности, B — как долго это длится (идеально: низкая A и высокая B)',
+              en: 'A — how painful it is for the person when responsibility is low, B — how long it lasts (ideally: a low A and a high B)',
+              pl: 'A — na ile boleśnie jest człowiekowi przy niskiej odpowiedzialności, B — jak długo to trwa (idealnie: niskie A i wysokie B)',
+            },
+            {
+              ru: 'обе показывают энергию',
+              en: 'both show energy',
+              pl: 'obie pokazują energię',
+            },
+            {
+              ru: 'они вообще не связаны с G',
+              en: 'they have nothing to do with G at all',
+              pl: 'w ogóle nie są związane z G',
+            },
+          ],
+          correct: 1,
         },
       ],
     },

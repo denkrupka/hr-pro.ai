@@ -283,107 +283,727 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'В чём ключевой концепт точки H (правильность оценки) и почему высокая H строит добрые отношения?',
-            en: 'What is the key concept of point H (correctness of evaluation) and why does a high H build good relations?',
-            pl: 'Na czym polega kluczowy koncept punktu H (poprawność oceny) i dlaczego wysokie H buduje dobre relacje?',
+            ru: 'Ключевой концепт точки H (объективность / правильность оценки) — это:',
+            en: 'The key concept of point H (objectivity / correctness of evaluation) is:',
+            pl: 'Kluczowy koncept punktu H (obiektywność / poprawność oceny) to:',
           },
           opts: [
             {
-              ru: 'Согласие: высокая H концентрирует внимание на плюсах человека, тот принимает тебя за друга и поворачивается плюсами — по закону «вы получаете то, что продолжительно награждаете»',
-              en: 'Agreement: a high H concentrates attention on a person\'s pluses, he takes you for a friend and turns his pluses toward you — by the law "you get what you reward over time"',
-              pl: 'Zgoda: wysokie H koncentruje uwagę na plusach człowieka, ten bierze cię za przyjaciela i odwraca się plusami — zgodnie z prawem „dostajesz to, co długotrwale nagradzasz"',
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
             },
             {
-              ru: 'Скорость: высокая H быстрее принимает решения, поэтому конфликты не успевают разгореться',
-              en: 'Speed: a high H makes decisions faster, so conflicts have no time to flare up',
-              pl: 'Szybkość: wysokie H szybciej podejmuje decyzje, dlatego konflikty nie zdążają się rozpalić',
+              ru: 'расстояние до людей',
+              en: 'distance to people',
+              pl: 'dystans do ludzi',
             },
             {
-              ru: 'Настойчивость: высокая H сильнее давит на собеседника, пока тот не согласится',
-              en: 'Persistence: a high H presses harder on the interlocutor until he agrees',
-              pl: 'Wytrwałość: wysokie H mocniej naciska na rozmówcę, dopóki ten się nie zgodzi',
-            },
-          ],
-          correct: 0,
-        },
-        {
-          q: {
-            ru: 'Что показывает образ «колпака» у человека с низкой чуткостью (точка I)?',
-            en: 'What does the image of the "cap" show in a person with low sensitivity (point I)?',
-            pl: 'Co pokazuje obraz „klosza" u człowieka z niską wrażliwością (punkt I)?',
-          },
-          opts: [
-            {
-              ru: 'Что человек агрессивен и подавляет чужие эмоции',
-              en: 'That the person is aggressive and suppresses others\' emotions',
-              pl: 'Że człowiek jest agresywny i tłumi cudze emocje',
+              ru: 'согласие — стремление найти что-то правильное, с чем человек согласен',
+              en: 'agreement — the drive to find something correct that the person agrees with',
+              pl: 'zgoda — dążenie do znalezienia czegoś słusznego, z czym człowiek się zgadza',
             },
             {
-              ru: 'Что его эмоции доходят только до колпака и чужие эмоции до него не доходят — он не чувствует других, а другие не чувствуют его, поэтому его считают холодным',
-              en: 'That his emotions reach only as far as the cap and others\' emotions do not reach him — he does not feel others, and others do not feel him, so he is considered cold',
-              pl: 'Że jego emocje dochodzą tylko do klosza i cudze emocje do niego nie docierają — nie czuje innych, a inni nie czują jego, dlatego uważa się go za chłodnego',
-            },
-            {
-              ru: 'Что человек постоянно скрывает информацию и никому не доверяет',
-              en: 'That the person constantly hides information and trusts no one',
-              pl: 'Że człowiek stale ukrywa informacje i nikomu nie ufa',
-            },
-          ],
-          correct: 1,
-        },
-        {
-          q: {
-            ru: 'Почему название точки J («общительность») обманчиво?',
-            en: 'Why is the name of point J ("sociability") deceptive?',
-            pl: 'Dlaczego nazwa punktu J („towarzyskość") jest myląca?',
-          },
-          opts: [
-            {
-              ru: 'Потому что низкое общение всегда означает, что человек плохо разговаривает и не годится в продавцы',
-              en: 'Because low communication always means that a person speaks badly and is not fit to be a salesperson',
-              pl: 'Ponieważ niska komunikacja zawsze oznacza, że człowiek źle mówi i nie nadaje się na sprzedawcę',
-            },
-            {
-              ru: 'Потому что она показывает полный набор навыков общения — от умения слушать до конфронта',
-              en: 'Because it shows the full set of communication skills — from the ability to listen to confront',
-              pl: 'Ponieważ pokazuje pełny zestaw umiejętności komunikacyjnych — od umiejętności słuchania po konfrontowanie',
-            },
-            {
-              ru: 'Потому что она показывает лишь «яркость» — насколько легко человеку начать поток, — а не то, хорошо ли он общается',
-              en: 'Because it shows only "vividness" — how easily a person can start a flow — and not whether he communicates well',
-              pl: 'Ponieważ pokazuje jedynie „barwność" — na ile łatwo człowiekowi zacząć przepływ — a nie to, czy komunikuje się dobrze',
+              ru: 'прямота',
+              en: 'directness',
+              pl: 'bezpośredniość',
             },
           ],
           correct: 2,
         },
         {
           q: {
-            ru: 'Что делать, если вы на самом деле не поняли собеседника, и почему подтверждение так важно?',
-            en: 'What should you do if you actually did not understand the interlocutor, and why is acknowledgment so important?',
-            pl: 'Co robić, jeśli naprawdę nie zrozumieliście rozmówcy, i dlaczego potwierdzenie jest tak ważne?',
+            ru: 'Человек с высокой правильностью оценки:',
+            en: 'A person with high correctness of evaluation:',
+            pl: 'Człowiek z wysoką poprawnością oceny:',
           },
           opts: [
             {
-              ru: 'Всё равно дать подтверждение «я понял», чтобы не затягивать разговор',
-              en: 'Give acknowledgment "I understand" anyway, so as not to drag out the conversation',
-              pl: 'Mimo wszystko dać potwierdzenie „zrozumiałem", żeby nie przeciągać rozmowy',
+              ru: 'смотрит в основном на минусы',
+              en: 'looks mainly at the minuses',
+              pl: 'patrzy głównie na minusy',
             },
             {
-              ru: 'Не давать ложного подтверждения, а спросить «что ты имеешь в виду?»; настоящее подтверждение снимает около половины конфликтов',
-              en: 'Do not give a false acknowledgment, but ask "what do you mean?"; a genuine acknowledgment removes about half of conflicts',
-              pl: 'Nie dawać fałszywego potwierdzenia, lecz zapytać „co masz na myśli?"; prawdziwe potwierdzenie usuwa około połowy konfliktów',
+              ru: 'концентрирует внимание на плюсах, стремится к согласию — и его принимают за друга',
+              en: 'concentrates attention on the pluses, strives for agreement — and is taken for a friend',
+              pl: 'koncentruje uwagę na plusach, dąży do zgody — i bierze się go za przyjaciela',
             },
             {
-              ru: 'Сразу возразить, ведь важнее донести свою точку зрения, чем понять чужую',
-              en: 'Object immediately, since it is more important to convey your own point of view than to understand another\'s',
-              pl: 'Od razu zaoponować, bo ważniejsze jest przekazać swój punkt widzenia niż zrozumieć cudzy',
+              ru: 'всегда наивен',
+              en: 'is always naive',
+              pl: 'jest zawsze naiwny',
+            },
+            {
+              ru: 'плохо ладит с людьми',
+              en: 'gets along badly with people',
+              pl: 'źle dogaduje się z ludźmi',
             },
           ],
           correct: 1,
+        },
+        {
+          q: {
+            ru: 'Где лучше работать человеку с низкой правильностью оценки?',
+            en: 'Where is it better for a person with low correctness of evaluation to work?',
+            pl: 'Gdzie lepiej pracować człowiekowi z niską poprawnością oceny?',
+          },
+          opts: [
+            {
+              ru: 'только с людьми',
+              en: 'only with people',
+              pl: 'tylko z ludźmi',
+            },
+            {
+              ru: 'руководителем большого коллектива',
+              en: 'as head of a large team',
+              pl: 'jako kierownik dużego zespołu',
+            },
+            {
+              ru: 'переговорщиком',
+              en: 'as a negotiator',
+              pl: 'jako negocjator',
+            },
+            {
+              ru: 'с техникой и документами (техника от нахождения минусов улучшается, а люди — портятся)',
+              en: 'with technology and documents (technology improves from finding minuses, whereas people deteriorate)',
+              pl: 'z techniką i dokumentami (technika od znajdowania minusów się poprawia, a ludzie — psują)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Какой закон подтверждает поведение точки H?',
+            en: 'Which law confirms the behavior of point H?',
+            pl: 'Które prawo potwierdza zachowanie punktu H?',
+          },
+          opts: [
+            {
+              ru: '«вы получаете то, что продолжительно награждаете» (внимание к плюсам даёт плюсы, к минусам — минусы)',
+              en: '"you get what you reward over time" (attention to pluses gives pluses, to minuses — minuses)',
+              pl: '„dostajesz to, co długotrwale nagradzasz" (uwaga na plusy daje plusy, na minusy — minusy)',
+            },
+            {
+              ru: '«производство — основа боевого духа»',
+              en: '"production is the basis of morale"',
+              pl: '„produkcja jest podstawą morale"',
+            },
+            {
+              ru: '«путь из — это путь через»',
+              en: '"the way out is the way through"',
+              pl: '„droga wyjścia to droga przez"',
+            },
+            {
+              ru: '«обмен создаёт пространство»',
+              en: '"exchange creates space"',
+              pl: '„wymiana tworzy przestrzeń"',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'В чём человек с высокой правильностью оценки НЕ наивен?',
+            en: 'In what is a person with high correctness of evaluation NOT naive?',
+            pl: 'W czym człowiek z wysoką poprawnością oceny NIE jest naiwny?',
+          },
+          opts: [
+            {
+              ru: 'он вообще не видит минусов',
+              en: 'he does not see minuses at all',
+              pl: 'w ogóle nie widzi minusów',
+            },
+            {
+              ru: 'он всем подряд доверяет',
+              en: 'he trusts everyone indiscriminately',
+              pl: 'ufa wszystkim bez wyjątku',
+            },
+            {
+              ru: 'он понимает: с людьми надо искать плюсы, а с техникой и документами — минусы',
+              en: 'he understands: with people you must look for pluses, and with technology and documents — minuses',
+              pl: 'rozumie: z ludźmi trzeba szukać plusów, a z techniką i dokumentami — minusów',
+            },
+            {
+              ru: 'он не умеет благодарить',
+              en: 'he is unable to give thanks',
+              pl: 'nie umie dziękować',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'В чём силён человек с высокой H, а в чём — с высокой B?',
+            en: 'In what is a person with high H strong, and in what — with high B?',
+            pl: 'W czym jest silny człowiek z wysokim H, a w czym — z wysokim B?',
+          },
+          opts: [
+            {
+              ru: 'H — в стратегии, B — в тактике',
+              en: 'H — in strategy, B — in tactics',
+              pl: 'H — w strategii, B — w taktyce',
+            },
+            {
+              ru: 'H силён в тактике с людьми, B — в стратегии (видит всю картину)',
+              en: 'H is strong in tactics with people, B — in strategy (sees the whole picture)',
+              pl: 'H jest silny w taktyce z ludźmi, B — w strategii (widzi cały obraz)',
+            },
+            {
+              ru: 'оба сильны только в стратегии',
+              en: 'both are strong only in strategy',
+              pl: 'oba są silne tylko w strategii',
+            },
+            {
+              ru: 'это никак не связано с точками',
+              en: 'this is not connected with the points at all',
+              pl: 'to nie ma nic wspólnego z punktami',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое приём «ассист»?',
+            en: 'What is the technique of the "assist"?',
+            pl: 'Czym jest technika „asysty"?',
+          },
+          opts: [
+            {
+              ru: 'способ надавить на человека',
+              en: 'a way to press on a person',
+              pl: 'sposób na naciśnięcie człowieka',
+            },
+            {
+              ru: 'финансовая помощь сотруднику',
+              en: 'financial help to an employee',
+              pl: 'pomoc finansowa dla pracownika',
+            },
+            {
+              ru: 'список его минусов',
+              en: 'a list of his minuses',
+              pl: 'lista jego minusów',
+            },
+            {
+              ru: 'ориентация человека в окружении — простые задания, вытаскивающие внимание наружу (вверх по шкале тонов)',
+              en: 'orienting a person in his surroundings — simple tasks that draw attention outward (up the tone scale)',
+              pl: 'zorientowanie człowieka w otoczeniu — proste zadania wyciągające uwagę na zewnątrz (w górę skali tonów)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Правило удержания собственного банка при давлении на другого:',
+            en: 'The rule for holding your own bank while pressing on another:',
+            pl: 'Reguła utrzymania własnego banku przy naciskaniu na drugiego:',
+          },
+          opts: [
+            {
+              ru: 'давить нужно ровно до тех пор, пока его банк чуть-чуть не отодвинется, и на этом остановиться',
+              en: 'you must press exactly until his bank moves back a little, and stop at that',
+              pl: 'naciskać należy dokładnie dopóki jego bank trochę się nie cofnie, i na tym się zatrzymać',
+            },
+            {
+              ru: 'давить как можно дольше',
+              en: 'press as long as possible',
+              pl: 'naciskać jak najdłużej',
+            },
+            {
+              ru: 'никогда не останавливаться',
+              en: 'never stop',
+              pl: 'nigdy się nie zatrzymywać',
+            },
+            {
+              ru: 'вообще не давить',
+              en: 'not press at all',
+              pl: 'wcale nie naciskać',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Чему учит байка о Хаббарде на палубе?',
+            en: 'What does the anecdote about Hubbard on deck teach?',
+            pl: 'Czego uczy anegdota o Hubbardzie na pokładzie?',
+          },
+          opts: [
+            {
+              ru: 'что нельзя кричать на людей',
+              en: 'that you must not shout at people',
+              pl: 'że nie wolno krzyczeć na ludzi',
+            },
+            {
+              ru: 'что надо всегда молчать',
+              en: 'that you should always keep silent',
+              pl: 'że trzeba zawsze milczeć',
+            },
+            {
+              ru: 'полному контролю над собственным банком: кричать тогда, когда это адекватно, и не кричать на тех, на кого не надо',
+              en: 'full control over your own bank: to shout when it is appropriate, and not to shout at those you should not',
+              pl: 'pełnej kontroli nad własnym bankiem: krzyczeć wtedy, gdy jest to adekwatne, i nie krzyczeć na tych, na których nie trzeba',
+            },
+            {
+              ru: 'что критика бесполезна',
+              en: 'that criticism is useless',
+              pl: 'że krytyka jest bezużyteczna',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Ключевой концепт точки I (чуткость) — это:',
+            en: 'The key concept of point I (sensitivity) is:',
+            pl: 'Kluczowy koncept punktu I (wrażliwość) to:',
+          },
+          opts: [
+            {
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
+            },
+            {
+              ru: 'расстояние — насколько близко человек пускает к себе другого',
+              en: 'distance — how close a person lets another come to him',
+              pl: 'dystans — jak blisko człowiek dopuszcza do siebie drugiego',
+            },
+            {
+              ru: 'согласие',
+              en: 'agreement',
+              pl: 'zgoda',
+            },
+            {
+              ru: 'прямота',
+              en: 'directness',
+              pl: 'bezpośredniość',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Образ «колпака» описывает человека с:',
+            en: 'The image of the "cap" describes a person with:',
+            pl: 'Obraz „klosza" opisuje człowieka z:',
+          },
+          opts: [
+            {
+              ru: 'высокой чуткостью',
+              en: 'high sensitivity',
+              pl: 'wysoką wrażliwością',
+            },
+            {
+              ru: 'высокой активностью',
+              en: 'high activity',
+              pl: 'wysoką aktywnością',
+            },
+            {
+              ru: 'высокой D',
+              en: 'high D',
+              pl: 'wysokim D',
+            },
+            {
+              ru: 'низкой чуткостью — эмоции доходят только до «колпака», чужие от него отражаются, поэтому его считают холодным',
+              en: 'low sensitivity — emotions reach only as far as the "cap", others\' emotions bounce off it, so he is considered cold',
+              pl: 'niską wrażliwością — emocje docierają tylko do „klosza", cudze się od niego odbijają, dlatego uważa się go za chłodnego',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Зачем чуткость нужна в бизнесе?',
+            en: 'Why is sensitivity needed in business?',
+            pl: 'Po co wrażliwość jest potrzebna w biznesie?',
+          },
+          opts: [
+            {
+              ru: 'сотрудник проводит на работе бóльшую часть жизни; без человеческого отношения тёплый человек уходит не за 15% прибавки, а за теплоту',
+              en: 'an employee spends most of his life at work; without a human attitude a warm person leaves not for a 15% raise, but for warmth',
+              pl: 'pracownik spędza w pracy większość życia; bez ludzkiego stosunku ciepły człowiek odchodzi nie za 15% podwyżki, lecz za ciepło',
+            },
+            {
+              ru: 'чтобы давать больше скидок',
+              en: 'to give more discounts',
+              pl: 'żeby dawać więcej rabatów',
+            },
+            {
+              ru: 'чтобы никого не нанимать',
+              en: 'so as not to hire anyone',
+              pl: 'żeby nikogo nie zatrudniać',
+            },
+            {
+              ru: 'чуткость в бизнесе не нужна вовсе',
+              en: 'sensitivity is not needed in business at all',
+              pl: 'wrażliwość w biznesie w ogóle nie jest potrzebna',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Компульсивная чуткость проявляется так, что человек:',
+            en: 'Compulsive sensitivity manifests such that the person:',
+            pl: 'Kompulsywna wrażliwość przejawia się tak, że człowiek:',
+          },
+          opts: [
+            {
+              ru: 'всегда отказывает в помощи',
+              en: 'always refuses help',
+              pl: 'zawsze odmawia pomocy',
+            },
+            {
+              ru: 'не замечает чужих эмоций',
+              en: 'does not notice others\' emotions',
+              pl: 'nie zauważa cudzych emocji',
+            },
+            {
+              ru: 'на просьбу о помощи говорит «да», даже отложив собственную работу; такого опасно ставить на ресепшен',
+              en: 'says "yes" to a request for help, even setting aside his own work; it is dangerous to put such a person at reception',
+              pl: 'na prośbę o pomoc mówi „tak", nawet odkładając własną pracę; takiego niebezpiecznie stawiać na recepcji',
+            },
+            {
+              ru: 'холоден и закрыт',
+              en: 'is cold and closed',
+              pl: 'jest chłodny i zamknięty',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Почему о компульсивной чуткости говорят в самую последнюю очередь?',
+            en: 'Why is compulsive sensitivity spoken of at the very last?',
+            pl: 'Dlaczego o kompulsywnej wrażliwości mówi się na samym końcu?',
+          },
+          opts: [
+            {
+              ru: 'потому что это неважно',
+              en: 'because it is unimportant',
+              pl: 'ponieważ to nieważne',
+            },
+            {
+              ru: 'потому что удержаться на её «пике» не выйдет — человек сам стянет вас в разговор о минусах (это оптимальный переход к минусам)',
+              en: 'because you cannot hold at its "peak" — the person himself will pull you into a conversation about minuses (this is the optimal transition to minuses)',
+              pl: 'ponieważ nie da się utrzymać na jej „szczycie" — człowiek sam wciągnie was w rozmowę o minusach (to optymalne przejście do minusów)',
+            },
+            {
+              ru: 'потому что её нельзя измерить',
+              en: 'because it cannot be measured',
+              pl: 'ponieważ nie da się jej zmierzyć',
+            },
+            {
+              ru: 'потому что это чистый плюс',
+              en: 'because it is a pure plus',
+              pl: 'ponieważ to czysty plus',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что важно помнить про название точки J (общительность)?',
+            en: 'What is important to remember about the name of point J (sociability)?',
+            pl: 'Co ważne pamiętać o nazwie punktu J (towarzyskość)?',
+          },
+          opts: [
+            {
+              ru: 'оно точно отражает суть',
+              en: 'it accurately reflects the essence',
+              pl: 'dokładnie odzwierciedla istotę',
+            },
+            {
+              ru: 'низкое J означает, что человек плохо общается',
+              en: 'a low J means the person communicates badly',
+              pl: 'niskie J oznacza, że człowiek źle się komunikuje',
+            },
+            {
+              ru: 'высокое J означает, что человек общается хорошо',
+              en: 'a high J means the person communicates well',
+              pl: 'wysokie J oznacza, że człowiek dobrze się komunikuje',
+            },
+            {
+              ru: 'название обманчиво: низкое J НЕ означает, что человек плохо общается',
+              en: 'the name is deceptive: a low J does NOT mean the person communicates badly',
+              pl: 'nazwa jest myląca: niskie J NIE oznacza, że człowiek źle się komunikuje',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что на самом деле показывает точка J?',
+            en: 'What does point J actually show?',
+            pl: 'Co tak naprawdę pokazuje punkt J?',
+          },
+          opts: [
+            {
+              ru: '«яркость» — насколько человеку легко и естественно начать поток, заговорить, «броситься в глаза»',
+              en: '"vividness" — how easily and naturally a person can start a flow, speak up, "catch the eye"',
+              pl: '„barwność" — jak łatwo i naturalnie człowiek może zacząć przepływ, odezwać się, „rzucić się w oczy"',
+            },
+            {
+              ru: 'насколько хорошо человек понимает',
+              en: 'how well a person understands',
+              pl: 'jak dobrze człowiek rozumie',
+            },
+            {
+              ru: 'с какой настойчивостью он говорит',
+              en: 'with what persistence he speaks',
+              pl: 'z jaką wytrwałością mówi',
+            },
+            {
+              ru: 'насколько внимательно он слушает',
+              en: 'how attentively he listens',
+              pl: 'jak uważnie słucha',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Настоящее общение состоит из многих составляющих. Что из них показывает именно точка J?',
+            en: 'Real communication consists of many components. Which of them does point J specifically show?',
+            pl: 'Prawdziwa komunikacja składa się z wielu elementów. Który z nich pokazuje właśnie punkt J?',
+          },
+          opts: [
+            {
+              ru: 'как человек понимает (это H)',
+              en: 'how a person understands (that is H)',
+              pl: 'jak człowiek rozumie (to H)',
+            },
+            {
+              ru: 'может ли вынести неприятное (это G)',
+              en: 'whether he can bear the unpleasant (that is G)',
+              pl: 'czy potrafi znieść nieprzyjemne (to G)',
+            },
+            {
+              ru: 'лишь маленький и наименее важный элемент — «яркость» начала общения',
+              en: 'only a small and least important element — the "vividness" of the start of communication',
+              pl: 'jedynie mały i najmniej ważny element — „barwność" początku komunikacji',
+            },
+            {
+              ru: 'о чём человек общается (это D)',
+              en: 'what a person communicates about (that is D)',
+              pl: 'o czym człowiek się komunikuje (to D)',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Правда ли, что продвигать себя нескромно и потому надо молчать?',
+            en: 'Is it true that promoting yourself is immodest and therefore one should keep silent?',
+            pl: 'Czy to prawda, że promowanie siebie jest nieskromne i dlatego trzeba milczeć?',
+          },
+          opts: [
+            {
+              ru: 'да, это всегда нескромно',
+              en: 'yes, it is always immodest',
+              pl: 'tak, to zawsze nieskromne',
+            },
+            {
+              ru: 'нет: продвигать себя и компанию можно скромно — на исходящем потоке, искренне интересуясь продуктом и человеком',
+              en: 'no: you can promote yourself and the company modestly — on the outgoing flow, sincerely interested in the product and the person',
+              pl: 'nie: siebie i firmę można promować skromnie — na przepływie wychodzącym, szczerze interesując się produktem i człowiekiem',
+            },
+            {
+              ru: 'да, молчание всегда выгодно',
+              en: 'yes, silence is always advantageous',
+              pl: 'tak, milczenie jest zawsze korzystne',
+            },
+            {
+              ru: 'да, для продуктивных людей',
+              en: 'yes, for productive people',
+              pl: 'tak, dla produktywnych ludzi',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Кому выгодны молчаливость и застенчивость продуктивного человека?',
+            en: 'Who benefits from the silence and shyness of a productive person?',
+            pl: 'Komu na rękę milczenie i nieśmiałość produktywnego człowieka?',
+          },
+          opts: [
+            {
+              ru: 'ему самому',
+              en: 'to himself',
+              pl: 'jemu samemu',
+            },
+            {
+              ru: 'его клиентам',
+              en: 'to his clients',
+              pl: 'jego klientom',
+            },
+            {
+              ru: 'его компании',
+              en: 'to his company',
+              pl: 'jego firmie',
+            },
+            {
+              ru: 'тем, кто производит такой же продукт, только хуже',
+              en: 'to those who produce the same product, only worse',
+              pl: 'tym, którzy produkują ten sam produkt, tylko gorszy',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что такое подтверждение?',
+            en: 'What is acknowledgment?',
+            pl: 'Czym jest potwierdzenie?',
+          },
+          opts: [
+            {
+              ru: 'сигнал понимания («я понял», «хорошо», «окей»), который показывает говорящему, что цель достигнута',
+              en: 'a signal of understanding ("I understand", "good", "okay") that shows the speaker the goal is reached',
+              pl: 'sygnał zrozumienia („zrozumiałem", „dobrze", „okej"), który pokazuje mówiącemu, że cel został osiągnięty',
+            },
+            {
+              ru: 'согласие с собеседником',
+              en: 'agreement with the interlocutor',
+              pl: 'zgoda z rozmówcą',
+            },
+            {
+              ru: 'похвала',
+              en: 'praise',
+              pl: 'pochwała',
+            },
+            {
+              ru: 'вопрос «что ты имеешь в виду?»',
+              en: 'the question "what do you mean?"',
+              pl: 'pytanie „co masz na myśli?"',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Сколько примерно конфликтов не было бы, умей люди давать подтверждение?',
+            en: 'Approximately how many conflicts would not exist if people knew how to give acknowledgment?',
+            pl: 'Ilu mniej więcej konfliktów by nie było, gdyby ludzie umieli dawać potwierdzenie?',
+          },
+          opts: [
+            {
+              ru: 'около 5%',
+              en: 'about 5%',
+              pl: 'około 5%',
+            },
+            {
+              ru: 'около 20%',
+              en: 'about 20%',
+              pl: 'około 20%',
+            },
+            {
+              ru: 'около 50%',
+              en: 'about 50%',
+              pl: 'około 50%',
+            },
+            {
+              ru: 'около 90%',
+              en: 'about 90%',
+              pl: 'około 90%',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Что делать, если ты на самом деле НЕ понял собеседника?',
+            en: 'What should you do if you actually did NOT understand the interlocutor?',
+            pl: 'Co robić, jeśli naprawdę NIE zrozumiałeś rozmówcy?',
+          },
+          opts: [
+            {
+              ru: 'всё равно дать подтверждение',
+              en: 'give acknowledgment anyway',
+              pl: 'mimo wszystko dać potwierdzenie',
+            },
+            {
+              ru: 'не давать подтверждения (это обман) — спросить «что ты имеешь в виду?»',
+              en: 'do not give acknowledgment (that is deception) — ask "what do you mean?"',
+              pl: 'nie dawać potwierdzenia (to oszustwo) — zapytać „co masz na myśli?"',
+            },
+            {
+              ru: 'сразу резко ответить',
+              en: 'answer sharply at once',
+              pl: 'od razu odpowiedzieć ostro',
+            },
+            {
+              ru: 'промолчать и уйти',
+              en: 'stay silent and leave',
+              pl: 'zamilczeć i odejść',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: '«Я тебя понял» — означает ли это «я согласен»?',
+            en: '"I understood you" — does this mean "I agree"?',
+            pl: '„Zrozumiałem cię" — czy oznacza to „zgadzam się"?',
+          },
+          opts: [
+            {
+              ru: 'да, это одно и то же',
+              en: 'yes, it is one and the same',
+              pl: 'tak, to jedno i to samo',
+            },
+            {
+              ru: 'да, всегда',
+              en: 'yes, always',
+              pl: 'tak, zawsze',
+            },
+            {
+              ru: 'да, если сказать дважды',
+              en: 'yes, if said twice',
+              pl: 'tak, jeśli powiedzieć dwa razy',
+            },
+            {
+              ru: 'нет: «понял» вовсе не значит «согласен»',
+              en: 'no: "understood" does not at all mean "agree"',
+              pl: 'nie: „zrozumiałem" wcale nie znaczy „zgadzam się"',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Ещё одна функция подтверждения:',
+            en: 'Another function of acknowledgment:',
+            pl: 'Jeszcze jedna funkcja potwierdzenia:',
+          },
+          opts: [
+            {
+              ru: 'мягко остановить поток в свою сторону, не обидев человека («я полностью тебя понял»)',
+              en: 'to gently stop the flow toward yourself without offending the person ("I understood you completely")',
+              pl: 'łagodnie zatrzymać przepływ w swoją stronę, nie urażając człowieka („w pełni cię zrozumiałem")',
+            },
+            {
+              ru: 'начать спор',
+              en: 'to start an argument',
+              pl: 'zacząć spór',
+            },
+            {
+              ru: 'прекратить общение навсегда',
+              en: 'to stop communication forever',
+              pl: 'przerwać komunikację na zawsze',
+            },
+            {
+              ru: 'грубо заставить человека замолчать',
+              en: 'to rudely make the person shut up',
+              pl: 'brutalnie zmusić człowieka do milczenia',
+            },
+          ],
+          correct: 0,
         },
       ],
     },

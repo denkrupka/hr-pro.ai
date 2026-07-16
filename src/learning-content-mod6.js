@@ -284,107 +284,697 @@ module.exports = {
       },
     ],
     quiz: {
-      passScore: 60,
+      passScore: 70,
       questions: [
         {
           q: {
-            ru: 'Что является ключевым концептом точки A?',
-            en: 'What is the key concept of point A?',
-            pl: 'Co jest kluczowym konceptem punktu A?',
+            ru: 'Ключевой концепт точки A (внимательность) — это:',
+            en: 'The key concept of point A (attentiveness) is:',
+            pl: 'Kluczowy koncept punktu A (uważność) to:',
           },
           opts: [
             {
-              ru: 'Свободное внимание — то, которое не застряло в реактивном уме',
-              en: 'Free attention — the kind that has not gotten stuck in the reactive mind',
-              pl: 'Wolna uwaga — ta, która nie utknęła w umyśle reaktywnym',
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
             },
             {
-              ru: 'Контроль собственных эмоций',
-              en: 'Control of one\'s own emotions',
-              pl: 'Kontrola własnych emocji',
+              ru: 'точка зрения',
+              en: 'point of view',
+              pl: 'punkt widzenia',
             },
             {
-              ru: 'Точка зрения, откуда человек смотрит',
-              en: 'Point of view, where the person looks from',
-              pl: 'Punkt widzenia, skąd człowiek patrzy',
-            },
-          ],
-          correct: 0,
-        },
-        {
-          q: {
-            ru: 'Как проще всего описать разницу между высокой и низкой B?',
-            en: 'What is the simplest way to describe the difference between a high and a low B?',
-            pl: 'Jak najprościej opisać różnicę między wysokim a niskim B?',
-          },
-          opts: [
-            {
-              ru: 'Высокая B спокойна, низкая — нервная',
-              en: 'A high B is calm, a low one — nervous',
-              pl: 'Wysokie B jest spokojne, niskie — nerwowe',
+              ru: 'свободное внимание (не застрявшее в реактивном уме)',
+              en: 'free attention (not stuck in the reactive mind)',
+              pl: 'wolna uwaga (nieutkwiona w umyśle reaktywnym)',
             },
             {
-              ru: 'Высокая B смотрит сверху и видит решения, низкая — видит только препятствия',
-              en: 'A high B looks from above and sees solutions, a low one — sees only obstacles',
-              pl: 'Wysokie B patrzy z góry i widzi rozwiązania, niskie — widzi tylko przeszkody',
-            },
-            {
-              ru: 'Высокая B много планирует, низкая — рассеяна',
-              en: 'A high B plans a lot, a low one — is scattered',
-              pl: 'Wysokie B dużo planuje, niskie — jest rozproszone',
-            },
-          ],
-          correct: 1,
-        },
-        {
-          q: {
-            ru: 'Что стоит посоветовать руководителю сотрудника с компульсивной C?',
-            en: 'What should be advised to the manager of an employee with a compulsive C?',
-            pl: 'Co warto poradzić kierownikowi pracownika z kompulsywnym C?',
-          },
-          opts: [
-            {
-              ru: 'Поменьше давать задач одновременно и не требовать планирования',
-              en: 'To give fewer tasks at once and not to demand planning',
-              pl: 'Dawać mniej zadań jednocześnie i nie wymagać planowania',
-            },
-            {
-              ru: 'Хвалить почаще, чтобы уравновесить его самокритику',
-              en: 'To praise more often, to balance his self-criticism',
-              pl: 'Chwalić częściej, żeby zrównoważyć jego samokrytykę',
-            },
-            {
-              ru: 'Информировать как можно больше и научить контролировать по ключевым показателям',
-              en: 'To inform as much as possible and teach him to control by key indicators',
-              pl: 'Informować jak najwięcej i nauczyć kontrolowania według kluczowych wskaźników',
+              ru: 'контроль эмоций',
+              en: 'control of emotions',
+              pl: 'kontrola emocji',
             },
           ],
           correct: 2,
         },
         {
           q: {
-            ru: 'При каком условии точка считается компульсивной?',
-            en: 'Under what condition is a point considered compulsive?',
-            pl: 'Pod jakim warunkiem punkt uważa się za kompulsywny?',
+            ru: 'Человек с высокой A:',
+            en: 'A person with a high A:',
+            pl: 'Człowiek z wysokim A:',
           },
           opts: [
             {
-              ru: 'Если она выше D, при условии что сама D не ниже 32',
-              en: 'If it is higher than D, provided that D itself is not below 32',
-              pl: 'Jeśli jest wyższy od D, pod warunkiem że samo D nie jest niższe niż 32',
+              ru: 'хорошо концентрируется и планирует',
+              en: 'concentrates and plans well',
+              pl: 'dobrze się koncentruje i planuje',
             },
             {
-              ru: 'Если она выше 90 по абсолютной величине',
-              en: 'If it is above 90 in absolute value',
-              pl: 'Jeśli jest wyższy niż 90 co do wartości bezwzględnej',
+              ru: 'рассеян и нетерпелив',
+              en: 'is scattered and impatient',
+              pl: 'jest rozproszony i niecierpliwy',
             },
             {
-              ru: 'Если D ниже 32 — тогда любая высокая точка компульсивна',
-              en: 'If D is below 32 — then any high point is compulsive',
-              pl: 'Jeśli D jest niższe niż 32 — wtedy każdy wysoki punkt jest kompulsywny',
+              ru: 'не умеет надеть маску',
+              en: 'does not know how to put on a mask',
+              pl: 'nie umie założyć maski',
+            },
+            {
+              ru: 'постоянно нервничает',
+              en: 'is constantly nervous',
+              pl: 'ciągle się denerwuje',
             },
           ],
           correct: 0,
+        },
+        {
+          q: {
+            ru: 'Человек с низкой A:',
+            en: 'A person with a low A:',
+            pl: 'Człowiek z niskim A:',
+          },
+          opts: [
+            {
+              ru: 'прекрасно планирует надолго',
+              en: 'plans splendidly for the long term',
+              pl: 'wspaniale planuje na długo',
+            },
+            {
+              ru: 'очень терпелив',
+              en: 'is very patient',
+              pl: 'jest bardzo cierpliwy',
+            },
+            {
+              ru: 'хорошо концентрируется',
+              en: 'concentrates well',
+              pl: 'dobrze się koncentruje',
+            },
+            {
+              ru: 'рассеян, нетерпелив, не может ждать и планировать',
+              en: 'is scattered, impatient, unable to wait or plan',
+              pl: 'jest rozproszony, niecierpliwy, nie może czekać ani planować',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Ключевой концепт точки B (позитивность) — это:',
+            en: 'The key concept of point B (positivity) is:',
+            pl: 'Kluczowy koncept punktu B (pozytywność) to:',
+          },
+          opts: [
+            {
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
+            },
+            {
+              ru: 'точка зрения — откуда человек смотрит (высокая B смотрит как бы «сверху»)',
+              en: 'point of view — where the person looks from (a high B looks, as it were, "from above")',
+              pl: 'punkt widzenia — skąd człowiek patrzy (wysokie B patrzy jakby „z góry")',
+            },
+            {
+              ru: 'свободное внимание',
+              en: 'free attention',
+              pl: 'wolna uwaga',
+            },
+            {
+              ru: 'расстояние до людей',
+              en: 'distance to people',
+              pl: 'dystans do ludzi',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Человек с высокой B:',
+            en: 'A person with a high B:',
+            pl: 'Człowiek z wysokim B:',
+          },
+          opts: [
+            {
+              ru: 'видит только препятствия',
+              en: 'sees only obstacles',
+              pl: 'widzi tylko przeszkody',
+            },
+            {
+              ru: 'всегда негативен',
+              en: 'is always negative',
+              pl: 'jest zawsze negatywny',
+            },
+            {
+              ru: 'видит решения, любит простоту, позитивен',
+              en: 'sees solutions, likes simplicity, is positive',
+              pl: 'widzi rozwiązania, lubi prostotę, jest pozytywny',
+            },
+            {
+              ru: 'не замечает проблем вовсе',
+              en: 'does not notice problems at all',
+              pl: 'w ogóle nie zauważa problemów',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Человек с низкой B:',
+            en: 'A person with a low B:',
+            pl: 'Człowiek z niskim B:',
+          },
+          opts: [
+            {
+              ru: 'видит в основном «остановки» и препятствия, негативен',
+              en: 'sees mainly "stops" and obstacles, is negative',
+              pl: 'widzi głównie „zatrzymania" i przeszkody, jest negatywny',
+            },
+            {
+              ru: 'всегда весел',
+              en: 'is always cheerful',
+              pl: 'jest zawsze wesoły',
+            },
+            {
+              ru: 'прекрасно видит решения',
+              en: 'sees solutions splendidly',
+              pl: 'wspaniale widzi rozwiązania',
+            },
+            {
+              ru: 'равнодушен ко всему',
+              en: 'is indifferent to everything',
+              pl: 'jest obojętny na wszystko',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Ключевой концепт точки C (самообладание) — это:',
+            en: 'The key concept of point C (self-possession) is:',
+            pl: 'Kluczowy koncept punktu C (panowanie nad sobą) to:',
+          },
+          opts: [
+            {
+              ru: 'точка зрения',
+              en: 'point of view',
+              pl: 'punkt widzenia',
+            },
+            {
+              ru: 'энергия',
+              en: 'energy',
+              pl: 'energia',
+            },
+            {
+              ru: 'свободное внимание',
+              en: 'free attention',
+              pl: 'wolna uwaga',
+            },
+            {
+              ru: 'контроль собственных эмоций (начать, изменить и закончить их по своему решению)',
+              en: 'control of one\'s own emotions (to start, change, and stop them by one\'s own decision)',
+              pl: 'kontrola własnych emocji (zacząć, zmienić i zakończyć je wedle swojej decyzji)',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Человек с низкой C:',
+            en: 'A person with a low C:',
+            pl: 'Człowiek z niskim C:',
+          },
+          opts: [
+            {
+              ru: 'спокоен и легко расслабляется',
+              en: 'is calm and relaxes easily',
+              pl: 'jest spokojny i łatwo się rozluźnia',
+            },
+            {
+              ru: 'нервный, ему трудно расслабиться, долго отходит после конфликтов',
+              en: 'is nervous, finds it hard to relax, takes long to recover after conflicts',
+              pl: 'jest nerwowy, trudno mu się rozluźnić, długo dochodzi do siebie po konfliktach',
+            },
+            {
+              ru: 'хорошо владеет телом',
+              en: 'has good control over the body',
+              pl: 'dobrze panuje nad ciałem',
+            },
+            {
+              ru: 'равнодушен ко всему',
+              en: 'is indifferent to everything',
+              pl: 'jest obojętny na wszystko',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что такое «инструкция по эксплуатации» точки?',
+            en: 'What is a point\'s "operating manual"?',
+            pl: 'Czym jest „instrukcja obsługi" punktu?',
+          },
+          opts: [
+            {
+              ru: 'подробное описание теста',
+              en: 'a detailed description of the test',
+              pl: 'szczegółowy opis testu',
+            },
+            {
+              ru: 'список всех минусов человека',
+              en: 'a list of all the person\'s minuses',
+              pl: 'lista wszystkich minusów człowieka',
+            },
+            {
+              ru: 'буквально пара предложений совета необученному руководителю: что делать с этим человеком',
+              en: 'literally a couple of sentences of advice to an untrained manager: what to do with this person',
+              pl: 'dosłownie parę zdań rady dla nieprzeszkolonego kierownika: co robić z tym człowiekiem',
+            },
+            {
+              ru: 'инструкция к прибору',
+              en: 'a manual for a device',
+              pl: 'instrukcja do urządzenia',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Полезное правило для шага о плюсах звучит так:',
+            en: 'The useful rule for the pluses step goes like this:',
+            pl: 'Pożyteczna zasada dla kroku o plusach brzmi tak:',
+          },
+          opts: [
+            {
+              ru: '«что торчит, то и плюс» — если хоть одна точка «торчит», уже есть о чём сказать хорошее',
+              en: '"whatever sticks out is a plus" — if even one point "sticks out," there is already something good to say',
+              pl: '„co sterczy, to i plus" — jeśli choć jeden punkt „sterczy", już jest o czym powiedzieć coś dobrego',
+            },
+            {
+              ru: '«начинай всегда с минусов»',
+              en: '"always start with the minuses"',
+              pl: '„zaczynaj zawsze od minusów"',
+            },
+            {
+              ru: '«хвали только высокие точки»',
+              en: '"praise only the high points"',
+              pl: '„chwal tylko wysokie punkty"',
+            },
+            {
+              ru: '«о плюсах лучше молчать»',
+              en: '"it is better to keep quiet about the pluses"',
+              pl: '„o plusach lepiej milczeć"',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'За «взрываемость» отвечают сразу три точки. Что показывает точка A в этой модели?',
+            en: 'Three points are responsible for "explosiveness." What does point A show in this model?',
+            pl: 'Za „wybuchowość" odpowiadają od razu trzy punkty. Co pokazuje punkt A w tym modelu?',
+          },
+          opts: [
+            {
+              ru: 'силу взрыва',
+              en: 'the force of the explosion',
+              pl: 'siłę wybuchu',
+            },
+            {
+              ru: '«влажность» системы',
+              en: 'the "dampness" of the system',
+              pl: '„wilgotność" systemu',
+            },
+            {
+              ru: 'желание всё контролировать',
+              en: 'the desire to control everything',
+              pl: 'chęć kontrolowania wszystkiego',
+            },
+            {
+              ru: 'длину бикфордова шнура — насколько долго человека надо «доставать»',
+              en: 'the length of the fuse — how long the person has to be "worked up"',
+              pl: 'długość lontu prochowego — jak długo trzeba człowieka „doprowadzać"',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что в модели «взрываемости» показывает точка C?',
+            en: 'What does point C show in the "explosiveness" model?',
+            pl: 'Co w modelu „wybuchowości" pokazuje punkt C?',
+          },
+          opts: [
+            {
+              ru: 'длину шнура',
+              en: 'the length of the fuse',
+              pl: 'długość lontu',
+            },
+            {
+              ru: 'насколько система «влажная» — насколько легко человек вспыхивает',
+              en: 'how "damp" the system is — how easily a person flares up',
+              pl: 'na ile system jest „wilgotny" — na ile łatwo człowiek się zapala',
+            },
+            {
+              ru: 'силу взрыва',
+              en: 'the force of the explosion',
+              pl: 'siłę wybuchu',
+            },
+            {
+              ru: 'уровень интеллекта',
+              en: 'the level of intelligence',
+              pl: 'poziom inteligencji',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Что показывает точка F в модели «взрываемости»?',
+            en: 'What does point F show in the "explosiveness" model?',
+            pl: 'Co pokazuje punkt F w modelu „wybuchowości"?',
+          },
+          opts: [
+            {
+              ru: 'длину шнура',
+              en: 'the length of the fuse',
+              pl: 'długość lontu',
+            },
+            {
+              ru: '«влажность» системы',
+              en: 'the "dampness" of the system',
+              pl: '„wilgotność" systemu',
+            },
+            {
+              ru: 'насколько сильно человек взорвётся',
+              en: 'how strongly the person will explode',
+              pl: 'jak silnie człowiek wybuchnie',
+            },
+            {
+              ru: 'скорость мышления',
+              en: 'the speed of thinking',
+              pl: 'szybkość myślenia',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Компульсивная C проявляется так, что человек:',
+            en: 'A compulsive C manifests such that the person:',
+            pl: 'Kompulsywne C przejawia się tak, że człowiek:',
+          },
+          opts: [
+            {
+              ru: 'не умеет нервничать «по чуть-чуть» и, чтобы не нервничать, стремится всё контролировать и обо всём знать',
+              en: 'does not know how to be nervous "a little bit" and, in order not to be nervous, strives to control everything and know about everything',
+              pl: 'nie umie denerwować się „po trochu" i, żeby się nie denerwować, dąży do kontrolowania wszystkiego i wiedzy o wszystkim',
+            },
+            {
+              ru: 'всегда абсолютно спокоен',
+              en: 'is always absolutely calm',
+              pl: 'jest zawsze absolutnie spokojny',
+            },
+            {
+              ru: 'вообще не контролирует себя',
+              en: 'does not control himself at all',
+              pl: 'w ogóle się nie kontroluje',
+            },
+            {
+              ru: 'не запоминает ничего',
+              en: 'remembers nothing',
+              pl: 'niczego nie zapamiętuje',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Как обращаться к человеку во время беседы о точках?',
+            en: 'How should one address the person during the conversation about the points?',
+            pl: 'Jak zwracać się do człowieka podczas rozmowy o punktach?',
+          },
+          opts: [
+            {
+              ru: 'говорить о нём в третьем лице («он»)',
+              en: 'speak of him in the third person ("he")',
+              pl: 'mówić o nim w trzeciej osobie („on")',
+            },
+            {
+              ru: 'читать ему вслух описание из методички',
+              en: 'read him the description from the manual aloud',
+              pl: 'czytać mu na głos opis z podręcznika',
+            },
+            {
+              ru: 'начинать с длинного предисловия',
+              en: 'begin with a long preface',
+              pl: 'zaczynać od długiej przedmowy',
+            },
+            {
+              ru: 'обращаться напрямую («ты»/«вы») и не читать, а говорить нормальным языком',
+              en: 'address directly ("you") and not read, but speak in normal language',
+              pl: 'zwracać się wprost („ty"/„wy") i nie czytać, lecz mówić normalnym językiem',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Стоит ли делать предисловие вроде «сейчас расскажу о твоих плюсах»?',
+            en: 'Is it worth making a preface like "now I\'ll tell you about your pluses"?',
+            pl: 'Czy warto robić przedmowę w rodzaju „teraz opowiem ci o twoich plusach"?',
+          },
+          opts: [
+            {
+              ru: 'да, обязательно',
+              en: 'yes, definitely',
+              pl: 'tak, obowiązkowo',
+            },
+            {
+              ru: 'нет: это подразумевает «потом будет другое», и человек внутренне напрягается',
+              en: 'no: it implies "then there\'ll be something else," and the person inwardly tenses up',
+              pl: 'nie: to zakłada „potem będzie coś innego", i człowiek wewnętrznie się spina',
+            },
+            {
+              ru: 'да, это его успокаивает',
+              en: 'yes, it calms him',
+              pl: 'tak, to go uspokaja',
+            },
+            {
+              ru: 'да, для руководителей',
+              en: 'yes, for managers',
+              pl: 'tak, dla kierowników',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'Компульсивная B опасна тем, что:',
+            en: 'A compulsive B is dangerous because:',
+            pl: 'Kompulsywne B jest niebezpieczne tym, że:',
+          },
+          opts: [
+            {
+              ru: 'человек видит только минусы',
+              en: 'the person sees only minuses',
+              pl: 'człowiek widzi tylko minusy',
+            },
+            {
+              ru: 'человек честен до предела',
+              en: 'the person is honest to the extreme',
+              pl: 'człowiek jest uczciwy do granic',
+            },
+            {
+              ru: 'человек всегда показывает, что «всё хорошо», хотя дела могут быть плохи давно',
+              en: 'the person always shows that "everything is fine," though things may have been bad for a long time',
+              pl: 'człowiek zawsze pokazuje, że „wszystko dobrze", choć sprawy mogą być złe od dawna',
+            },
+            {
+              ru: 'человек становится молчаливым',
+              en: 'the person becomes silent',
+              pl: 'człowiek staje się małomówny',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'При каком сочетании человек с высокой A «надевает маску» и говорит правильные вещи, будучи негативным?',
+            en: 'With what combination does a person with a high A "put on a mask" and say the right things while being negative?',
+            pl: 'Przy jakim połączeniu człowiek z wysokim A „zakłada maskę" i mówi właściwe rzeczy, będąc negatywnym?',
+          },
+          opts: [
+            {
+              ru: 'при высокой A и низкой B (видит снизу, решений не видит, но знает, что вы хотите услышать)',
+              en: 'with a high A and a low B (looks from below, sees no solutions, but knows what you want to hear)',
+              pl: 'przy wysokim A i niskim B (patrzy z dołu, rozwiązań nie widzi, ale wie, co chcecie usłyszeć)',
+            },
+            {
+              ru: 'при высокой C',
+              en: 'with a high C',
+              pl: 'przy wysokim C',
+            },
+            {
+              ru: 'при низкой A',
+              en: 'with a low A',
+              pl: 'przy niskim A',
+            },
+            {
+              ru: 'при высокой E',
+              en: 'with a high E',
+              pl: 'przy wysokim E',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Когда точка считается компульсивной?',
+            en: 'When is a point considered compulsive?',
+            pl: 'Kiedy punkt uważa się za kompulsywny?',
+          },
+          opts: [
+            {
+              ru: 'когда она ниже нуля',
+              en: 'when it is below zero',
+              pl: 'gdy jest poniżej zera',
+            },
+            {
+              ru: 'когда она равна D',
+              en: 'when it equals D',
+              pl: 'gdy jest równy D',
+            },
+            {
+              ru: 'всегда, если она высокая',
+              en: 'always, if it is high',
+              pl: 'zawsze, jeśli jest wysoki',
+            },
+            {
+              ru: 'когда она выше D — но при условии, что сама D не ниже 32',
+              en: 'when it is higher than D — but on condition that D itself is not below 32',
+              pl: 'gdy jest wyższy od D — ale pod warunkiem, że samo D nie jest niższe niż 32',
+            },
+          ],
+          correct: 3,
+        },
+        {
+          q: {
+            ru: 'Что происходит с уверенностью в компульсивности, если D ниже 32?',
+            en: 'What happens to certainty about compulsiveness if D is below 32?',
+            pl: 'Co dzieje się z pewnością co do kompulsywności, jeśli D jest niższe niż 32?',
+          },
+          opts: [
+            {
+              ru: 'уверенность только растёт',
+              en: 'certainty only grows',
+              pl: 'pewność tylko rośnie',
+            },
+            {
+              ru: 'тест импульсивный, всё «плавает», и в компульсивности уже нельзя быть уверенным',
+              en: 'the test is impulsive, everything "floats," and one can no longer be sure of compulsiveness',
+              pl: 'test jest impulsywny, wszystko „pływa", i kompulsywności już nie można być pewnym',
+            },
+            {
+              ru: 'ничего не меняется',
+              en: 'nothing changes',
+              pl: 'nic się nie zmienia',
+            },
+            {
+              ru: 'точки становятся точнее',
+              en: 'the points become more precise',
+              pl: 'punkty stają się dokładniejsze',
+            },
+          ],
+          correct: 1,
+        },
+        {
+          q: {
+            ru: 'В компульсивности какой точки мы увереннее при D ниже 32?',
+            en: 'In the compulsiveness of which point are we more confident when D is below 32?',
+            pl: 'Co do kompulsywności którego punktu jesteśmy pewniejsi przy D niższym niż 32?',
+          },
+          opts: [
+            {
+              ru: 'средней (например, C)',
+              en: 'the middle one (for example, C)',
+              pl: 'średniego (na przykład C)',
+            },
+            {
+              ru: 'любой одинаково',
+              en: 'any of them equally',
+              pl: 'każdego jednakowo',
+            },
+            {
+              ru: 'самой высокой (например, A) — она, даже колеблясь, остаётся высокой',
+              en: 'the highest one (for example, A) — even fluctuating, it remains high',
+              pl: 'najwyższego (na przykład A) — nawet się wahając, pozostaje wysoki',
+            },
+            {
+              ru: 'точки D',
+              en: 'point D',
+              pl: 'punktu D',
+            },
+          ],
+          correct: 2,
+        },
+        {
+          q: {
+            ru: 'Почему признавать, что чего-то не знаешь по тесту, — это профессионализм?',
+            en: 'Why is admitting that you don\'t know something from the test a mark of professionalism?',
+            pl: 'Dlaczego przyznanie, że czegoś nie wiadomo z testu, to profesjonalizm?',
+          },
+          opts: [
+            {
+              ru: 'дилетанты «надувают щёки», делая вид, что знают всё, а мы спокойно показываем, где сомневаемся, — и не обжигаемся',
+              en: 'dilettantes "puff out their cheeks," pretending to know everything, while we calmly show where we doubt — and do not get burned',
+              pl: 'dyletanci „nadymają policzki", udając, że wiedzą wszystko, a my spokojnie pokazujemy, gdzie wątpimy — i się nie parzymy',
+            },
+            {
+              ru: 'потому что так быстрее',
+              en: 'because it is faster',
+              pl: 'ponieważ tak jest szybciej',
+            },
+            {
+              ru: 'потому что это скрывает незнание',
+              en: 'because it hides the lack of knowledge',
+              pl: 'ponieważ ukrywa to niewiedzę',
+            },
+            {
+              ru: 'потому что клиент всё равно не заметит',
+              en: 'because the client won\'t notice anyway',
+              pl: 'ponieważ klient i tak nie zauważy',
+            },
+          ],
+          correct: 0,
+        },
+        {
+          q: {
+            ru: 'Даже разбирая тест близкого человека (например, ребёнка), нельзя:',
+            en: 'Even when going over the test of a close person (for example, a child), one must not:',
+            pl: 'Nawet analizując test bliskiej osoby (na przykład dziecka), nie wolno:',
+          },
+          opts: [
+            {
+              ru: 'хвалить его',
+              en: 'praise him',
+              pl: 'chwalić go',
+            },
+            {
+              ru: 'вступать с ним в контакт',
+              en: 'make contact with him',
+              pl: 'nawiązywać z nim kontaktu',
+            },
+            {
+              ru: 'говорить о его плюсах',
+              en: 'speak about his pluses',
+              pl: 'mówić o jego plusach',
+            },
+            {
+              ru: 'сразу «решать проблему» и указывать на минусы, перешагнув важную ступень (сначала надо стать другом)',
+              en: 'immediately "solve the problem" and point out the minuses, stepping over an important rung (one must first become a friend)',
+              pl: 'od razu „rozwiązywać problemu" i wskazywać na minusy, przekraczając ważny szczebel (najpierw trzeba stać się przyjacielem)',
+            },
+          ],
+          correct: 3,
         },
       ],
     },
