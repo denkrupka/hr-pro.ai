@@ -97,4 +97,19 @@ async function extractAnswers(transcripts, kind, extra) {
   return { answers: j, summary };
 }
 
-module.exports = { analyzeCompleteness, continuationTask, continuationFirst, extractAnswers, GOALS, MODEL };
+// Определить, просил ли собеседник перезвонить и на какое конкретное время.
+// nowStr — текущие дата/время (тот же часовой пояс, что нужен в ответе). Возвращает {requested, at, note}.
+async function detectCallback(transcript, nowStr, lang) {
+  if (!transcript || transcript.trim().length < 20) return { requested: false, at: null, note: '' };
+  const system = `Определи по расшифровке телефонного разговора, просил ли собеседник ПЕРЕЗВОНИТЬ ему позже, и на какое конкретное время.
+Текущие дата и время (тот же часовой пояс, что и в ответе): ${nowStr}.
+Верни СТРОГО JSON без пояснений: {"requested": true|false, "callback_at": "YYYY-MM-DDTHH:mm" или null, "note": "как именно просил, кратко"}.
+callback_at — конкретный БУДУЩИЙ момент. Если сказал расплывчато («завтра днём», «после обеда», «вечером», «на следующей неделе») — выбери разумное конкретное время (утро=10:00, день=14:00, вечер=18:00). Если о перезвоне речи не было или разговор уже завершён по делу — requested:false, callback_at:null.`;
+  try {
+    const out = await callClaude(system, 'Расшифровка разговора:\n\n' + transcript, 300);
+    const j = parseJson(out) || {};
+    return { requested: !!j.requested, at: j.callback_at || null, note: j.note || '' };
+  } catch (_) { return { requested: false, at: null, note: '' }; }
+}
+
+module.exports = { analyzeCompleteness, continuationTask, continuationFirst, extractAnswers, detectCallback, GOALS, MODEL };

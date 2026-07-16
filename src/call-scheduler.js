@@ -3,8 +3,10 @@
 // Сами звонки размещаются через ai-call-log (журнал+транскрипт+запись+докрутка при обрыве).
 const integ = require('./integrations');
 const callLog = require('./ai-call-log');
+const analyzer = require('./ai-call-analyzer');
 
 const DEFAULTS = { agentName: '', companyMission: '', hoursFrom: '10:00', hoursTo: '19:00', days: [1, 2, 3, 4, 5], maxDurationMin: 10, retryAfterMin: 60, retryCount: 3, offHoursCallback: 'defer' };
+const MAX_CALLBACKS = 2;   // сколько раз уважаем просьбу «перезвоните позже» на одном этапе (защита от петли)
 // endedReason'ы «не подняли трубку / не дошло до разговора» — повод для перезвона планировщиком.
 const NO_ANSWER = ['no-answer', 'did-not-answer', 'voicemail', 'busy', 'customer-busy', 'no-microphone-permission', 'failed-to-connect', 'did-not-receive-customer-audio', 'twilio-failed'];
 
@@ -101,6 +103,23 @@ async function enqueueCall(dbData, save, settings, p, spec) {
   return { item, callId: item.callId, deferred: !item.callId, skipped: placed && placed.skipped, reason: item.lastReason };
 }
 
+// Если в разговоре просили перезвонить — вернуть момент следующего звонка (с учётом offHoursCallback), иначе null.
+async function maybeCallback(item, lastAttempt, now) {
+  if ((item.callbacks || 0) >= MAX_CALLBACKS) return null;
+  const transcript = lastAttempt && lastAttempt.transcript;
+  if (!transcript || transcript.trim().length < 20) return null;
+  let cb;
+  try { cb = await analyzer.detectCallback(transcript, now.toISOString(), (item.opts && item.opts.lang) || 'ru'); }
+  catch (_) { return null; }
+  if (!cb || !cb.requested || !cb.at) return null;
+  let target = new Date(cb.at);
+  if (isNaN(target) || target <= now) return null;
+  item.lastReason = 'просил перезвонить: ' + String(cb.note || '').slice(0, 80);
+  // offHoursCallback: 'call' — звоним в указанное время как есть; 'defer' — переносим на ближайшее рабочее окно.
+  if (item.cfg.offHoursCallback !== 'call' && !isWorkingTime(item.cfg, target)) target = nextWorkingSlot(item.cfg, target);
+  return target;
+}
+
 // Тик планировщика: разместить назревшие, обновить активные, повторить неответы.
 async function tick(dbData, save) {
   const q = dbData.callQueue || [];
@@ -132,7 +151,10 @@ async function tick(dbData, save) {
         } else if (noAnswer) {
           item.status = 'stopped'; item.lastReason = 'нет ответа после ' + item.attempts + ' попыток';
         } else {
-          item.status = 'done'; item.lastReason = reason || 'завершён';
+          // Разговор состоялся. Не просил ли собеседник перезвонить в конкретное время?
+          const cb = await maybeCallback(item, last, now);
+          if (cb) { item.status = 'pending'; item.nextAt = cb.toISOString(); item.attempts = 0; item.callbacks = (item.callbacks || 0) + 1; }
+          else { item.status = 'done'; item.lastReason = reason || 'завершён'; }
         }
         touched = true;
       }
