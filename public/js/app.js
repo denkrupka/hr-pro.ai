@@ -436,6 +436,10 @@ const RI18N = {
     aicfg_offhours: 'Если просят перезвонить в нерабочее время', aicfg_offhours_defer: 'Перенести на следующий рабочий день', aicfg_offhours_call: 'Звонить в нерабочее время', aicfg_offhours_hint: 'Как поступать, если удобное время вне окна звонков.',
     aicfg_save: 'Сохранить', aicfg_apply_all: 'Применить ко всем вакансиям', aicfg_apply_all_confirm: 'Перезаписать настройки ИИ-звонков во ВСЕХ ваших вакансиях текущими значениями?', aicfg_applied: 'Применено к {n} вакансиям',
     aicfg_err_days: 'Выберите хотя бы один день', aicfg_err_hours: 'Время «с» должно быть раньше «до»',
+    wf_final_h: 'Финальный анализ', wf_final_hint: 'ИИ оценит кандидата по всем этапам, заявке и объявлению', wf_final_locked: 'Доступно после прохождения всех этапов',
+    wf_final_run: 'Финальный анализ', wf_final_rerun: 'Пересчитать', wf_final_view: 'Смотреть', wf_final_running: 'Анализирую…',
+    wf_final_title: 'Итоговый ИИ-анализ кандидата', wf_final_hire: 'Рекомендован', wf_final_reject: 'Лучше отклонить', wf_final_consider: 'Под вопросом',
+    wf_final_fit: 'Соответствие должности', wf_final_strengths: 'Сильные стороны', wf_final_concerns: 'Риски и слабые места', wf_final_reco: 'Рекомендация', wf_final_at: 'Анализ выполнен',
     vp_ai_note: 'Для звонков ИИ нужны подключённая интеграция звонков (Vapi) и телефон кандидата. Если интеграция не настроена, шаг тихо пропускается.',
     vp_kn_q: 'вопросов', vp_kn_add: 'Добавить тест знаний', vp_kn_setup: 'Настроить', vp_kn_blank: 'Тест',
     vp_kn_hint: 'Пустые тесты-болванки наполняются во вкладке «Проверка знаний» — и наоборот: созданные там тесты появляются в этом списке.',
@@ -551,6 +555,10 @@ const RI18N = {
     aicfg_offhours: 'Gdy proszą o telefon poza godzinami', aicfg_offhours_defer: 'Przenieś na następny dzień roboczy', aicfg_offhours_call: 'Dzwoń poza godzinami', aicfg_offhours_hint: 'Co robić, gdy dogodny czas jest poza oknem rozmów.',
     aicfg_save: 'Zapisz', aicfg_apply_all: 'Zastosuj do wszystkich wakatów', aicfg_apply_all_confirm: 'Nadpisać ustawienia rozmów AI we WSZYSTKICH wakatach bieżącymi wartościami?', aicfg_applied: 'Zastosowano do {n} wakatów',
     aicfg_err_days: 'Wybierz co najmniej jeden dzień', aicfg_err_hours: 'Godzina „od” musi być wcześniejsza niż „do”',
+    wf_final_h: 'Analiza końcowa', wf_final_hint: 'AI oceni kandydata na podstawie wszystkich etapów, zapotrzebowania i ogłoszenia', wf_final_locked: 'Dostępne po przejściu wszystkich etapów',
+    wf_final_run: 'Analiza końcowa', wf_final_rerun: 'Przelicz', wf_final_view: 'Zobacz', wf_final_running: 'Analizuję…',
+    wf_final_title: 'Końcowa analiza AI kandydata', wf_final_hire: 'Rekomendowany', wf_final_reject: 'Lepiej odrzucić', wf_final_consider: 'Do rozważenia',
+    wf_final_fit: 'Dopasowanie do stanowiska', wf_final_strengths: 'Mocne strony', wf_final_concerns: 'Ryzyka i słabe punkty', wf_final_reco: 'Rekomendacja', wf_final_at: 'Analiza wykonana',
     vp_ai_note: 'Telefony AI wymagają podłączonej integracji połączeń (Vapi) i numeru telefonu kandydata. Bez integracji krok jest pomijany.',
     vp_kn_q: 'pytań', vp_kn_add: 'Dodaj test wiedzy', vp_kn_setup: 'Konfiguruj', vp_kn_blank: 'Test',
     vp_kn_hint: 'Puste testy uzupełnia się w zakładce „Sprawdzenie wiedzy” — i odwrotnie: testy utworzone tam pojawiają się na tej liście.',
@@ -666,6 +674,10 @@ const RI18N = {
     aicfg_offhours: 'If asked to call back off-hours', aicfg_offhours_defer: 'Defer to next working day', aicfg_offhours_call: 'Call off-hours', aicfg_offhours_hint: 'What to do when the convenient time is outside the call window.',
     aicfg_save: 'Save', aicfg_apply_all: 'Apply to all vacancies', aicfg_apply_all_confirm: 'Overwrite AI call settings across ALL your vacancies with the current values?', aicfg_applied: 'Applied to {n} vacancies',
     aicfg_err_days: 'Select at least one day', aicfg_err_hours: 'Start time must be earlier than end time',
+    wf_final_h: 'Final analysis', wf_final_hint: 'AI will assess the candidate across all stages, the requisition and the ad', wf_final_locked: 'Available after all stages are completed',
+    wf_final_run: 'Final analysis', wf_final_rerun: 'Recalculate', wf_final_view: 'View', wf_final_running: 'Analyzing…',
+    wf_final_title: 'Final AI assessment', wf_final_hire: 'Recommended', wf_final_reject: 'Better to reject', wf_final_consider: 'Borderline',
+    wf_final_fit: 'Fit for the position', wf_final_strengths: 'Strengths', wf_final_concerns: 'Risks and weak points', wf_final_reco: 'Recommendation', wf_final_at: 'Analysis done',
     vp_ai_note: 'AI calls require the calls integration (Vapi) and the candidate’s phone number. Without the integration the step is silently skipped.',
     vp_kn_q: 'questions', vp_kn_add: 'Add knowledge test', vp_kn_setup: 'Configure', vp_kn_blank: 'Test',
     vp_kn_hint: 'Empty draft tests are filled in on the “Knowledge check” tab — and vice versa: tests created there show up in this list.',
@@ -2736,7 +2748,20 @@ function candidateStepsPanel(wf) {
          <button class="btn soft xs" data-cdec="interview">${rt('dec_interview')}</button>
          <button class="btn ghost danger xs" data-cdec="rejected">${rt('wf_rejected')}</button>`}
     </span></div>`;
-  return `<div class="csteps">${rows.join('')}</div>${decBox}`;
+  // Финальный ИИ-анализ: общее заключение по всем этапам + заявка + объявление
+  const fa = wf.finalAnalysis;
+  window.__finalA = fa || null;
+  const faTone = fa ? (fa.verdict === 'hire' ? 'good' : fa.verdict === 'reject' ? 'low' : 'mid') : '';
+  const faTxt = fa ? (fa.verdict === 'hire' ? rt('wf_final_hire') : fa.verdict === 'reject' ? rt('wf_final_reject') : rt('wf_final_consider')) : '';
+  const canRun = wf.finalReady || !!fa;
+  const finalBox = `<div class="cfinal ${fa ? 'has tone-' + faTone : ''}">
+    <div class="cfinal-top">
+      <div class="cfinal-l">${AI_IC} ${fa ? `<span class="cfinal-badge ${faTone}">${faTxt} · ${fa.fit_score}%</span><b>${esc(fa.headline)}</b>` : `<b>${rt('wf_final_h')}</b><span class="muted">${rt(canRun ? 'wf_final_hint' : 'wf_final_locked')}</span>`}</div>
+      <div class="cfinal-act">
+        ${fa ? `<button class="btn ghost xs" id="cfinal-view">${rt('wf_final_view')}</button>` : ''}
+        <button class="btn ${fa ? 'ghost' : 'soft'} xs" id="cfinal-run"${canRun ? '' : ' disabled'}>${AI_IC} ${fa ? rt('wf_final_rerun') : rt('wf_final_run')}</button>
+      </div></div></div>`;
+  return `<div class="csteps">${rows.join('')}</div>${finalBox}${decBox}`;
 }
 function wireCandidateSteps() {
   $$('[data-cres]').forEach(b => b.onclick = () => openReport(b.dataset.cres));
@@ -2784,6 +2809,17 @@ function wireCandidateSteps() {
       pollRefAiCall(pid, refIndex);
     } catch (e) { b.disabled = false; toast((e && e.message) || rt('refai_err')); }
   });
+  // Финальный ИИ-анализ кандидата (по всем этапам + заявка + объявление)
+  const fRun = $('#cfinal-run'); if (fRun) fRun.onclick = async () => {
+    fRun.disabled = true; const old = fRun.innerHTML; fRun.innerHTML = `<span class="db-spin"></span> ${rt('wf_final_running')}`;
+    try {
+      const d = await api('/api/participants/' + modalPart.id + '/final-analysis', { method: 'POST' });
+      window.__finalA = d.finalAnalysis;
+      openFinalModal(d.finalAnalysis);
+      await refreshCandidateCard();
+    } catch (e) { toast((e && e.message) || 'Ошибка'); fRun.disabled = false; fRun.innerHTML = old; }
+  };
+  const fView = $('#cfinal-view'); if (fView) fView.onclick = () => { if (window.__finalA) openFinalModal(window.__finalA); };
   // Итоговое решение; «Пригласить на собеседование» создаёт карточку собеседования
   $$('[data-cdec]').forEach(b => b.onclick = async () => {
     const v = b.dataset.cdec;
@@ -2807,6 +2843,24 @@ function wireCandidateSteps() {
     try { await api('/api/participants/' + modalPart.id + '/send-knowledge', { method: 'POST', body: JSON.stringify({ ktId: kn.dataset.csendkn || undefined }) }); toast(rt('common_saved')); refreshCandidateCard(); }
     catch (e) { toast(e.message); }
   });
+}
+// Модалка финального ИИ-анализа — в стиле ИИ-плашек портала (.ai-note tone-*)
+function openFinalModal(fa) {
+  if (!fa) return;
+  const tone = fa.verdict === 'hire' ? 'win' : fa.verdict === 'reject' ? 'low' : 'mid';
+  const vTxt = fa.verdict === 'hire' ? rt('wf_final_hire') : fa.verdict === 'reject' ? rt('wf_final_reject') : rt('wf_final_consider');
+  const list = (arr, cls) => (arr && arr.length) ? `<ul class="fin-list ${cls}">${arr.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+  openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">${AI_IC} ${rt('wf_final_title')}</h2>
+      <span class="fin-badge ${tone}">${vTxt} · ${fa.fit_score}%</span></div>
+    <div class="ai-note tone-${tone}">
+      <div class="ai-h">${esc(fa.headline || '')}</div>
+      <div class="fin-fit"><div class="fin-fit-bar"><i style="width:${fa.fit_score}%"></i></div><span>${rt('wf_final_fit')}: <b>${fa.fit_score}%</b></span></div>
+      ${fa.summary ? `<p class="fin-sum">${esc(fa.summary)}</p>` : ''}
+      ${fa.strengths && fa.strengths.length ? `<div class="fin-h good">${rt('wf_final_strengths')}</div>${list(fa.strengths, 'good')}` : ''}
+      ${fa.concerns && fa.concerns.length ? `<div class="fin-h risk">${rt('wf_final_concerns')}</div>${list(fa.concerns, 'risk')}` : ''}
+      ${fa.recommendation ? `<div class="fin-h">${rt('wf_final_reco')}</div><p class="fin-sum">${esc(fa.recommendation)}</p>` : ''}
+    </div>
+    ${fa.at ? `<div class="muted" style="font-size:11.5px;margin-top:8px">${rt('wf_final_at')}: ${fmtDate(fa.at)}</div>` : ''}`, true);
 }
 async function sendCandidateTest(type) {
   try { const d = await api('/api/participants/' + modalPart.id + '/send-test', { method: 'POST', body: JSON.stringify({ type }) }); if (d.balance) state.user = d.balance; toast(t('pm_sent')); refreshCandidateCard(); }

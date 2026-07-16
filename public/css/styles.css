@@ -1352,6 +1352,28 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .ai-note.tone-good,.ai-note.tone-mid{border-left-color:var(--brand);background:var(--brand-soft)}
 .ai-note.tone-win{border-left-color:var(--good);background:rgba(31,157,107,.09)}
 .ai-note.tone-low{border-left-color:var(--bad);background:rgba(224,85,59,.09)}
+/* Финальный ИИ-анализ — врезка в карточке кандидата (в стиле ИИ-плашек) */
+.cfinal{margin-top:12px;border-radius:12px;border:1px solid var(--line);border-left:3px solid var(--brand);background:var(--surface-2);padding:13px 15px}
+.cfinal.has.tone-good,.cfinal.has.tone-win{border-left-color:var(--good);background:rgba(31,157,107,.08)}
+.cfinal.has.tone-mid{border-left-color:var(--brand);background:var(--brand-soft)}
+.cfinal.has.tone-low{border-left-color:var(--bad);background:rgba(224,85,59,.08)}
+.cfinal-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cfinal-l{display:flex;align-items:center;gap:8px;flex:1;min-width:0;flex-wrap:wrap;font-size:13.5px}
+.cfinal-l b{color:var(--text)}.cfinal-l .muted{font-size:12px}
+.cfinal-act{display:flex;gap:6px;flex-wrap:wrap}
+.cfinal-badge,.fin-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.cfinal-badge.good,.fin-badge.win,.fin-badge.good{background:rgba(31,157,107,.16);color:var(--good)}
+.cfinal-badge.mid,.fin-badge.mid{background:var(--brand-soft);color:var(--brand)}
+.cfinal-badge.low,.fin-badge.low{background:rgba(224,85,59,.16);color:var(--bad)}
+/* Элементы модалки финального анализа */
+.fin-fit{display:flex;align-items:center;gap:10px;margin:10px 0 4px;font-size:12.5px;color:var(--text-2)}
+.fin-fit-bar{flex:1;height:7px;border-radius:6px;background:var(--line-2);overflow:hidden}
+.fin-fit-bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--bad),var(--brand),var(--good))}
+.fin-sum{margin:8px 0;color:var(--text-2)}
+.fin-h{font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;margin:12px 0 5px;color:var(--text-2)}
+.fin-h.good{color:var(--good)}.fin-h.risk{color:var(--bad)}
+.fin-list{margin:0;padding-left:18px}.fin-list li{margin:4px 0}
+.fin-list.good li::marker{color:var(--good)}.fin-list.risk li::marker{color:var(--bad)}
 .vac-cfg{max-height:calc(100vh - 180px);overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:16px}
 .cfg-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 17px}
 .cfg-h{font-weight:700;font-size:15px;margin-bottom:10px}

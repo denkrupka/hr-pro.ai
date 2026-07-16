@@ -18,6 +18,7 @@ const refai = require('./src/references-ai');
 const aiCallPrompts = require('./src/ai-call-prompts');
 const callLog = require('./src/ai-call-log');
 const scheduler = require('./src/call-scheduler');
+const aiFinal = require('./src/ai-final');
 const { localizeResult } = require('./src/i18n-content');
 const RES_LANGS = ['ru', 'pl', 'en'];
 const pickLang = req => { const l = (req.query && req.query.lang) || ''; return RES_LANGS.includes(l) ? l : 'ru'; };
@@ -2261,8 +2262,33 @@ function buildWorkflow(p, lang) {
     const anyActivity = stages.some(s => (s.status && s.status !== 'none') || s.done);
     column = !firstUndone ? 'hired' : (!anyActivity ? 'new' : firstUndone.key);
   }
-  return { stages, decision, autoDecision: auto, column, optional };
+  // Готовность к финальному ИИ-анализу: все не пропущенные этапы разрешены (пройден/провален/завершён)
+  const resolved = s => s.skipped || s.passed === true || s.passed === false || s.done || s.status === 'done';
+  const finalReady = stages.length > 0 && stages.every(resolved) && stages.some(s => !s.skipped && s.analysis);
+  const finalAnalysis = (wf && wf.finalAnalysis) || null;
+  return { stages, decision, autoDecision: auto, column, optional, finalReady, finalAnalysis };
 }
+// Финальный ИИ-анализ кандидата: собрать анализы всех этапов + заявку + объявление → заключение
+app.post('/api/participants/:id/final-analysis', requireAuth, async (req, res) => {
+  const data = db();
+  const p = data.participants.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!p) return res.status(404).json({ error: 'Не найдено' });
+  const vac = data.vacancies.find(v => v.id === p.vacancyId && v.userId === p.userId);
+  const lang = (vac && vac.lang) || 'ru';
+  const wf = buildWorkflow(p, lang);
+  const req0 = vac && vac.requisitionId ? data.requisitions.find(r => r.id === vac.requisitionId) : null;
+  try {
+    const result = await aiFinal.finalAssessment({
+      lang, candidate: { name: p.name, surname: p.surname, age: p.age, city: p.city },
+      form: (req0 && req0.form) || { position: vac ? vac.name : '' },
+      ad: (vac && vac.adText) || '', stages: wf.stages, optional: wf.optional, autoDecision: wf.autoDecision,
+    });
+    p.workflow = p.workflow || {};
+    p.workflow.finalAnalysis = Object.assign({}, result, { at: nowISO(), by: 'ai' });
+    save();
+    res.json({ finalAnalysis: p.workflow.finalAnalysis });
+  } catch (e) { res.status(502).json({ error: 'ИИ-анализ: ' + (e.message || 'ошибка') }); }
+});
 app.get('/api/participants/:id/workflow', requireAuth, (req, res) => {
   const p = db().participants.find(x => x.id === req.params.id && x.userId === req.user.id);
   if (!p) return res.status(404).json({ error: 'Не найдено' });
@@ -2270,6 +2296,7 @@ app.get('/api/participants/:id/workflow', requireAuth, (req, res) => {
   const wf = buildWorkflow(p, lang);
   res.json({ participant: participantView(p), stages: wf.stages, decision: wf.decision,
     autoDecision: wf.autoDecision, column: wf.column, columnTitle: kanbanColTitle(wf.column, lang), optional: wf.optional,
+    finalReady: wf.finalReady, finalAnalysis: wf.finalAnalysis,
     interviews: (p.workflow && p.workflow.interviews) || [] });
 });
 // Глобальный список кандидатов (страница «Кандидаты») — куда попадают отклики с объявлений
