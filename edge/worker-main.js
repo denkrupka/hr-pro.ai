@@ -13,6 +13,10 @@ import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import { generateAd as genAdAI } from './ai-ad-edge.js';
 import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
+import * as callLog from './ai-call-log-edge.js';
+import { vapiConfigured } from './integrations-edge.js';
+import * as aiCallPrompts from '../src/ai-call-prompts.js';
+import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
 import * as learn from '../src/learning.js';
@@ -103,6 +107,27 @@ function expireBalance(u) { _ensureLots(u); const now = Date.now(); let expired 
 function balanceExpiresAt(u) { if (!Array.isArray(u.balanceLots)) return null; const act = u.balanceLots.filter(l => (l.remaining || 0) > 0).map(l => l.expiresAt).filter(Boolean).sort(); return act[0] || null; }
 
 // ── API-роутер ──────────────────────────────────────────────────────────────────
+// Звонок ИИ кандидату на настроенном шаге (edge). Размещает через журнал; part мутируется, вызывающий делает upsert.
+async function aiCallForEdge(env, S, owner, part, vac, kind) {
+  try {
+    const proc = processOf(vac);
+    if (!proc.aiCalls || !proc.aiCalls[kind] || !part.tel || !vapiConfigured(env)) return false;
+    const lang = vac.lang || 'ru';
+    const nm = ((part.name || '') + ' ' + (part.surname || '')).trim() || 'кандидат';
+    const allV = (await S.select('vacancies', `user_id=eq.${owner.id}&select=data`)).map(r => r.data);
+    const cfg = resolveAiCallCfg(allV, owner.id, vac);
+    const vars = {
+      candidate: nm, position: vac.name, company: owner.company || '', language: lang,
+      recruiter: [owner.name, owner.surname].filter(Boolean).join(' '),
+      company_mission: (vac.mission || cfg.companyMission || ''),
+      agent_name: cfg.agentName || aiCallPrompts.agentName(lang),
+    };
+    const task = aiCallPrompts.candidatePrompt(kind, vars);
+    const first = aiCallPrompts.firstMessage('candidate', lang === 'de' ? 'en' : lang, { candidate: nm, company: owner.company || '', agent_name: vars.agent_name });
+    const r = await callLog.startCall(env, part, { kind, to: part.tel, lang, task, firstMessage: first, vars, maxDurationMin: cfg.maxDurationMin });
+    return !(r && r.skipped);
+  } catch (e) { return false; }
+}
 // Объявление: ИИ по методологии (Claude через env), фолбэк — шаблон air.generateAd.
 async function buildAdEdge(env, { form, lang, company, target, vacancyName }) {
   try {
@@ -579,14 +604,69 @@ async function api(req, env, url) {
     for (const v of allV) { const proc = processOf(v); proc.aiCall = Object.assign({}, cfg); v.process = proc; await S.upsert('vacancies', { id: v.id, data: v }); }
     return j({ ok: true, count: allV.length, aiCall: cfg });
   }
-  // Журнал ИИ-звонков кандидата (на edge звонки пока не размещаются — журнал пуст)
+  // Журнал ИИ-звонков кандидата (список + обновление с оркестрацией)
   let mAiCalls = p.match(/^\/api\/participants\/([\w-]+)\/ai-calls(\/refresh)?$/);
   if (mAiCalls && (m === 'GET' || m === 'POST')) {
     if (!me) return needAuth();
     const part = await S.one('participants', mAiCalls[1]);
     if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
-    const log = (part.workflow && part.workflow.aiCallLog) || [];
-    return j({ calls: log, motivation: (part.workflow && part.workflow.aiMotivation) || null });
+    const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    const clang = (vac && vac.lang) || 'ru';
+    if (mAiCalls[2] === '/refresh' && m === 'POST') {
+      try { await callLog.refreshAll(env, part); await S.upsert('participants', { id: part.id, data: part }); }
+      catch (e) { return j({ error: e.message }, 502); }
+    }
+    return j({ calls: callLog.publicView(part, clang), motivation: (part.workflow && part.workflow.aiMotivation) || null });
+  }
+  // ИИ-референс: ИИ звонит бывшему руководителю (контакты из «Резалта», вопрос 13)
+  let mRefAi = p.match(/^\/api\/participants\/([\w-]+)\/references\/ai-call(?:\/(\d+))?$/);
+  if (mRefAi) {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mRefAi[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    const rlang = (vac && vac.lang) || 'ru';
+    // контакты руководителей из пройденного «Резалта» (вопрос 13)
+    const tRows = (await S.select('tests', `participant_id=eq.${part.id}&select=data`)).map(r => r.data);
+    const doneResult = tRows.filter(x => x.type === 'result' && x.status === 'done').sort((a, b) => (b.sentAt || '').localeCompare(a.sentAt || ''))[0];
+    const raw = doneResult && doneResult.answers && (doneResult.answers['13'] != null ? doneResult.answers['13'] : doneResult.answers[13]);
+    const contacts = Array.isArray(raw) ? raw.filter(c => c && (c.name || c.surname || c.phone)) : [];
+    if (m === 'POST') {
+      const refIndex = body && body.refIndex;
+      const contact = contacts[refIndex];
+      if (!contact) return j({ error: 'Контакт руководителя не найден в ответах «Резалта»' }, 400);
+      if (!contact.phone) return j({ error: 'У контакта руководителя не указан телефон' }, 400);
+      if (!vapiConfigured(env)) return j({ error: 'ИИ-звонки не настроены (Vapi)' }, 503);
+      const allV = (await S.select('vacancies', `user_id=eq.${me.id}&select=data`)).map(r => r.data);
+      const cfg = resolveAiCallCfg(allV, me.id, vac);
+      const iv = buildRefInterview({ candidateName: ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат',
+        vacancyName: vac && vac.name, contact, lang: rlang, company: me.company || '',
+        recruiter: [me.name, me.surname].filter(Boolean).join(' '), agentName: cfg.agentName || '' });
+      const supervisor = [contact.name, contact.surname].filter(Boolean).join(' ').trim();
+      const vars = { candidate: ((part.name || '') + ' ' + (part.surname || '')).trim() || 'кандидат', supervisor, company: me.company || '', language: rlang, agent_name: cfg.agentName || aiCallPrompts.agentName(rlang) };
+      try {
+        const r = await callLog.startCall(env, part, { kind: 'references', refIndex, to: contact.phone, lang: rlang,
+          task: iv.systemPrompt, firstMessage: iv.firstMessage, structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt, vars, maxDurationMin: cfg.maxDurationMin });
+        if (r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
+        part.workflow = part.workflow || {}; part.workflow.references = part.workflow.references || {}; part.workflow.references.multi = part.workflow.references.multi || {};
+        part.workflow.references.multi[refIndex] = Object.assign({}, part.workflow.references.multi[refIndex], { aiCall: { callId: r.callId, status: 'calling', startedAt: new Date().toISOString(), entryId: r.entry.id } });
+        await S.upsert('participants', { id: part.id, data: part });
+        return j({ status: 'calling', callId: r.callId });
+      } catch (e) { return j({ error: 'Vapi: ' + (e.message || 'ошибка звонка') }, 502); }
+    }
+    if (m === 'GET') {
+      const refIndex = String(mRefAi[2]);
+      const log = (part.workflow && part.workflow.aiCallLog) || [];
+      const entry = log.filter(e => e.kind === 'references' && String(e.refIndex) === refIndex).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))[0];
+      if (!entry) return j({ status: 'none' });
+      try {
+        if (!callLog.isFinal(entry)) { await callLog.refreshEntry(env, part, entry); await S.upsert('participants', { id: part.id, data: part }); }
+        const cur = part.workflow.references && part.workflow.references.multi && part.workflow.references.multi[refIndex];
+        const filled = cur && cur.answers ? Object.keys(cur.answers).length : (entry.filled || 0);
+        const st = entry.status === 'done' ? 'done' : (entry.status === 'failed' ? 'error' : 'calling');
+        return j({ status: st, summary: entry.summary || '', filled, attempts: (entry.attempts || []).length });
+      } catch (e) { return j({ status: (entry && entry.status) || 'calling', error: e.message }); }
+    }
   }
   let mVBoard = p.match(/^\/api\/vacancies\/([\w-]+)\/board$/);
   if (mVBoard && m === 'GET') {
@@ -1404,18 +1484,27 @@ async function api(req, env, url) {
       await logBalance(owner, -1, 'test_spend', { testId: test.id, comment: `Пройден тест «${testTitleOf(test.type)}»` });
     }
     await S.upsert('tests', { id: test.id, data: test });
-    // Последовательная отправка: запустить следующий тест из очереди этого кандидата
+    // Автоворонка: ИИ-звонки на настроенных шагах + отправка следующего теста
     try {
+      const part = await S.one('participants', test.participantId);
+      const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+      if (part && owner && vac) {
+        let called = false;
+        if (test.type === 'result') called = await aiCallForEdge(env, S, owner, part, vac, 'afterResult') || called;
+        if (test.type === 'tools') { called = await aiCallForEdge(env, S, owner, part, vac, 'afterTools') || called; called = await aiCallForEdge(env, S, owner, part, vac, 'motivation') || called; }
+        if (called) await S.upsert('participants', { id: part.id, data: part });
+      }
+      // Последовательная отправка: запустить следующий тест из очереди этого кандидата
       const rows = await S.select('tests', `participant_id=eq.${test.participantId}&select=data`);
       const queued = rows.map(r => r.data).filter(t => t.status === 'queued').sort((a, b) => (a.queueOrder || 0) - (b.queueOrder || 0));
       const next = queued[0];
       if (next && owner && owner.blocked !== true) {
-        const part = await S.one('participants', next.participantId);
-        const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+        const npart = await S.one('participants', next.participantId);
+        const nvac = npart && npart.vacancyId ? await S.one('vacancies', npart.vacancyId) : null;
         next.status = 'sent'; next.sentAt = new Date().toISOString();
         await S.upsert('tests', { id: next.id, data: next });
         const link = `${BASE}/t/${next.code}`;
-        await notifyCandidate(env, owner, part, next, vac, link, testTitleOf(next.type));
+        await notifyCandidate(env, owner, npart, next, nvac, link, testTitleOf(next.type));
       }
     } catch (e) {}
     return j({ ok: true });

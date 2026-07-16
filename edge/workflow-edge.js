@@ -5,6 +5,17 @@ import * as recruit from '../src/recruitment.js';
 import * as ai from '../src/ai.js';
 import * as air from '../src/ai-recruit.js';
 import { computeResult, gradeKnowledge, localizeResult } from './tests-edge.js';
+import { REF_LABELS } from '../src/ai-call-prompts.js';
+
+// Метки собранных ИИ-звонком ответов (для кнопки «Смотреть результат»)
+const AICALL_LABELS = {
+  afterResult: {
+    ru: { q1_answer: 'Что важно в работе/компании', q2_answer: 'Почему откликнулся и что знает', q3_answer: 'Критерии при равной зарплате', q4_answer: 'Что откликнулось в миссии', q5_questions: 'Вопросы кандидата' },
+    pl: { q1_answer: 'Co ważne w pracy/firmie', q2_answer: 'Dlaczego aplikował i co wie', q3_answer: 'Kryteria przy równej płacy', q4_answer: 'Co poruszyło w misji', q5_questions: 'Pytania kandydata' },
+    en: { q1_answer: 'What matters in job/company', q2_answer: 'Why applied and what knows', q3_answer: 'Criteria at equal pay', q4_answer: 'What resonated in mission', q5_questions: 'Candidate questions' },
+  },
+  references: { ru: REF_LABELS, pl: REF_LABELS, en: REF_LABELS },
+};
 
 const OPT_TITLE = {
   logic: { ru: 'Тест на логику (Логис)', pl: 'Test logiki (Logic)', en: 'Logic test (Logic)' },
@@ -24,7 +35,7 @@ export function processOf(v) {
     order: ['result', 'tools', 'logic', 'sales', 'knowledge'],
     stages: { result: true, references: true, tools: true, motivation: true, knowledge: true },
     optional: { logic: false, sales: false },
-    aiCalls: { first: false, afterResult: false, afterTools: false, motivation: false },
+    aiCalls: { first: false, afterResult: false, afterTools: false, motivation: false, references: false },
     critical: { result: true, references: true, tools: true, motivation: false, knowledge: false } };
   if (!v.process || typeof v.process !== 'object') v.process = {};
   v.process.stages = Object.assign({}, def.stages, v.process.stages || {});
@@ -108,9 +119,16 @@ export function buildWorkflow(p, lang, vac, tests) {
       const mo = wf.motivation;
       st.done = !!(mo && mo.level); st.level = mo ? mo.level : null;
       if (mo && mo.level) { st.analysis = air.motivationAnalysis(mo.level, lang); st.suggested = (recruit.MOTIVATION_LEVELS.find(x => x.key === mo.level) || {}).score >= 2; }
+      const am = wf.aiMotivation;
+      if (am && am.answers && Object.keys(am.answers).some(k => (am.answers[k] || '').trim())) {
+        const labels = AICALL_LABELS.afterResult[lang] || AICALL_LABELS.afterResult.ru;
+        st.aiResult = { summary: am.summary || '', at: am.at || null, attempts: am.attempts || 1,
+          answers: Object.entries(am.answers).filter(([, v]) => (v || '').trim()).map(([k, v]) => ({ label: labels[k] || k, value: v })) };
+      }
       st.passed = gates[key] !== undefined ? gates[key] : (st.done ? st.suggested : null);
     } else if (key === 'references') {
       const rf = wf.references || {};
+      st.aiCall = !!(proc && proc.aiCalls && proc.aiCalls.references);   // тумблер ИИ-референсов (Vapi проверяется на сервере при звонке)
       const doneResult = myTests.filter(x => x.type === 'result' && x.status === 'done').sort((a, b) => (b.sentAt || '').localeCompare(a.sentAt || ''))[0];
       let contacts = [];
       const raw = doneResult && doneResult.answers && (doneResult.answers['13'] != null ? doneResult.answers['13'] : doneResult.answers[13]);
@@ -118,9 +136,17 @@ export function buildWorkflow(p, lang, vac, tests) {
       const multi = rf.multi || {};
       if (contacts.length) {
         st.refs = contacts.map((c, i) => {
-          const filled = !!(multi[i] && multi[i].answers && Object.keys(multi[i].answers).length);
-          const r = { i, contact: c, done: filled };
-          if (filled) { const an = air.referencesAnalysis(multi[i].answers, lang); r.verdict = an.verdict; r.tone = an.tone; }
+          const mi = multi[i] || {};
+          const aiDone = !!(mi.aiCall && mi.aiCall.status === 'done');
+          const filled = !!(mi.answers && Object.keys(mi.answers).length);
+          const r = { i, contact: c, done: filled || aiDone, phone: c.phone || '', aiStatus: (mi.aiCall && mi.aiCall.status) || null };
+          if (aiDone) { r.verdict = (mi.aiCall.summary || 'Референс собран ИИ').slice(0, 200); r.tone = 'good'; }
+          else if (filled) { const an = air.referencesAnalysis(mi.answers, lang); r.verdict = an.verdict; r.tone = an.tone; }
+          if (mi.answers && Object.keys(mi.answers).some(k => (mi.answers[k] || '').toString().trim())) {
+            const labels = AICALL_LABELS.references[lang] || AICALL_LABELS.references.ru;
+            r.aiResult = { summary: (mi.aiCall && mi.aiCall.summary) || '', by: aiDone ? 'ai' : 'manual',
+              answers: Object.entries(mi.answers).filter(([, v]) => (v || '').toString().trim()).map(([k, v]) => ({ label: labels[k] || k, value: String(v) })) };
+          }
           return r;
         });
         st.done = st.refs.every(r => r.done);
