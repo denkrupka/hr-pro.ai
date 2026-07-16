@@ -363,7 +363,7 @@ const RI18N = {
     req_by_manager: 'От руководителя', req_has_vac: 'Вакансия создана',
     vac_empty: 'Утверждённых вакансий пока нет. Утвердите заявку во вкладке «Заявки».',
     vac_config: 'Настроить', vac_open: 'Открыть', vac_ad: 'Объявление о вакансии',
-    vac_ad_gen: 'Сгенерировать ИИ', vac_ad_manual: 'Или отредактируйте вручную:', vac_ad_target: 'Кого ищем',
+    vac_ad_gen: 'Сгенерировать ИИ', vac_ad_fallback: 'ИИ недоступен — показан базовый шаблон', vac_ad_manual: 'Или отредактируйте вручную:', vac_ad_target: 'Кого ищем',
     vac_target_auto: 'Автоопределение', vac_target_performer: 'Виннер', vac_target_executor: 'Дуер',
     vac_target_boss_hint: 'Руководящая должность — всегда ищем Виннера',
     vac_stages: 'Этапы отбора', vac_knowledge: 'Проверка знаний', vac_motivation: 'Оценка мотивации',
@@ -483,7 +483,7 @@ const RI18N = {
     req_by_manager: 'Od przełożonego', req_has_vac: 'Wakat utworzony',
     vac_empty: 'Brak zatwierdzonych wakatów. Zatwierdź wniosek w zakładce „Wnioski”.',
     vac_config: 'Konfiguruj', vac_open: 'Otwórz', vac_ad: 'Ogłoszenie o pracę',
-    vac_ad_gen: 'Generuj AI', vac_ad_manual: 'Lub edytuj ręcznie:', vac_ad_target: 'Kogo szukamy',
+    vac_ad_gen: 'Generuj AI', vac_ad_fallback: 'AI niedostępne — pokazano szablon', vac_ad_manual: 'Lub edytuj ręcznie:', vac_ad_target: 'Kogo szukamy',
     vac_target_auto: 'Automatycznie', vac_target_performer: 'Winner', vac_target_executor: 'Doer',
     vac_target_boss_hint: 'Stanowisko kierownicze — zawsze szukamy Winnera',
     vac_stages: 'Etapy selekcji', vac_knowledge: 'Sprawdzenie wiedzy', vac_motivation: 'Ocena motywacji',
@@ -603,7 +603,7 @@ const RI18N = {
     req_by_manager: 'From manager', req_has_vac: 'Vacancy created',
     vac_empty: 'No approved vacancies yet. Approve a requisition in the “Requisitions” tab.',
     vac_config: 'Configure', vac_open: 'Open', vac_ad: 'Job ad',
-    vac_ad_gen: 'Generate with AI', vac_ad_manual: 'Or edit manually:', vac_ad_target: 'Who we seek',
+    vac_ad_gen: 'Generate with AI', vac_ad_fallback: 'AI unavailable — showing basic template', vac_ad_manual: 'Or edit manually:', vac_ad_target: 'Who we seek',
     vac_target_auto: 'Auto-detect', vac_target_performer: 'Winner', vac_target_executor: 'Doer',
     vac_target_boss_hint: 'Leadership role — we always look for a Winner',
     vac_stages: 'Selection stages', vac_knowledge: 'Knowledge check', vac_motivation: 'Motivation assessment',
@@ -1452,9 +1452,12 @@ async function renderVacAdEditor(body, id) {
     <div id="publish-link"></div></div>`;
   $$('[data-adtab]').forEach(b => b.onclick = () => { adSubTab = b.dataset.adtab; renderVacAd(body, id); });
   $('#vann-gen').onclick = async () => {
-    const bt = $('#vann-gen'); bt.disabled = true; const o = bt.textContent; bt.textContent = rt('common_gen');
-    try { const d = await api('/api/requisitions/' + vacancy.requisitionId + '/generate-ad', { method: 'POST', body: JSON.stringify({ lang: vacancy.lang, target: $('#vann-target').value }) }); $('#vann-text').value = stripTags(d.ad); }
-    catch (e) { toast(e.message); }
+    const bt = $('#vann-gen'); bt.disabled = true; const o = bt.textContent; bt.innerHTML = `<span class="db-spin"></span> ${rt('common_gen')}`;
+    try {
+      const d = await api('/api/vacancies/' + id + '/generate-ad', { method: 'POST', body: JSON.stringify({ lang: vacancy.lang, target: $('#vann-target').value }) });
+      $('#vann-text').value = stripTags(d.ad);
+      if (d.ai === false) toast(rt('vac_ad_fallback'));
+    } catch (e) { toast(e.message); }
     bt.disabled = false; bt.textContent = o;
   };
   const saveAd = () => api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ adText: $('#vann-text').value }) });

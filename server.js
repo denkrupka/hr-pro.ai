@@ -19,6 +19,7 @@ const aiCallPrompts = require('./src/ai-call-prompts');
 const callLog = require('./src/ai-call-log');
 const scheduler = require('./src/call-scheduler');
 const aiFinal = require('./src/ai-final');
+const aiAd = require('./src/ai-ad');
 const { localizeResult } = require('./src/i18n-content');
 const RES_LANGS = ['ru', 'pl', 'en'];
 const pickLang = req => { const l = (req.query && req.query.lang) || ''; return RES_LANGS.includes(l) ? l : 'ru'; };
@@ -1720,11 +1721,31 @@ app.post('/api/req/:code', (req, res) => {
   save(); res.json({ ok: true });
 });
 // Генерация объявления по заявке
-app.post('/api/requisitions/:id/generate-ad', requireAuth, (req, res) => {
+// Собрать объявление: ИИ по методологии (промт+база знаний+заявка), фолбэк — шаблон.
+async function buildAd({ form, lang, company, target, vacancyName }) {
+  try {
+    const ad = await aiAd.generateAd({ form, lang, company, target, vacancyName });
+    if (ad && ad.trim()) return { ad, ai: true };
+  } catch (e) { console.error('[ai-ad]', e.message); }
+  return { ad: air.generateAd(form || { position: vacancyName }, lang, { company, target }), ai: false };
+}
+app.post('/api/requisitions/:id/generate-ad', requireAuth, async (req, res) => {
   const r = db().requisitions.find(x => x.id === req.params.id && x.userId === req.user.id);
   if (!r) return res.status(404).json({ error: 'Не найдено' });
   const lang = (req.body && ['ru', 'pl', 'en'].includes(req.body.lang)) ? req.body.lang : r.lang;
-  res.json({ ad: air.generateAd(r.form, lang, { company: req.user.company, target: req.body && req.body.target }) });
+  const out = await buildAd({ form: r.form, lang, company: req.user.company, target: req.body && req.body.target, vacancyName: (r.form && r.form.position) || '' });
+  res.json(out);
+});
+// Генерация объявления на уровне вакансии — работает и без связанной заявки (берёт данные вакансии).
+app.post('/api/vacancies/:id/generate-ad', requireAuth, async (req, res) => {
+  const data = db();
+  const v = data.vacancies.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!v) return res.status(404).json({ error: 'Не найдено' });
+  const r = v.requisitionId ? data.requisitions.find(x => x.id === v.requisitionId) : null;
+  const form = (r && r.form) || { position: v.name };
+  const lang = (req.body && ['ru', 'pl', 'en'].includes(req.body.lang)) ? req.body.lang : (v.lang || 'ru');
+  const out = await buildAd({ form, lang, company: req.user.company, target: req.body && req.body.target, vacancyName: v.name });
+  res.json(out);
 });
 
 // ---------- Расширения вакансии (объявление + конфигурация workflow) ----------
