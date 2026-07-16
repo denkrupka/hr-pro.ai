@@ -199,13 +199,23 @@ async function startCall(settings, { to, task, firstMessage, language, structure
   if (!c.phoneNumberId) throw new Error('Vapi: не указан Phone Number ID (импортируйте номер Zadarma в Vapi)');
   const el = cfgOf(settings, 'elevenlabs');
   const body = { phoneNumberId: c.phoneNumberId, customer: { number: String(to) } };
-  // План разбора звонка: краткое резюме + извлечение структурированных ответов (референсы).
+  // План разбора звонка: краткое резюме + извлечение структурированных ответов.
+  // ВАЖНО: в messages плана нужно передать сам транскрипт через {{transcript}}, иначе Vapi вернёт пусто.
   const analysisPlan = {};
-  if (summaryPrompt) analysisPlan.summaryPlan = { messages: [{ role: 'system', content: summaryPrompt }] };
+  if (summaryPrompt) analysisPlan.summaryPlan = {
+    enabled: true,
+    messages: [
+      { role: 'system', content: summaryPrompt },
+      { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' },
+    ],
+  };
   if (structuredDataSchema) analysisPlan.structuredDataPlan = {
     enabled: true,
     schema: structuredDataSchema,
-    messages: [{ role: 'system', content: 'Извлеки из расшифровки звонка ответы на вопросы референса строго по JSON-схеме. Если на вопрос не ответили — оставь поле пустым.' }],
+    messages: [
+      { role: 'system', content: 'Извлеки ответы из расшифровки звонка строго по JSON-схеме. Если на пункт не ответили — оставь поле пустым. Верни только данные по схеме.' },
+      { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' },
+    ],
   };
   if (c.assistantId) {
     body.assistantId = c.assistantId;
@@ -234,9 +244,15 @@ async function getCall(settings, callId) {
   if (!c.apiKey) return { skipped: true, reason: 'Vapi не настроен' };
   const d = await http('https://api.vapi.ai/call/' + encodeURIComponent(callId), { headers: { Authorization: 'Bearer ' + c.apiKey } });
   const a = (d && d.analysis) || {};
+  const art = (d && d.artifact) || {};
+  const rec = art.recording || {};
+  const recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || null;
+  const startedAt = d.startedAt || null, endedAt = d.endedAt || null;
+  const durationSec = (startedAt && endedAt) ? Math.max(0, Math.round((new Date(endedAt) - new Date(startedAt)) / 1000)) : (d.durationSeconds || null);
   return {
     ok: true, id: d && d.id, status: d && d.status, endedReason: d && d.endedReason,
-    transcript: d && d.transcript, summary: a.summary || null, structuredData: a.structuredData || null,
+    transcript: (d && d.transcript) || (art.transcript) || null, summary: a.summary || null, structuredData: a.structuredData || null,
+    recordingUrl, startedAt, endedAt, durationSec,
   };
 }
 async function vapiPing(settings) {

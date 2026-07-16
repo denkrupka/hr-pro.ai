@@ -1343,14 +1343,15 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .trait-chip.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-ink);font-weight:600}
 .share-block{background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--r-sm);padding:12px 14px;margin-top:14px}
 /* ИИ-подсказка — единый градиентный стиль (как .ai-banner / дизайн Claude Design) */
-.ai-note{border-radius:var(--r-lg);padding:17px 21px;margin-top:14px;color:#fff;border:0;position:relative;overflow:hidden;font-size:13.8px;line-height:1.55}
-.ai-note::before{content:"";position:absolute;right:-38px;top:-38px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.28),rgba(255,255,255,0) 70%)}
-.ai-note .ai-h{font-weight:700;font-size:16.5px;margin-bottom:7px;position:relative;color:#fff}
-.ai-note ul{margin:0;padding-left:18px;position:relative}.ai-note li{margin:3px 0;color:rgba(255,255,255,.95)}
-.ai-note.tone-good{background:linear-gradient(120deg,var(--brand),var(--brand-2))}
-.ai-note.tone-win{background:linear-gradient(120deg,#12b886,#0a9b74)}
-.ai-note.tone-mid{background:linear-gradient(120deg,#8b6cff,#6f97ff)}
-.ai-note.tone-low{background:linear-gradient(120deg,#f5576c,#e0435a)}
+/* Врезка ИИ-анализа в модалке — аккуратная, в тёмной теме портала (не яркий градиент) */
+.ai-note{border-radius:12px;padding:16px 18px;margin-top:14px;color:var(--text);border:1px solid var(--line);border-left:3px solid var(--brand);
+  background:var(--surface-2);position:relative;overflow:hidden;font-size:13.8px;line-height:1.6}
+.ai-note .ai-h{font-weight:700;font-size:16px;margin-bottom:8px;color:var(--text)}
+.ai-note ul{margin:0;padding-left:18px}.ai-note li{margin:4px 0;color:var(--text-2)}
+.ai-note li b,.ai-note .ai-h b{color:var(--text)}
+.ai-note.tone-good,.ai-note.tone-mid{border-left-color:var(--brand);background:var(--brand-soft)}
+.ai-note.tone-win{border-left-color:var(--good);background:rgba(31,157,107,.09)}
+.ai-note.tone-low{border-left-color:var(--bad);background:rgba(224,85,59,.09)}
 .vac-cfg{max-height:calc(100vh - 180px);overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:16px}
 .cfg-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 17px}
 .cfg-h{font-weight:700;font-size:15px;margin-bottom:10px}
@@ -1482,10 +1483,11 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 @media(max-width:720px){.mq-final-row{grid-template-columns:1fr}}
 .mq-final .field{background:var(--surface)}
 .cstep-dec{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:13.5px}
-.cstep-dec.d-hired{background:#eaf7f0;border-color:#bfe6d1}
-.cstep-dec.d-rej{background:#fdeeee;border-color:#f2c9c9}
-.cstep-dec.d-rec-hire{background:#eef8f2;border-color:#cfe9db;border-left:3px solid var(--good)}
-.cstep-dec.d-rec-rej{background:#fdf1f1;border-color:#f2d4d4;border-left:3px solid var(--bad)}
+.cstep-dec.d-hired{background:rgba(31,157,107,.14);border-color:rgba(31,157,107,.42)}
+.cstep-dec.d-rej{background:rgba(224,85,59,.12);border-color:rgba(224,85,59,.42)}
+.cstep-dec.d-rec-hire{background:rgba(31,157,107,.1);border-color:rgba(31,157,107,.32);border-left:3px solid var(--good)}
+.cstep-dec.d-rec-rej{background:rgba(224,85,59,.1);border-color:rgba(224,85,59,.32);border-left:3px solid var(--bad)}
+.cstep-dec b{color:var(--text)}
 .cand-steps-wrap .send-more{margin-top:14px}
 /* страница кандидата */
 .cand-head{display:flex;align-items:center;gap:16px}
