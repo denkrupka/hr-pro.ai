@@ -45,7 +45,7 @@ async function startCall(settings, p, opts, save) {
   // opts: {kind, refIndex?, to, lang, task, firstMessage, structuredDataSchema?, summaryPrompt?, vars}
   const r = await integ.startCall(settings, {
     to: opts.to, task: opts.task, firstMessage: opts.firstMessage, language: opts.lang,
-    structuredDataSchema: opts.structuredDataSchema, summaryPrompt: opts.summaryPrompt,
+    structuredDataSchema: opts.structuredDataSchema, summaryPrompt: opts.summaryPrompt, maxDurationMin: opts.maxDurationMin,
   });
   if (r && r.skipped) return { skipped: true, reason: r.reason };
   const log = logOf(p);
@@ -53,7 +53,7 @@ async function startCall(settings, p, opts, save) {
     id: uid(8), kind: opts.kind, refIndex: opts.refIndex != null ? opts.refIndex : null,
     to: opts.to, lang: opts.lang || 'ru', createdAt: nowISO(), status: 'calling',
     basePrompt: opts.task || '', vars: opts.vars || {},
-    callConfig: { structuredDataSchema: opts.structuredDataSchema || null, summaryPrompt: opts.summaryPrompt || null },
+    callConfig: { structuredDataSchema: opts.structuredDataSchema || null, summaryPrompt: opts.summaryPrompt || null, maxDurationMin: opts.maxDurationMin || null },
     attempts: [{ callId: r.callId, status: 'calling', startedAt: nowISO(), endedAt: null, endedReason: null, durationSec: null, transcript: null, recordingUrl: null, summary: null }],
     analysis: null, answers: null, summary: '', filled: 0,
   };
@@ -89,7 +89,10 @@ async function refreshEntry(settings, p, entry, save) {
   catch (e) { analysis = { complete: false, covered: [], remaining: ['уточнить'], reason: 'анализ не выполнен: ' + e.message }; }
   entry.analysis = analysis;
 
-  const canContinue = !analysis.complete && entry.attempts.length <= MAX_CONTINUATIONS;
+  // Докручиваем только если разговор реально состоялся и прервался (есть содержательный транскрипт).
+  // Неответ/сброс до разговора — не докручиваем здесь: это зона планировщика (retryAfterMin/retryCount).
+  const answered = (att.transcript || '').trim().length >= 20;
+  const canContinue = answered && !analysis.complete && entry.attempts.length <= MAX_CONTINUATIONS;
   if (canContinue) {
     // Докручивающий перезвон: собрать промт «что уже обсудили / где прервалось / что осталось».
     const contTask = analyzer.continuationTask(entry.basePrompt, analysis, entry.vars || {});
@@ -99,6 +102,7 @@ async function refreshEntry(settings, p, entry, save) {
         to: entry.to, task: contTask, firstMessage: contFirst, language: entry.lang,
         structuredDataSchema: entry.callConfig && entry.callConfig.structuredDataSchema,
         summaryPrompt: entry.callConfig && entry.callConfig.summaryPrompt,
+        maxDurationMin: entry.callConfig && entry.callConfig.maxDurationMin,
       });
       if (r && r.callId) {
         entry.attempts.push({ callId: r.callId, status: 'calling', startedAt: nowISO(), endedAt: null, endedReason: null, durationSec: null, transcript: null, recordingUrl: null, summary: null, continuation: true });

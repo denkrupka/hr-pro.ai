@@ -1685,6 +1685,17 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .aic-tr.open{display:block}
 .aic-tr pre{margin:0;padding:11px 12px;white-space:pre-wrap;word-break:break-word;color:#c3cbe4;font-size:12.5px;line-height:1.55;font-family:inherit}
 .db-modal [data-aictr].on{color:#fff;background:rgba(139,108,255,.2)}
+/* Настройки ИИ-звонков */
+.aicfg-h{display:flex;align-items:center;gap:10px;margin:0 30px 6px 0}
+.aicfg-h h2{margin:0;font-size:19px;color:#fff;font-family:Manrope,sans-serif;flex:1}
+.aicfg-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.aicfg-tag.own{background:rgba(67,224,160,.14);color:#43e0a0}
+.aicfg-tag.inh{background:rgba(139,108,255,.14);color:#b3a1ff}
+.aicfg-hint{color:#7b83a0;font-size:11.5px;margin:5px 0 2px;line-height:1.45}
+.aicfg-days{display:flex;flex-wrap:wrap;gap:6px}
+.aicfg-day{background:#141c30;border:1px solid rgba(255,255,255,.14);color:#9aa2bd;border-radius:9px;padding:7px 12px;cursor:pointer;font-size:13px;font-weight:600}
+.aicfg-day.on{background:rgba(139,108,255,.22);border-color:#8b6cff;color:#fff}
+.db-modal textarea.field{min-height:60px;resize:vertical;font-family:inherit}
 /* чат */
 .db-chat{display:flex;flex-direction:column;flex:1;min-height:0}
 .dc-msgs{flex:1;overflow:auto;margin:10px -4px 12px;padding:6px 4px;display:flex;flex-direction:column;gap:10px}

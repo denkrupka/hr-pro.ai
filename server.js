@@ -17,6 +17,7 @@ const aiDecodeRoutes = require('./src/ai-decode-routes');
 const refai = require('./src/references-ai');
 const aiCallPrompts = require('./src/ai-call-prompts');
 const callLog = require('./src/ai-call-log');
+const scheduler = require('./src/call-scheduler');
 const { localizeResult } = require('./src/i18n-content');
 const RES_LANGS = ['ru', 'pl', 'en'];
 const pickLang = req => { const l = (req.query && req.query.lang) || ''; return RES_LANGS.includes(l) ? l : 'ru'; };
@@ -685,19 +686,22 @@ function aiCallFor(owner, p, vac, kind) {
     if (!proc.aiCalls[kind] || !p.tel) return;
     const lang = vac.lang || 'ru';
     const nm = ((p.name || '') + ' ' + (p.surname || '')).trim() || 'кандидат';
+    // Настройки ИИ-звонков (наследование): имя агента, миссия, длительность, окно, повторы.
+    const cfg = scheduler.resolveAiCall(db().vacancies, owner.id, vac);
     // Официальные промты HR-PRO.AI (по типу звонка). Агент только собирает ответы и уточняет.
     const vars = {
       candidate: nm, position: vac.name, company: owner.company || '', language: lang,
       recruiter: [owner.name, owner.surname].filter(Boolean).join(' '),
-      company_mission: (vac.mission || (owner.settings && owner.settings.companyMission) || ''),
-      agent_name: aiCallPrompts.agentName(lang),
+      company_mission: (vac.mission || cfg.companyMission || ''),
+      agent_name: cfg.agentName || aiCallPrompts.agentName(lang),
     };
     const task = aiCallPrompts.candidatePrompt(kind, vars);
-    const first = aiCallPrompts.firstMessage('candidate', lang === 'de' ? 'en' : lang, { candidate: nm, company: owner.company || '' });
-    // Записываем звонок в журнал кандидата (транскрипт/запись/анализ подтянутся при обновлении).
-    callLog.startCall(owner.settings, p, { kind, to: p.tel, lang, task, firstMessage: first, vars }, save)
-      .then(r => { if (r && r.skipped) return; console.log('[vapi:auto]', kind, p.id, r.callId || ''); })
-      .catch(e => console.error('[vapi:auto]', kind, e.message));
+    const first = aiCallPrompts.firstMessage('candidate', lang === 'de' ? 'en' : lang, { candidate: nm, company: owner.company || '', agent_name: vars.agent_name });
+    // В очередь планировщика: разместит в рабочее окно, при неответе — перезвонит; журнал/транскрипт/запись подтянутся.
+    scheduler.enqueueCall(db(), save, owner.settings, p, { userId: owner.id, participantId: p.id, kind, cfg,
+      opts: { to: p.tel, lang, task, firstMessage: first, vars } })
+      .then(r => { if (r && r.skipped) return; console.log('[vapi:queue]', kind, p.id, r.callId || (r.deferred ? 'deferred' : '')); })
+      .catch(e => console.error('[vapi:queue]', kind, e.message));
   } catch (e) { console.error('[vapi:auto]', e.message); }
 }
 // Продвинуть кандидата по автоворонке: отправить следующий тест процесса,
@@ -1786,7 +1790,24 @@ app.put('/api/vacancies/:id/process', requireAuth, (req, res) => {
   if (proc.stages.result === false) proc.aiCalls.afterResult = false;
   if (proc.stages.tools === false) proc.aiCalls.afterTools = false;
   if (proc.stages.motivation === false) proc.aiCalls.motivation = false;
-  save(); res.json({ process: proc });
+  // Настройки ИИ-звонков этой вакансии (переопределяют наследование)
+  if (b.aiCall && typeof b.aiCall === 'object') proc.aiCall = scheduler.normalizeCfg(b.aiCall);
+  save();
+  res.json({ process: proc, aiCall: scheduler.resolveAiCall(db().vacancies, v.userId, v), aiCallOwn: !!proc.aiCall });
+});
+// Применить текущие настройки ИИ-звонков ко ВСЕМ вакансиям пользователя
+app.post('/api/vacancies/ai-call/apply-all', requireAuth, (req, res) => {
+  const cfg = scheduler.normalizeCfg((req.body && req.body.aiCall) || {});
+  const mine = db().vacancies.filter(v => v.userId === req.user.id);
+  mine.forEach(v => { const proc = processOf(v); proc.aiCall = Object.assign({}, cfg); });
+  save();
+  res.json({ ok: true, count: mine.length, aiCall: cfg });
+});
+// Резолв настроек ИИ-звонков для вакансии (для предзаполнения модалки) + признак «своё»
+app.get('/api/vacancies/:id/ai-call', requireAuth, (req, res) => {
+  const v = db().vacancies.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!v) return res.status(404).json({ error: 'Не найдено' });
+  res.json({ aiCall: scheduler.resolveAiCall(db().vacancies, req.user.id, v), aiCallOwn: !!(v.process && v.process.aiCall), defaults: scheduler.DEFAULTS });
 });
 app.get('/api/vacancies/:id/full', requireAuth, (req, res) => {
   const v = db().vacancies.find(x => x.id === req.params.id && x.userId === req.user.id);
@@ -1977,30 +1998,32 @@ app.post('/api/participants/:id/references/ai-call', requireAuth, async (req, re
   if (!integ.isConfigured(req.user.settings, 'vapi')) return res.status(503).json({ error: 'ИИ-звонки не настроены (Vapi)' });
   const vac = data.vacancies.find(v => v.id === p.vacancyId && v.userId === p.userId);
   const lang = (vac && vac.lang) || 'ru';
+  const cfg = scheduler.resolveAiCall(data.vacancies, p.userId, vac);
   const iv = refai.buildRefInterview({
     candidateName: ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат',
     vacancyName: vac && vac.name, contact, lang,
     company: req.user.company || '', recruiter: [req.user.name, req.user.surname].filter(Boolean).join(' '),
+    agentName: cfg.agentName || '',
   });
   try {
     const supervisor = [contact.name, contact.surname].filter(Boolean).join(' ').trim();
     const vars = {
       candidate: ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат',
-      supervisor, company: req.user.company || '', language: lang, agent_name: aiCallPrompts.agentName(lang),
+      supervisor, company: req.user.company || '', language: lang, agent_name: cfg.agentName || aiCallPrompts.agentName(lang),
     };
-    const r = await callLog.startCall(req.user.settings, p, {
-      kind: 'references', refIndex, to: contact.phone, lang,
-      task: iv.systemPrompt, firstMessage: iv.firstMessage,
-      structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt, vars,
-    }, save);
+    const r = await scheduler.enqueueCall(data, save, req.user.settings, p, {
+      userId: p.userId, participantId: p.id, kind: 'references', refIndex, cfg,
+      opts: { to: contact.phone, lang, task: iv.systemPrompt, firstMessage: iv.firstMessage,
+        structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt, vars },
+    });
     if (r.skipped) return res.status(503).json({ error: r.reason || 'ИИ-звонки не настроены' });
-    // Совместимость со старым отображением этапа: пометим контакт как «звонок идёт».
+    // Совместимость со старым отображением этапа: пометим контакт как «звонок идёт/в очереди».
     p.workflow.references = p.workflow.references || {}; p.workflow.references.multi = p.workflow.references.multi || {};
     const cur = p.workflow.references.multi[refIndex] || {};
-    cur.aiCall = { callId: r.callId, status: 'calling', startedAt: nowISO(), entryId: r.entry.id };
+    cur.aiCall = { callId: r.callId || null, status: 'calling', startedAt: nowISO(), entryId: r.item.entryId, queued: !!r.deferred };
     p.workflow.references.multi[refIndex] = cur;
     save();
-    res.json({ status: 'calling', callId: r.callId });
+    res.json({ status: 'calling', callId: r.callId || null, deferred: !!r.deferred });
   } catch (e) { res.status(502).json({ error: 'Vapi: ' + (e.message || 'ошибка звонка') }); }
 });
 app.get('/api/participants/:id/references/ai-call/:refIndex', requireAuth, async (req, res) => {
@@ -2472,3 +2495,9 @@ app.listen(PORT, () => {
 });
 // ежедневно сжигаем просроченные тесты (срок 1 год с пополнения)
 setInterval(() => { try { sweepExpiries(); } catch (_) {} }, 24 * 3600e3);
+// планировщик ИИ-звонков: рабочее окно, повтор при неответе, докрутка при обрыве
+let _tickBusy = false;
+setInterval(() => {
+  if (_tickBusy) return; _tickBusy = true;
+  Promise.resolve().then(() => scheduler.tick(db(), save)).catch(e => console.error('[scheduler]', e.message)).finally(() => { _tickBusy = false; });
+}, 45000);

@@ -426,6 +426,16 @@ const RI18N = {
     aicalls_no_rec: 'Запись недоступна', aicalls_attempt: 'Попытка', aicalls_cont: 'дозвон', aicalls_calls: 'звонка(ов)', aicalls_answers: 'Собранные ответы', aicalls_remaining: 'осталось',
     aic_st_calling: 'Идёт звонок', aic_st_analyzing: 'Анализ', aic_st_continuing: 'Перезвон', aic_st_done: 'Завершён', aic_st_failed: 'Не удалось',
     wf_see_ai: 'Смотреть результат (звонок ИИ)', aic_result_title: 'Результат ИИ-звонка',
+    aicfg_btn: 'Настройки ИИ-звонков', aicfg_title: 'Настройки ИИ-звонков', aicfg_own: 'свои настройки', aicfg_inherited: 'унаследовано',
+    aicfg_agent: 'Имя агента', aicfg_agent_ph: 'Ева', aicfg_agent_hint: 'Как агент представляется в звонке. Пусто — по языку: Ева / Ewa / Eva.',
+    aicfg_mission: 'Миссия компании', aicfg_mission_hint: '1–3 предложения о цели и продукте компании. Если пусто — агент не задаёт вопрос о миссии.',
+    aicfg_hours: 'Время звонков', aicfg_days: 'Дни звонков', aicfg_daynames: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+    aicfg_maxdur: 'Макс. длительность, мин', aicfg_maxdur_hint: 'Дольше — разговор прерывается.',
+    aicfg_retry_after: 'Перезвон при неответе, мин', aicfg_retry_after_hint: 'Если не подняли трубку.',
+    aicfg_retry_count: 'Попыток дозвона', aicfg_retry_count_hint: 'После стольких неответов звонки по этапу прекращаются; на следующем этапе счётчик заново.',
+    aicfg_offhours: 'Если просят перезвонить в нерабочее время', aicfg_offhours_defer: 'Перенести на следующий рабочий день', aicfg_offhours_call: 'Звонить в нерабочее время', aicfg_offhours_hint: 'Как поступать, если удобное время вне окна звонков.',
+    aicfg_save: 'Сохранить', aicfg_apply_all: 'Применить ко всем вакансиям', aicfg_apply_all_confirm: 'Перезаписать настройки ИИ-звонков во ВСЕХ ваших вакансиях текущими значениями?', aicfg_applied: 'Применено к {n} вакансиям',
+    aicfg_err_days: 'Выберите хотя бы один день', aicfg_err_hours: 'Время «с» должно быть раньше «до»',
     vp_ai_note: 'Для звонков ИИ нужны подключённая интеграция звонков (Vapi) и телефон кандидата. Если интеграция не настроена, шаг тихо пропускается.',
     vp_kn_q: 'вопросов', vp_kn_add: 'Добавить тест знаний', vp_kn_setup: 'Настроить', vp_kn_blank: 'Тест',
     vp_kn_hint: 'Пустые тесты-болванки наполняются во вкладке «Проверка знаний» — и наоборот: созданные там тесты появляются в этом списке.',
@@ -531,6 +541,16 @@ const RI18N = {
     aicalls_no_rec: 'Nagranie niedostępne', aicalls_attempt: 'Próba', aicalls_cont: 'oddzwonienie', aicalls_calls: 'rozmów', aicalls_answers: 'Zebrane odpowiedzi', aicalls_remaining: 'pozostało',
     aic_st_calling: 'Trwa rozmowa', aic_st_analyzing: 'Analiza', aic_st_continuing: 'Oddzwanianie', aic_st_done: 'Zakończono', aic_st_failed: 'Nieudane',
     wf_see_ai: 'Zobacz wynik (rozmowa AI)', aic_result_title: 'Wynik rozmowy AI',
+    aicfg_btn: 'Ustawienia rozmów AI', aicfg_title: 'Ustawienia rozmów AI', aicfg_own: 'własne ustawienia', aicfg_inherited: 'odziedziczone',
+    aicfg_agent: 'Imię agenta', aicfg_agent_ph: 'Ewa', aicfg_agent_hint: 'Jak agent się przedstawia. Puste — wg języka: Ева / Ewa / Eva.',
+    aicfg_mission: 'Misja firmy', aicfg_mission_hint: '1–3 zdania o celu i produkcie firmy. Jeśli puste — agent nie pyta o misję.',
+    aicfg_hours: 'Godziny rozmów', aicfg_days: 'Dni rozmów', aicfg_daynames: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'],
+    aicfg_maxdur: 'Maks. długość, min', aicfg_maxdur_hint: 'Dłużej — rozmowa się przerywa.',
+    aicfg_retry_after: 'Oddzwonienie po nieodebraniu, min', aicfg_retry_after_hint: 'Jeśli nie odebrano.',
+    aicfg_retry_count: 'Prób połączenia', aicfg_retry_count_hint: 'Po tylu nieodebraniach rozmowy na etapie ustają; na kolejnym etapie licznik od nowa.',
+    aicfg_offhours: 'Gdy proszą o telefon poza godzinami', aicfg_offhours_defer: 'Przenieś na następny dzień roboczy', aicfg_offhours_call: 'Dzwoń poza godzinami', aicfg_offhours_hint: 'Co robić, gdy dogodny czas jest poza oknem rozmów.',
+    aicfg_save: 'Zapisz', aicfg_apply_all: 'Zastosuj do wszystkich wakatów', aicfg_apply_all_confirm: 'Nadpisać ustawienia rozmów AI we WSZYSTKICH wakatach bieżącymi wartościami?', aicfg_applied: 'Zastosowano do {n} wakatów',
+    aicfg_err_days: 'Wybierz co najmniej jeden dzień', aicfg_err_hours: 'Godzina „od” musi być wcześniejsza niż „do”',
     vp_ai_note: 'Telefony AI wymagają podłączonej integracji połączeń (Vapi) i numeru telefonu kandydata. Bez integracji krok jest pomijany.',
     vp_kn_q: 'pytań', vp_kn_add: 'Dodaj test wiedzy', vp_kn_setup: 'Konfiguruj', vp_kn_blank: 'Test',
     vp_kn_hint: 'Puste testy uzupełnia się w zakładce „Sprawdzenie wiedzy” — i odwrotnie: testy utworzone tam pojawiają się na tej liście.',
@@ -636,6 +656,16 @@ const RI18N = {
     aicalls_no_rec: 'Recording unavailable', aicalls_attempt: 'Attempt', aicalls_cont: 'follow-up', aicalls_calls: 'calls', aicalls_answers: 'Collected answers', aicalls_remaining: 'remaining',
     aic_st_calling: 'Calling', aic_st_analyzing: 'Analyzing', aic_st_continuing: 'Calling back', aic_st_done: 'Completed', aic_st_failed: 'Failed',
     wf_see_ai: 'View result (AI call)', aic_result_title: 'AI call result',
+    aicfg_btn: 'AI call settings', aicfg_title: 'AI call settings', aicfg_own: 'own settings', aicfg_inherited: 'inherited',
+    aicfg_agent: 'Agent name', aicfg_agent_ph: 'Eva', aicfg_agent_hint: 'How the agent introduces itself. Empty — by language: Ева / Ewa / Eva.',
+    aicfg_mission: 'Company mission', aicfg_mission_hint: '1–3 sentences about the company’s purpose and product. If empty — the agent skips the mission question.',
+    aicfg_hours: 'Call hours', aicfg_days: 'Call days', aicfg_daynames: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    aicfg_maxdur: 'Max duration, min', aicfg_maxdur_hint: 'Longer — the call is cut off.',
+    aicfg_retry_after: 'Retry after no answer, min', aicfg_retry_after_hint: 'If the call was not picked up.',
+    aicfg_retry_count: 'Dial attempts', aicfg_retry_count_hint: 'After this many no-answers, calls for the stage stop; the next stage restarts the counter.',
+    aicfg_offhours: 'If asked to call back off-hours', aicfg_offhours_defer: 'Defer to next working day', aicfg_offhours_call: 'Call off-hours', aicfg_offhours_hint: 'What to do when the convenient time is outside the call window.',
+    aicfg_save: 'Save', aicfg_apply_all: 'Apply to all vacancies', aicfg_apply_all_confirm: 'Overwrite AI call settings across ALL your vacancies with the current values?', aicfg_applied: 'Applied to {n} vacancies',
+    aicfg_err_days: 'Select at least one day', aicfg_err_hours: 'Start time must be earlier than end time',
     vp_ai_note: 'AI calls require the calls integration (Vapi) and the candidate’s phone number. Without the integration the step is silently skipped.',
     vp_kn_q: 'questions', vp_kn_add: 'Add knowledge test', vp_kn_setup: 'Configure', vp_kn_blank: 'Test',
     vp_kn_hint: 'Empty draft tests are filled in on the “Knowledge check” tab — and vice versa: tests created there show up in this list.',
@@ -1126,6 +1156,7 @@ async function renderVacProcess(body, id) {
     <div class="card" style="margin-bottom:14px"><div class="row" style="gap:16px;align-items:center">
       <div style="flex:1;min-width:0"><b style="font-size:15px">${rt('vp_auto')}</b>
         <p class="muted" style="margin:4px 0 0;font-size:13px;line-height:1.5">${rt('vp_auto_hint')}</p></div>
+      <button class="btn ghost sm ic-btn" id="vp-aicall-cfg" title="${rt('aicfg_btn')}">${_svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>')}<span>${rt('aicfg_btn')}</span></button>
       ${sw('auto', !!proc.auto)}</div>
       <div class="row" style="gap:12px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);flex-wrap:wrap">
         <div style="flex:1;min-width:220px"><b style="font-size:13.5px">${rt('vp_linkdays')}</b>
@@ -1168,6 +1199,7 @@ async function renderVacProcess(body, id) {
     await api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify({ linkDays: v }) });
     toast(rt('common_saved'));
   };
+  const acb = $('#vp-aicall-cfg'); if (acb) acb.onclick = () => openAiCallCfgModal(id);
   // Очерёдность тестов: стрелки меняют порядок и сразу сохраняют
   const moveOrder = async (i, d) => {
     const ord = order.slice();   // тот же порядок, что отрисован (включая мотивацию)
@@ -1194,6 +1226,64 @@ async function renderVacProcess(body, id) {
     await api('/api/vacancies/' + id + '/knowledge/' + b.dataset.vpknDel, { method: 'DELETE' });
     toast(rt('common_saved')); refresh();
   });
+}
+// ---------- Модалка «Настройки ИИ-звонков» (per-vacancy + наследование) ----------
+async function openAiCallCfgModal(id) {
+  let data;
+  try { data = await api('/api/vacancies/' + id + '/ai-call'); }
+  catch (e) { return toast(e.message); }
+  const c = data.aiCall || {};
+  const dn = rt('aicfg_daynames'); // массив [Пн..Вс]
+  const days = Array.isArray(c.days) ? c.days.slice() : [1, 2, 3, 4, 5];
+  const chips = [1, 2, 3, 4, 5, 6, 7].map(d => `<button type="button" class="aicfg-day${days.includes(d) ? ' on' : ''}" data-day="${d}">${dn[d - 1]}</button>`).join('');
+  const ownTag = data.aiCallOwn ? `<span class="aicfg-tag own">${rt('aicfg_own')}</span>` : `<span class="aicfg-tag inh">${rt('aicfg_inherited')}</span>`;
+  mkDecodeModal(`<div class="aicfg">
+    <div class="aicfg-h"><h2>${rt('aicfg_title')}</h2>${ownTag}</div>
+    <label class="db-lb">${rt('aicfg_agent')}</label>
+    <input class="field" id="acf-agent" maxlength="60" placeholder="${rt('aicfg_agent_ph')}" value="${esc(c.agentName || '')}">
+    <div class="aicfg-hint">${rt('aicfg_agent_hint')}</div>
+    <label class="db-lb">${rt('aicfg_mission')}</label>
+    <textarea class="field" id="acf-mission" rows="3" maxlength="1200" placeholder="…">${esc(c.companyMission || '')}</textarea>
+    <div class="aicfg-hint">${rt('aicfg_mission_hint')}</div>
+    <label class="db-lb">${rt('aicfg_hours')}</label>
+    <div class="row" style="gap:10px;align-items:center"><input class="field" id="acf-from" type="time" value="${esc(c.hoursFrom || '10:00')}" style="width:130px"><span class="muted">—</span><input class="field" id="acf-to" type="time" value="${esc(c.hoursTo || '19:00')}" style="width:130px"></div>
+    <label class="db-lb">${rt('aicfg_days')}</label>
+    <div class="aicfg-days" id="acf-days">${chips}</div>
+    <div class="row" style="gap:14px;flex-wrap:wrap;margin-top:6px">
+      <div style="flex:1;min-width:150px"><label class="db-lb">${rt('aicfg_maxdur')}</label>
+        <input class="field" id="acf-maxdur" type="number" min="1" max="30" value="${c.maxDurationMin || 10}"><div class="aicfg-hint">${rt('aicfg_maxdur_hint')}</div></div>
+      <div style="flex:1;min-width:150px"><label class="db-lb">${rt('aicfg_retry_after')}</label>
+        <input class="field" id="acf-retryafter" type="number" min="5" max="1440" value="${c.retryAfterMin || 60}"><div class="aicfg-hint">${rt('aicfg_retry_after_hint')}</div></div>
+      <div style="flex:1;min-width:150px"><label class="db-lb">${rt('aicfg_retry_count')}</label>
+        <input class="field" id="acf-retrycount" type="number" min="1" max="10" value="${c.retryCount || 3}"><div class="aicfg-hint">${rt('aicfg_retry_count_hint')}</div></div>
+    </div>
+    <label class="db-lb">${rt('aicfg_offhours')}</label>
+    <select class="field" id="acf-offhours"><option value="defer"${c.offHoursCallback !== 'call' ? ' selected' : ''}>${rt('aicfg_offhours_defer')}</option><option value="call"${c.offHoursCallback === 'call' ? ' selected' : ''}>${rt('aicfg_offhours_call')}</option></select>
+    <div class="aicfg-hint">${rt('aicfg_offhours_hint')}</div>
+    <div class="db-modal-foot"><button class="btn ghost" id="acf-applyall">${rt('aicfg_apply_all')}</button><button class="btn" id="acf-save">${rt('aicfg_save')}</button></div>
+  </div>`, true);
+  const sel = new Set(days);
+  $$('#acf-days .aicfg-day').forEach(b => b.onclick = () => { const d = +b.dataset.day; if (sel.has(d)) sel.delete(d); else sel.add(d); b.classList.toggle('on'); });
+  const collect = () => ({
+    agentName: ($('#acf-agent').value || '').trim(),
+    companyMission: ($('#acf-mission').value || '').trim(),
+    hoursFrom: $('#acf-from').value || '10:00', hoursTo: $('#acf-to').value || '19:00',
+    days: Array.from(sel).sort((a, b) => a - b),
+    maxDurationMin: +$('#acf-maxdur').value || 10, retryAfterMin: +$('#acf-retryafter').value || 60,
+    retryCount: +$('#acf-retrycount').value || 3, offHoursCallback: $('#acf-offhours').value,
+  });
+  const validate = a => { if (!a.days.length) { toast(rt('aicfg_err_days')); return false; } if (a.hoursFrom >= a.hoursTo) { toast(rt('aicfg_err_hours')); return false; } return true; };
+  $('#acf-save').onclick = async () => {
+    const a = collect(); if (!validate(a)) return;
+    try { await api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify({ aiCall: a }) }); toast(rt('common_saved')); closeDecodeModal(); }
+    catch (e) { toast(e.message); }
+  };
+  $('#acf-applyall').onclick = async () => {
+    const a = collect(); if (!validate(a)) return;
+    if (!confirm(rt('aicfg_apply_all_confirm'))) return;
+    try { const r = await api('/api/vacancies/ai-call/apply-all', { method: 'POST', body: JSON.stringify({ aiCall: a }) }); toast(rt('aicfg_applied').replace('{n}', r.count)); closeDecodeModal(); }
+    catch (e) { toast(e.message); }
+  };
 }
 // ---------- Вкладка «Кандидаты» — кандидаты только этой должности ----------
 async function renderVacCandidates(body, id) {

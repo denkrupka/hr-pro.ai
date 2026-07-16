@@ -16,6 +16,7 @@ function buildRefInterview(ctx) {
     supervisor,
     previous_company: contact.company || '',
     language: ctx.lang || 'ru',
+    agent_name: ctx.agentName || undefined,
   });
 }
 

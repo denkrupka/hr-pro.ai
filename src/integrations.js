@@ -193,7 +193,7 @@ async function listVoices(settings) {
 // ---------- Vapi.ai: ИИ-звонок ----------
 // task — текст задания ассистенту (пригласить на анкету/тест, навести справки и т.п.)
 // Опц.: structuredDataSchema + summaryPrompt — для сбора структурированного результата (референсы).
-async function startCall(settings, { to, task, firstMessage, language, structuredDataSchema, summaryPrompt }) {
+async function startCall(settings, { to, task, firstMessage, language, structuredDataSchema, summaryPrompt, maxDurationMin }) {
   const c = cfgOf(settings, 'vapi');
   if (!c.apiKey) return { skipped: true, reason: 'Vapi не настроен' };
   if (!c.phoneNumberId) throw new Error('Vapi: не указан Phone Number ID (импортируйте номер Zadarma в Vapi)');
@@ -217,9 +217,14 @@ async function startCall(settings, { to, task, firstMessage, language, structure
       { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' },
     ],
   };
+  // Запись разговора (обе стороны сведённого SIP-звонка) — mp3 для прослушивания в модалке «Звонки ИИ».
+  const artifactPlan = { recordingEnabled: true, recordingFormat: 'mp3' };
+  const maxDurationSeconds = Number.isFinite(+maxDurationMin) && +maxDurationMin > 0 ? Math.round(+maxDurationMin * 60) : null;
   if (c.assistantId) {
     body.assistantId = c.assistantId;
-    if (task) body.assistantOverrides = { variableValues: { task } };
+    body.assistantOverrides = { artifactPlan };
+    if (maxDurationSeconds) body.assistantOverrides.maxDurationSeconds = maxDurationSeconds;
+    if (task) body.assistantOverrides.variableValues = { task };
   } else {
     // Временный ассистент: GPT-4o mini + голос ElevenLabs (если настроен)
     body.assistant = {
@@ -231,6 +236,8 @@ async function startCall(settings, { to, task, firstMessage, language, structure
     if (el.apiKey) body.assistant.voice = { provider: '11labs', voiceId: el.voiceId || 'EXAVITQu4vr4xnSDxMaL', model: 'eleven_multilingual_v2' };
     else body.assistant.voice = { provider: 'azure', voiceId: (language === 'pl' ? 'pl-PL-AgnieszkaNeural' : language === 'en' ? 'en-US-JennyNeural' : 'ru-RU-SvetlanaNeural') };
     if (Object.keys(analysisPlan).length) body.assistant.analysisPlan = analysisPlan;
+    body.assistant.artifactPlan = artifactPlan;
+    if (maxDurationSeconds) body.assistant.maxDurationSeconds = maxDurationSeconds;
   }
   const d = await http('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + c.apiKey, 'Content-Type': 'application/json' },

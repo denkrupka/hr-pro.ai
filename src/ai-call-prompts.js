@@ -45,8 +45,7 @@ const P2 = `Ты — {{agent_name}}, виртуальный HR-менеджер 
 1. «Что для вас важно при выборе новой работы и компании?» Если общо — доуточни (какой именно продукт/компания; какой продукт был у прошлой компании и как оцениваете его качество; почему это важно).
 2. «Почему вы откликнулись на нашу вакансию? Что вас привлекло?» Если «ознакомился с компанией» — «А что вы уже знаете о нашей компании? Смотрели сайт, соцсети, отзывы?»
 3. «Представьте: два предложения работы с одинаковой зарплатой. По каким критериям будете выбирать?»
-4. Зачитай миссию компании: «{{company_mission}}» — затем: «А что из этого откликнулось вам больше всего?»
-5. «Какие у вас есть вопросы ко мне или к компании?» На встречные вопросы отвечай коротко; чего не знаешь — скажет {{recruiter}}.
+{{mission_and_questions}}
 
 ПРИГЛАШЕНИЕ НА ТЕСТ: «Спасибо за ответы! Второй, заключительный тест я уже отправила вам на почту — он совсем короткий. Пройдите его сегодня, чтобы назначить встречу с руководителем. Если письма нет — проверьте, пожалуйста, папку „Спам“. Договорились?»
 
@@ -107,9 +106,9 @@ const P3 = `Ты — {{agent_name}}, виртуальный HR-менеджер 
 // первые реплики (агент их произносит на языке собеседника)
 const FIRST = {
  candidate: {
- ru: v => `Добрый день, ${v.candidate || ''}! Меня зовут ${agentName('ru')}, я виртуальный HR-менеджер компании ${v.company || ''}. Вам сейчас удобно говорить?`,
- pl: v => `Dzień dobry, ${v.candidate || ''}! Nazywam się ${agentName('pl')}, jestem wirtualnym HR-menedżerem firmy ${v.company || ''}. Od razu zaznaczę: jestem wirtualnym asystentem, nie żywą osobą. Czy może Pan(i) teraz rozmawiać?`,
- en: v => `Hello, ${v.candidate || ''}! My name is ${agentName('en')}, I’m a virtual HR manager at ${v.company || ''}. Just to note: I’m a virtual assistant, not a live person. Is now a good time to talk?`,
+ ru: v => `Добрый день, ${v.candidate || ''}! Меня зовут ${v.agent_name || agentName('ru')}, я виртуальный HR-менеджер компании ${v.company || ''}. Вам сейчас удобно говорить?`,
+ pl: v => `Dzień dobry, ${v.candidate || ''}! Nazywam się ${v.agent_name || agentName('pl')}, jestem wirtualnym HR-menedżerem firmy ${v.company || ''}. Od razu zaznaczę: jestem wirtualnym asystentem, nie żywą osobą. Czy może Pan(i) teraz rozmawiać?`,
+ en: v => `Hello, ${v.candidate || ''}! My name is ${v.agent_name || agentName('en')}, I’m a virtual HR manager at ${v.company || ''}. Just to note: I’m a virtual assistant, not a live person. Is now a good time to talk?`,
  },
  reference: {
  ru: v => `Здравствуйте! Я разговариваю с ${v.supervisor || 'руководителем'}?`,
@@ -164,7 +163,15 @@ const REF_SUMMARY = {
 // Промт кандидатского звонка по типу шага автоворонки.
 function candidatePrompt(kind, vars) {
  const v = Object.assign({ agent_name: agentName(vars.language) }, vars);
+ // Имя агента: кастомное из настроек имеет приоритет над дефолтом по языку.
+ if (vars.agent_name) v.agent_name = vars.agent_name;
  const tpl = kind === 'first' ? P1 : kind === 'afterResult' ? P2 : kind === 'afterTools' ? P4 : P2;
+ // Блок «миссия + вопросы» в P2 — вопрос о миссии добавляем только если миссия задана.
+ const rec = v.recruiter || '';
+ const qMission = `4. Зачитай миссию компании: «${v.company_mission}» — затем: «А что из этого откликнулось вам больше всего?»
+5. «Какие у вас есть вопросы ко мне или к компании?» На встречные вопросы отвечай коротко; чего не знаешь — скажет ${rec}.`;
+ const qNoMission = `4. «Какие у вас есть вопросы ко мне или к компании?» На встречные вопросы отвечай коротко; чего не знаешь — скажет ${rec}. (Вопрос про миссию компании НЕ задавай — миссия не указана.)`;
+ v.mission_and_questions = (v.company_mission && String(v.company_mission).trim()) ? qMission : qNoMission;
  return fill(tpl, v);
 }
 // Полная сборка референс-звонка (промт 3 + схема + резюме + первая реплика).

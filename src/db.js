@@ -23,6 +23,7 @@ const DEFAULT = {
   settings: {},     // ГЛОБАЛЬНЫЕ настройки портала (объект, не массив) — тарифы, интеграции, шаблоны, режимы
   balanceLog: [],   // { id, userId, delta, kind, comment, adminId, purchaseId, testId, balanceAfter, createdAt }
   adminLog: [],     // { id, adminId, action, targetType, targetId, details, createdAt }
+  callQueue: [],    // очередь ИИ-звонков планировщика { id, userId, participantId, kind, refIndex, status, attempts, nextAt, entryId, callId, opts, cfg, createdAt, lastReason }
 };
 
 let cache = null;
