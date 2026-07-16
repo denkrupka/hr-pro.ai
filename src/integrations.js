@@ -232,8 +232,10 @@ async function startCall(settings, { to, task, firstMessage, language, structure
       firstMessage: firstMessage || 'Здравствуйте! Это ассистент отдела подбора персонала.',
       transcriber: { provider: 'deepgram', model: 'nova-2', language: language || 'ru' },
     };
-    // Голос агента — женский (Ева). ElevenLabs multilingual (ru/pl/en) по умолчанию, если не задан свой voiceId.
-    if (el.apiKey) body.assistant.voice = { provider: '11labs', voiceId: el.voiceId || 'EXAVITQu4vr4xnSDxMaL', model: 'eleven_multilingual_v2' };
+    // Голос агента по языку звонка (ElevenLabs Voice ID). Свой voiceId в конфиге переопределяет карту.
+    const VOICE_BY_LANG = { ru: 'ymDCYd8puC7gYjxIamPt', pl: 'd4Z5Fvjohw3zxGpV8XUV', en: 'EST9Ui6982FZPSi7gCHi' };
+    const vlang = language === 'de' ? 'en' : (VOICE_BY_LANG[language] ? language : 'ru');
+    if (el.apiKey) body.assistant.voice = { provider: '11labs', voiceId: el.voiceId || VOICE_BY_LANG[vlang], model: 'eleven_multilingual_v2' };
     else body.assistant.voice = { provider: 'azure', voiceId: (language === 'pl' ? 'pl-PL-AgnieszkaNeural' : language === 'en' ? 'en-US-JennyNeural' : 'ru-RU-SvetlanaNeural') };
     if (Object.keys(analysisPlan).length) body.assistant.analysisPlan = analysisPlan;
     body.assistant.artifactPlan = artifactPlan;

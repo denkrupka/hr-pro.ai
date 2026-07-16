@@ -10,6 +10,9 @@ import { handleAdmin } from './admin-edge.js';
 import { guideCheck } from './guide-check.js';
 import { parseCV, cvSummary } from './cv-parse.js';
 import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
+import { generateAd as genAdAI } from './ai-ad-edge.js';
+import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
+import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
 import * as learn from '../src/learning.js';
@@ -100,6 +103,14 @@ function expireBalance(u) { _ensureLots(u); const now = Date.now(); let expired 
 function balanceExpiresAt(u) { if (!Array.isArray(u.balanceLots)) return null; const act = u.balanceLots.filter(l => (l.remaining || 0) > 0).map(l => l.expiresAt).filter(Boolean).sort(); return act[0] || null; }
 
 // ── API-роутер ──────────────────────────────────────────────────────────────────
+// Объявление: ИИ по методологии (Claude через env), фолбэк — шаблон air.generateAd.
+async function buildAdEdge(env, { form, lang, company, target, vacancyName }) {
+  try {
+    const ad = await genAdAI(env, { form, lang, company, target, vacancyName });
+    if (ad && ad.trim()) return { ad, ai: true };
+  } catch (e) { /* фолбэк ниже */ }
+  return { ad: air.generateAd(form || { position: vacancyName }, lang, { company, target }), ai: false };
+}
 async function api(req, env, url) {
   const p = url.pathname, m = req.method;
   const isWebhook = p === '/api/stripe/webhook';
@@ -545,9 +556,37 @@ async function api(req, env, url) {
     if (proc.stages.result === false) proc.aiCalls.afterResult = false;
     if (proc.stages.tools === false) proc.aiCalls.afterTools = false;
     if (proc.stages.motivation === false) proc.aiCalls.motivation = false;
+    if (body.aiCall && typeof body.aiCall === 'object') proc.aiCall = normAiCall(body.aiCall);
     v.process = proc;
     await S.upsert('vacancies', { id: v.id, data: v });
-    return j({ process: proc });
+    const allV = (await S.select('vacancies', `user_id=eq.${me.id}&select=data`)).map(r => r.data);
+    return j({ process: proc, aiCall: resolveAiCallCfg(allV, me.id, v), aiCallOwn: !!proc.aiCall });
+  }
+  // Настройки ИИ-звонков вакансии (для предзаполнения модалки)
+  let mVAiCall = p.match(/^\/api\/vacancies\/([\w-]+)\/ai-call$/);
+  if (mVAiCall && m === 'GET') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVAiCall[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const allV = (await S.select('vacancies', `user_id=eq.${me.id}&select=data`)).map(r => r.data);
+    return j({ aiCall: resolveAiCallCfg(allV, me.id, v), aiCallOwn: !!(v.process && v.process.aiCall), defaults: AICALL_DEFAULTS });
+  }
+  // Применить настройки ИИ-звонков ко всем вакансиям пользователя
+  if (p === '/api/vacancies/ai-call/apply-all' && m === 'POST') {
+    if (!me) return needAuth();
+    const cfg = normAiCall(body.aiCall || {});
+    const allV = (await S.select('vacancies', `user_id=eq.${me.id}&select=data`)).map(r => r.data);
+    for (const v of allV) { const proc = processOf(v); proc.aiCall = Object.assign({}, cfg); v.process = proc; await S.upsert('vacancies', { id: v.id, data: v }); }
+    return j({ ok: true, count: allV.length, aiCall: cfg });
+  }
+  // Журнал ИИ-звонков кандидата (на edge звонки пока не размещаются — журнал пуст)
+  let mAiCalls = p.match(/^\/api\/participants\/([\w-]+)\/ai-calls(\/refresh)?$/);
+  if (mAiCalls && (m === 'GET' || m === 'POST')) {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mAiCalls[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const log = (part.workflow && part.workflow.aiCallLog) || [];
+    return j({ calls: log, motivation: (part.workflow && part.workflow.aiMotivation) || null });
   }
   let mVBoard = p.match(/^\/api\/vacancies\/([\w-]+)\/board$/);
   if (mVBoard && m === 'GET') {
@@ -923,7 +962,18 @@ async function api(req, env, url) {
     const r = await S.one('requisitions', mReqAd[1]);
     if (!r || r.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     const adLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : r.lang;
-    return j({ ad: air.generateAd(r.form, adLang, { company: me.company, target: body.target }) });
+    return j(await buildAdEdge(env, { form: r.form, lang: adLang, company: me.company, target: body.target, vacancyName: (r.form && r.form.position) || '' }));
+  }
+  // Генерация объявления на уровне вакансии (работает и без связанной заявки)
+  let mVacAd = p.match(/^\/api\/vacancies\/([\w-]+)\/generate-ad$/);
+  if (mVacAd && m === 'POST') {
+    if (!me) return needAuth();
+    const v = await S.one('vacancies', mVacAd[1]);
+    if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const r = v.requisitionId ? await S.one('requisitions', v.requisitionId) : null;
+    const form = (r && r.form) || { position: v.name };
+    const adLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : (v.lang || 'ru');
+    return j(await buildAdEdge(env, { form, lang: adLang, company: me.company, target: body.target, vacancyName: v.name }));
   }
   // Публичная заявка (руководитель по ссылке)
   let mReqPub = p.match(/^\/api\/req\/([\w-]+)$/);
@@ -1017,7 +1067,31 @@ async function api(req, env, url) {
     } catch (e) { /* ИИ не критичен — остаётся эвристика */ }
     return j({ participant: await participantView(part), stages: wf.stages, decision: wf.decision,
       autoDecision: wf.autoDecision, column: wf.column, columnTitle: kanbanColTitle(wf.column, lang), optional: wf.optional,
+      finalReady: wf.finalReady, finalAnalysis: wf.finalAnalysis,
       interviews: (part.workflow && part.workflow.interviews) || [] });
+  }
+  // Финальный ИИ-анализ кандидата (по всем этапам + заявка + объявление)
+  let mFinal = p.match(/^\/api\/participants\/([\w-]+)\/final-analysis$/);
+  if (mFinal && m === 'POST') {
+    if (!me) return needAuth();
+    const part = await S.one('participants', mFinal[1]);
+    if (!part || part.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    const aLang = (vac && vac.lang) || 'ru';
+    const tests = (await S.select('tests', `participant_id=eq.${part.id}&select=data`)).map(r => r.data);
+    const wf = buildWorkflow(part, aLang, vac, tests);
+    const r0 = vac && vac.requisitionId ? await S.one('requisitions', vac.requisitionId) : null;
+    try {
+      const result = await finalAssessAI(env, {
+        lang: aLang, candidate: { name: part.name, surname: part.surname, age: part.age, city: part.city },
+        form: (r0 && r0.form) || { position: vac ? vac.name : '' },
+        ad: (vac && vac.adText) || '', stages: wf.stages, optional: wf.optional, autoDecision: wf.autoDecision,
+      });
+      part.workflow = part.workflow || {};
+      part.workflow.finalAnalysis = Object.assign({}, result, { at: new Date().toISOString(), by: 'ai' });
+      await S.upsert('participants', { id: part.id, data: part });
+      return j({ finalAnalysis: part.workflow.finalAnalysis });
+    } catch (e) { return j({ error: 'ИИ-анализ: ' + (e.message || 'ошибка') }, 502); }
   }
   let mCol = p.match(/^\/api\/participants\/([\w-]+)\/column$/);
   if (mCol && m === 'POST') {
@@ -1176,9 +1250,11 @@ async function api(req, env, url) {
     const list = pr.map(r => r.data).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')).map(x => {
       const vac = vacs.find(v => v.id === x.vacancyId);
       const nm = ((x.name || '') + ' ' + (x.surname || '')).trim() || x.email;
+      const fa = x.workflow && x.workflow.finalAnalysis;
       return { id: x.id, name: nm, email: x.email, tel: x.tel || '', city: x.city || '',
         vacancyId: x.vacancyId || null, vacancyName: vac ? vac.name : '', column: x.stage === 'Принят' ? 'hired' : x.stage === 'Отказ' ? 'rejected' : 'stage',
         columnTitle: x.stage || 'Без этапа', createdAt: x.createdAt,
+        final: fa ? { verdict: fa.verdict, fit: fa.fit_score } : null,
         testsDone: tr.map(r => r.data).filter(t => t.participantId === x.id && t.status === 'done').length, cv: x.cv || null };
     });
     return j({ candidates: list });

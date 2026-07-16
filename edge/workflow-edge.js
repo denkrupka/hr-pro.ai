@@ -164,7 +164,10 @@ export function buildWorkflow(p, lang, vac, tests) {
     const anyActivity = stages.some(s => (s.status && s.status !== 'none') || s.done);
     column = !firstUndone ? 'hired' : (!anyActivity ? 'new' : firstUndone.key);
   }
-  return { stages, decision, autoDecision: auto, column, optional };
+  const resolved = s => s.skipped || s.passed === true || s.passed === false || s.done || s.status === 'done';
+  const finalReady = stages.length > 0 && stages.every(resolved) && stages.some(s => !s.skipped && s.analysis);
+  const finalAnalysis = (wf && wf.finalAnalysis) || null;
+  return { stages, decision, autoDecision: auto, column, optional, finalReady, finalAnalysis };
 }
 
 // Сборка канбан-доски вакансии.
