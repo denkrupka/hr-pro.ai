@@ -2312,6 +2312,7 @@ app.get('/api/candidates', requireAuth, (req, res) => {
     return { id: p.id, name: nm, email: p.email, tel: p.tel || '', city: p.city || '',
       vacancyId: p.vacancyId || null, vacancyName: vac ? vac.name : '', column: wf.column,
       columnTitle: kanbanColTitle(wf.column, lang), decision: wf.decision, createdAt: p.createdAt,
+      final: wf.finalAnalysis ? { verdict: wf.finalAnalysis.verdict, fit: wf.finalAnalysis.fit_score } : null,
       testsDone: doneTests.length, tests: doneTests.map(t => ({ id: t.id, type: t.type })), cv: p.cv || null };
   });
   res.json({ candidates: list });

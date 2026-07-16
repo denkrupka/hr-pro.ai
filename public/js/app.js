@@ -440,6 +440,7 @@ const RI18N = {
     wf_final_run: 'Финальный анализ', wf_final_rerun: 'Пересчитать', wf_final_view: 'Смотреть', wf_final_running: 'Анализирую…',
     wf_final_title: 'Итоговый ИИ-анализ кандидата', wf_final_hire: 'Рекомендован', wf_final_reject: 'Лучше отклонить', wf_final_consider: 'Под вопросом',
     wf_final_fit: 'Соответствие должности', wf_final_strengths: 'Сильные стороны', wf_final_concerns: 'Риски и слабые места', wf_final_reco: 'Рекомендация', wf_final_at: 'Анализ выполнен',
+    cand_col_ai: 'ИИ анализ', ai_tag_hire: 'Рекомендован', ai_tag_reject: 'Отклонить', ai_tag_consider: 'Под вопросом', ai_tag_pending: 'В процессе',
     vp_ai_note: 'Для звонков ИИ нужны подключённая интеграция звонков (Vapi) и телефон кандидата. Если интеграция не настроена, шаг тихо пропускается.',
     vp_kn_q: 'вопросов', vp_kn_add: 'Добавить тест знаний', vp_kn_setup: 'Настроить', vp_kn_blank: 'Тест',
     vp_kn_hint: 'Пустые тесты-болванки наполняются во вкладке «Проверка знаний» — и наоборот: созданные там тесты появляются в этом списке.',
@@ -559,6 +560,7 @@ const RI18N = {
     wf_final_run: 'Analiza końcowa', wf_final_rerun: 'Przelicz', wf_final_view: 'Zobacz', wf_final_running: 'Analizuję…',
     wf_final_title: 'Końcowa analiza AI kandydata', wf_final_hire: 'Rekomendowany', wf_final_reject: 'Lepiej odrzucić', wf_final_consider: 'Do rozważenia',
     wf_final_fit: 'Dopasowanie do stanowiska', wf_final_strengths: 'Mocne strony', wf_final_concerns: 'Ryzyka i słabe punkty', wf_final_reco: 'Rekomendacja', wf_final_at: 'Analiza wykonana',
+    cand_col_ai: 'Analiza AI', ai_tag_hire: 'Rekomendowany', ai_tag_reject: 'Odrzucić', ai_tag_consider: 'Do rozważenia', ai_tag_pending: 'W trakcie',
     vp_ai_note: 'Telefony AI wymagają podłączonej integracji połączeń (Vapi) i numeru telefonu kandydata. Bez integracji krok jest pomijany.',
     vp_kn_q: 'pytań', vp_kn_add: 'Dodaj test wiedzy', vp_kn_setup: 'Konfiguruj', vp_kn_blank: 'Test',
     vp_kn_hint: 'Puste testy uzupełnia się w zakładce „Sprawdzenie wiedzy” — i odwrotnie: testy utworzone tam pojawiają się na tej liście.',
@@ -678,6 +680,7 @@ const RI18N = {
     wf_final_run: 'Final analysis', wf_final_rerun: 'Recalculate', wf_final_view: 'View', wf_final_running: 'Analyzing…',
     wf_final_title: 'Final AI assessment', wf_final_hire: 'Recommended', wf_final_reject: 'Better to reject', wf_final_consider: 'Borderline',
     wf_final_fit: 'Fit for the position', wf_final_strengths: 'Strengths', wf_final_concerns: 'Risks and weak points', wf_final_reco: 'Recommendation', wf_final_at: 'Analysis done',
+    cand_col_ai: 'AI analysis', ai_tag_hire: 'Recommended', ai_tag_reject: 'Reject', ai_tag_consider: 'Borderline', ai_tag_pending: 'In progress',
     vp_ai_note: 'AI calls require the calls integration (Vapi) and the candidate’s phone number. Without the integration the step is silently skipped.',
     vp_kn_q: 'questions', vp_kn_add: 'Add knowledge test', vp_kn_setup: 'Configure', vp_kn_blank: 'Test',
     vp_kn_hint: 'Empty draft tests are filled in on the “Knowledge check” tab — and vice versa: tests created there show up in this list.',
@@ -1305,17 +1308,24 @@ async function renderVacCandidates(body, id) {
     const cls = c.column === 'hired' ? 'cs-hired' : c.column === 'rejected' ? 'cs-rej' : c.column === 'new' ? 'cs-new' : 'cs-stage';
     return `<span class="cand-stage ${cls}">${esc(c.columnTitle)}</span>`;
   };
+  // Тег итогового ИИ-анализа (как последняя строка процесса найма): брать / под вопросом / отклонить / в процессе
+  const aiTag = c => {
+    if (!c.final || !c.final.verdict) return `<span class="ai-tag pending">${rt('ai_tag_pending')}</span>`;
+    const v = c.final.verdict, cls = v === 'hire' ? 'good' : v === 'reject' ? 'bad' : 'mid';
+    const lbl = v === 'hire' ? rt('ai_tag_hire') : v === 'reject' ? rt('ai_tag_reject') : rt('ai_tag_consider');
+    return `<span class="ai-tag ${cls}" title="${rt('cand_col_ai')}">${lbl}${c.final.fit != null ? ' · ' + c.final.fit + '%' : ''}</span>`;
+  };
   body.innerHTML = `<div class="card">
     <div class="row" style="gap:10px;margin-bottom:14px;flex-wrap:wrap">
       <div class="search-wrap grow" style="flex:1;min-width:220px"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="vcand-q" placeholder="${rt('cand_search')}"></div>
       <button class="btn ic-btn" id="vcand-add">${_svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>')}${rt('cand_add')}</button></div>
-    <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_stage')}</th><th style="text-align:center">${rt('cand_col_tests')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="vcand-rows"></tbody></table></div></div>`;
+    <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_stage')}</th><th>${rt('cand_col_ai')}</th><th style="text-align:center">${rt('cand_col_tests')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="vcand-rows"></tbody></table></div></div>`;
   const draw = q => {
     const rows = list.filter(c => !q || (c.name + ' ' + c.email + ' ' + (c.tel || '')).toLowerCase().includes(q))
       .map(c => `<tr data-vcid="${c.id}" style="cursor:pointer">
         <td><div class="cand"><span class="avatar" style="width:32px;height:32px;background:${avColor(c.name)}">${esc(initials(c.name, c.email))}</span><div><b>${esc(c.name)}</b><div class="muted" style="font-size:12px">${esc(c.email || c.tel || '')}</div></div></div></td>
-        <td>${colBadge(c)}</td><td style="text-align:center"><b>${c.testsDone}</b></td><td class="muted">${fmtDate(c.createdAt)}</td></tr>`).join('');
-    $('#vcand-rows').innerHTML = rows || `<tr><td colspan="4" class="muted" style="text-align:center;padding:30px">${rt('cand_empty')}</td></tr>`;
+        <td>${colBadge(c)}</td><td>${aiTag(c)}</td><td style="text-align:center"><b>${c.testsDone}</b></td><td class="muted">${fmtDate(c.createdAt)}</td></tr>`).join('');
+    $('#vcand-rows').innerHTML = rows || `<tr><td colspan="5" class="muted" style="text-align:center;padding:30px">${rt('cand_empty')}</td></tr>`;
     $$('[data-vcid]').forEach(r => r.onclick = () => openParticipant(r.dataset.vcid, () => openVacancyPage(id, 'candidates')));
   };
   $('#vcand-q').oninput = e => draw(e.target.value.toLowerCase().trim());
