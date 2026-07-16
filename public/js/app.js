@@ -419,6 +419,8 @@ const RI18N = {
     vp_st_logic: 'Тест на логику (Логис)', vp_st_sales: 'Тест на продажи (Sales)', vp_st_motivation: 'Уровень мотивации', vp_st_knowledge: 'Проверка знаний',
     vp_ref_hint: 'Проводит рекрутёр по контактам руководителей из «Резалта»',
     vp_ai_first: 'Звонок ИИ: первый контакт', vp_ai_afterResult: 'Звонок ИИ после «Резалта»', vp_ai_afterTools: 'Звонок ИИ после «Тулса»', vp_ai_motivation: 'Оценка мотивации в звонке с ИИ',
+    vp_ai_references: 'Получение референсов с помощью ИИ', vp_ai_references_hint: 'ИИ сам звонит руководителям из «Резалта» и собирает справку',
+    refai_btn: 'Звонок ИИ', refai_calling: 'ИИ звонит…', refai_hint: 'ИИ позвонит руководителю и соберёт референс', refai_started: 'ИИ звонит руководителю — справка появится после разговора', refai_done: 'Референс собран ИИ', refai_err: 'Не удалось запустить ИИ-звонок',
     vp_ai_note: 'Для звонков ИИ нужны подключённая интеграция звонков (Vapi) и телефон кандидата. Если интеграция не настроена, шаг тихо пропускается.',
     vp_kn_q: 'вопросов', vp_kn_add: 'Добавить тест знаний', vp_kn_setup: 'Настроить', vp_kn_blank: 'Тест',
     vp_kn_hint: 'Пустые тесты-болванки наполняются во вкладке «Проверка знаний» — и наоборот: созданные там тесты появляются в этом списке.',
@@ -517,6 +519,8 @@ const RI18N = {
     vp_st_logic: 'Test logiki (Logic)', vp_st_sales: 'Test sprzedaży (Sales)', vp_st_motivation: 'Poziom motywacji', vp_st_knowledge: 'Sprawdzenie wiedzy',
     vp_ref_hint: 'Przeprowadza rekruter na podstawie kontaktów z „Result”',
     vp_ai_first: 'Telefon AI: pierwszy kontakt', vp_ai_afterResult: 'Telefon AI po „Result”', vp_ai_afterTools: 'Telefon AI po „Tools”', vp_ai_motivation: 'Ocena motywacji w rozmowie z AI',
+    vp_ai_references: 'Zbieranie referencji przez AI', vp_ai_references_hint: 'AI samo dzwoni do przełożonych z „Result” i zbiera referencję',
+    refai_btn: 'Telefon AI', refai_calling: 'AI dzwoni…', refai_hint: 'AI zadzwoni do przełożonego i zbierze referencję', refai_started: 'AI dzwoni do przełożonego — referencja pojawi się po rozmowie', refai_done: 'Referencja zebrana przez AI', refai_err: 'Nie udało się uruchomić telefonu AI',
     vp_ai_note: 'Telefony AI wymagają podłączonej integracji połączeń (Vapi) i numeru telefonu kandydata. Bez integracji krok jest pomijany.',
     vp_kn_q: 'pytań', vp_kn_add: 'Dodaj test wiedzy', vp_kn_setup: 'Konfiguruj', vp_kn_blank: 'Test',
     vp_kn_hint: 'Puste testy uzupełnia się w zakładce „Sprawdzenie wiedzy” — i odwrotnie: testy utworzone tam pojawiają się na tej liście.',
@@ -615,6 +619,8 @@ const RI18N = {
     vp_st_logic: 'Logic test (Logic)', vp_st_sales: 'Sales test (Sales)', vp_st_motivation: 'Motivation level', vp_st_knowledge: 'Knowledge check',
     vp_ref_hint: 'Done by the recruiter using manager contacts from “Result”',
     vp_ai_first: 'AI call: first contact', vp_ai_afterResult: 'AI call after “Result”', vp_ai_afterTools: 'AI call after “Tools”', vp_ai_motivation: 'Motivation assessed in an AI call',
+    vp_ai_references: 'Collect references with AI', vp_ai_references_hint: 'AI calls the managers from “Result” itself and gathers the reference',
+    refai_btn: 'AI call', refai_calling: 'AI is calling…', refai_hint: 'AI will call the manager and collect the reference', refai_started: 'AI is calling the manager — the reference will appear after the call', refai_done: 'Reference collected by AI', refai_err: 'Could not start the AI call',
     vp_ai_note: 'AI calls require the calls integration (Vapi) and the candidate’s phone number. Without the integration the step is silently skipped.',
     vp_kn_q: 'questions', vp_kn_add: 'Add knowledge test', vp_kn_setup: 'Configure', vp_kn_blank: 'Test',
     vp_kn_hint: 'Empty draft tests are filled in on the “Knowledge check” tab — and vice versa: tests created there show up in this list.',
@@ -665,7 +671,7 @@ async function renderCandidates() {
       .map(c => `<tr onclick="openParticipant('${c.id}')" style="cursor:pointer">
         <td><div class="cand"><span class="avatar" style="width:32px;height:32px;background:${avColor(c.name)}">${esc(initials(c.name, c.email))}</span><div><b>${esc(c.name)}</b><div class="muted" style="font-size:12px">${esc(c.email || c.tel || '')}</div></div></div></td>
         <td>${esc(c.vacancyName || '—')}</td><td>${colBadge(c)}</td>
-        <td style="text-align:center"><b>${c.testsDone}</b></td><td class="muted">${fmtDate(c.createdAt)}</td></tr>`).join('');
+        <td style="white-space:nowrap">${(c.tests || []).map(tt => `<span class="res-icon res-${tt.type}" title="${testTitle(tt.type)}" onclick="event.stopPropagation();openReport('${tt.id}')">${TEST_ICON[tt.type] || ICON_KNOWLEDGE}</span>`).join('') || '<span class="muted">—</span>'}</td><td class="muted">${fmtDate(c.createdAt)}</td></tr>`).join('');
     $('#cand-rows').innerHTML = rows || `<tr><td colspan="5" class="muted" style="text-align:center;padding:30px">${rt('cand_empty')}</td></tr>`;
   };
   const vacOpts = `<option value="all">${rt('cand_all_vac')}</option>` + vacs.map(([id, name]) => `<option value="${id}" ${candVacFilter === id ? 'selected' : ''}>${esc(name)}</option>`).join('');
@@ -676,7 +682,7 @@ async function renderCandidates() {
         <select class="field" id="cand-vac" style="max-width:240px">${vacOpts}</select>
         <label class="btn ghost ic-btn" id="cand-cv-lbl" title="${rt('cand_cv_hint')}">${_svg('<path d="M14 3v5h5M9 13h6M9 17h6M8 3h6l5 5v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-linecap="round" stroke-linejoin="round"/>')}${rt('cand_import_cv')}<input type="file" id="cand-cv-inp" accept="application/pdf,image/*" multiple hidden></label>
         <button class="btn ic-btn" id="cand-add">${_svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>')}${rt('cand_add')}</button></div>
-      <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_vac')}</th><th>${rt('cand_col_stage')}</th><th style="text-align:center">${rt('cand_col_tests')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="cand-rows"></tbody></table></div>
+      <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_vac')}</th><th>${rt('cand_col_stage')}</th><th>${t('col_results')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="cand-rows"></tbody></table></div>
     </div>`;
   $('#cand-q').oninput = e => draw(e.target.value.toLowerCase().trim());
   $('#cand-vac').onchange = e => { candVacFilter = e.target.value; draw($('#cand-q').value.toLowerCase().trim()); };
@@ -1055,6 +1061,8 @@ async function renderVacProcess(body, id) {
   const kts = vacancy.knowledgeTests || [];
   const sw = (path, on) => `<span class="switch ${on ? 'on' : ''}" data-vp="${path}" role="switch" tabindex="0" aria-checked="${on}"><i></i></span>`;
   const order = (proc.order || ['result', 'tools', 'logic', 'sales', 'knowledge']).slice();
+  // Мотивация участвует в очерёдности наравне с тестами (по умолчанию — сразу под «Продуктивностью»)
+  if (!order.includes('motivation')) { const ri = order.indexOf('result'); order.splice(ri >= 0 ? ri + 1 : order.length, 0, 'motivation'); }
   // Стрелки очередности прямо в «Шагах процесса»
   const ordArrows = key => { const i = order.indexOf(key); if (i < 0) return '';
     return `<span class="vp-ord"><span class="vp-ordn">${i + 1}</span>
@@ -1087,13 +1095,16 @@ async function renderVacProcess(body, id) {
   const testBlock = key => {
     if (key === 'result') return stRow(TEST_ICON.result, 'res-result', rt('vp_st_result'), '', ordArrows('result') + sw('stages.result', st.result !== false), { off: st.result === false })
       + (st.result !== false ? aiRow('afterResult') : '')
-      + stRow(ICON_PHONE, '', rt('vp_st_references'), rt('vp_ref_hint'), sw('stages.references', st.references !== false), { off: st.references === false, style: 'background:#e4f6ec;color:#1f9d6b' });
+      + stRow(ICON_PHONE, '', rt('vp_st_references'), rt('vp_ref_hint'), sw('stages.references', st.references !== false), { off: st.references === false, style: 'background:#e4f6ec;color:#1f9d6b' })
+      + (st.references !== false ? aiRow('references') : '');
     if (key === 'tools') return stRow(TEST_ICON.tools, 'res-tools', rt('vp_st_tools'), '', ordArrows('tools') + sw('stages.tools', st.tools !== false), { off: st.tools === false })
       + (st.tools !== false ? aiRow('afterTools') : '');
     if (key === 'logic') return stRow(TEST_ICON.logic, 'res-logic', rt('vp_st_logic'), '', ordArrows('logic') + sw('optional.logic', !!op.logic), { off: !op.logic });
     if (key === 'sales') return stRow(TEST_ICON.sales, 'res-sales', rt('vp_st_sales'), '', ordArrows('sales') + sw('optional.sales', !!op.sales), { off: !op.sales });
     if (key === 'knowledge') return stRow(ICON_KNOWLEDGE, 'res-knowledge', rt('vp_st_knowledge'), '', ordArrows('knowledge') + sw('stages.knowledge', st.knowledge !== false), { off: st.knowledge === false })
       + (st.knowledge !== false ? knList : '');
+    if (key === 'motivation') return stRow(ICON_FLAME, '', rt('vp_st_motivation'), '', ordArrows('motivation') + sw('stages.motivation', st.motivation !== false), { off: st.motivation === false, style: 'background:#fff0e6;color:#d3641e' })
+      + (st.motivation !== false ? aiRow('motivation') : '');
     return '';
   };
   body.innerHTML = `
@@ -1110,8 +1121,6 @@ async function renderVacProcess(body, id) {
       <div class="vp-list">
         ${aiRow('first')}
         ${order.map(testBlock).join('')}
-        ${stRow(ICON_FLAME, '', rt('vp_st_motivation'), '', sw('stages.motivation', st.motivation !== false), { off: st.motivation === false, style: 'background:#fff0e6;color:#d3641e' })}
-        ${st.motivation !== false ? aiRow('motivation') : ''}
       </div></div>
     <div class="card" style="margin-top:14px"><div class="cfg-h">${rt('vp_crit_h')}</div>
       <p class="muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.5">${rt('vp_crit_hint')}</p>
@@ -1146,7 +1155,7 @@ async function renderVacProcess(body, id) {
   };
   // Очерёдность тестов: стрелки меняют порядок и сразу сохраняют
   const moveOrder = async (i, d) => {
-    const ord = (proc.order || ['result', 'tools', 'logic', 'sales', 'knowledge']).slice();
+    const ord = order.slice();   // тот же порядок, что отрисован (включая мотивацию)
     const j = i + d; if (j < 0 || j >= ord.length) return;
     [ord[i], ord[j]] = [ord[j], ord[i]];
     await api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify({ order: ord }) });
@@ -1607,6 +1616,21 @@ function renderWorkflow() {
 window.openWorkflow = openWorkflow;
 
 // ---------- Форма референсов (вопросы с подсказками методики; открывается из карточки кандидата) ----------
+// Поллинг ИИ-звонка референса: ждём завершения звонка Vapi, затем обновляем карточку (справка заполнится сама)
+const refAiPolls = {};
+function pollRefAiCall(pid, refIndex) {
+  const key = pid + ':' + refIndex;
+  if (refAiPolls[key]) clearInterval(refAiPolls[key]);
+  let tries = 0;
+  refAiPolls[key] = setInterval(async () => {
+    tries++;
+    try {
+      const d = await api('/api/participants/' + pid + '/references/ai-call/' + refIndex);
+      if (d.status === 'done') { clearInterval(refAiPolls[key]); delete refAiPolls[key]; toast(rt('refai_done')); if (modalPart && modalPart.id === pid) refreshCandidateCard(); }
+      else if (d.status === 'none' || tries > 90) { clearInterval(refAiPolls[key]); delete refAiPolls[key]; } // ~12 минут максимум
+    } catch (e) {}
+  }, 8000);
+}
 // refIndex — номер контакта руководителя из «Резалта»: своя форма справок на каждого
 async function openReferencesForm(pid, wf, onSaved, refIndex) {
   pid = pid || wfPid; wf = wf || wfData;
@@ -2168,7 +2192,7 @@ async function renderHome() {
       <button class="btn ghost sm ic-btn" id="export-csv">${_svg('<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>')}${t('export_csv')}</button>
     </div>
     <div class="table-wrap reveal d3"><table class="cand-table">
-      <thead><tr><th>${t('col_candidate')}</th>${visibleCols().map(c => `<th>${colTh(c)}</th>`).join('')}<th>${t('col_results')}</th><th class="col-cfg-th"><button id="col-cfg" title="Настройка столбцов" aria-label="Настройка столбцов">${_svg('<path d="M4 8h10M18 8h2M4 16h2M10 16h10" stroke-linecap="round"/><circle cx="16" cy="8" r="2.4"/><circle cx="8" cy="16" r="2.4"/>')}</button></th></tr></thead>
+      <thead><tr><th>${t('col_candidate')}</th>${visibleCols().map(c => `<th>${colTh(c)}</th>`).join('')}<th class="res-col">${t('col_results')}</th><th class="col-cfg-th"><button id="col-cfg" title="Настройка столбцов" aria-label="Настройка столбцов">${_svg('<path d="M4 8h10M18 8h2M4 16h2M10 16h10" stroke-linecap="round"/><circle cx="16" cy="8" r="2.4"/><circle cx="8" cy="16" r="2.4"/>')}</button></th></tr></thead>
       <tbody id="rows"></tbody>
     </table></div>`;
   $$('.chip[data-sec]').forEach(b => b.onclick = async () => { state.activeSection = b.dataset.sec; state.activeVac = 'all'; await loadVacancies(); renderHome(); });
@@ -2249,7 +2273,7 @@ function renderRows() {
     return `<tr data-pid="${p.id}"${sc ? ` style="box-shadow:inset 3px 0 0 ${sc}"` : ''}>
       <td><div class="cand"><button class="star-btn ${p.starred ? 'on' : ''}" data-star="${p.id}" title="Избранное" aria-label="Избранное">★</button><span class="avatar" style="background:${avColor(nm)}">${esc(initials(nm, p.email))}</span><b>${esc(nm)}</b></div></td>
       ${visibleCols().map(c => cellFor(c.key, p, ctx)).join('')}
-      <td>${icons || '<span class="muted">—</span>'}</td><td></td></tr>`;
+      <td class="res-col">${icons || '<span class="muted">—</span>'}</td><td></td></tr>`;
   }).join('');
   $('#rows').innerHTML = rows || `<tr><td colspan="${visibleCols().length + 3}" class="muted" style="text-align:center;padding:44px">${state.participants.length ? 'Ничего не найдено по фильтрам.' : 'Пока нет кандидатов. Отправьте первый тест выше ↑'}</td></tr>`;
   $$('#rows tr[data-pid]').forEach(tr => tr.onclick = e => { const st = e.target.closest('.star-btn'); if (st) return toggleStar(st.dataset.star, e); const ic = e.target.closest('.res-icon'); if (ic) openReport(ic.dataset.test); else openParticipant(tr.dataset.pid); });
@@ -2474,6 +2498,13 @@ function candidateStepsPanel(wf) {
       const refAttr = s.refIndex != null ? ` data-refidx="${s.refIndex}"` : '';
       act = s.done ? `<button class="btn ghost xs" data-cform="${s.kind}"${refAttr} title="✎">✎</button>`
         : `<button class="btn soft xs" data-cform="${s.kind}"${refAttr}>${rt('wf_conduct')}</button>`;
+      // ИИ-референс: кнопка звонка ИИ по контакту руководителя (телефон есть, тумблер включён, Vapi настроен)
+      if (s.kind === 'references' && s.aiCall && s.phone) {
+        const aiRef = s.aiStatus === 'calling'
+          ? `<span class="cstep-st sent" id="refai-${s.refIndex}"><span class="db-spin"></span> ${rt('refai_calling')}</span>`
+          : `<button class="btn soft xs" data-refaicall="${s.refIndex}" title="${rt('refai_hint')}">${AI_IC} ${rt('refai_btn')}</button>`;
+        act = aiRef + act;
+      }
     }
     // Кнопка ИИ-анализа: открывает модалку с полным разбором
     let aiBtn = '';
@@ -2511,7 +2542,8 @@ function candidateStepsPanel(wf) {
         rows.push(mkRow({ kind: 'references', key: 'references', refIndex: r.i, skipKey: 'references',
           title: s.title + ' · ' + nm2 + (r.contact.position ? ' (' + r.contact.position + ')' : '') + (r.contact.phone ? ' · ' + r.contact.phone : ''),
           done: r.done, passed: r.done ? r.tone !== 'low' : null,
-          analysis: r.verdict ? { verdict: r.verdict } : null }));
+          analysis: r.verdict ? { verdict: r.verdict } : null,
+          aiCall: s.aiCall, phone: r.phone, aiStatus: r.aiStatus }));
       });
     } else rows.push(mkRow(Object.assign({ skipKey: s.key }, s)));
     if (s.key === 'tools' && wf.optional) wf.optional.forEach(o => rows.push(mkRow(Object.assign({ skipKey: 'opt:' + o.key }, o))));
@@ -2564,6 +2596,17 @@ function wireCandidateSteps() {
   $$('[data-cform]').forEach(b => b.onclick = () => {
     if (b.dataset.cform === 'references') openReferencesForm(modalPart.id, modalWf, refreshCandidateCard, b.dataset.refidx !== undefined && b.dataset.refidx !== '' ? +b.dataset.refidx : null);
     else openMotivationForm(modalPart.id, modalWf, refreshCandidateCard);
+  });
+  // ИИ-референс: ИИ сам звонит руководителю и собирает справку
+  $$('[data-refaicall]').forEach(b => b.onclick = async () => {
+    const refIndex = +b.dataset.refaicall, pid = modalPart.id;
+    b.disabled = true;
+    try {
+      await api('/api/participants/' + pid + '/references/ai-call', { method: 'POST', body: JSON.stringify({ refIndex }) });
+      toast(rt('refai_started'));
+      await refreshCandidateCard();
+      pollRefAiCall(pid, refIndex);
+    } catch (e) { b.disabled = false; toast((e && e.message) || rt('refai_err')); }
   });
   // Итоговое решение; «Пригласить на собеседование» создаёт карточку собеседования
   $$('[data-cdec]').forEach(b => b.onclick = async () => {
@@ -2788,9 +2831,155 @@ function renderToolsReport(d) {
   const interp = `<h2 style="margin-top:28px">${t(`interp_h`)}</h2>` + interpGrid(r.order, r.points, CFG_TOOLS);
   const meta = `<div class="row" style="gap:14px;margin-top:22px"><div class="tag">${t(`ans_maybe`)} <b>${r.mAnswers}/200</b></div><div class="tag">${t(`tp_time`)} <b>${fmtDur(d.test.durationSec)}</b></div></div>`;
   $('#main').innerHTML = reportHeader(d, r.cheating ? '<span class="tag warn">Признаки читинга</span>' : '') +
+    decodeBarHtml(d.test.id, 'tools') +
     `<div class="card reveal d2">${aiBanner({ verdict: d.hint.verdict, notes: d.hint.notes }, r.cheating ? 'low' : 'good')}<h3 class="subh" style="margin:0 0 8px;font-family:Manrope;color:var(--indigo)">${t(`spectrum`)}</h3>${chart}${meta}${manics}${synd}${interp}${shareBlock(d.test)}</div>`;
-  wireShare(d.test); fillSpec();
+  wireShare(d.test); fillSpec(); initDecodeBar(d.test.id, 'tools');
 }
+
+// ============ AI-РАСШИФРОВКИ ТЕСТОВ (Claude) ============
+// Монохромные иконки (наследуют цвет кнопки) — без цветных эмодзи.
+const DBICO = {
+  full: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>',
+  manual: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M8 6h11M8 12h11M8 18h11"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>',
+  presentation: '<svg class="db-ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M9 21l3-4 3 4"/></svg>',
+  productivity: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20v-6M11 20V8M16 20v-9"/></svg>',
+  chat: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg>',
+  gear: '<svg class="db-ico" viewBox="0 0 24 24" style="opacity:1"><path d="M4 21v-6M4 11V3M12 21v-8M12 9V3M20 21v-4M20 13V3M1 15h6M9 9h6M17 17h6"/></svg>',
+  check: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
+  retry: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M23 4v6h-6M20.5 15A9 9 0 1 1 18.4 5.6L23 10"/></svg>',
+};
+const DECODE_KINDS_TOOLS = [
+  { kind: 'full', label: 'Полная расшифровка' },
+  { kind: 'manual', label: 'Инструкция по эксплуатации' },
+  { kind: 'presentation', label: 'Сценарий предоставления оценки' },
+];
+let decodeState = {}, decodePoll = null, decodeCtxCb = null, chatBusy = false;
+
+function decodeBarHtml(testId, type) {
+  return `<div class="decode-bar no-print reveal" id="decode-bar" data-test="${testId}" data-type="${type}">
+    <div class="db-inner"><span class="db-title">✦ AI-расшифровка</span>
+    <div class="db-btns" id="db-btns"><span class="db-load">загрузка…</span></div></div></div>`;
+}
+async function initDecodeBar(testId, type) {
+  try { const d = await api('/api/decode/' + testId + '?lang=' + LANG); decodeState = d; renderDecodeBtns(testId, d); if (hasPendingDecode(d)) startDecodePoll(testId); }
+  catch (e) { const el = $('#db-btns'); if (el) el.innerHTML = '<span class="db-load">—</span>'; }
+}
+function hasPendingDecode(d) { return Object.values(d.states || {}).some(s => s.status === 'pending'); }
+function renderDecodeBtns(testId, d) {
+  const el = $('#db-btns'); if (!el) return;
+  const list = d.type === 'tools' ? DECODE_KINDS_TOOLS : [{ kind: 'productivity', label: 'Анализ продуктивности' }];
+  let html = list.map(m => { const st = (d.states && d.states[m.kind]) || { status: 'none' }; return decodeBtn(testId, m, st.status); }).join('');
+  if (d.type === 'tools') html += `<button class="db-btn chat" onclick="openDecodeChat('${testId}')">${DBICO.chat} Уточнить${d.chatCount ? ` <span class="db-badge">${Math.ceil(d.chatCount / 2)}</span>` : ''}</button>`;
+  html += `<button class="db-ctx" title="Контекст вакансии (тип должности, обязанности)" onclick="openDecodeContext('${testId}')">${DBICO.gear}</button>`;
+  el.innerHTML = html;
+  if (!d.apiConfigured) el.insertAdjacentHTML('beforeend', '<span class="db-warn" title="Задайте ANTHROPIC_API_KEY на сервере">AI не настроен</span>');
+}
+function decodeBtn(testId, m, status) {
+  const L = esc(m.label), ic = DBICO[m.kind] || '';
+  if (status === 'pending') return `<button class="db-btn pending" disabled>${ic} ${L} <span class="db-spin"></span><i>генерируется…</i></button>`;
+  if (status === 'done') return `<button class="db-btn done" onclick="openDecodePage('${testId}','${m.kind}')" title="Открыть готовую расшифровку">${DBICO.check} ${L}</button>`;
+  if (status === 'error') return `<button class="db-btn error" onclick="startDecode('${testId}','${m.kind}',true)" title="Повторить генерацию">${DBICO.retry} ${L} — ошибка</button>`;
+  return `<button class="db-btn" onclick="onDecodeClick('${testId}','${m.kind}')">${ic} ${L}</button>`;
+}
+function openDecodePage(testId, kind) { window.open('/decode/' + testId + '/' + kind + '?lang=' + LANG, '_blank'); }
+function decodeContextComplete(ctx) {
+  ctx = ctx || {};
+  return !!ctx.roleType && !!(ctx.vacancy || '').trim() && !!(ctx.duties || '').trim();
+}
+function onDecodeClick(testId, kind) {
+  // Контекст вакансии обязателен: без него не шлём пустой запрос в ИИ.
+  if (!decodeContextComplete(decodeState.context)) {
+    toast('Заполните контекст вакансии — эти данные уходят в ИИ вместе с результатом теста.');
+    openDecodeContext(testId, () => startDecode(testId, kind));
+    return;
+  }
+  startDecode(testId, kind);
+}
+async function startDecode(testId, kind, regenerate) {
+  try {
+    const r = await api('/api/decode/' + testId + '/' + kind, { method: 'POST', body: JSON.stringify({ regenerate: !!regenerate, lang: LANG }) });
+    if (r.status === 'done' && !regenerate) { openDecodePage(testId, kind); await initDecodeBar(testId, decodeState.type); return; }
+    toast('Генерация запущена — займёт 1–3 минуты. Когда будет готово, придёт письмо, а кнопка станет зелёной.');
+    await initDecodeBar(testId, decodeState.type); startDecodePoll(testId);
+  } catch (e) { toast((e && e.message) || 'Ошибка запуска'); }
+}
+function startDecodePoll(testId) {
+  if (decodePoll) clearInterval(decodePoll);
+  decodePoll = setInterval(async () => {
+    if (!$('#decode-bar')) { clearInterval(decodePoll); decodePoll = null; return; }
+    try { const d = await api('/api/decode/' + testId + '?lang=' + LANG); decodeState = d; renderDecodeBtns(testId, d); if (!hasPendingDecode(d)) { clearInterval(decodePoll); decodePoll = null; } } catch (e) {}
+  }, 5000);
+}
+// ── Контекст вакансии ──
+function openDecodeContext(testId, onSaved) {
+  const ctx = decodeState.context || {};
+  const autofilled = !!((ctx.vacancy || '').trim() || (ctx.duties || '').trim());
+  mkDecodeModal(`<h3 class="db-h">Контекст вакансии</h3>
+    <p class="db-note">${autofilled ? 'Заполнено автоматически из заявки на найм — проверьте и при необходимости поправьте.' : 'Заявки/вакансии у кандидата нет — заполните вручную.'} Методика по-разному оценивает <b>руководящую</b> и <b>рядовую</b> должность; эти данные уходят в ИИ вместе с результатом теста.</p>
+    <label class="db-lb">Вакансия</label><input class="field" id="dc-vac" value="${esc(ctx.vacancy || '')}" placeholder="Например: Менеджер по продажам">
+    <label class="db-lb">Тип должности</label>
+    <select class="field" id="dc-role"><option value="">— не выбрано —</option>
+      <option value="lead" ${ctx.roleType === 'lead' ? 'selected' : ''}>Руководящая</option>
+      <option value="rank" ${ctx.roleType === 'rank' ? 'selected' : ''}>Рядовая</option></select>
+    <label class="db-lb">Основные обязанности</label>
+    <textarea class="field" id="dc-duties" style="min-height:96px" placeholder="Ключевые задачи и зона ответственности">${esc(ctx.duties || '')}</textarea>
+    <div class="db-err" id="dc-err"></div>
+    <div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">Отмена</button><button class="btn" onclick="saveDecodeContext('${testId}')">Сохранить</button></div>`);
+  decodeCtxCb = onSaved || null;
+}
+async function saveDecodeContext(testId) {
+  const vacName = ($('#dc-vac').value || '').trim(), roleType = $('#dc-role').value, duties = ($('#dc-duties').value || '').trim();
+  const err = $('#dc-err');
+  if (!vacName || !roleType || !duties) {
+    if (err) err.textContent = 'Заполните все поля: вакансия, тип должности и обязанности — иначе в ИИ уйдёт пустой контекст.';
+    return;
+  }
+  try {
+    await api('/api/decode/' + testId + '/context', { method: 'POST', body: JSON.stringify({ vacName, roleType, duties }) });
+    decodeState.context = Object.assign(decodeState.context || {}, { vacancy: vacName, roleType, duties });
+    closeDecodeModal(); toast('Контекст сохранён');
+    const cb = decodeCtxCb; decodeCtxCb = null; if (cb) cb();
+  } catch (e) { const e2 = $('#dc-err'); if (e2) e2.textContent = (e && e.message) || 'Ошибка сохранения'; }
+}
+// ── Чат «Уточнить» ──
+async function openDecodeChat(testId) {
+  mkDecodeModal(`<div class="db-chat"><h3 class="db-h">${DBICO.chat} Уточнить у ИИ по кандидату</h3>
+    <div class="dc-msgs" id="dc-msgs"><div class="db-load">Загрузка…</div></div>
+    <div class="dc-input"><textarea id="dc-q" class="field" placeholder="Ваш вопрос по этому кандидату… (Ctrl+Enter — отправить)" style="min-height:52px"></textarea>
+    <button class="btn" id="dc-send" onclick="sendDecodeChat('${testId}')">Спросить</button></div></div>`, true);
+  try { const d = await api('/api/decode/' + testId + '/chat'); renderChat(d.history || []); if (!d.apiConfigured) $('#dc-msgs').innerHTML = '<div class="db-warn">AI не настроен (ANTHROPIC_API_KEY)</div>'; }
+  catch (e) { const el = $('#dc-msgs'); if (el) el.innerHTML = '<div class="db-warn">Ошибка загрузки</div>'; }
+  const q = $('#dc-q'); if (q) { q.focus(); q.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendDecodeChat(testId); }); }
+}
+function renderChat(history) {
+  const el = $('#dc-msgs'); if (!el) return;
+  el.innerHTML = history.length ? history.map(m => `<div class="dc-msg ${m.role}"><div class="dc-bubble">${mdLite(m.content)}</div></div>`).join('')
+    : '<div class="muted" style="text-align:center;padding:26px 10px">Задайте любой вопрос по этому кандидату — ИИ уже знает результаты его теста и вакансию.</div>';
+  el.scrollTop = el.scrollHeight;
+}
+function mdLite(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`(.+?)`/g, '<code>$1</code>').replace(/\n/g, '<br>'); }
+async function sendDecodeChat(testId) {
+  if (chatBusy) return; const q = $('#dc-q'); const msg = ((q && q.value) || '').trim(); if (!msg) return;
+  chatBusy = true; const send = $('#dc-send'); if (send) { send.disabled = true; send.textContent = '…'; }
+  const el = $('#dc-msgs');
+  el.insertAdjacentHTML('beforeend', `<div class="dc-msg user"><div class="dc-bubble">${mdLite(msg)}</div></div><div class="dc-msg assistant" id="dc-wait"><div class="dc-bubble"><span class="db-spin"></span> думает…</div></div>`);
+  el.scrollTop = el.scrollHeight; q.value = '';
+  try {
+    const r = await api('/api/decode/' + testId + '/chat', { method: 'POST', body: JSON.stringify({ message: msg, lang: LANG }) });
+    const w = $('#dc-wait'); if (w) w.outerHTML = `<div class="dc-msg assistant"><div class="dc-bubble">${mdLite(r.answer || '')}</div></div>`;
+  } catch (e) { const w = $('#dc-wait'); if (w) w.outerHTML = `<div class="dc-msg assistant"><div class="dc-bubble db-warn">${esc((e && e.message) || 'Ошибка')}</div></div>`; }
+  const el2 = $('#dc-msgs'); if (el2) el2.scrollTop = el2.scrollHeight;
+  chatBusy = false; if (send) { send.disabled = false; send.textContent = 'Спросить'; }
+}
+// ── Модалка ──
+function mkDecodeModal(inner, wide) {
+  closeDecodeModal();
+  const ov = document.createElement('div'); ov.className = 'db-modal-ov'; ov.id = 'db-modal-ov';
+  ov.innerHTML = `<div class="db-modal${wide ? ' wide' : ''}"><button class="db-close" onclick="closeDecodeModal()" aria-label="Закрыть">✕</button>${inner}</div>`;
+  ov.addEventListener('click', e => { if (e.target === ov) closeDecodeModal(); });
+  document.body.appendChild(ov); return ov;
+}
+function closeDecodeModal() { const ov = $('#db-modal-ov'); if (ov) ov.remove(); }
 
 function renderSalesReport(d) {
   const r = d.result;
@@ -2803,10 +2992,10 @@ function renderSalesReport(d) {
 
 function renderResultReport(d) {
   const cards = d.result.items.map(it => `<div class="q-card"><div class="q-top"><b>${t(`lr_question`)} ${it.id}</b><span>${fmtDur(it.timeSec)}</span></div><div>${esc(it.text)}</div><div class="q-ans"><b>${t(`lr_answer`)}</b> ${esc(it.answer) || '<span class="muted">—</span>'}</div><div class="rate-stars" data-qid="${it.id}" style="margin-top:10px">${[1, 2, 3, 4, 5].map(n => `<span data-n="${n}" class="${n <= it.stars ? 'on' : ''}">★</span>`).join('')}</div></div>`).join('');
-  $('#main').innerHTML = reportHeader(d) + `<div class="card reveal d2">${aiBanner(d.hint, d.hint.tone)}<div class="q-grid">${cards}</div>
+  $('#main').innerHTML = reportHeader(d) + decodeBarHtml(d.test.id, 'result') + `<div class="card reveal d2">${aiBanner(d.hint, d.hint.tone)}<div class="q-grid">${cards}</div>
     <div class="row" style="gap:14px;margin-top:20px"><div class="tag">${t(`tp_time`)} <b>${fmtDur(d.test.durationSec)}</b></div></div>${candidateActions(d.participant && d.participant.id)}${shareBlock(d.test)}</div>`;
   $$('.rate-stars').forEach(rs => rs.querySelectorAll('span').forEach(sp => sp.onclick = async () => { const qid = rs.dataset.qid, n = +sp.dataset.n; rs.querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.n <= n)); await api('/api/tests/' + d.test.id + '/rate', { method: 'POST', body: JSON.stringify({ questionId: qid, stars: n }) }); }));
-  wireShare(d.test);
+  wireShare(d.test); initDecodeBar(d.test.id, 'result');
 }
 function renderLogicReport(d) {
   const r = d.result, iq = r.iq != null ? r.iq : r.percent, scaleMin = 60, scaleMax = 160;

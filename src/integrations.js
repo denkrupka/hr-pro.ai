@@ -192,12 +192,21 @@ async function listVoices(settings) {
 
 // ---------- Vapi.ai: ИИ-звонок ----------
 // task — текст задания ассистенту (пригласить на анкету/тест, навести справки и т.п.)
-async function startCall(settings, { to, task, firstMessage, language }) {
+// Опц.: structuredDataSchema + summaryPrompt — для сбора структурированного результата (референсы).
+async function startCall(settings, { to, task, firstMessage, language, structuredDataSchema, summaryPrompt }) {
   const c = cfgOf(settings, 'vapi');
   if (!c.apiKey) return { skipped: true, reason: 'Vapi не настроен' };
   if (!c.phoneNumberId) throw new Error('Vapi: не указан Phone Number ID (импортируйте номер Zadarma в Vapi)');
   const el = cfgOf(settings, 'elevenlabs');
   const body = { phoneNumberId: c.phoneNumberId, customer: { number: String(to) } };
+  // План разбора звонка: краткое резюме + извлечение структурированных ответов (референсы).
+  const analysisPlan = {};
+  if (summaryPrompt) analysisPlan.summaryPlan = { messages: [{ role: 'system', content: summaryPrompt }] };
+  if (structuredDataSchema) analysisPlan.structuredDataPlan = {
+    enabled: true,
+    schema: structuredDataSchema,
+    messages: [{ role: 'system', content: 'Извлеки из расшифровки звонка ответы на вопросы референса строго по JSON-схеме. Если на вопрос не ответили — оставь поле пустым.' }],
+  };
   if (c.assistantId) {
     body.assistantId = c.assistantId;
     if (task) body.assistantOverrides = { variableValues: { task } };
@@ -209,12 +218,24 @@ async function startCall(settings, { to, task, firstMessage, language }) {
       transcriber: { provider: 'deepgram', model: 'nova-2', language: language || 'ru' },
     };
     if (el.apiKey && el.voiceId) body.assistant.voice = { provider: '11labs', voiceId: el.voiceId };
+    if (Object.keys(analysisPlan).length) body.assistant.analysisPlan = analysisPlan;
   }
   const d = await http('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + c.apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   return { ok: true, callId: d && d.id, status: d && d.status };
+}
+// Забрать состояние/результат звонка по id (для сбора референсов после завершения).
+async function getCall(settings, callId) {
+  const c = cfgOf(settings, 'vapi');
+  if (!c.apiKey) return { skipped: true, reason: 'Vapi не настроен' };
+  const d = await http('https://api.vapi.ai/call/' + encodeURIComponent(callId), { headers: { Authorization: 'Bearer ' + c.apiKey } });
+  const a = (d && d.analysis) || {};
+  return {
+    ok: true, id: d && d.id, status: d && d.status, endedReason: d && d.endedReason,
+    transcript: d && d.transcript, summary: a.summary || null, structuredData: a.structuredData || null,
+  };
 }
 async function vapiPing(settings) {
   const c = cfgOf(settings, 'vapi');
@@ -244,4 +265,4 @@ async function zadarmaBalance(settings) {
   return { ok: true, balance: d.balance, currency: d.currency };
 }
 
-module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, vapiPing, zadarmaBalance, zadarmaRequest };
+module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, vapiPing, zadarmaBalance, zadarmaRequest };

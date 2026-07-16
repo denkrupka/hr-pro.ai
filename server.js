@@ -13,6 +13,9 @@ const recruit = require('./src/recruitment');
 const air = require('./src/ai-recruit');
 const learn = require('./src/learning');
 const integ = require('./src/integrations');
+const aiDecodeRoutes = require('./src/ai-decode-routes');
+const refai = require('./src/references-ai');
+const aiCallPrompts = require('./src/ai-call-prompts');
 const { localizeResult } = require('./src/i18n-content');
 const RES_LANGS = ['ru', 'pl', 'en'];
 const pickLang = req => { const l = (req.query && req.query.lang) || ''; return RES_LANGS.includes(l) ? l : 'ru'; };
@@ -679,14 +682,16 @@ function aiCallFor(owner, p, vac, kind) {
   try {
     const proc = processOf(vac);
     if (!proc.aiCalls[kind] || !p.tel) return;
+    const lang = vac.lang || 'ru';
     const nm = ((p.name || '') + ' ' + (p.surname || '')).trim() || 'кандидат';
-    const TASKS = {
-      first: `Первый контакт с кандидатом по имени ${nm} на вакансию «${vac.name}». Поприветствуй, коротко расскажи о вакансии, уточни, интересна ли она, и предупреди, что придёт ссылка на первый тест.`,
-      afterResult: `Кандидат ${nm} прошёл тест продуктивности по вакансии «${vac.name}». Поблагодари за прохождение, скажи, что отбор продолжается, и сообщи о следующем шаге.`,
-      afterTools: `Кандидат ${nm} прошёл тест личности по вакансии «${vac.name}». Поблагодари и сообщи, что дальше будет разговор о мотивации и проверка знаний.`,
-      motivation: `Оцени мотивацию кандидата ${nm} на вакансию «${vac.name}». Спроси: что для него важно при выборе новой работы; почему откликнулся; было ли в прошлом что-то, что он делал не только ради денег. Слушай, о чём говорит кандидат — о деле, продукте и клиентах или только о деньгах и выгоде — и зафиксируй вывод.`,
-    };
-    integ.startCall(owner.settings, { to: p.tel, task: TASKS[kind], language: (vac.lang || 'ru') })
+    // Официальные промты HR-PRO.AI (по типу звонка). Агент только собирает ответы и уточняет.
+    const task = aiCallPrompts.candidatePrompt(kind, {
+      candidate: nm, position: vac.name, company: owner.company || '', language: lang,
+      recruiter: [owner.name, owner.surname].filter(Boolean).join(' '),
+      company_mission: (vac.mission || (owner.settings && owner.settings.companyMission) || ''),
+    });
+    const first = aiCallPrompts.firstMessage('candidate', lang === 'de' ? 'en' : lang, { candidate: nm, company: owner.company || '' });
+    integ.startCall(owner.settings, { to: p.tel, task, firstMessage: first, language: lang })
       .then(r => { if (r && r.skipped) return; console.log('[vapi:auto]', kind, p.id); })
       .catch(e => console.error('[vapi:auto]', kind, e.message));
   } catch (e) { console.error('[vapi:auto]', e.message); }
@@ -1355,6 +1360,12 @@ app.post('/api/tests/:id/share', requireAuth, (req, res) => {
   res.json({ publicShare: test.publicShare, url: `${BASE_URL}/r/${test.id}` });
 });
 
+// ---------- AI-РАСШИФРОВКИ ТЕСТОВ (Claude, prompt caching) ----------
+aiDecodeRoutes.register(app, {
+  db, save, nowISO, requireAuth, integ, computeResult,
+  resultHint: ai.resultHint, getBaseUrl: () => BASE_URL,
+});
+
 // ---------- CANDIDATE (public, by code) ----------
 function findByCode(code) { return db().tests.find(t => t.code === code); }
 // Публичные ссылки заблокированного клиента (тесты/анкеты/отчёты) недоступны
@@ -1721,10 +1732,10 @@ function knowledgeTestsOf(v) {
 function processOf(v) {
   const def = { auto: false,
     linkDays: 3, // срок жизни ссылки на тест — настраивается на каждую вакансию
-    order: ['result', 'tools', 'logic', 'sales', 'knowledge'], // очерёдность тестов процесса
+    order: ['result', 'motivation', 'tools', 'logic', 'sales', 'knowledge'], // очерёдность шагов процесса (мотивация — под продуктивностью)
     stages: { result: true, references: true, tools: true, motivation: true, knowledge: true },
     optional: { logic: false, sales: false },
-    aiCalls: { first: false, afterResult: false, afterTools: false, motivation: false },
+    aiCalls: { first: false, afterResult: false, afterTools: false, motivation: false, references: false },
     // Критерии отбора: критичный этап не пройден → кандидат дальше не идёт.
     // Продуктивность, качества и референсы не изменить; мотивацию можно поднять, знаниям — обучить
     critical: { result: true, references: true, tools: true, motivation: false, knowledge: false } };
@@ -1759,7 +1770,7 @@ app.put('/api/vacancies/:id/process', requireAuth, (req, res) => {
   if (b.target === 'performer' || b.target === 'executor') proc.target = b.target;
   if (b.linkDays !== undefined) proc.linkDays = Math.max(1, Math.min(365, parseInt(b.linkDays, 10) || 3));
   if (Array.isArray(b.order)) {
-    const def = ['result', 'tools', 'logic', 'sales', 'knowledge'];
+    const def = ['result', 'motivation', 'tools', 'logic', 'sales', 'knowledge'];
     const clean = b.order.filter(k => def.includes(k));
     if (clean.length === def.length && new Set(clean).size === def.length) proc.order = clean;
   }
@@ -1929,14 +1940,78 @@ app.post('/api/participants/:id/references', requireAuth, (req, res) => {
   p.workflow.references = p.workflow.references || {};
   const idx = req.body && req.body.refIndex;
   if (idx != null && idx !== '') {
-    // Референс по конкретному контакту руководителя (несколько форм)
+    // Референс по конкретному контакту руководителя (несколько форм). Сохраняем aiCall, если был ИИ-звонок.
     p.workflow.references.multi = p.workflow.references.multi || {};
-    p.workflow.references.multi[idx] = { answers: (req.body && req.body.answers) || {}, at: nowISO() };
+    const prev = p.workflow.references.multi[idx] || {};
+    p.workflow.references.multi[idx] = Object.assign({}, prev, { answers: (req.body && req.body.answers) || {}, at: nowISO() });
   } else {
     p.workflow.references.answers = (req.body && req.body.answers) || {};
     p.workflow.references.at = nowISO();
   }
   save(); res.json({ ok: true, references: p.workflow.references });
+});
+
+// ---------- ИИ-РЕФЕРЕНСЫ: ИИ сам звонит руководителю из «Резалта» и собирает справку ----------
+// Контакты руководителей — из ответа на вопрос 13 пройденного «Резалта».
+function refContactsOf(p) {
+  const data = db();
+  const tests = data.tests.filter(t => t.participantId === p.id);
+  const doneResult = tests.filter(x => x.type === 'result' && x.status === 'done')
+    .sort((a, b) => (b.sentAt || '').localeCompare(a.sentAt || ''))[0];
+  const raw = doneResult && doneResult.answers && (doneResult.answers['13'] != null ? doneResult.answers['13'] : doneResult.answers[13]);
+  return Array.isArray(raw) ? raw.filter(c => c && (c.name || c.surname || c.phone)) : [];
+}
+app.post('/api/participants/:id/references/ai-call', requireAuth, async (req, res) => {
+  const data = db();
+  const p = data.participants.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!p) return res.status(404).json({ error: 'Не найдено' });
+  const refIndex = req.body && req.body.refIndex;
+  if (refIndex == null || refIndex === '') return res.status(400).json({ error: 'Не указан контакт руководителя' });
+  const contact = refContactsOf(p)[refIndex];
+  if (!contact) return res.status(400).json({ error: 'Контакт руководителя не найден в ответах «Резалта»' });
+  if (!contact.phone) return res.status(400).json({ error: 'У контакта руководителя не указан телефон' });
+  if (!integ.isConfigured(req.user.settings, 'vapi')) return res.status(503).json({ error: 'ИИ-звонки не настроены (Vapi)' });
+  const vac = data.vacancies.find(v => v.id === p.vacancyId && v.userId === p.userId);
+  const lang = (vac && vac.lang) || 'ru';
+  const iv = refai.buildRefInterview({
+    candidateName: ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат',
+    vacancyName: vac && vac.name, contact, lang,
+    company: req.user.company || '', recruiter: [req.user.name, req.user.surname].filter(Boolean).join(' '),
+  });
+  try {
+    const r = await integ.startCall(req.user.settings, {
+      to: contact.phone, task: iv.systemPrompt, firstMessage: iv.firstMessage, language: lang,
+      structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt,
+    });
+    if (r.skipped) return res.status(503).json({ error: r.reason || 'ИИ-звонки не настроены' });
+    p.workflow = p.workflow || {}; p.workflow.references = p.workflow.references || {}; p.workflow.references.multi = p.workflow.references.multi || {};
+    const cur = p.workflow.references.multi[refIndex] || {};
+    cur.aiCall = { callId: r.callId, status: 'calling', startedAt: nowISO() };
+    p.workflow.references.multi[refIndex] = cur;
+    save();
+    res.json({ status: 'calling', callId: r.callId });
+  } catch (e) { res.status(502).json({ error: 'Vapi: ' + (e.message || 'ошибка звонка') }); }
+});
+app.get('/api/participants/:id/references/ai-call/:refIndex', requireAuth, async (req, res) => {
+  const p = db().participants.find(x => x.id === req.params.id && x.userId === req.user.id);
+  if (!p) return res.status(404).json({ error: 'Не найдено' });
+  const refIndex = req.params.refIndex;
+  const cur = p.workflow && p.workflow.references && p.workflow.references.multi && p.workflow.references.multi[refIndex];
+  const ai = cur && cur.aiCall;
+  if (!ai || !ai.callId) return res.json({ status: 'none' });
+  if (ai.status === 'done') return res.json({ status: 'done', summary: ai.summary || '', filled: cur.answers ? Object.keys(cur.answers).length : 0 });
+  try {
+    const call = await integ.getCall(req.user.settings, ai.callId);
+    if (call.skipped) return res.json({ status: ai.status || 'calling' });
+    const ended = call.status === 'ended' || !!call.endedReason;
+    if (!ended) return res.json({ status: 'calling', vapiStatus: call.status });
+    const parsed = refai.parseCall(call);            // structuredData → answers, + summary/transcript
+    cur.answers = Object.assign({}, cur.answers || {}, parsed.answers);
+    cur.at = nowISO();
+    cur.aiCall = Object.assign({}, ai, { status: 'done', summary: parsed.summary, transcript: parsed.transcript, doneAt: nowISO(), endedReason: call.endedReason });
+    save();
+    res.json({ status: 'done', summary: parsed.summary || '', filled: parsed.filled });
+  } catch (e) { res.json({ status: ai.status || 'calling', error: e.message }); }
 });
 // ---------- Собеседования (несколько карточек на кандидата) ----------
 app.post('/api/participants/:id/interviews', requireAuth, (req, res) => {
@@ -1989,6 +2064,9 @@ function buildWorkflow(p, lang) {
   const data = db();
   const vac = data.vacancies.find(v => v.id === p.vacancyId);
   const proc = vac ? processOf(vac) : null;
+  const owner = data.users.find(u => u.id === p.userId);
+  // ИИ-референсы доступны, если тумблер включён и настроен Vapi
+  const refsAi = !!(proc && proc.aiCalls && proc.aiCalls.references) && !!(owner && integ.isConfigured(owner.settings, 'vapi'));
   // Этапы методики минус выключенные в настройках процесса вакансии
   const cfgStages = recruit.STAGE_KEYS.filter(k => !proc || proc.stages[k] !== false);
   const wf = p.workflow || {};
@@ -2051,11 +2129,15 @@ function buildWorkflow(p, lang) {
       const raw = doneResult && doneResult.answers && (doneResult.answers['13'] != null ? doneResult.answers['13'] : doneResult.answers[13]);
       if (Array.isArray(raw)) contacts = raw.filter(c => c && (c.name || c.surname || c.phone));
       const multi = rf.multi || {};
+      st.aiCall = refsAi;   // можно ли собирать референсы ИИ-звонком
       if (contacts.length) {
         st.refs = contacts.map((c, i) => {
-          const filled = !!(multi[i] && multi[i].answers && Object.keys(multi[i].answers).length);
-          const r = { i, contact: c, done: filled };
-          if (filled) { const an = air.referencesAnalysis(multi[i].answers, lang); r.verdict = an.verdict; r.tone = an.tone; }
+          const m = multi[i] || {};
+          const aiDone = !!(m.aiCall && m.aiCall.status === 'done');
+          const filled = !!(m.answers && Object.keys(m.answers).length);
+          const r = { i, contact: c, done: filled || aiDone, phone: c.phone || '', aiStatus: (m.aiCall && m.aiCall.status) || null };
+          if (aiDone) { r.verdict = (m.aiCall.summary || 'Референс собран ИИ').slice(0, 200); r.tone = 'good'; r.aiSummary = m.aiCall.summary || ''; }
+          else if (filled) { const an = air.referencesAnalysis(m.answers, lang); r.verdict = an.verdict; r.tone = an.tone; }
           return r;
         });
         st.done = st.refs.every(r => r.done);
@@ -2127,10 +2209,11 @@ app.get('/api/candidates', requireAuth, (req, res) => {
     const wf = buildWorkflow(p, lang);
     const vac = data.vacancies.find(v => v.id === p.vacancyId);
     const nm = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email;
+    const doneTests = data.tests.filter(t => t.participantId === p.id && t.status === 'done');
     return { id: p.id, name: nm, email: p.email, tel: p.tel || '', city: p.city || '',
       vacancyId: p.vacancyId || null, vacancyName: vac ? vac.name : '', column: wf.column,
       columnTitle: kanbanColTitle(wf.column, lang), decision: wf.decision, createdAt: p.createdAt,
-      testsDone: data.tests.filter(t => t.participantId === p.id && t.status === 'done').length, cv: p.cv || null };
+      testsDone: doneTests.length, tests: doneTests.map(t => ({ id: t.id, type: t.type })), cv: p.cv || null };
   });
   res.json({ candidates: list });
 });

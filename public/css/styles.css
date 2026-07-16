@@ -247,10 +247,12 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
   color:#fff;flex:0 0 36px}
 .cand{display:flex;align-items:center;gap:11px}
 .cand b{font-weight:650}
-.res-icon{width:34px;height:34px;border-radius:10px;display:inline-grid;place-items:center;font-size:16px;margin-right:5px;
+.res-icon{width:30px;height:30px;border-radius:9px;display:inline-grid;place-items:center;font-size:15px;margin-right:4px;
   transition:transform var(--d1)}
 .res-icon:hover{transform:scale(1.12)}
-.res-icon svg{width:19px;height:19px}
+.res-icon svg{width:17px;height:17px}
+/* колонка «Результаты» — вмещает все иконки тестов (до 5–6) без обрезки «...» */
+.cand-table th.res-col,.cand-table td.res-col{width:210px;overflow:visible;text-overflow:clip;white-space:nowrap}
 .res-tools{background:#eef3fd;color:#2a4fa0} .res-result{background:#e7f6ef;color:#1f7a54} .res-logic{background:#efeaff;color:#5847b5} .res-sales{background:#fff0ec;color:#c0472f}
 .stars{color:#ffb020;letter-spacing:2px;font-size:14px}
 .stars .off{color:var(--line-2)}
@@ -1603,3 +1605,63 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .kn-mx{position:absolute;top:4px;right:4px;width:22px;height:22px;border:none;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;font-size:15px;line-height:1}
 .kn-up{cursor:pointer}
 .kn-up input{display:none}
+
+/* ============ AI-РАСШИФРОВКИ ТЕСТОВ ============ */
+.decode-bar{margin:14px 0 4px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-lg);
+  background:linear-gradient(120deg,var(--brand-soft),var(--surface));box-shadow:var(--sh)}
+.db-inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.db-title{font-family:Manrope,sans-serif;font-weight:800;font-size:13px;letter-spacing:.02em;color:var(--brand);flex:none}
+.db-btns{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.db-btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+  padding:9px 15px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);transition:.15s}
+.db-btn:hover{border-color:var(--brand);transform:translateY(-1px)}
+.db-btn.chat{background:var(--brand);border-color:transparent;color:#fff}
+.db-btn.done{background:rgba(31,157,107,.12);border-color:rgba(31,157,107,.5);color:var(--good);font-weight:700}
+.db-btn.done:hover{background:rgba(31,157,107,.2)}
+.db-btn.pending{background:var(--surface-2);color:var(--muted);cursor:default}
+.db-btn.pending:hover{transform:none;border-color:var(--line)}
+.db-btn.pending i{font-style:normal;font-size:12px;color:var(--muted)}
+.db-btn.error{background:rgba(224,85,59,.1);border-color:rgba(224,85,59,.45);color:var(--bad)}
+.db-badge{background:rgba(255,255,255,.28);border-radius:999px;padding:0 7px;font-size:11px;font-weight:700}
+.db-ctx{cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:10px;
+  width:34px;height:34px;font-size:15px;display:inline-flex;align-items:center;justify-content:center}
+.db-ctx:hover{border-color:var(--brand);color:var(--brand)}
+.db-load{color:var(--muted);font-size:13px}
+.db-warn{color:var(--warn);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;padding:0 6px}
+.db-spin{width:13px;height:13px;border-radius:50%;border:2px solid var(--line-2);border-top-color:var(--brand);
+  display:inline-block;animation:dbspin .7s linear infinite;vertical-align:middle}
+@keyframes dbspin{to{transform:rotate(360deg)}}
+/* иконки на кнопках расшифровок — монохромные, наследуют цвет кнопки */
+.db-ico{width:15px;height:15px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+/* модалка расшифровок — самодостаточная тёмная тема (НЕ зависит от темы портала, фон НЕПРОЗРАЧНЫЙ) */
+.db-modal-ov{position:fixed;inset:0;background:rgba(4,6,15,.74);backdrop-filter:blur(4px);z-index:1200;
+  display:flex;align-items:center;justify-content:center;padding:20px;animation:dbfade .2s ease}
+@keyframes dbfade{from{opacity:0}to{opacity:1}}
+.db-modal{position:relative;background:#0d1024;border:1px solid rgba(255,255,255,.1);border-radius:18px;color:#c3cbe4;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);width:100%;max-width:460px;padding:26px 26px 22px;max-height:88vh;overflow:auto}
+.db-modal.wide{max-width:640px;display:flex;flex-direction:column;height:80vh}
+.db-close{position:absolute;top:12px;right:12px;border:none;background:rgba(255,255,255,.06);width:30px;height:30px;border-radius:9px;
+  cursor:pointer;color:#8b93ad;font-size:14px}
+.db-close:hover{color:#fff;background:rgba(255,255,255,.12)}
+.db-h{font-family:Manrope,sans-serif;margin:0 0 8px;color:#fff;font-size:19px}
+.db-note{font-size:13px;color:#8b93ad;margin:0 0 16px}
+.db-lb{display:block;margin:14px 0 6px;font-weight:600;font-size:13px;color:#dbe0f0}
+.db-modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+/* поля внутри модалки — тоже тёмные и читаемые, независимо от темы портала */
+.db-modal .field{background:#141c30;border:1px solid rgba(255,255,255,.14);color:#eaf0fb;border-radius:10px}
+.db-modal .field::placeholder{color:#6b7492}
+.db-modal .field:focus{border-color:#8b6cff;outline:none}
+.db-modal select.field option{background:#141c30;color:#eaf0fb}
+.db-err{color:#ff8a8a;font-size:12.5px;margin-top:10px;min-height:1px}
+/* чат */
+.db-chat{display:flex;flex-direction:column;flex:1;min-height:0}
+.dc-msgs{flex:1;overflow:auto;margin:10px -4px 12px;padding:6px 4px;display:flex;flex-direction:column;gap:10px}
+.dc-msg{display:flex}
+.dc-msg.user{justify-content:flex-end}
+.dc-bubble{max-width:82%;padding:11px 14px;border-radius:14px;font-size:13.8px;line-height:1.55}
+.dc-msg.user .dc-bubble{background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff;border-bottom-right-radius:4px}
+.dc-msg.assistant .dc-bubble{background:#182142;border:1px solid rgba(255,255,255,.1);color:#e8ecf6;border-bottom-left-radius:4px}
+.dc-msg.assistant .dc-bubble b{color:#fff}
+.dc-input{display:flex;gap:10px;align-items:flex-end}
+.dc-input textarea{flex:1;resize:vertical}
+@media print{.decode-bar{display:none!important}}

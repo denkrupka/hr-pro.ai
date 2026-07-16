@@ -8,6 +8,9 @@ integrations.config.json
 data/db.json
 data/db.json.tmp
 
+# сгенерированные AI-расшифровки тестов (рантайм-артефакты, привязаны к кандидатам)
+data/decodes/
+
 # загруженные пользователями файлы (переезжают в Supabase/R2 Storage)
 public/uploads/
 
