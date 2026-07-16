@@ -9,6 +9,8 @@
 // Контент разделов/квиза сейчас на русском; заголовки и описания — ru/pl/en. Полная локализация
 // длинных материалов — отдельная контент-задача (L() делает фолбэк на ru).
 
+let CONTENT = {};
+try { CONTENT = require('./learning-content'); } catch (_) { CONTENT = {}; }
 function tri(ru, pl, en) { return { ru, pl: pl || ru, en: en || ru }; }
 function L(o, lang) { return (o && (o[lang] || o.ru)) || ''; }
 
@@ -117,6 +119,16 @@ const PROGRAMS = [
   },
 ];
 
+// Подмешиваем реальный контент программ (html разделов, трейлеры, квизы) из learning-content.js,
+// оставляя цену/порядок/название из PROGRAMS. Так контент удобно дополнять языками и программами.
+for (const p of PROGRAMS) {
+  const c = CONTENT[p.id];
+  if (!c) continue;
+  if (c.trailer) p.trailer = c.trailer;
+  if (c.sections) p.sections = c.sections;
+  if (c.quiz) p.quiz = c.quiz;
+}
+
 function progOf(id) { return PROGRAMS.find(p => p.id === id) || null; }
 function sortedPrograms() { return PROGRAMS.slice().sort((a, b) => a.order - b.order); }
 
@@ -173,12 +185,18 @@ function detailView(user, id, lang) {
     purchased: pr.purchased, completed: pr.completed, quizPassed: pr.quizPassed,
     unlocked: unlocked(user, p),
     done: pr.done, total: pr.total, pct: pr.pct, allSectionsDone: pr.allSectionsDone,
-    sections: p.sections.map(s => ({
-      id: s.id, title: L(s.title, lang), desc: L(s.desc, lang),
-      html: pr.purchased ? L(s.html, lang) : '',
-      done: pr.sectionsDone.includes(s.id),
-      bookmark: (pr.st && pr.st.bookmarks && pr.st.bookmarks[s.id]) || 0,
-    })),
+    sections: p.sections.map((s, i) => {
+      // Последовательность: раздел открыт, только когда все предыдущие пройдены.
+      const secUnlocked = i === 0 || p.sections.slice(0, i).every(x => pr.sectionsDone.includes(x.id));
+      const hasBm = !!(pr.st && pr.st.bookmarks && Object.prototype.hasOwnProperty.call(pr.st.bookmarks, s.id));
+      return {
+        id: s.id, title: L(s.title, lang), desc: L(s.desc, lang),
+        html: (pr.purchased && secUnlocked) ? L(s.html, lang) : '',
+        done: pr.sectionsDone.includes(s.id),
+        unlocked: secUnlocked,
+        bookmark: hasBm ? pr.st.bookmarks[s.id] : null,
+      };
+    }),
     quiz: {
       passScore: p.quiz.passScore, count: p.quiz.questions.length,
       questions: pr.purchased ? p.quiz.questions.map((q, i) => ({ id: i, q: L(q.q, lang), opts: q.opts.map(o => L(o, lang)) })) : [],

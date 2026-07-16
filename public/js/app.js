@@ -51,7 +51,7 @@ const I18N = {
     lp_close: 'Закрыть', lp_protected: 'Материал защищён авторским правом. Копирование, скачивание и распространение запрещены.', lp_hidden: 'Контент скрыт', lp_copy_blocked: 'Копирование запрещено — материал защищён', lp_read_to_end: 'Дочитайте до конца', lp_reading: 'Прочитано',
     lp_trailer: 'Трейлер', lp_trailer_locked: 'Трейлер откроется после покупки предыдущей программы', lp_trailer_soon: 'Трейлер скоро появится', lp_buy_title: 'Покупка программы', lp_buy_after: 'Останется после покупки', lp_buy_btn: 'Купить за {n} тестов', lp_cancel: 'Отмена',
     lp_material: 'Материал обучения', lp_module: 'Модуль', lp_min_read: 'мин чтения', lp_passed_title: 'Материал пройден', lp_passed_sub: 'Прогресс сохранён в вашей программе обучения', lp_mark_passed: 'Отметить как пройдено',
-    lp_bookmark: 'Закладка', lp_bookmark_on: 'Закладка стоит', lp_bookmark_set: 'Закладка поставлена', lp_bookmark_removed: 'Закладка снята', lp_bookmark_resumed: 'Открыто с закладки', lp_bm_q_title: 'Поставить закладку?', lp_bm_q_text: 'Сохраним место, на котором вы остановились, чтобы в следующий раз открыть материал с этого места.', lp_bm_set_btn: 'Поставить закладку', lp_bm_exit: 'Выйти без закладки',
+    lp_quiz_intro: 'Проверочный тест по программе. Откроется в отдельном окне.', lp_quiz_start: 'Пройти тест', lp_questions: 'вопросов', lp_sec_locked: 'Сначала пройдите предыдущий раздел', lp_bookmark: 'Закладка', lp_bookmark_on: 'Закладка стоит', lp_bookmark_set: 'Закладка поставлена', lp_bookmark_removed: 'Закладка снята', lp_bookmark_resumed: 'Открыто с закладки', lp_bm_q_title: 'Поставить закладку?', lp_bm_q_text: 'Сохраним место, на котором вы остановились, чтобы в следующий раз открыть материал с этого места.', lp_bm_set_btn: 'Поставить закладку', lp_bm_exit: 'Выйти без закладки',
     tab_info: 'Общая информация', tab_rules: 'Правила', tab_spec: 'Спецификация', tab_video: 'Видео',
     stub_dev: 'Раздел в разработке', stub_soon: 'Наполнение появится позже.',
     dash_overview: 'Обзор', dash_title: 'Панель приборов', balance: 'Баланс',
@@ -107,7 +107,7 @@ const I18N = {
     lp_close: 'Zamknij', lp_protected: 'Materiał chroniony prawem autorskim. Kopiowanie, pobieranie i rozpowszechnianie zabronione.', lp_hidden: 'Treść ukryta', lp_copy_blocked: 'Kopiowanie zabronione — materiał chroniony', lp_read_to_end: 'Doczytaj do końca', lp_reading: 'Przeczytano',
     lp_trailer: 'Zwiastun', lp_trailer_locked: 'Zwiastun odblokuje się po zakupie poprzedniego programu', lp_trailer_soon: 'Zwiastun wkrótce', lp_buy_title: 'Zakup programu', lp_buy_after: 'Pozostanie po zakupie', lp_buy_btn: 'Kup za {n} testów', lp_cancel: 'Anuluj',
     lp_material: 'Materiał szkoleniowy', lp_module: 'Moduł', lp_min_read: 'min czytania', lp_passed_title: 'Materiał ukończony', lp_passed_sub: 'Postęp zapisany w Twoim programie szkoleniowym', lp_mark_passed: 'Oznacz jako ukończone',
-    lp_bookmark: 'Zakładka', lp_bookmark_on: 'Zakładka ustawiona', lp_bookmark_set: 'Zakładka ustawiona', lp_bookmark_removed: 'Zakładka usunięta', lp_bookmark_resumed: 'Otwarto od zakładki', lp_bm_q_title: 'Ustawić zakładkę?', lp_bm_q_text: 'Zapiszemy miejsce, w którym skończyłeś, aby następnym razem otworzyć materiał od tego miejsca.', lp_bm_set_btn: 'Ustaw zakładkę', lp_bm_exit: 'Wyjdź bez zakładki',
+    lp_quiz_intro: 'Test sprawdzający z programu. Otworzy się w osobnym oknie.', lp_quiz_start: 'Rozpocznij test', lp_questions: 'pytań', lp_sec_locked: 'Najpierw ukończ poprzedni rozdział', lp_bookmark: 'Zakładka', lp_bookmark_on: 'Zakładka ustawiona', lp_bookmark_set: 'Zakładka ustawiona', lp_bookmark_removed: 'Zakładka usunięta', lp_bookmark_resumed: 'Otwarto od zakładki', lp_bm_q_title: 'Ustawić zakładkę?', lp_bm_q_text: 'Zapiszemy miejsce, w którym skończyłeś, aby następnym razem otworzyć materiał od tego miejsca.', lp_bm_set_btn: 'Ustaw zakładkę', lp_bm_exit: 'Wyjdź bez zakładki',
     tab_info: 'Informacje ogólne', tab_rules: 'Zasady', tab_spec: 'Specyfikacja', tab_video: 'Wideo',
     stub_dev: 'Sekcja w budowie', stub_soon: 'Zawartość pojawi się później.',
     dash_overview: 'Przegląd', dash_title: 'Panel', balance: 'Saldo',
@@ -162,7 +162,7 @@ const I18N = {
     lp_quiz_result: 'Result: {c} of {t} ({p}%)', lp_pick_answer: 'Answer all questions', lp_your_balance: 'Your balance',
     lp_close: 'Close', lp_protected: 'This material is copyright-protected. Copying, downloading and distribution are prohibited.', lp_hidden: 'Content hidden', lp_copy_blocked: 'Copying is disabled — material is protected', lp_read_to_end: 'Read to the end', lp_reading: 'Read',
     lp_trailer: 'Trailer', lp_trailer_locked: 'The trailer unlocks after buying the previous program', lp_trailer_soon: 'Trailer coming soon', lp_buy_title: 'Buy program', lp_buy_after: 'Balance after purchase', lp_buy_btn: 'Buy for {n} tests', lp_cancel: 'Cancel',
-    lp_material: 'Learning material', lp_module: 'Module', lp_min_read: 'min read', lp_passed_title: 'Material completed', lp_passed_sub: 'Progress saved in your training program', lp_mark_passed: 'Mark as completed',
+    lp_quiz_intro: 'A check test for the program. Opens in a separate window.', lp_quiz_start: 'Take the test', lp_questions: 'questions', lp_sec_locked: 'Complete the previous section first', lp_material: 'Learning material', lp_module: 'Module', lp_min_read: 'min read', lp_passed_title: 'Material completed', lp_passed_sub: 'Progress saved in your training program', lp_mark_passed: 'Mark as completed',
     lp_bookmark: 'Bookmark', lp_bookmark_on: 'Bookmarked', lp_bookmark_set: 'Bookmark saved', lp_bookmark_removed: 'Bookmark removed', lp_bookmark_resumed: 'Opened at your bookmark', lp_bm_q_title: 'Save a bookmark?', lp_bm_q_text: 'We will save where you stopped so you can reopen this material right at that spot next time.', lp_bm_set_btn: 'Save bookmark', lp_bm_exit: 'Exit without bookmark',
     tab_info: 'Overview', tab_rules: 'Rules', tab_spec: 'Specification', tab_video: 'Video',
     stub_dev: 'Section under development', stub_soon: 'Content will appear later.',
@@ -3124,11 +3124,20 @@ async function openLearningProgram(id) {
   wireEduModes();
   let d; try { d = await api('/api/learning/' + id + '?lang=' + LANG); } catch (e) { renderLearning(); return; }
   const p = d.program;
-  const sections = p.sections.map((s, i) => `<div class="lp-sec ${s.done ? 'done' : ''}" id="lp-sec-${s.id}">
-      <span class="lp-sec-n">${s.done ? LP_CHECK : (i + 1)}</span>
+  const sections = p.sections.map((s, i) => {
+    const locked = s.unlocked === false;
+    const num = s.done ? LP_CHECK : (locked ? LP_LOCK : (i + 1));
+    const act = s.done
+      ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span><button class="btn ghost sm" data-lp-open-sec="${s.id}">${t('lp_open')}</button>`
+      : locked
+        ? `<button class="btn ghost sm" disabled title="${t('lp_sec_locked')}">${t('lp_open')}</button>`
+        : `<button class="btn soft sm" data-lp-open-sec="${s.id}">${t('lp_open')}</button>`;
+    return `<div class="lp-sec ${s.done ? 'done' : ''} ${locked ? 'locked' : ''}" id="lp-sec-${s.id}">
+      <span class="lp-sec-n">${num}</span>
       <div class="lp-sec-info"><b>${esc(s.title)}</b>${s.desc ? `<p class="lp-sec-desc">${esc(s.desc)}</p>` : ''}</div>
-      <div class="lp-sec-act">${s.done ? `<span class="lp-done-tag">${LP_CHECK}${t('lp_done')}</span>` : ''}<button class="btn ${s.done ? 'ghost' : 'soft'} sm" data-lp-open-sec="${s.id}">${t('lp_open')}</button></div>
-    </div>`).join('');
+      <div class="lp-sec-act">${act}</div>
+    </div>`;
+  }).join('');
   const quizLocked = !p.allSectionsDone;
   let quizHtml;
   if (p.completed) {
@@ -3136,10 +3145,8 @@ async function openLearningProgram(id) {
   } else if (quizLocked) {
     quizHtml = `<div class="lp-quiz locked"><div class="lp-quiz-h">${LP_LOCK}<b>${t('lp_quiz')}</b></div><p class="muted">${t('lp_quiz_locked')}</p></div>`;
   } else {
-    const qs = p.quiz.questions.map((q, qi) => `<div class="lp-q" data-qi="${qi}"><div class="lp-q-t"><b>${qi + 1}.</b> ${esc(q.q)}</div>
-      <div class="lp-opts">${q.opts.map((o, oi) => `<label class="lp-opt"><input type="radio" name="lpq${qi}" value="${oi}"><span>${esc(o)}</span></label>`).join('')}</div></div>`).join('');
     quizHtml = `<div class="lp-quiz"><div class="lp-quiz-h"><b>${t('lp_quiz')}</b><span class="muted" style="font-size:13px">${t('lp_quiz_pass')}: ${p.quiz.passScore}%</span></div>
-      ${qs}<div id="lp-quiz-msg" class="lp-quiz-msg"></div><button class="btn" id="lp-quiz-go">${t('lp_quiz_submit')}</button></div>`;
+      <p class="muted" style="margin:8px 0 14px">${t('lp_quiz_intro')}</p><button class="btn" id="lp-quiz-open">${t('lp_quiz_start')}</button></div>`;
   }
   $('#main').innerHTML = `${head}
     <button class="lp-backlink reveal d2" id="lp-back">${t('lp_back')}</button>
@@ -3156,19 +3163,57 @@ async function openLearningProgram(id) {
     const s = p.sections.find(x => x.id === b.dataset.lpOpenSec);
     if (s) openSecureReader(id, s, { title: p.title, order: p.order });
   });
-  const go = $('#lp-quiz-go');
-  if (go) go.onclick = async () => {
+  const qopen = $('#lp-quiz-open');
+  if (qopen) qopen.onclick = () => openQuizModal(id, p);
+}
+
+// Итоговый тест в отдельном полноэкранном окне (как блоки)
+let _quizModal = null;
+function openQuizModal(programId, p) {
+  closeQuizModal();
+  const qs = p.quiz.questions.map((q, qi) => `<div class="lm-q"><div class="lm-q-t"><b>${qi + 1}.</b> ${esc(q.q)}</div>
+    <div class="lm-opts">${q.opts.map((o, oi) => `<label class="lm-opt"><input type="radio" name="mq${qi}" value="${oi}"><span>${esc(o)}</span></label>`).join('')}</div></div>`).join('');
+  const ov = document.createElement('div');
+  ov.className = 'lm-body';
+  ov.innerHTML = `
+    <div class="lm-ambient" aria-hidden="true"><div class="lm-glow lm-glow1"></div><div class="lm-glow lm-glow2"></div><div class="lm-scan"></div></div>
+    <header class="lm-head">
+      <span class="lm-head-ic">${LP_CHECK}</span>
+      <div class="lm-head-t"><div class="lm-eyebrow">${t('lp_quiz')}</div><h1 class="lm-head-title">${esc(p.title)}</h1></div>
+      <div class="lm-head-r">
+        <span class="lm-pct">${t('lp_quiz_pass')}: ${p.quiz.passScore}%</span>
+        <button class="lm-close" id="mq-close">${_svg('<path d="M6 6l12 12M18 6L6 18"/>')}${t('lp_close')}</button>
+      </div>
+    </header>
+    <div class="lm-scroll">
+      <article class="lm-article">
+        <div class="lm-tag"><span class="lm-tag-dot"></span>${t('lp_quiz')}</div>
+        <h2 class="lm-title">${t('lp_quiz')}</h2>
+        <div class="lm-meta"><span>${t('lp_quiz_pass')}: ${p.quiz.passScore}% · ${p.quiz.count} ${t('lp_questions')}</span></div>
+        <div class="lm-quizbody">${qs}</div>
+        <div id="mq-msg" class="lp-quiz-msg"></div>
+        <button class="lm-mark ready" id="mq-go">${t('lp_quiz_submit')}</button>
+      </article>
+    </div>`;
+  document.body.appendChild(ov);
+  document.body.classList.add('sec-lock');
+  _quizModal = ov;
+  ov.querySelector('#mq-close').onclick = () => closeQuizModal();
+  ov.querySelector('#mq-go').onclick = async () => {
     const answers = {}; let missing = false;
-    p.quiz.questions.forEach((q, qi) => { const sel = document.querySelector(`input[name="lpq${qi}"]:checked`); if (!sel) missing = true; else answers[qi] = +sel.value; });
-    if (missing) { $('#lp-quiz-msg').textContent = t('lp_pick_answer'); $('#lp-quiz-msg').className = 'lp-quiz-msg warn'; return; }
-    go.disabled = true;
+    p.quiz.questions.forEach((q, qi) => { const sel = ov.querySelector(`input[name="mq${qi}"]:checked`); if (!sel) missing = true; else answers[qi] = +sel.value; });
+    const msg = ov.querySelector('#mq-msg');
+    if (missing) { msg.textContent = t('lp_pick_answer'); msg.className = 'lp-quiz-msg warn'; return; }
+    const go = ov.querySelector('#mq-go'); go.disabled = true;
     try {
-      const r = await api('/api/learning/' + id + '/quiz', { method: 'POST', body: JSON.stringify({ answers }) });
-      if (r.passed) { toast(t('lp_quiz_passed')); openLearningProgram(id); }
-      else { const m = $('#lp-quiz-msg'); m.textContent = tv('lp_quiz_failed', { c: r.correct, t: r.total, p: r.pct }); m.className = 'lp-quiz-msg bad'; go.disabled = false; }
+      const r = await api('/api/learning/' + programId + '/quiz', { method: 'POST', body: JSON.stringify({ answers }) });
+      if (r.passed) { toast(t('lp_quiz_passed')); closeQuizModal(); openLearningProgram(programId); }
+      else { msg.textContent = tv('lp_quiz_failed', { c: r.correct, t: r.total, p: r.pct }); msg.className = 'lp-quiz-msg bad'; go.disabled = false; }
     } catch (e) { toast(e.message); go.disabled = false; }
   };
 }
+function closeQuizModal() { if (_quizModal) { _quizModal.remove(); document.body.classList.remove('sec-lock'); _quizModal = null; } }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && _quizModal) closeQuizModal(); });
 
 // ---- Защищённый полноэкранный ридер материала (анти-копирование/скрин, водяной знак) ----
 let _secReader = null;
@@ -3200,7 +3245,7 @@ function openSecureReader(programId, section, ctx) {
       <div class="lm-head-t"><div class="lm-eyebrow">${t('lp_material')}</div><h1 class="lm-head-title">${esc(section.title)}</h1></div>
       <div class="lm-head-r">
         <span class="lm-pct" id="sec-read-pct">${done ? '100%' : '0%'}</span>
-        <button class="lm-bm ${section.bookmark > 0 ? 'on' : ''}" id="sec-bm" title="${t('lp_bookmark')}">${LP_BM}<span class="lm-bm-l">${t('lp_bookmark')}</span></button>
+        <button class="lm-bm ${section.bookmark != null ? 'on' : ''}" id="sec-bm" title="${t('lp_bookmark')}">${LP_BM}<span class="lm-bm-l">${t('lp_bookmark')}</span></button>
         <button class="lm-passed ${done ? 'on' : ''}" id="sec-done" ${done ? '' : 'disabled'}><span class="lm-passed-dot"></span><span class="lm-passed-label">${done ? t('lp_done') : t('lp_read_to_end')}</span></button>
         <button class="lm-close" id="sec-close">${_svg('<path d="M6 6l12 12M18 6L6 18"/>')}${t('lp_close')}</button>
       </div>
@@ -3223,8 +3268,8 @@ function openSecureReader(programId, section, ctx) {
   document.body.appendChild(ov);
   document.body.classList.add('sec-lock');
   const wmEl = ov.querySelector('#sec-wm'); if (wmEl) wmEl.style.backgroundImage = 'url("' + wmSvg + '")';
-  let bookmarked = section.bookmark > 0;
-  let curPct = section.bookmark || 0;
+  let bookmarked = section.bookmark != null;
+  let curPct = section.bookmark != null ? section.bookmark : 0;
 
   const stop = e => { e.preventDefault(); e.stopPropagation(); return false; };
   const onCopy = e => {
@@ -3270,8 +3315,8 @@ function openSecureReader(programId, section, ctx) {
   const bmBtn = ov.querySelector('#sec-bm');
   if (bmBtn) bmBtn.onclick = async () => {
     try {
-      if (bookmarked) { await saveBookmark(null); bookmarked = false; bmBtn.classList.remove('on'); toast(t('lp_bookmark_removed')); }
-      else { await saveBookmark(Math.round(curPct)); bookmarked = true; bmBtn.classList.add('on'); toast(t('lp_bookmark_set')); }
+      if (bookmarked) { await saveBookmark(null); bookmarked = false; section.bookmark = null; bmBtn.classList.remove('on'); toast(t('lp_bookmark_removed')); }
+      else { const pos = Math.round(curPct); await saveBookmark(pos); bookmarked = true; section.bookmark = pos; bmBtn.classList.add('on'); toast(t('lp_bookmark_set')); }
     } catch (e) { toast(e.message); }
   };
 
@@ -3280,28 +3325,33 @@ function openSecureReader(programId, section, ctx) {
   const fill = ov.querySelector('#sec-read-fill');
   const pctEl = ov.querySelector('#sec-read-pct');
   let reachedEnd = done;
+  const enableDone = () => {
+    if (reachedEnd) return;
+    reachedEnd = true;
+    const h = ov.querySelector('#sec-done');
+    if (h) { h.disabled = false; h.classList.add('ready'); const lbl = h.querySelector('.lm-passed-label'); if (lbl) lbl.textContent = t('lp_mark_passed'); }
+    const f = ov.querySelector('#sec-done-2');
+    if (f) { f.disabled = false; f.classList.add('ready'); f.innerHTML = LP_CHECK + t('lp_mark_passed'); }
+  };
   const updateRead = () => {
     if (!scroller) return;
     const max = scroller.scrollHeight - scroller.clientHeight;
-    const pct = max <= 8 ? 100 : Math.min(100, Math.round(scroller.scrollTop / max * 100));
+    const pct = max <= 8 ? 0 : Math.min(100, Math.round(scroller.scrollTop / max * 100));
     curPct = pct;
     if (fill) fill.style.width = pct + '%';
     if (pctEl) pctEl.textContent = pct + '%';
-    if (!reachedEnd && (max <= 8 || pct >= 99)) {
-      reachedEnd = true;
-      const h = ov.querySelector('#sec-done');
-      if (h) { h.disabled = false; h.classList.add('ready'); const lbl = h.querySelector('.lm-passed-label'); if (lbl) lbl.textContent = t('lp_mark_passed'); }
-      const f = ov.querySelector('#sec-done-2');
-      if (f) { f.disabled = false; f.classList.add('ready'); f.innerHTML = LP_CHECK + t('lp_mark_passed'); }
-    }
+    if (pct >= 99) enableDone();
   };
   if (scroller) scroller.addEventListener('scroll', updateRead, { passive: true });
   requestAnimationFrame(updateRead);
   setTimeout(updateRead, 200);
-  // Восстановление позиции с закладки при открытии
-  if (section.bookmark > 0 && scroller) {
-    const restore = () => { const max = scroller.scrollHeight - scroller.clientHeight; scroller.scrollTop = section.bookmark / 100 * max; updateRead(); };
-    setTimeout(restore, 140); setTimeout(() => { toast(t('lp_bookmark_resumed')); }, 260);
+  // короткий материал, помещающийся без прокрутки — доступен к отметке после раскладки
+  setTimeout(() => { if (scroller && (scroller.scrollHeight - scroller.clientHeight) <= 8) { curPct = 100; if (fill) fill.style.width = '100%'; if (pctEl) pctEl.textContent = '100%'; enableDone(); } }, 600);
+  // Восстановление позиции с закладки при открытии (повторяем после раскладки большого контента)
+  if (section.bookmark != null && scroller) {
+    const restore = () => { const max = scroller.scrollHeight - scroller.clientHeight; if (max > 8) scroller.scrollTop = section.bookmark / 100 * max; updateRead(); };
+    requestAnimationFrame(restore); setTimeout(restore, 250); setTimeout(restore, 650);
+    setTimeout(() => { toast(t('lp_bookmark_resumed')); }, 400);
   }
 
   // Выход: если закладка не стоит и материал начат, но не дочитан — спросить о закладке.
@@ -3309,7 +3359,7 @@ function openSecureReader(programId, section, ctx) {
     if (!bookmarked && !done && curPct > 2 && curPct < 98) {
       readerAsk(ov, {
         title: t('lp_bm_q_title'), text: t('lp_bm_q_text'), okLabel: t('lp_bm_set_btn'), cancelLabel: t('lp_bm_exit'),
-        onOk: async () => { try { await saveBookmark(Math.round(curPct)); } catch (_) {} closeSecureReader(); },
+        onOk: async () => { const pos = Math.round(curPct); try { await saveBookmark(pos); } catch (_) {} section.bookmark = pos; bookmarked = true; closeSecureReader(); },
         onCancel: () => closeSecureReader(),
       });
     } else closeSecureReader();
