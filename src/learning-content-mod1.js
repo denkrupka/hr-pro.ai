@@ -19,7 +19,7 @@ function r(label, inner) { return box('rgba(67,224,160,.06)', 'rgba(67,224,160,.
 
 module.exports = {
   'module-foundations': {
-    // трейлер добавят позже
+    trailer: { ru: '/media/module1-trailer-ru.mp4', pl: '', en: '' },
     sections: [
       // 1 — ВВЕДЕНИЕ
       {

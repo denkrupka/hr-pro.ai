@@ -8,6 +8,7 @@
 
 module.exports = {
   'module-point-d': {
+    trailer: { ru: '/media/module2-trailer-ru.mp4', pl: '', en: '' },
     sections: [
       {
         id: 'intro',

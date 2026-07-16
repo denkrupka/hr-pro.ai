@@ -19,6 +19,7 @@ function t(label, inner) { return box('rgba(111,151,255,.06)', 'rgba(111,151,255
 
 module.exports = {
   'module-states': {
+    trailer: { ru: '/media/module3-trailer-ru.mp4', pl: '', en: '' },
     sections: [
       // 1 — ВВЕДЕНИЕ
       {
