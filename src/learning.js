@@ -60,11 +60,11 @@ const PROGRAMS = [
     },
   },
   {
-    id: 'reading-tests', order: 2, price: 15,
-    title: tri('Чтение тестов и решения', 'Czytanie testów i decyzje', 'Reading tests & decisions'),
-    desc: tri('Как читать «Резалт», «Тулс», «Логис» и «Сэйлс» и превращать баллы в кадровое решение.',
-      'Jak czytać Result, Tools, Logic i Sales oraz zamieniać wyniki w decyzję.',
-      'How to read Result, Tools, Logic and Sales and turn scores into a decision.'),
+    id: 'productivity-winners', order: 2, price: 15,
+    title: tri('Продуктивность и Виннеры', 'Produktywność i Winnerzy', 'Productivity and Winners'),
+    desc: tri('Продукт должности, виннеры и дуеры, интервью на продуктивность и фактор таланта.',
+      'Produkt stanowiska, winnerzy i doerzy, rozmowa produktywnościowa i czynnik talentu.',
+      'The product of a role, winners and doers, the productivity interview and the talent factor.'),
     trailer: tri('', '', ''),
     sections: [
       { id: 'result-tools', title: tri('Резалт и Тулс', 'Result i Tools', 'Result & Tools'),
