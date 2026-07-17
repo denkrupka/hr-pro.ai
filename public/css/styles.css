@@ -1304,7 +1304,19 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 /* ============ ПЕЧАТЬ ОТЧЁТА (только сам отчёт, аккуратно) ============ */
 @media print {
   @page { margin: 12mm 11mm; }
-  html, body { background: #fff !important; font-size: 12.5px !important; }
+  /* Печать всегда в светлой теме — сбрасываем переменные тёмной темы, чтобы фон/текст не были тёмными */
+  html, body, [data-theme="dark"] {
+    --canvas:#f4f7fc; --surface:#ffffff; --surface-2:#eef2fb; --surface-3:#dce7fb;
+    --line:#e4eaf4; --line-2:#d7e0ef; --text:#16203a; --text-2:#3a4663; --muted:#6b768e; --faint:#98a2b8;
+    --ink:#16203a; --ink-2:#3a4663; --brand-soft:#eef2fb; --coral-s:#fff0ec; --bg:#ffffff;
+  }
+  html, body { background: #fff !important; color: #16203a !important; font-size: 12.5px !important; }
+  /* шапка отчёта — светлая, без тёмной заливки */
+  .report-head { background: transparent !important; }
+  .report-head * { color: #16203a !important; }
+  .report-head .muted, .report-head .tag { color: #6b768e !important; }
+  .report-head .avatar { background:#3d6cd1 !important; color:#fff !important; }
+  .card, .cand-head, .cand-pipe-card, .ai-note, .cstep, .cstep-dec { background:#fff !important; color:#16203a !important; }
   .sidebar, .lang-switch, .toast, #modal-root, .no-print { display: none !important; }
   .app { display: block !important; }
   .main { padding: 0 !important; max-width: 100% !important; width: 100% !important; margin: 0 !important; }
