@@ -3,7 +3,7 @@
 // чистые модули портала (scoring/ai/recruitment) по мере портирования.
 import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
-import { notifyCandidate, wrapEmailEdge, unsubToken, resetToken, verifyResetToken } from './notify-edge.js';
+import { notifyCandidate, wrapEmailEdge, unsubToken, resetToken, verifyResetToken, emailVerifyToken } from './notify-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
@@ -139,6 +139,29 @@ async function buildAdEdge(env, { form, lang, company, target, vacancyName }) {
   } catch (e) { /* фолбэк ниже */ }
   return { ad: air.generateAd(form || { position: vacancyName }, lang, { company, target }), ai: false };
 }
+// Письмо подтверждения email (best-effort через Resend env). ru/pl/en.
+async function sendVerifyEmailEdge(env, url, u, lang) {
+  try {
+    if (!env.RESEND_API_KEY) return;
+    const lg = ['ru', 'pl', 'en'].includes(lang) ? lang : 'ru';
+    const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+    const exp = Math.floor(Date.now() / 1000) + 3 * 86400;
+    const link = `${base}/api/verify-email?e=${btoa(u.email)}&t=${await emailVerifyToken(env.SECRET, u.email, exp)}&exp=${exp}&lang=${lg}`;
+    const V = {
+      ru: { subj: 'Подтвердите email — HR PRO AI', eyebrow: 'Подтверждение почты', head: `Здравствуйте, ${u.name}!`,
+        body: 'Спасибо за регистрацию в HR PRO AI. Остался один шаг — подтвердите ваш email, и мы сразу перейдём к настройке портала.', cta: 'Подтвердить email' },
+      pl: { subj: 'Potwierdź email — HR PRO AI', eyebrow: 'Potwierdzenie poczty', head: `Dzień dobry, ${u.name}!`,
+        body: 'Dziękujemy za rejestrację w HR PRO AI. Został jeden krok — potwierdź swój email, a od razu przejdziemy do konfiguracji portalu.', cta: 'Potwierdź email' },
+      en: { subj: 'Confirm your email — HR PRO AI', eyebrow: 'Email confirmation', head: `Hello, ${u.name}!`,
+        body: 'Thanks for signing up for HR PRO AI. One step left — confirm your email and we’ll go straight to setting up your portal.', cta: 'Confirm email' },
+    }[lg];
+    const html = wrapEmailEdge({ lang: lg, baseUrl: base, subject: V.subj, eyebrow: V.eyebrow, headline: V.head, bodyHtml: V.body, ctaUrl: link, ctaLabel: V.cta });
+    await fetch('https://api.resend.com/emails', { method: 'POST',
+      headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [u.email], subject: V.subj, html }) });
+  } catch (e) {}
+}
+
 async function api(req, env, url) {
   const p = url.pathname, m = req.method;
   const isWebhook = p === '/api/stripe/webhook';
@@ -243,7 +266,7 @@ async function api(req, env, url) {
       u = { id: uid(12), email, password: '', googleId: prof.sub, avatar: prof.picture || '',
         name: gname, company: '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
         settings: { uiLang: 'ru', surname: gsurname }, role: 'user', blocked: false, adminNote: '', provider: 'google',
-        onboarded: false, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
+        onboarded: false, emailVerified: true, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
       if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
       await S.upsert('users', { id: u.id, data: u });
       isNew = true;
@@ -305,6 +328,11 @@ async function api(req, env, url) {
     const u = rows[0] && rows[0].data;
     if (!u || !(await verifyPassword(body.password || '', u.password))) return j({ error: 'Неверный email или пароль' }, 401);
     if (u.blocked === true) return j({ error: 'Аккаунт заблокирован. Свяжитесь с поддержкой.' }, 403);
+    // email не подтверждён — не пускаем, повторно шлём письмо (existing без флага считаем подтверждёнными)
+    if (u.emailVerified === false) {
+      await sendVerifyEmailEdge(env, url, u, (u.settings && u.settings.uiLang) || 'ru');
+      return j({ error: 'Подтвердите email — мы отправили ссылку на вашу почту.', needVerify: true, email: u.email }, 403);
+    }
     u.lastLoginAt = new Date().toISOString();
     await S.upsert('users', { id: u.id, data: u });
     const cookie = `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`;
@@ -351,31 +379,39 @@ async function api(req, env, url) {
     const u = { id: uid(12), email, password: await hashPassword(body.password), name: body.name || email.split('@')[0],
       company: body.company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
       settings: { uiLang, timezone: body.timezone || '' }, role: 'user', blocked: false, adminNote: '', onboarded: false, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
+    u.emailVerified = false;
     if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
     await S.upsert('users', { id: u.id, data: u });
-    // Приветственное письмо со ссылкой на онбординг (best-effort, если Resend настроен)
-    try {
-      if (env.RESEND_API_KEY) {
-        const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
-        const W = {
-          ru: { subj: 'Добро пожаловать в HR PRO AI', eyebrow: 'Добро пожаловать', head: `Здравствуйте, ${u.name}!`,
-            body: 'Аккаунт создан. Осталось за пару минут настроить портал под вашу компанию — и можно приглашать первого кандидата.', cta: 'Настроить портал' },
-          pl: { subj: 'Witamy w HR PRO AI', eyebrow: 'Witamy', head: `Dzień dobry, ${u.name}!`,
-            body: 'Konto utworzone. W kilka minut dostroimy portal do Twojej firmy — i możesz zaprosić pierwszego kandydata.', cta: 'Skonfiguruj portal' },
-          en: { subj: 'Welcome to HR PRO AI', eyebrow: 'Welcome', head: `Hello, ${u.name}!`,
-            body: 'Your account is ready. Take a couple of minutes to tune the portal for your company — then invite your first candidate.', cta: 'Set up the portal' },
-        }[uiLang] || null;
-        if (W) {
-          const html = wrapEmailEdge({ lang: uiLang, baseUrl: base, subject: W.subj, eyebrow: W.eyebrow,
-            headline: W.head, bodyHtml: W.body, ctaUrl: base + '/onboarding.html', ctaLabel: W.cta });
-          await fetch('https://api.resend.com/emails', { method: 'POST',
-            headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: W.subj, html }) });
-        }
-      }
-    } catch (e) {}
-    const cookie = `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`;
-    return j({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
+    // Письмо подтверждения email. Сессию НЕ выдаём: вход — только после подтверждения по ссылке.
+    await sendVerifyEmailEdge(env, url, u, uiLang);
+    return j({ needVerify: true, email: u.email }, 200);
+  }
+
+  // Подтверждение email по ссылке из письма → логиним и ведём на онбординг.
+  if (p === '/api/verify-email' && m === 'GET') {
+    const email = (() => { try { return atob(url.searchParams.get('e') || ''); } catch (_) { return ''; } })();
+    const exp = parseInt(url.searchParams.get('exp'), 10) || 0;
+    const t = url.searchParams.get('t') || '';
+    const back = (to) => new Response(null, { status: 302, headers: { Location: url.origin + to } });
+    if (!email || !exp || exp * 1000 < Date.now() || t !== await emailVerifyToken(env.SECRET, email, exp)) return back('/login?err=verify_failed');
+    const rows = await S.select('users', `email=eq.${encodeURIComponent(email.toLowerCase())}&select=data`);
+    const u = rows[0] && rows[0].data;
+    if (!u) return back('/login?err=verify_failed');
+    if (u.blocked === true) return back('/login?err=blocked');
+    u.emailVerified = true; u.lastLoginAt = new Date().toISOString();
+    await S.upsert('users', { id: u.id, data: u });
+    const headers = new Headers({ Location: url.origin + (u.onboarded ? '/app' : '/onboarding.html') });
+    headers.append('set-cookie', `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`);
+    return new Response(null, { status: 302, headers });
+  }
+
+  // Повторная отправка письма подтверждения
+  if (p === '/api/verify-email/resend' && m === 'POST') {
+    const email = String(body.email || '').trim().toLowerCase();
+    const rows = await S.select('users', `email=eq.${encodeURIComponent(email)}&select=data`);
+    const u = rows[0] && rows[0].data;
+    if (u && u.emailVerified === false) await sendVerifyEmailEdge(env, url, u, (u.settings && u.settings.uiLang) || 'ru');
+    return j({ ok: true });
   }
 
   // ── Восстановление пароля: запрос ссылки ──
@@ -1927,6 +1963,7 @@ async function api(req, env, url) {
 const HTML_MAP = [
   [/^\/$/, '/landing'],
   [/^\/login$/, '/login'],
+  [/^\/verify-email$/, '/verify-email'],
   [/^\/reset$/, '/reset'],
   [/^\/guide(\/|$)/, '/guide'],
   [/^\/storage\/guide(\/|$)/, '/guide'],

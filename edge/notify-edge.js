@@ -39,6 +39,12 @@ export async function resetToken(secret, email, expTs) {
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('reset:' + String(email || '').toLowerCase() + ':' + String(expTs)));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
 }
+// Токен подтверждения email при регистрации: HMAC(secret, `verify:email:expTs`).
+export async function emailVerifyToken(secret, email, expTs) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('verify:' + String(email || '').toLowerCase() + ':' + String(expTs)));
+  return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
+}
 // Проверка токена сброса: exp — число unix-секунд, sig — подпись из ссылки. Возвращает true,
 // только если exp ещё не наступил и подпись совпадает (постоянное сравнение не критично — токен одноразово-временный).
 export async function verifyResetToken(secret, email, expTs, sig) {

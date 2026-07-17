@@ -77,14 +77,15 @@ select.finput option{background:#0b0d18;color:#eef1fb}
   </div>
 
   <div class="ob-top">
-    <div style="display:flex;align-items:center;gap:11px">
+    <div style="display:flex;align-items:center;gap:11px;flex:none">
       <svg viewBox="0 0 64 64" fill="none" style="width:38px;height:38px;flex:none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".9"></path><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></line><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></line><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></line><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></line><circle cx="22" cy="25" r="3.2" stroke="#fff" stroke-width="1.8"></circle><circle cx="41" cy="21" r="3.4" stroke="#fff" stroke-width="1.8"></circle><circle cx="46" cy="35" r="3" stroke="#fff" stroke-width="1.8"></circle><circle cx="29" cy="45" r="2.8" stroke="#fff" stroke-width="1.8"></circle><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"></circle></svg>
       <div style="line-height:1.12">
         <div style="font-family:Manrope,sans-serif;font-weight:800;font-size:15.5px;letter-spacing:.02em;color:#fff">HR&nbsp;PRO&nbsp;AI</div>
         <div style="font-size:10px;color:#8b93ad;font-weight:600" id="ob-tagline">Технология, которая чувствует людей</div>
       </div>
     </div>
-    <div style="flex:1;min-width:180px;max-width:520px;margin:0 0 0 auto">
+    <div style="flex:1"></div>
+    <div style="flex:0 1 520px;min-width:180px;max-width:520px">
       <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#7d84a3;margin-bottom:7px">
         <span id="ob-steptag"></span><span id="ob-pct"></span>
       </div>
@@ -92,6 +93,7 @@ select.finput option{background:#0b0d18;color:#eef1fb}
         <div id="ob-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b6cff,#6f97ff);box-shadow:0 0 12px rgba(139,108,255,.7);transition:width .45s cubic-bezier(.22,.9,.3,1);border-radius:99px"></div>
       </div>
     </div>
+    <div style="flex:1"></div>
   </div>
 
   <div style="position:relative;z-index:2;display:flex;justify-content:center;gap:6px;padding:2px 20px 8px;flex-wrap:wrap" id="ob-dots"></div>
@@ -113,7 +115,7 @@ var I18N = {
     back:'Назад', next:'Далее',
     w_badge:'Добро пожаловать', w_hi:'Здравствуйте', w_p:'За пару коротких шагов мы настроим HR PRO AI под вашу компанию — и уже сегодня вы сможете начать поиск идеального сотрудника.', w_go:'Начать настройку',
     c_h:'Расскажите о компании', c_p:'Это поможет ИИ точнее подбирать эталонные профили под ваши вакансии.',
-    c_name:'Название компании', c_name_ph:'Например: Nova Sales Group', c_ind:'Сфера', c_size:'Размер команды', c_role:'Ваша роль', c_role_ph:'Например: Руководитель отдела найма',
+    c_name:'Название компании', c_name_ph:'Например: Nova Sales Group', c_ind:'Сфера', c_size:'Размер команды', c_role:'Ваша роль', c_role_ph:'Например: Руководитель отдела найма', c_choose:'— выберите —',
     industries:['Продажи / Ритейл','IT / Технологии','Финансы','Производство','Услуги','Другое'],
     p_h:'Как обстоят дела сейчас?', p_p:'Пара вопросов о вашем найме — покажем, сколько времени и денег сэкономит портал.',
     q1:'Сколько времени уходило на одно собеседование?', q2:'Сколько собеседований проводили, чтобы закрыть одну вакансию?', q3:'Как часто после найма понимали, что человек не подходит, и увольняли?',
@@ -136,7 +138,7 @@ var I18N = {
     back:'Wstecz', next:'Dalej',
     w_badge:'Witamy', w_hi:'Dzień dobry', w_p:'W kilku krótkich krokach dostroimy HR PRO AI do Twojej firmy — i już dziś zaczniesz szukać idealnego pracownika.', w_go:'Zacznij konfigurację',
     c_h:'Opowiedz o firmie', c_p:'Pomoże to AI trafniej dobierać wzorcowe profile do Twoich wakatów.',
-    c_name:'Nazwa firmy', c_name_ph:'Np.: Nova Sales Group', c_ind:'Branża', c_size:'Wielkość zespołu', c_role:'Twoja rola', c_role_ph:'Np.: Kierownik rekrutacji',
+    c_name:'Nazwa firmy', c_name_ph:'Np.: Nova Sales Group', c_ind:'Branża', c_size:'Wielkość zespołu', c_role:'Twoja rola', c_role_ph:'Np.: Kierownik rekrutacji', c_choose:'— wybierz —',
     industries:['Sprzedaż / Retail','IT / Technologie','Finanse','Produkcja','Usługi','Inne'],
     p_h:'Jak jest teraz?', p_p:'Kilka pytań o Twoją rekrutację — pokażemy, ile czasu i pieniędzy oszczędzi portal.',
     q1:'Ile czasu zajmowała jedna rozmowa?', q2:'Ile rozmów przeprowadzasz, by zamknąć jeden wakat?', q3:'Jak często po zatrudnieniu okazywało się, że osoba nie pasuje, i zwalniałeś?',
@@ -159,7 +161,7 @@ var I18N = {
     back:'Back', next:'Next',
     w_badge:'Welcome', w_hi:'Hello', w_p:'In a couple of short steps we’ll tune HR PRO AI for your company — and you can start finding the perfect hire today.', w_go:'Start setup',
     c_h:'Tell us about your company', c_p:'This helps the AI pick reference profiles that fit your roles more precisely.',
-    c_name:'Company name', c_name_ph:'e.g. Nova Sales Group', c_ind:'Industry', c_size:'Team size', c_role:'Your role', c_role_ph:'e.g. Head of Hiring',
+    c_name:'Company name', c_name_ph:'e.g. Nova Sales Group', c_ind:'Industry', c_size:'Team size', c_role:'Your role', c_role_ph:'e.g. Head of Hiring', c_choose:'— select —',
     industries:['Sales / Retail','IT / Technology','Finance','Manufacturing','Services','Other'],
     p_h:'How are things now?', p_p:'A few questions about your hiring — we’ll show how much time and money the portal saves.',
     q1:'How long did one interview take?', q2:'How many interviews did you run to fill one role?', q3:'How often did a new hire turn out wrong and had to be let go?',
@@ -179,7 +181,7 @@ var I18N = {
 
 var LANG = 'ru', T = I18N.ru, USERNAME = '', lastStep = -1;
 var STEPS = ['welcome','company','pain','goal','result','done'];
-var state = { step:0, form:{ company:'', industry:'', size:'11–50', myrole:'', goal:'hire', timePer:'', perHire:'', badHire:'' } };
+var state = { step:0, form:{ company:'', industry:'', size:'', myrole:'', goal:'hire', timePer:'', perHire:'', badHire:'' } };
 var GKEYS = ['hire','quality','reduce','scale'];
 var Q1V = ['<30','30-60','1-2','2+'], Q2V = ['1-5','5-10','10-20','20+'], Q3V = ['never','rare','some','often'];
 var SIZES = ['1–10','11–50','51–200','200+'];
@@ -268,9 +270,10 @@ function render(){
   }
 
   else if (cur==='company'){
-    var indOpts = T.industries.map(function(x){ return '<option value="'+esc(x)+'"'+(state.form.industry===x?' selected':'')+'>'+esc(x)+'</option>'; }).join('');
-    if (!state.form.industry) state.form.industry = T.industries[0];
-    var sizeOpts = SIZES.map(function(x){ return '<option value="'+esc(x)+'"'+(state.form.size===x?' selected':'')+'>'+esc(x)+'</option>'; }).join('');
+    var ph = '<option value=""'+(state.form.industry?'':' selected')+'>'+esc(T.c_choose)+'</option>';
+    var indOpts = ph + T.industries.map(function(x){ return '<option value="'+esc(x)+'"'+(state.form.industry===x?' selected':'')+'>'+esc(x)+'</option>'; }).join('');
+    var phS = '<option value=""'+(state.form.size?'':' selected')+'>'+esc(T.c_choose)+'</option>';
+    var sizeOpts = phS + SIZES.map(function(x){ return '<option value="'+esc(x)+'"'+(state.form.size===x?' selected':'')+'>'+esc(x)+'</option>'; }).join('');
     h = '<div>'+
       '<div style="text-align:center;margin-bottom:30px"><h2 class="ob-h2" style="font-size:clamp(24px,3.2vw,34px)">'+esc(T.c_h)+'</h2><p style="font-size:15px;color:#8b93ad;margin:0">'+esc(T.c_p)+'</p></div>'+
       '<div class="ob-card">'+
@@ -359,18 +362,18 @@ function render(){
     var steps3 = T.ns.map(function(n,i){
       var bg = ['rgba(139,108,255,.14)','rgba(111,151,255,.14)','rgba(67,224,160,.14)'][i];
       var col = ['#b3a4ff','#8fb0ff','#5fe0b0'][i];
-      return '<div style="display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);text-align:left">'+
-        '<span style="width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;background:'+bg+';color:'+col+';font-weight:800">'+(i+1)+'</span>'+
-        '<div style="min-width:0"><div style="font-family:Manrope,sans-serif;font-weight:700;font-size:14px;color:#eef1fb">'+esc(n[0])+'</div><div style="font-size:12.5px;color:#8b93ad">'+esc(n[1])+'</div></div></div>';
+      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);text-align:left">'+
+        '<span style="width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;background:'+bg+';color:'+col+';font-weight:800">'+(i+1)+'</span>'+
+        '<div style="min-width:0"><div style="font-family:Manrope,sans-serif;font-weight:700;font-size:13.5px;color:#eef1fb">'+esc(n[0])+'</div><div style="font-size:12px;color:#8b93ad">'+esc(n[1])+'</div></div></div>';
     }).join('');
     h = '<div style="text-align:center">'+
-      '<div style="position:relative;width:104px;height:104px;margin:0 auto 28px">'+
+      '<div style="position:relative;width:74px;height:74px;margin:0 auto 14px">'+
         '<span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(67,224,160,.4);animation:obring 2.6s ease-out infinite"></span>'+
-        '<span style="position:absolute;inset:0;border-radius:28px;display:grid;place-items:center;background:radial-gradient(circle at 40% 30%,rgba(67,224,160,.26),rgba(11,13,24,.9));border:1px solid rgba(67,224,160,.4);box-shadow:0 20px 50px rgba(67,224,160,.35);animation:obpop .5s cubic-bezier(.22,.9,.3,1) both"><svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="#43e0a0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"></path></svg></span>'+
+        '<span style="position:absolute;inset:0;border-radius:22px;display:grid;place-items:center;background:radial-gradient(circle at 40% 30%,rgba(67,224,160,.26),rgba(11,13,24,.9));border:1px solid rgba(67,224,160,.4);box-shadow:0 16px 40px rgba(67,224,160,.32);animation:obpop .5s cubic-bezier(.22,.9,.3,1) both"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#43e0a0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-11"></path></svg></span>'+
       '</div>'+
-      '<h1 class="ob-h1" style="font-size:clamp(28px,4vw,40px)">'+esc(T.d_h)+'</h1>'+
-      '<p style="font-size:16px;line-height:1.65;color:#a8b0c8;max-width:48ch;margin:0 auto 26px">'+esc(T.d_p)+'</p>'+
-      '<div style="display:flex;flex-direction:column;gap:11px;max-width:420px;margin:0 auto 30px">'+steps3+'</div>'+
+      '<h1 class="ob-h1" style="font-size:clamp(24px,3.4vw,32px);margin:0 0 8px">'+esc(T.d_h)+'</h1>'+
+      '<p style="font-size:14.5px;line-height:1.55;color:#a8b0c8;max-width:48ch;margin:0 auto 16px">'+esc(T.d_p)+'</p>'+
+      '<div style="display:flex;flex-direction:column;gap:8px;max-width:420px;margin:0 auto 18px">'+steps3+'</div>'+
       '<button class="obtn ob-cta" id="ob-finish">'+esc(T.d_go)+ARROW+'</button>'+
     '</div>';
   }
@@ -385,6 +388,12 @@ var saving = false;
 function finish(){
   if (saving) return; saving = true;
   var fb = $('#ob-finish'); if (fb){ fb.disabled = true; fb.style.opacity = '.7'; }
+  // Новый пользователь после онбординга ДОЛЖЕН увидеть тур по порталу и мини-туры страниц —
+  // сбрасываем флаги «уже показано» в этом браузере, чтобы туры точно запустились.
+  try {
+    localStorage.removeItem('hp_tour_v1');
+    Object.keys(localStorage).filter(function(k){ return k.indexOf('hp_tour_pg_') === 0; }).forEach(function(k){ localStorage.removeItem(k); });
+  } catch (e) {}
   fetch('/api/onboarding', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ form: state.form }) })
     .then(function(){ location.href = '/app'; })
     .catch(function(){ location.href = '/app'; });

@@ -1781,7 +1781,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cal-weekdays>div{padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .cal-weekdays>div.we{color:var(--faint)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-cell{position:relative;min-height:112px;padding:8px 8px 9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer;transition:background .18s}
+.cal-cell{position:relative;min-height:clamp(58px,10.5vh,112px);padding:8px 8px 9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer;transition:background .18s}
 .cal-cell:hover{background:var(--brand-soft)}
 .cal-cell.we{background:var(--surface-2)}
 .cal-cell.out{background:var(--surface-2);opacity:.55}

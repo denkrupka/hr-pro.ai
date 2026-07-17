@@ -1931,8 +1931,8 @@ function fillSideUser() {
   const u = state.user; if (!u) return;
   const nm = (u.name || u.company || u.email || '').trim();
   const nEl = $('#side-name'); if (nEl) nEl.textContent = nm || 'Аккаунт';
-  const sEl = $('#side-sub'); if (sEl) sEl.textContent = (u.company && u.company !== nm) ? u.company
-    : (u.role === 'admin' ? 'Администратор' : (u.email && u.email !== nm ? u.email : ''));
+  const sEl = $('#side-sub'); if (sEl) { sEl.removeAttribute('data-i18n'); sEl.textContent = (u.company && u.company !== nm) ? u.company
+    : (u.role === 'admin' ? 'Администратор' : (u.email && u.email !== nm ? u.email : '')); }
   const aEl = $('#side-ava'); if (aEl) aEl.textContent = (nm[0] || 'H').toUpperCase();
   const mBal = $('#mnav-bal-num'); if (mBal) mBal.textContent = (u.balanceAvailable != null ? u.balanceAvailable : (u.balanceTotal || 0));
   // Пункт «Админка» — только для администраторов портала

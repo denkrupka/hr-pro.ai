@@ -36,6 +36,31 @@ const PORT = process.env.PORT || 3000;
 const ENV_BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 let BASE_URL = ENV_BASE_URL; // может быть переопределён глобальной настройкой baseUrl (админка)
 
+// ---------- Подтверждение email (верификация при регистрации) ----------
+function emailVerifyToken(email, exp) { return crypto.createHmac('sha256', SECRET).update('verify:' + String(email || '').toLowerCase() + ':' + exp).digest('hex').slice(0, 32); }
+function emailVerifyUrl(email, lang) {
+  const exp = Math.floor(Date.now() / 1000) + 3 * 86400; // ссылка живёт 3 дня
+  const base = String(BASE_URL || '').replace(/\/+$/, '');
+  return `${base}/api/verify-email?e=${Buffer.from(email).toString('base64')}&t=${emailVerifyToken(email, exp)}&exp=${exp}&lang=${lang || 'ru'}`;
+}
+function sendVerifyEmail(user, lang) {
+  try {
+    if (!integ.isConfigured(user.settings, 'resend')) return;
+    const lg = ['ru', 'pl', 'en'].includes(lang) ? lang : 'ru';
+    const V = {
+      ru: { subject: 'Подтвердите email — HR PRO AI', eyebrow: 'Подтверждение почты', headline: `Здравствуйте, ${user.name}!`,
+        body: 'Спасибо за регистрацию в HR PRO AI. Остался один шаг — подтвердите ваш email, и мы сразу перейдём к настройке портала.', cta: 'Подтвердить email' },
+      pl: { subject: 'Potwierdź email — HR PRO AI', eyebrow: 'Potwierdzenie poczty', headline: `Dzień dobry, ${user.name}!`,
+        body: 'Dziękujemy za rejestrację w HR PRO AI. Został jeden krok — potwierdź swój email, a od razu przejdziemy do konfiguracji portalu.', cta: 'Potwierdź email' },
+      en: { subject: 'Confirm your email — HR PRO AI', eyebrow: 'Email confirmation', headline: `Hello, ${user.name}!`,
+        body: 'Thanks for signing up for HR PRO AI. One step left — confirm your email and we’ll go straight to setting up your portal.', cta: 'Confirm email' },
+    }[lg];
+    integ.sendEmail(user.settings, { to: user.email, lang: lg, baseUrl: BASE_URL, subject: V.subject,
+      eyebrow: V.eyebrow, headline: V.headline, bodyHtml: V.body, ctaLabel: V.cta, ctaUrl: emailVerifyUrl(user.email, lg) })
+      .catch(e => console.error('[verify-email]', e.message));
+  } catch (e) { console.error('[verify-email]', e.message); }
+}
+
 // ---------- Отписка от писем (unsubscribe) ----------
 function unsubToken(email) { return crypto.createHmac('sha256', SECRET).update('unsub:' + String(email || '').toLowerCase()).digest('hex').slice(0, 24); }
 function unsubUrlFor(email, lang) {
@@ -475,9 +500,10 @@ app.post('/api/register', (req, res) => {
   const accLang = String(req.headers['accept-language'] || '').slice(0, 2).toLowerCase();
   const auto = { uiLang: (req.body && req.body.uiLang) || (['ru', 'pl', 'en'].includes(accLang) ? accLang : ''),
     timezone: (req.body && req.body.timezone) || '' };
+  const lg = ['ru', 'pl', 'en'].includes(auto.uiLang) ? auto.uiLang : 'ru';
   const user = { id: uid(12), email, password: hashPassword(password), name: name || email.split('@')[0],
     company: company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [], settings: defaultSettings(auto),
-    role: 'user', blocked: false, adminNote: '', onboarded: false, lastLoginAt: nowISO(), createdAt: nowISO() };
+    role: 'user', blocked: false, adminNote: '', onboarded: false, emailVerified: false, lastLoginAt: nowISO(), createdAt: nowISO() };
   data.users.push(user);
   if (bonus > 0) { logBalance(user.id, bonus, 'signup_bonus', { comment: 'Бонус при регистрации' }); addBalanceLot(user, bonus, 'signup_bonus'); }
   // стартовые вакансии
@@ -485,26 +511,33 @@ app.post('/api/register', (req, res) => {
     data.vacancies.push({ id: uid(10), userId: user.id, sectionId: null, name: n, lang: 'ru', order: i, createdAt: nowISO() });
   });
   save();
-  // Приветственное письмо со ссылкой на онбординг (best-effort; шлётся только если Resend настроен)
-  try {
-    if (integ.isConfigured(user.settings, 'resend')) {
-      const lg = ['ru', 'pl', 'en'].includes(auto.uiLang) ? auto.uiLang : 'ru';
-      const onbUrl = String(BASE_URL || '').replace(/\/+$/, '') + '/onboarding.html';
-      const W = {
-        ru: { subject: 'Добро пожаловать в HR PRO AI', eyebrow: 'Добро пожаловать', headline: `Здравствуйте, ${user.name}!`,
-          body: 'Аккаунт создан. Осталось за пару минут настроить портал под вашу компанию — и можно приглашать первого кандидата.', cta: 'Настроить портал' },
-        pl: { subject: 'Witamy w HR PRO AI', eyebrow: 'Witamy', headline: `Dzień dobry, ${user.name}!`,
-          body: 'Konto utworzone. W kilka minut dostroimy portal do Twojej firmy — i możesz zaprosić pierwszego kandydata.', cta: 'Skonfiguruj portal' },
-        en: { subject: 'Welcome to HR PRO AI', eyebrow: 'Welcome', headline: `Hello, ${user.name}!`,
-          body: 'Your account is ready. Take a couple of minutes to tune the portal for your company — then invite your first candidate.', cta: 'Set up the portal' },
-      }[lg];
-      integ.sendEmail(user.settings, { to: user.email, lang: lg, baseUrl: BASE_URL, subject: W.subject,
-        eyebrow: W.eyebrow, headline: W.headline, bodyHtml: W.body, ctaLabel: W.cta, ctaUrl: onbUrl })
-        .catch(e => console.error('[welcome-email]', e.message));
-    }
-  } catch (e) { console.error('[welcome-email]', e.message); }
+  // Письмо для подтверждения email. Сессию НЕ выдаём: вход — только после подтверждения по ссылке из письма.
+  sendVerifyEmail(user, lg);
+  res.json({ needVerify: true, email: user.email });
+});
+
+// Подтверждение email по ссылке из письма → логиним и ведём на онбординг.
+app.get('/api/verify-email', (req, res) => {
+  const email = (() => { try { return Buffer.from(String(req.query.e || ''), 'base64').toString('utf8'); } catch (_) { return ''; } })();
+  const exp = parseInt(req.query.exp, 10) || 0;
+  const t = String(req.query.t || '');
+  const lang = ['ru', 'pl', 'en'].includes(req.query.lang) ? req.query.lang : 'ru';
+  if (!email || !exp || exp < Math.floor(Date.now() / 1000) || t !== emailVerifyToken(email, exp))
+    return res.redirect('/login?err=verify_failed');
+  const user = db().users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (!user) return res.redirect('/login?err=verify_failed');
+  if (user.blocked === true) return res.redirect('/login?err=blocked');
+  user.emailVerified = true; user.lastLoginAt = nowISO(); save();
   res.cookie('uid', user.id, { signed: true, httpOnly: true, sameSite: 'lax', maxAge: 30 * 864e5 });
-  res.json({ user: publicUser(user) });
+  res.redirect(user.onboarded ? '/app' : '/onboarding.html');
+});
+
+// Повторно отправить письмо подтверждения (со страницы «проверьте почту»).
+app.post('/api/verify-email/resend', (req, res) => {
+  const email = String((req.body && req.body.email) || '').trim().toLowerCase();
+  const user = db().users.find(u => u.email.toLowerCase() === email);
+  if (user && user.emailVerified === false) sendVerifyEmail(user, (user.settings && user.settings.uiLang) || 'ru');
+  res.json({ ok: true }); // не раскрываем, существует ли аккаунт
 });
 
 app.post('/api/login', (req, res) => {
@@ -513,6 +546,11 @@ app.post('/api/login', (req, res) => {
   if (!user || !verifyPassword(password || '', user.password))
     return res.status(401).json({ error: 'Неверный email или пароль' });
   if (user.blocked === true) return res.status(403).json({ error: 'Аккаунт заблокирован. Свяжитесь с поддержкой.' + (portalSettings().supportEmail ? ' ' + portalSettings().supportEmail : '') });
+  // email не подтверждён — не пускаем, повторно шлём письмо (existing-аккаунты без флага считаем подтверждёнными)
+  if (user.emailVerified === false) {
+    sendVerifyEmail(user, (user.settings && user.settings.uiLang) || 'ru');
+    return res.status(403).json({ error: 'Подтвердите email — мы отправили ссылку на вашу почту.', needVerify: true, email: user.email });
+  }
   user.lastLoginAt = nowISO(); save();
   res.cookie('uid', user.id, { signed: true, httpOnly: true, sameSite: 'lax', maxAge: 30 * 864e5 });
   res.json({ user: publicUser(user) });
@@ -2577,6 +2615,7 @@ app.get('/api/a/:slug/jsonld', (req, res) => {
 app.get('/req/:code', (req, res) => res.sendFile(path.join(PUB, 'req.html')));
 app.get('/new-req/:code', (req, res) => res.sendFile(path.join(PUB, 'req.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(PUB, 'login.html')));
+app.get('/verify-email', (req, res) => res.sendFile(path.join(PUB, 'verify-email.html')));
 app.get(['/guide', '/guide/:slug'], (req, res) => res.sendFile(path.join(PUB, 'guide.html')));
 app.get('/privacy', (req, res) => res.sendFile(path.join(PUB, 'privacy.html')));
 app.get('/terms', (req, res) => res.sendFile(path.join(PUB, 'terms.html')));
