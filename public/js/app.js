@@ -4241,7 +4241,10 @@ function drawCalendar() {
     '<div class="cal-wrap reveal">' +
       '<div class="cal-head">' +
         '<div><div class="eyebrow">' + ct('eyebrow') + '</div><h1 style="margin:10px 0 0">' + ct('title') + '</h1></div>' +
-        '<button class="btn" id="cal-new">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + ' ' + ct('neww') + '</button>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<button class="btn ghost ic-btn" id="cal-setup" title="' + ct('setup_title') + '" aria-label="' + ct('setup_title') + '">' + _svg('<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.77l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-.97 1.47V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1.05-1.47 1.6 1.6 0 0 0-1.77.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.47-.97H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.47-1.05 1.6 1.6 0 0 0-.32-1.77l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.77.32H9a1.6 1.6 0 0 0 .97-1.47V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 .97 1.47 1.6 1.6 0 0 0 1.77-.32l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.32 1.77V9a1.6 1.6 0 0 0 1.47.97H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.47.97Z" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
+          '<button class="btn" id="cal-new">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + ' ' + ct('neww') + '</button>' +
+        '</div>' +
       '</div>' +
       '<div class="cal-toolbar">' +
         '<div class="cal-nav">' +
@@ -4259,6 +4262,7 @@ function drawCalendar() {
       '<div class="cal-up-sec"><div class="eyebrow">' + ct('upcoming') + '</div><div class="cal-up-grid">' + upHtml + '</div></div>' +
     '</div>';
   $('#cal-new').onclick = () => openCalModal(null, calIso(S.y, S.m, Math.min(now.getDate(), dim)));
+  { const gs = $('#cal-setup'); if (gs) gs.onclick = () => openInterviewSetup(); }
   $('#cal-prev').onclick = () => { S.m--; if (S.m < 0) { S.m = 11; S.y--; } drawCalendar(); };
   $('#cal-next').onclick = () => { S.m++; if (S.m > 11) { S.m = 0; S.y++; } drawCalendar(); };
   $('#cal-today').onclick = () => { S.y = now.getFullYear(); S.m = now.getMonth(); drawCalendar(); };
