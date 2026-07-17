@@ -1000,6 +1000,10 @@ async function openReqForm(id, unlock) {
   const ap = $('#req-approve'); if (ap) ap.onclick = async () => {
     await api('/api/requisitions/' + id, { method: 'PUT', body: JSON.stringify({ form: collectReqForm(), lang: $('#rq-lang').value }) });
     const d = await api('/api/requisitions/' + id + '/approve', { method: 'POST' });
+    // обновляем разделы и вакансии в state, чтобы новая вакансия сразу была видна везде
+    // (в списке отправки тестов, фильтрах) без перезагрузки страницы
+    try { await loadSections(); } catch (e) {}
+    try { await loadVacancies(true); } catch (e) {}
     toast(rt('req_created_vac')); closeModal(); recTab = 'vacancies'; renderRecruitment();
   };
   const tv = $('#req-tovac'); if (tv) tv.onclick = () => { closeModal(); openVacancyPage(req.vacancyId); };
@@ -1037,6 +1041,8 @@ async function renderVacTab() {
       if (!name) return toast(rt('vac_quick_need_name'));
       const d = await api('/api/requisitions', { method: 'POST', body: JSON.stringify({ form: { position: name }, lang: docLang() }) });
       const a = await api('/api/requisitions/' + d.requisition.id + '/approve', { method: 'POST' });
+      try { await loadSections(); } catch (e) {}
+      try { await loadVacancies(true); } catch (e) {}
       toast(rt('req_created_vac')); closeModal(); openVacancyPage(a.vacancyId);
     };
     // Полный путь: открыть форму заявки (название предзаполняется)
