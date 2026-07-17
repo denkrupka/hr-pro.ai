@@ -1637,8 +1637,10 @@ async function api(req, env, url, exec) {
       const delivery = { email: null, sms: null };
       if (part.email && env.RESEND_API_KEY) {
         try {
-          const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: H.subj, eyebrow: H.subj, headline: H.subj,
-            bodyHtml: `${H.hi}<br><br>${H.when} — <b>${FL[k][lang]}</b>.<br>${H.kwhen}: <b>${when}</b>.<br>${detail.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + H.pos + ': ' + ev.role : ''}` });
+          const candName = ((part.name || '') + ' ' + (part.surname || '')).trim();
+          const greet = { ru: `Здравствуйте${candName ? ', ' + candName : ''}!`, pl: `Dzień dobry${candName ? ', ' + candName : ''}!`, en: `Hello${candName ? ', ' + candName : ''}!` }[lang];
+          const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: H.subj, eyebrow: H.subj, headline: greet,
+            bodyHtml: `${H.when} — <b>${FL[k][lang]}</b>.<br>${H.kwhen}: <b>${when}</b>.<br>${detail.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + H.pos + ': ' + ev.role : ''}` });
           await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
             body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [part.email], subject: H.subj, html }) });
           delivery.email = 'sent';

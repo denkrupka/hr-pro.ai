@@ -2473,8 +2473,11 @@ function interviewInviteText(ev, lang, forSms) {
   }[lg];
   const line = k === 'video' ? `${L.video}: ${ev.meetingLink || ''}` : k === 'office' ? `${L.office}: ${ev.meetingLink || ''}` : `${L.phone}: ${ev.meetingLink || ''}`;
   if (forSms) return `${L.when}${ev.role ? ' — ' + ev.role : ''} (${CAL_FMT_LABEL[k][lg]}), ${when}. ${line}`.slice(0, 320);
-  return `${L.hi}<br><br>${L.when} — <b>${CAL_FMT_LABEL[k][lg]}</b>.<br>${L.at === 'когда' ? 'Когда' : L.at[0].toUpperCase() + L.at.slice(1)}: <b>${when}</b>.<br>${line.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + (lg === 'en' ? 'Position' : lg === 'pl' ? 'Stanowisko' : 'Должность') + ': ' + ev.role : ''}`;
+  // Тело письма без приветствия — «Здравствуйте, Имя!» выносим в headline (именное).
+  return `${L.when} — <b>${CAL_FMT_LABEL[k][lg]}</b>.<br>${L.at === 'когда' ? 'Когда' : L.at[0].toUpperCase() + L.at.slice(1)}: <b>${when}</b>.<br>${line.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + (lg === 'en' ? 'Position' : lg === 'pl' ? 'Stanowisko' : 'Должность') + ': ' + ev.role : ''}`;
 }
+function inviteGreeting(name, lang) { const lg = ['ru', 'pl', 'en'].includes(lang) ? lang : 'ru'; const nm = String(name || '').trim();
+  return { ru: `Здравствуйте${nm ? ', ' + nm : ''}!`, pl: `Dzień dobry${nm ? ', ' + nm : ''}!`, en: `Hello${nm ? ', ' + nm : ''}!` }[lg]; }
 app.post('/api/calendar/:id/invite', requireAuth, async (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
   const ev = (u.calendar || []).find(x => x.id === req.params.id);
@@ -2487,7 +2490,8 @@ app.post('/api/calendar/:id/invite', requireAuth, async (req, res) => {
   const delivery = { email: null, sms: null };
   try {
     if (p.email && integ.isConfigured(u.settings, 'resend')) {
-      await integ.sendEmail(u.settings, { to: p.email, lang, baseUrl: BASE_URL, subject, eyebrow: subject, headline: subject, bodyHtml: interviewInviteText(ev, lang, false) });
+      const candName = ((p.name || '') + ' ' + (p.surname || '')).trim();
+      await integ.sendEmail(u.settings, { to: p.email, lang, baseUrl: BASE_URL, subject, eyebrow: subject, headline: inviteGreeting(candName, lang), bodyHtml: interviewInviteText(ev, lang, false) });
       delivery.email = 'sent';
     }
   } catch (e) { delivery.email = 'error: ' + e.message; }
