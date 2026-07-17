@@ -1732,6 +1732,16 @@ async function api(req, env, url, exec) {
       interested: { type: 'boolean', description: 'Подтвердил ли интерес к вакансии' },
     } };
     if (body.dryRun) return j({ ok: true, dryRun: true, vapiConfigured: vapiConfigured(env), hasPhone: !!env.VAPI_PHONE_NUMBER_ID, hasKey: !!env.VAPI_API_KEY, hasEleven: !!env.ELEVENLABS_API_KEY, taskLen: task.length, first: firstMessage.slice(0, 80) });
+    if (body.pingVapi) {
+      try {
+        const pr = await Promise.race([
+          fetch('https://api.vapi.ai/phone-number/' + encodeURIComponent(env.VAPI_PHONE_NUMBER_ID), { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY } }),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('ping timeout')), 6000)),
+        ]);
+        const pt = await pr.text();
+        return j({ ping: true, vapiStatus: pr.status, body: pt.slice(0, 250) });
+      } catch (e) { return j({ ping: true, error: String(e.message || e) }); }
+    }
     try {
       const r = await Promise.race([
         vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
