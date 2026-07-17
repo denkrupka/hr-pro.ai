@@ -8,7 +8,7 @@
 
 module.exports = {
   'module-point-d': {
-    trailer: { ru: '/media/module2-trailer-ru.mp4', pl: '', en: '' },
+    trailer: { ru: 'https://tnemvzaxtgumtvijpfli.supabase.co/storage/v1/object/public/media/learning/prog5-trailer-ru.mp4', pl: '', en: '' },
     sections: [
       {
         id: 'intro',
