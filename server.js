@@ -2456,7 +2456,7 @@ function calEvent(b, base) {
   e.stage = CAL_STAGES.includes(b && b.stage) ? b.stage : (e.stage || 'intv');
   e.date = /^\d{4}-\d{2}-\d{2}$/.test(b && b.date) ? b.date : (e.date || '');
   e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
-  e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.note = s('note');
+  e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.videoPlatform = s('videoPlatform'); e.note = s('note');
   e.participantId = (b && b.participantId) || e.participantId || null;
   return e;
 }
