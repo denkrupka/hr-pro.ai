@@ -1679,6 +1679,9 @@ async function api(req, env, url, exec) {
     if (Array.isArray(body.interviewers)) {
       s.interviewers = body.interviewers.slice(0, 50).map(x => ({ name: String(x.name || '').slice(0, 120), email: String(x.email || '').slice(0, 160), phone: String(x.phone || '').slice(0, 60) })).filter(x => x.name);
     }
+    if (Array.isArray(body.calStages)) {
+      s.calStages = body.calStages.slice(0, 12).map(x => ({ key: String(x.key || '').slice(0, 40), label: String(x.label || '').slice(0, 60), color: /^#[0-9a-fA-F]{6}$/.test(x.color) ? x.color : '#6f97ff' })).filter(x => x.key);
+    }
     await saveUser(me);
     return j({ user: publicUser(me) });
   }

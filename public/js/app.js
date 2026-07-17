@@ -3517,7 +3517,9 @@ async function renderLearning() {
       ? `<button class="btn ghost sm lp-trailer-btn" data-lp-trailer="${p.id}">${LP_PLAY}${t('lp_trailer')}</button>`
       : `<button class="btn ghost sm lp-trailer-btn" disabled title="${t('lp_trailer_locked')}">${LP_PLAY}${t('lp_trailer')}</button>`;
     const bar = p.purchased ? `<div class="lp-prog"><div class="lp-prog-h"><span>${t('lp_progress')}</span><span class="mono">${p.done}/${p.total} · ${p.pct}%</span></div>${lpProgressBar(p.pct)}</div>` : '';
-    return `<div class="lp-card ${locked ? 'locked' : ''} reveal" style="animation-delay:${i * 60}ms">
+    // Состояние-цвет: завершена → зелёный, в процессе → жёлтый, доступна к покупке → синий, заблокирована → серый.
+    const stateCls = p.completed ? 'lp-done' : p.purchased ? 'lp-inprog' : (locked ? 'lp-locked' : 'lp-avail');
+    return `<div class="lp-card ${stateCls} ${locked ? 'locked' : ''} reveal" style="animation-delay:${i * 60}ms">
       <div class="lp-card-top"><span class="lp-num">${p.order}</span><div class="lp-card-h"><b>${esc(p.title)}</b>${badge}</div></div>
       <p class="lp-desc">${esc(p.desc)}</p>
       <div class="lp-meta"><span>${p.sectionsCount} ${t('lp_sections')}</span><span class="lp-dot">·</span><span>${t('lp_price')}: <b>${p.price} ${t('lp_tests_unit')}</b></span></div>
@@ -4128,12 +4130,18 @@ function renderInstruct() {
 }
 
 // ============ КАЛЕНДАРЬ СОБЕСЕДОВАНИЙ ============
-const CAL_STAGE = {
-  screen: { key: 'screen', color: '#6f97ff' },
-  tests:  { key: 'tests',  color: '#8b6cff' },
-  intv:   { key: 'intv',   color: '#ff7a5c' },
-  final:  { key: 'final',  color: '#43e0a0' },
-};
+const CAL_PALETTE = ['#6f97ff', '#8b6cff', '#ff7a5c', '#43e0a0', '#e0a94e', '#ff6b6b', '#4fd1c5', '#b3a4ff'];
+const CAL_STAGE_DEFAULTS = [{ key: 'screen', color: '#6f97ff' }, { key: 'tests', color: '#8b6cff' }, { key: 'intv', color: '#ff7a5c' }, { key: 'final', color: '#43e0a0' }];
+let CAL_STAGE = {};
+// Этапы календаря: кастомные из настроек пользователя, иначе — дефолтные 4.
+function rebuildCalStages() {
+  const custom = state.user && state.user.settings && state.user.settings.calStages;
+  const src = (Array.isArray(custom) && custom.length) ? custom : CAL_STAGE_DEFAULTS;
+  const out = {};
+  src.forEach((s, i) => { const key = s.key || ('st' + i); out[key] = { key, label: (s.label || cStageDefaultLabel(key)), color: s.color || CAL_PALETTE[i % CAL_PALETTE.length] }; });
+  CAL_STAGE = out;
+}
+function cStageDefaultLabel(k) { return (CI18N[LANG] || CI18N.ru)['s_' + k] || (CI18N.ru['s_' + k]) || k; }
 const CI18N = {
   ru: { title: 'Календарь собеседований', eyebrow: 'Планирование собеседований', neww: 'Новое собеседование', today: 'Сегодня',
     s_screen: 'Скрининг', s_tests: 'Тесты', s_intv: 'Интервью', s_final: 'Финал',
@@ -4148,10 +4156,12 @@ const CI18N = {
     need: 'Укажите кандидата и дату', saved: 'Сохранено', deleted: 'Удалено', del_confirm: 'Удалить это собеседование?', more: 'ещё',
     cand_search: 'Начните вводить имя или выберите из списка', cand_manual: 'Ввести вручную: ', cand_none: 'Кандидаты не найдены',
     int_me: 'Я', int_add: '+ Другой сотрудник', int_add_name: 'Имя сотрудника', int_add_email: 'Email (для приглашения)', int_add_phone: 'Телефон', int_add_save: 'Добавить',
-    meet_video: 'Ссылка на видеовстречу', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Адрес встречи', meet_office_ph: 'Город, улица, офис', meet_phone: 'Номер для звонка', meet_phone_ph: '+48…', meet_create: 'Создать ссылку',
+    meet_video: 'Ссылка на видеовстречу', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Адрес встречи', meet_office_ph: 'Город, улица, офис', meet_phone: 'Номер, с которого будет звонок', meet_phone_ph: '+48…', meet_create: 'Создать ссылку',
     setup_title: 'Давайте настроим процесс собеседований', setup_sub: 'Заполните один раз — данные подставятся во все собеседования. Позже можно изменить в настройках.', setup_office: 'Адрес офиса (для очных встреч)', setup_office_ph: 'Город, улица, дом, офис', setup_phone: 'Телефон организатора (для звонков)', setup_video: 'Сервис видеосвязи', setup_save: 'Сохранить и продолжить', setup_later: 'Позже',
     save_invite: 'Запланировать и пригласить',
-    inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы — приглашение шлём на его email и телефон', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)' },
+    inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы — приглашение шлём на его email и телефон', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)',
+    search_ph: 'Поиск: имя, телефон, email…', filter_all: 'Все этапы', view_month: 'Месяц', view_list: 'Список', link_hint: 'Создайте встречу в открывшемся окне и вставьте ссылку сюда', list_empty: 'Нет собеседований по заданным условиям',
+    edit_stages: 'Изменить этапы', st_ed_title: 'Этапы отбора', st_ed_sub: 'Переименуйте, добавьте или удалите этапы. Цвет — метка события в календаре.', st_name_ph: 'Название этапа', st_add: '+ Добавить этап', st_min: 'Оставьте хотя бы один этап', cand_email: 'Email кандидата', cand_phone: 'Телефон кандидата' },
   pl: { title: 'Kalendarz rozmów', eyebrow: 'Planowanie rozmów', neww: 'Nowa rozmowa', today: 'Dziś',
     s_screen: 'Screening', s_tests: 'Testy', s_intv: 'Rozmowa', s_final: 'Finał',
     upcoming: 'Najbliższe rozmowy', none_up: 'Brak zaplanowanych rozmów.',
@@ -4165,10 +4175,12 @@ const CI18N = {
     need: 'Podaj kandydata i datę', saved: 'Zapisano', deleted: 'Usunięto', del_confirm: 'Usunąć tę rozmowę?', more: 'więcej',
     cand_search: 'Zacznij wpisywać imię lub wybierz z listy', cand_manual: 'Wpisz ręcznie: ', cand_none: 'Nie znaleziono kandydatów',
     int_me: 'Ja', int_add: '+ Inny pracownik', int_add_name: 'Imię pracownika', int_add_email: 'Email (do zaproszenia)', int_add_phone: 'Telefon', int_add_save: 'Dodaj',
-    meet_video: 'Link do wideorozmowy', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Adres spotkania', meet_office_ph: 'Miasto, ulica, biuro', meet_phone: 'Numer do rozmowy', meet_phone_ph: '+48…', meet_create: 'Utwórz link',
+    meet_video: 'Link do wideorozmowy', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Adres spotkania', meet_office_ph: 'Miasto, ulica, biuro', meet_phone: 'Numer, z którego zadzwonimy', meet_phone_ph: '+48…', meet_create: 'Utwórz link',
     setup_title: 'Skonfigurujmy proces rozmów', setup_sub: 'Wypełnij raz — dane podstawią się do wszystkich rozmów. Później można zmienić w ustawieniach.', setup_office: 'Adres biura (spotkania na żywo)', setup_office_ph: 'Miasto, ulica, biuro', setup_phone: 'Telefon organizatora (rozmowy tel.)', setup_video: 'Usługa wideo', setup_save: 'Zapisz i kontynuuj', setup_later: 'Później',
     save_invite: 'Zaplanuj i zaproś',
-    inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy — zaproszenie wyślemy na jego email i telefon', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)' },
+    inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy — zaproszenie wyślemy na jego email i telefon', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)',
+    search_ph: 'Szukaj: imię, telefon, email…', filter_all: 'Wszystkie etapy', view_month: 'Miesiąc', view_list: 'Lista', link_hint: 'Utwórz spotkanie w otwartym oknie i wklej link tutaj', list_empty: 'Brak rozmów dla podanych warunków',
+    edit_stages: 'Edytuj etapy', st_ed_title: 'Etapy rekrutacji', st_ed_sub: 'Zmień nazwę, dodaj lub usuń etapy. Kolor — oznaczenie wydarzenia w kalendarzu.', st_name_ph: 'Nazwa etapu', st_add: '+ Dodaj etap', st_min: 'Zostaw co najmniej jeden etap', cand_email: 'Email kandydata', cand_phone: 'Telefon kandydata' },
   en: { title: 'Interview calendar', eyebrow: 'Interview scheduling', neww: 'New interview', today: 'Today',
     s_screen: 'Screening', s_tests: 'Tests', s_intv: 'Interview', s_final: 'Final',
     upcoming: 'Upcoming interviews', none_up: 'No interviews scheduled yet.',
@@ -4182,19 +4194,33 @@ const CI18N = {
     need: 'Enter candidate and date', saved: 'Saved', deleted: 'Deleted', del_confirm: 'Delete this interview?', more: 'more',
     cand_search: 'Start typing a name or pick from the list', cand_manual: 'Enter manually: ', cand_none: 'No candidates found',
     int_me: 'Me', int_add: '+ Another teammate', int_add_name: 'Teammate name', int_add_email: 'Email (for the invite)', int_add_phone: 'Phone', int_add_save: 'Add',
-    meet_video: 'Video meeting link', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Meeting address', meet_office_ph: 'City, street, office', meet_phone: 'Number to call', meet_phone_ph: '+48…', meet_create: 'Create link',
+    meet_video: 'Video meeting link', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Meeting address', meet_office_ph: 'City, street, office', meet_phone: 'Number we will call from', meet_phone_ph: '+48…', meet_create: 'Create link',
     setup_title: 'Let’s set up your interview process', setup_sub: 'Fill this once — it will prefill every interview. You can change it later in settings.', setup_office: 'Office address (in-person)', setup_office_ph: 'City, street, office', setup_phone: 'Organizer phone (phone calls)', setup_video: 'Video service', setup_save: 'Save and continue', setup_later: 'Later',
     save_invite: 'Schedule & invite',
-    inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base — we send the invite to their email and phone', inv_needmeet: 'Fill in the meeting details (link / address / phone)' },
+    inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base — we send the invite to their email and phone', inv_needmeet: 'Fill in the meeting details (link / address / phone)',
+    search_ph: 'Search: name, phone, email…', filter_all: 'All stages', view_month: 'Month', view_list: 'List', link_hint: 'Create the meeting in the opened window and paste the link here', list_empty: 'No interviews match the filters',
+    edit_stages: 'Edit stages', st_ed_title: 'Selection stages', st_ed_sub: 'Rename, add or remove stages. The color is the event marker in the calendar.', st_name_ph: 'Stage name', st_add: '+ Add stage', st_min: 'Keep at least one stage', cand_email: 'Candidate email', cand_phone: 'Candidate phone' },
 };
 function ct(k) { return (CI18N[LANG] || CI18N.ru)[k] || CI18N.ru[k] || k; }
-function cStageLabel(k) { return ct('s_' + k); }
-let calState = { y: null, m: null, events: [], cands: [] };
+function cStageLabel(k) { return (CAL_STAGE[k] && CAL_STAGE[k].label) || ct('s_' + k); }
+let calState = { y: null, m: null, events: [], cands: [], view: 'month', filterStage: '', search: '' };
 async function renderCalendar() {
   if (calState.y === null) { const n = new Date(); calState.y = n.getFullYear(); calState.m = n.getMonth(); }
+  rebuildCalStages();
   try { calState.events = (await api('/api/calendar')).events || []; } catch (e) { calState.events = []; }
   try { if (!calState.cands.length) calState.cands = (await api('/api/candidates?lang=' + LANG)).candidates || []; } catch (e) {}
   drawCalendar();
+}
+// Фильтр событий по этапу и поиску (имя/должность/телефон/email связанного кандидата).
+function calFilteredEvents() {
+  const q = (calState.search || '').trim().toLowerCase();
+  return calState.events.filter(ev => {
+    if (calState.filterStage && ev.stage !== calState.filterStage) return false;
+    if (!q) return true;
+    const c = ev.participantId ? calState.cands.find(x => x.id === ev.participantId) : null;
+    const hay = [ev.candidate, ev.role, c && c.email, c && c.tel, ev.meetingLink].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
 }
 function calPad(n) { return String(n).padStart(2, '0'); }
 function calIso(y, m, d) { return y + '-' + calPad(m + 1) + '-' + calPad(d); }
@@ -4208,7 +4234,8 @@ function drawCalendar() {
   const monName = monNom ? monNom[S.m] : new Date(S.y, S.m, 1).toLocaleString('en', { month: 'long' });
   const wd = { ru: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], pl: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'], en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }[LANG] || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const now = new Date(); const todayIso = calIso(now.getFullYear(), now.getMonth(), now.getDate());
-  const byDate = {}; S.events.forEach(e => { (byDate[e.date] = byDate[e.date] || []).push(e); });
+  const fEvents = calFilteredEvents();
+  const byDate = {}; fEvents.forEach(e => { (byDate[e.date] = byDate[e.date] || []).push(e); });
   Object.values(byDate).forEach(a => a.sort((x, y) => x.time.localeCompare(y.time)));
   const first = new Date(S.y, S.m, 1); let sd = first.getDay(); sd = sd === 0 ? 6 : sd - 1;
   const dim = new Date(S.y, S.m + 1, 0).getDate(); const dip = new Date(S.y, S.m, 0).getDate();
@@ -4229,8 +4256,9 @@ function drawCalendar() {
       '<div class="cal-cell-h"><span class="cal-num">' + dn + '</span><span class="cal-add">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + '</span></div>' +
       '<div class="cal-evts">' + evHtml + more + '</div></div>';
   }
-  const legend = Object.values(CAL_STAGE).map(st => '<span class="cal-leg"><i style="background:' + st.color + ';box-shadow:0 0 8px ' + calHexA(st.color, .6) + '"></i>' + cStageLabel(st.key) + '</span>').join('');
-  const up = [...S.events].filter(e => e.date >= todayIso).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)).slice(0, 6);
+  const legend = Object.values(CAL_STAGE).map(st => '<span class="cal-leg"><i style="background:' + st.color + ';box-shadow:0 0 8px ' + calHexA(st.color, .6) + '"></i>' + esc(cStageLabel(st.key)) + '</span>').join('') +
+    '<button class="btn ghost xs" id="cal-edit-stages" style="margin-left:4px">' + _svg('<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" stroke-linecap="round" stroke-linejoin="round"/>') + ' ' + ct('edit_stages') + '</button>';
+  const up = [...fEvents].filter(e => e.date >= todayIso).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)).slice(0, 6);
   const upHtml = up.length ? up.map(ev => { const st = CAL_STAGE[ev.stage] || CAL_STAGE.intv; const parts = ev.date.split('-').map(Number); const d = parts[2], m = parts[1];
     return '<div class="cal-up" data-caledit="' + ev.id + '" style="border-left:3px solid ' + st.color + '">' +
       '<div class="cal-up-d"><b>' + d + '</b><span>' + monShort[m - 1] + '</span></div><div class="cal-up-sep"></div>' +
@@ -4248,26 +4276,84 @@ function drawCalendar() {
       '</div>' +
       '<div class="cal-toolbar">' +
         '<div class="cal-nav">' +
-          '<button class="btn ghost ic-btn" id="cal-prev" aria-label="prev">' + _svg('<path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
+          (S.view === 'month' ? '<button class="btn ghost ic-btn" id="cal-prev" aria-label="prev">' + _svg('<path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
           '<div class="cal-month">' + esc(monName) + ' ' + S.y + '</div>' +
-          '<button class="btn ghost ic-btn" id="cal-next" aria-label="next">' + _svg('<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
+          '<button class="btn ghost ic-btn" id="cal-next" aria-label="next">' + _svg('<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' : '<div class="cal-month">' + ct('view_list') + '</div>') +
           '<button class="btn ghost xs" id="cal-today">' + ct('today') + '</button>' +
+        '</div>' +
+        '<div class="cal-tools">' +
+          '<div class="cal-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg><input id="cal-search" placeholder="' + ct('search_ph') + '" value="' + esc(S.search || '') + '"></div>' +
+          '<select class="field cal-filter" id="cal-filter"><option value="">' + ct('filter_all') + '</option>' + Object.values(CAL_STAGE).map(st => '<option value="' + st.key + '"' + (S.filterStage === st.key ? ' selected' : '') + '>' + esc(cStageLabel(st.key)) + '</option>').join('') + '</select>' +
+          '<div class="cal-viewtog"><button class="' + (S.view === 'month' ? 'on' : '') + '" data-calview="month">' + ct('view_month') + '</button><button class="' + (S.view === 'list' ? 'on' : '') + '" data-calview="list">' + ct('view_list') + '</button></div>' +
         '</div>' +
         '<div class="cal-legend">' + legend + '</div>' +
       '</div>' +
-      '<div class="cal-grid-card">' +
-        '<div class="cal-weekdays">' + wd.map((n, i) => '<div class="' + (i >= 5 ? 'we' : '') + '">' + n + '</div>').join('') + '</div>' +
-        '<div class="cal-grid">' + cells + '</div>' +
-      '</div>' +
-      '<div class="cal-up-sec"><div class="eyebrow">' + ct('upcoming') + '</div><div class="cal-up-grid">' + upHtml + '</div></div>' +
+      (S.view === 'month'
+        ? '<div class="cal-grid-card">' +
+            '<div class="cal-weekdays">' + wd.map((n, i) => '<div class="' + (i >= 5 ? 'we' : '') + '">' + n + '</div>').join('') + '</div>' +
+            '<div class="cal-grid">' + cells + '</div>' +
+          '</div>'
+        : calListHtml(fEvents, monShort)) +
+      (S.view === 'month' ? '<div class="cal-up-sec"><div class="eyebrow">' + ct('upcoming') + '</div><div class="cal-up-grid">' + upHtml + '</div></div>' : '') +
     '</div>';
   $('#cal-new').onclick = () => openCalModal(null, calIso(S.y, S.m, Math.min(now.getDate(), dim)));
   { const gs = $('#cal-setup'); if (gs) gs.onclick = () => openInterviewSetup(); }
-  $('#cal-prev').onclick = () => { S.m--; if (S.m < 0) { S.m = 11; S.y--; } drawCalendar(); };
-  $('#cal-next').onclick = () => { S.m++; if (S.m > 11) { S.m = 0; S.y++; } drawCalendar(); };
+  { const p = $('#cal-prev'); if (p) p.onclick = () => { S.m--; if (S.m < 0) { S.m = 11; S.y--; } drawCalendar(); }; }
+  { const n = $('#cal-next'); if (n) n.onclick = () => { S.m++; if (S.m > 11) { S.m = 0; S.y++; } drawCalendar(); }; }
   $('#cal-today').onclick = () => { S.y = now.getFullYear(); S.m = now.getMonth(); drawCalendar(); };
+  { const s = $('#cal-search'); if (s) s.oninput = () => { S.search = s.value; const pos = s.selectionStart; drawCalendar(); const s2 = $('#cal-search'); if (s2) { s2.focus(); try { s2.setSelectionRange(pos, pos); } catch (e) {} } }; }
+  { const f = $('#cal-filter'); if (f) f.onchange = () => { S.filterStage = f.value; drawCalendar(); }; }
+  $$('[data-calview]').forEach(b => b.onclick = () => { S.view = b.dataset.calview; drawCalendar(); });
+  { const es = $('#cal-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   $$('[data-caladd]').forEach(c => c.onclick = () => openCalModal(null, c.dataset.caladd));
   $$('[data-caledit]').forEach(el => el.onclick = e => { e.stopPropagation(); const ev = S.events.find(x => x.id === el.dataset.caledit); if (ev) openCalModal(ev); });
+}
+// Список собеседований (режим «Список»): по датам, с контактами кандидата.
+function calListHtml(events, monShort) {
+  const sorted = [...events].sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  if (!sorted.length) return '<div class="cal-grid-card" style="padding:40px 20px;text-align:center"><p class="muted">' + ct('list_empty') + '</p></div>';
+  const rows = sorted.map(ev => {
+    const st = CAL_STAGE[ev.stage] || Object.values(CAL_STAGE)[0]; const parts = ev.date.split('-').map(Number);
+    const c = ev.participantId ? calState.cands.find(x => x.id === ev.participantId) : null;
+    const contact = [c && c.email, c && c.tel].filter(Boolean).join(' · ');
+    return '<div class="cal-list-row" data-caledit="' + ev.id + '">' +
+      '<div class="cal-list-d"><b>' + parts[2] + '</b><span>' + monShort[parts[1] - 1] + '</span><em>' + esc(ev.time) + '</em></div>' +
+      '<div class="cal-list-bar" style="background:' + st.color + '"></div>' +
+      '<div class="cal-list-main"><div class="cal-list-c">' + esc(ev.candidate) + (ev.role ? ' <span class="cal-list-role">· ' + esc(ev.role) + '</span>' : '') + '</div>' +
+        (contact ? '<div class="cal-list-contact">' + esc(contact) + '</div>' : '') +
+        (ev.meetingLink ? '<div class="cal-list-contact">' + esc(ev.meetingLink) + '</div>' : '') + '</div>' +
+      '<span class="cal-tag" style="color:' + st.color + ';background:' + calHexA(st.color, .12) + ';border-color:' + calHexA(st.color, .3) + '">' + esc(cStageLabel(ev.stage)) + '</span>' +
+      (ev.invited ? '<span class="cal-list-inv" title="Приглашение отправлено">✓</span>' : '') +
+    '</div>';
+  }).join('');
+  return '<div class="cal-grid-card cal-list">' + rows + '</div>';
+}
+// Редактор этапов отбора (rename/add/remove/recolor) → settings.calStages.
+function openStageEditor() {
+  let stages = Object.values(CAL_STAGE).map(s => ({ key: s.key, label: s.label, color: s.color }));
+  const draw = () => {
+    const rows = stages.map((s, i) => '<div class="st-ed-row">' +
+      '<input type="color" value="' + esc(s.color) + '" data-sti="' + i + '" class="st-ed-color">' +
+      '<input class="field" value="' + esc(s.label) + '" data-sti="' + i + '" placeholder="' + ct('st_name_ph') + '">' +
+      '<button class="btn ghost ic-btn xs" data-stdel="' + i + '" title="' + ct('del') + '">' + ICON_TRASH + '</button>' +
+    '</div>').join('');
+    mkDecodeModal('<div class="cal-modal"><h2 class="db-h" style="margin:0 0 6px">' + ct('st_ed_title') + '</h2>' +
+      '<p class="db-note" style="margin:0 0 14px">' + ct('st_ed_sub') + '</p>' +
+      '<div class="st-ed-list">' + rows + '</div>' +
+      '<button class="btn ghost xs" id="st-add" style="margin-top:10px">' + ct('st_add') + '</button>' +
+      '<div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">' + ct('cancel') + '</button><button class="btn" id="st-save">' + ct('save_edit') + '</button></div>' +
+    '</div>', true);
+    $$('.st-ed-color').forEach(el => el.oninput = () => { stages[+el.dataset.sti].color = el.value; });
+    $$('.st-ed-list input.field').forEach(el => el.oninput = () => { stages[+el.dataset.sti].label = el.value; });
+    $$('[data-stdel]').forEach(b => b.onclick = () => { if (stages.length <= 1) return toast(ct('st_min')); stages.splice(+b.dataset.stdel, 1); draw(); });
+    $('#st-add').onclick = () => { stages.push({ key: 'st' + Date.now().toString(36), label: '', color: CAL_PALETTE[stages.length % CAL_PALETTE.length] }); draw(); };
+    $('#st-save').onclick = async () => {
+      const clean = stages.map(s => ({ key: s.key, label: (s.label || '').trim() || ct('s_intv'), color: s.color })).filter(s => s.key);
+      if (!clean.length) return toast(ct('st_min'));
+      if (await saveSettingsPatch({ calStages: clean })) { rebuildCalStages(); closeDecodeModal(); toast(ct('saved')); drawCalendar(); }
+    };
+  };
+  draw();
 }
 function calFmtKey(f) { const v = String(f || '').toLowerCase();
   if (v === 'video' || v === 'office' || v === 'phone') return v;
@@ -4281,9 +4367,10 @@ function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date:
 function interviewSetup() { return (state.user && state.user.settings && state.user.settings.interviewSetup) || null; }
 function hasInterviewSetup() { const s = interviewSetup(); return !!(s && (s.office || s.phone || s.videoService)); }
 function savedInterviewers() { return (state.user && state.user.settings && state.user.settings.interviewers) || []; }
+// Страница СОЗДАНИЯ встречи в выбранном сервисе (не мгновенный старт звонка).
 function videoNewUrl(svc) { const s = String(svc || '').toLowerCase();
-  if (s.indexOf('teams') >= 0) return 'https://teams.microsoft.com/';
-  if (s.indexOf('zoom') >= 0) return 'https://zoom.us/start/videomeeting';
+  if (s.indexOf('teams') >= 0) return 'https://teams.microsoft.com/l/meeting/new';
+  if (s.indexOf('zoom') >= 0) return 'https://zoom.us/meeting/schedule';
   return 'https://meet.google.com/new'; }
 async function saveSettingsPatch(patch) { try { const d = await api('/api/settings', { method: 'PUT', body: JSON.stringify(patch) }); state.user = d.user; return true; } catch (e) { toast(e.message); return false; } }
 function openInterviewSetup(onDone) {
@@ -4333,8 +4420,9 @@ function openCalModalInner(ev, dateIso) {
       '<input class="field" id="cf-candidate" autocomplete="off" value="' + esc(f.candidate) + '" placeholder="' + ct('cand_search') + '">' +
       '<div id="cf-cand-list" class="cf-list" style="display:none"></div>' +
     '</div>' +
+    '<div id="cf-cand-contact" class="cf-contact" style="display:none"></div>' +
     '<label class="db-lb">' + ct('f_role') + '</label><input class="field" id="cf-role" value="' + esc(f.role) + '" placeholder="' + ct('f_role_ph') + '">' +
-    '<label class="db-lb">' + ct('f_stage') + '</label><div class="cal-stages" id="cf-stages">' + stageBtns + '</div>' +
+    '<label class="db-lb" style="display:flex;align-items:center;justify-content:space-between">' + ct('f_stage') + '<button type="button" class="cf-editstages" id="cf-edit-stages">' + ct('edit_stages') + '</button></label><div class="cal-stages" id="cf-stages">' + stageBtns + '</div>' +
     '<div class="row" style="gap:12px">' +
       '<div style="flex:1"><label class="db-lb">' + ct('f_date') + '</label><input class="field" id="cf-date" type="date" value="' + esc(f.date) + '"></div>' +
       '<div style="flex:1"><label class="db-lb">' + ct('f_time') + '</label><input class="field" id="cf-time" type="time" value="' + esc(f.time) + '"></div>' +
@@ -4362,22 +4450,33 @@ function openCalModalInner(ev, dateIso) {
   // Поиск кандидата: выпадающий список с фильтром; выбор подтягивает должность и связывает с базой.
   const candIn = $('#cf-candidate'), candList = $('#cf-cand-list');
   const setStage = k => { stage = k; $$('#cf-stages .cal-stage').forEach(x => { const on = x.dataset.calstage === k; x.classList.toggle('on', on); if (on) { const st = CAL_STAGE[k]; x.style.background = calHexA(st.color, .14); x.style.borderColor = calHexA(st.color, .5); } else { x.removeAttribute('style'); } }); };
+  const contactEl = $('#cf-cand-contact');
+  const showContact = (c) => {
+    if (c && (c.email || c.tel)) {
+      contactEl.style.display = 'flex';
+      contactEl.innerHTML = (c.email ? '<span class="cf-ct-i">' + _svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round"/>') + esc(c.email) + '</span>' : '') +
+        (c.tel ? '<span class="cf-ct-i">' + _svg('<path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L14 14l5 2v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4 6.2 2 2 0 0 1 6 4V3Z" stroke-linecap="round" stroke-linejoin="round"/>') + esc(c.tel) + '</span>' : '');
+    } else { contactEl.style.display = 'none'; contactEl.innerHTML = ''; }
+  };
+  // Контакты уже связанного кандидата (режим редактирования)
+  if (linkedId) { const c0 = calState.cands.find(x => x.id === linkedId); if (c0) showContact(c0); }
   const renderCandList = () => {
     const q = candIn.value.trim().toLowerCase();
-    const list = calState.cands.filter(c => !q || (c.name || '').toLowerCase().includes(q) || (c.vacancyName || '').toLowerCase().includes(q)).slice(0, 8);
-    let html = list.map(c => '<div class="cf-opt" data-id="' + c.id + '"><b>' + esc(c.name) + '</b>' + (c.vacancyName ? '<span>' + esc(c.vacancyName) + '</span>' : '') + (c.stage ? '<i>' + esc(c.stage) + '</i>' : '') + '</div>').join('');
+    // Показываем всех подходящих (список прокручивается); при пустом запросе — все кандидаты.
+    const list = calState.cands.filter(c => !q || (c.name || '').toLowerCase().includes(q) || (c.vacancyName || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q) || (c.tel || '').includes(q));
+    let html = list.map(c => '<div class="cf-opt" data-id="' + c.id + '"><b>' + esc(c.name) + '</b>' + (c.vacancyName ? '<span>' + esc(c.vacancyName) + '</span>' : '') + (c.email ? '<i class="cf-opt-c">' + esc(c.email) + '</i>' : (c.tel ? '<i class="cf-opt-c">' + esc(c.tel) + '</i>' : '')) + '</div>').join('');
     if (!list.length) html = '<div class="cf-opt muted">' + ct('cand_none') + '</div>';
     if (q) html += '<div class="cf-opt cf-manual" data-id=""><span>' + ct('cand_manual') + '«' + esc(candIn.value.trim()) + '»</span></div>';
     candList.innerHTML = html; candList.style.display = 'block';
     $$('#cf-cand-list .cf-opt[data-id]').forEach(o => o.onclick = () => {
       const id = o.dataset.id; const c = calState.cands.find(x => x.id === id);
-      if (c) { candIn.value = c.name; linkedId = c.id; if (c.vacancyName) $('#cf-role').value = c.vacancyName; if (c.stage && CAL_STAGE[c.stage]) setStage(c.stage); }
-      else { linkedId = null; } // ручной ввод — оставляем как есть
+      if (c) { candIn.value = c.name; linkedId = c.id; if (c.vacancyName) $('#cf-role').value = c.vacancyName; showContact(c); }
+      else { linkedId = null; showContact(null); } // ручной ввод — оставляем как есть
       candList.style.display = 'none';
     });
   };
   candIn.onfocus = renderCandList;
-  candIn.oninput = () => { linkedId = null; renderCandList(); };
+  candIn.oninput = () => { linkedId = null; showContact(null); renderCandList(); };
   document.addEventListener('click', e => { if (candList && !candList.contains(e.target) && e.target !== candIn) candList.style.display = 'none'; });
 
   // Интервьюер: выбор себя/сотрудника или добавление нового.
@@ -4402,7 +4501,10 @@ function openCalModalInner(ev, dateIso) {
     else { meetLb.textContent = ct('meet_video'); meetIn.placeholder = ct('meet_video_ph'); meetBtn.style.display = ''; }
   };
   $('#cf-format').onchange = () => { if ($('#cf-format').value !== calFmtKey(f.format)) meetIn.value = ''; applyFormat(true); };
-  meetBtn.onclick = () => window.open(videoNewUrl(setup.videoService), '_blank');
+  // «Создать ссылку»: открываем страницу создания встречи в выбранном сервисе в отдельном окне,
+  // пользователь создаёт встречу и вставляет ссылку в поле (без OAuth-интеграции автогенерация невозможна).
+  meetBtn.onclick = () => { window.open(videoNewUrl(setup.videoService), 'hrpro_meet', 'width=1000,height=760'); toast(ct('link_hint')); meetIn.focus(); };
+  { const es = $('#cf-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   applyFormat(!isEdit);
 
   const collect = () => ({ candidate: candIn.value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: $('#cf-format').value, interviewer: intSel.value === '__add' ? '' : intSel.value, interviewerEmail: interviewerEmail, meetingLink: meetIn.value.trim(), note: $('#cf-note').value.trim(), participantId: linkedId });

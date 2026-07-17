@@ -525,7 +525,18 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .lp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
 .lp-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;display:flex;flex-direction:column;gap:12px;transition:border-color var(--d1) var(--ease),transform var(--d1) var(--ease)}
 .lp-card:hover{border-color:var(--brand);transform:translateY(-3px)}
-.lp-card.locked{opacity:.72}
+/* состояние программы: серый(заблок.) / жёлтый(в процессе) / зелёный(пройдена) / синий(доступна) */
+.lp-card.lp-locked{filter:grayscale(1);opacity:.6}
+.lp-card.lp-locked:hover{border-color:var(--line);transform:none}
+.lp-card.lp-inprog{border-color:rgba(224,169,78,.5);background:linear-gradient(180deg,rgba(224,169,78,.06),transparent 120px)}
+.lp-card.lp-inprog:hover{border-color:rgba(224,169,78,.75)}
+.lp-card.lp-inprog .lp-num{background:linear-gradient(120deg,#c08a2e,#e0a94e)}
+.lp-card.lp-inprog .lp-prog-fill,.lp-card.lp-inprog .lp-prog-bar>span{background:linear-gradient(90deg,#c08a2e,#e0a94e)}
+.lp-card.lp-done{border-color:rgba(67,224,160,.45);background:linear-gradient(180deg,rgba(67,224,160,.06),transparent 120px)}
+.lp-card.lp-done:hover{border-color:rgba(67,224,160,.7)}
+.lp-card.lp-done .lp-num{background:linear-gradient(120deg,#1f9d6b,#43e0a0)}
+.lp-card.lp-avail{border-color:rgba(111,151,255,.55);box-shadow:0 0 0 1px rgba(111,151,255,.14) inset}
+.lp-card.lp-avail:hover{border-color:rgba(111,151,255,.85)}
 .lp-card-top{display:flex;align-items:flex-start;gap:13px}
 .lp-num{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:16px;background:linear-gradient(120deg,var(--brand),var(--brand-2));color:#fff}
 .lp-num.big{width:44px;height:44px;font-size:20px;border-radius:14px}
@@ -1834,6 +1845,43 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cf-opt i{margin-left:auto;font-style:normal;font-size:10.5px;color:#b3a4ff;background:rgba(139,108,255,.14);border:1px solid rgba(139,108,255,.3);border-radius:999px;padding:1px 8px}
 .cf-opt.muted{color:#5f6885;cursor:default}.cf-opt.muted:hover{background:none}
 .cf-opt.cf-manual span{color:#b3a4ff}
+.cf-opt-c{margin-left:auto;font-style:normal;font-size:11px;color:#8b93ad}
+/* контакты выбранного кандидата */
+.cf-contact{display:flex;flex-wrap:wrap;gap:8px 16px;margin:8px 0 2px;padding:9px 12px;border-radius:10px;background:rgba(139,108,255,.08);border:1px solid rgba(139,108,255,.2)}
+.cf-ct-i{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:#c3cbe4}
+.cf-ct-i svg{width:15px;height:15px;stroke:#b3a4ff;fill:none;stroke-width:1.8}
+.cf-editstages{background:transparent;border:none;color:#8b6cff;font-size:11.5px;font-weight:600;cursor:pointer;padding:0;text-transform:none;letter-spacing:0}
+.cf-editstages:hover{color:#b3a4ff;text-decoration:underline}
+/* тулбар: поиск / фильтр / переключатель вида */
+.cal-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cal-search{position:relative;display:flex;align-items:center}
+.cal-search svg{position:absolute;left:11px;width:15px;height:15px;stroke:var(--muted);fill:none;pointer-events:none}
+.cal-search input{background:var(--surface);border:1px solid var(--line);border-radius:11px;color:var(--text);font-size:13.5px;padding:9px 13px 9px 33px;width:230px;outline:none;font-family:inherit}
+.cal-search input:focus{border-color:var(--brand)}
+.cal-filter{width:auto;min-width:130px;padding:9px 30px 9px 13px;font-size:13.5px}
+.cal-viewtog{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:3px}
+.cal-viewtog button{border:0;background:none;color:var(--muted);font-weight:700;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit}
+.cal-viewtog button.on{background:linear-gradient(135deg,#8b6cff,#6f97ff);color:#fff}
+/* режим списка */
+.cal-list{padding:6px}
+.cal-list-row{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:pointer;transition:background .16s}
+.cal-list-row:hover{background:var(--brand-soft)}
+.cal-list-d{flex:none;width:50px;text-align:center;line-height:1.05}
+.cal-list-d b{font-family:Manrope,sans-serif;font-weight:800;font-size:20px;color:var(--text);display:block}
+.cal-list-d span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;display:block}
+.cal-list-d em{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-2);font-style:normal;display:block;margin-top:2px}
+.cal-list-bar{flex:none;width:4px;align-self:stretch;border-radius:3px;min-height:34px}
+.cal-list-main{flex:1;min-width:0}
+.cal-list-c{font-family:Manrope,sans-serif;font-weight:700;font-size:14.5px;color:var(--text)}
+.cal-list-role{font-weight:500;color:var(--muted);font-size:13px}
+.cal-list-contact{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-list-inv{flex:none;color:#43e0a0;font-weight:800}
+/* редактор этапов */
+.st-ed-list{display:flex;flex-direction:column;gap:9px}
+.st-ed-row{display:flex;align-items:center;gap:9px}
+.st-ed-color{flex:none;width:38px;height:38px;padding:2px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.04);cursor:pointer}
+.st-ed-row .field{flex:1}
+@media(max-width:640px){.cal-search input{width:100%}.cal-tools{width:100%}.cal-search{flex:1}}
 
 /* ====== Тур по порталу ====== */
 .tour-ov{position:fixed;inset:0;z-index:3000;animation:cfade .3s ease both}
