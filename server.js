@@ -152,10 +152,10 @@ const DEFAULT_TEMPLATES = {
   en: { subject: 'Assessment invitation — {company}', body: 'Hello!\n\n{company} invites you to take the online test "{test}" for the "{vacancy}" position.\nComplete the test at: {link}\n\nIt won\'t take long. Thank you!' },
 };
 const DEFAULT_SMS = {
-  ru: '{company}: пройдите онлайн-тест «{test}» по вакансии «{vacancy}» — {link}',
-  uk: '{company}: пройдіть онлайн-тест «{test}» за вакансією «{vacancy}» — {link}',
-  pl: '{company}: wykonaj test online „{test}” na stanowisko „{vacancy}” — {link}',
-  en: '{company}: take the "{test}" online test for "{vacancy}" — {link}',
+  ru: 'Приглашаем пройти «{test}» по вакансии «{vacancy}»: {link}',
+  uk: 'Запрошуємо пройти «{test}» за вакансією «{vacancy}»: {link}',
+  pl: 'Zapraszamy do testu „{test}” na stanowisko „{vacancy}”: {link}',
+  en: 'Please take the "{test}" test for "{vacancy}": {link}',
 };
 // ===== Шаблоны писем под каждое событие (тест / статус) × язык (как в HR-сканере) =====
 const MAIL_SEND_ITEMS = ['result', 'result_emp', 'tools', 'logic', 'sales', 'video', 'regard'];
@@ -678,8 +678,11 @@ function notifyCandidate(user, p, test, vac, link) {
     const smsTpl = smsTpls[lang] || smsTpls.ru || '';
     const fillSms = s => String(s || '').replace(/\{candidate\}/g, name).replace(/\{company\}/g, company)
       .replace(/\{vacancy\}/g, vacName).replace(/\{test\}/g, candTitle).replace(/\{link\}/g, link);
+    let smsMsg = fillSms(smsTpl) || (candTitle + ': ' + link);
+    // отправитель SMS уже показывает компанию → убираем лишний ведущий префикс «Компания:»
+    if (company) smsMsg = smsMsg.replace(new RegExp('^\\s*' + company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*:\\s*'), '');
     if (p.tel && integ.isConfigured(user.settings, 'smsapi'))
-      integ.sendSms(user.settings, { to: p.tel, message: fillSms(smsTpl) || (candTitle + ': ' + link) })
+      integ.sendSms(user.settings, { to: p.tel, message: smsMsg })
         .catch(e => console.error('[smsapi]', e.message));
   } catch (e) { console.error('[notifyCandidate]', e.message); }
 }

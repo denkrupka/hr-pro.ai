@@ -6,9 +6,9 @@ const DEFAULT_EMAIL = {
   en: { subject: 'Assessment invitation — {company}', body: 'Hello, {candidate}!\n\nYou are invited to take the «{test}» assessment for the «{vacancy}» position.\nOpen the link: {link}\n\nBest regards, {company}' },
 };
 const DEFAULT_SMS = {
-  ru: '{company}: пройдите тест «{test}» — {link}',
-  pl: '{company}: wykonaj test «{test}» — {link}',
-  en: '{company}: take the «{test}» test — {link}',
+  ru: 'Приглашаем пройти «{test}»: {link}',
+  pl: 'Zapraszamy do testu „{test}”: {link}',
+  en: 'Please take the "{test}" test: {link}',
 };
 
 // ---------- Дизайн-обёртка письма (единый шаблон HR PRO AI) ----------
@@ -220,8 +220,11 @@ export async function notifyCandidate(env, user, p, test, vac, link, title) {
     const tpls = s.smsTemplates && Object.keys(s.smsTemplates).length ? s.smsTemplates : DEFAULT_SMS;
     const tpl = tpls[lang] || tpls.ru || DEFAULT_SMS.ru;
     const base = (env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '');
+    const company = user.company || '';
+    let smsMsg = fill(tpl) || (candTitle + ': ' + link);
+    if (company) smsMsg = smsMsg.replace(new RegExp('^\\s*' + company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*:\\s*'), '');
     const params = new URLSearchParams({ to: String(p.tel).replace(/[^\d+]/g, ''),
-      message: (fill(tpl) || (candTitle + ': ' + link)).slice(0, 800), format: 'json', encoding: 'utf-8' });
+      message: smsMsg.slice(0, 800), format: 'json', encoding: 'utf-8' });
     params.set('from', env.SMSAPI_FROM || 'HR-PRO.AI');
     try {
       const r = await fetch(base + '/sms.do', { method: 'POST',
