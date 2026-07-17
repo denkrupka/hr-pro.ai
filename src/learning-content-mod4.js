@@ -20,6 +20,7 @@ function t(label, inner) { return box('rgba(111,151,255,.06)', 'rgba(111,151,255
 
 module.exports = {
   'module-assessment': {
+    trailer: { ru: 'https://tnemvzaxtgumtvijpfli.supabase.co/storage/v1/object/public/media/learning/prog7-trailer-ru.mp4', pl: '', en: '' },
     sections: [
       // 1 — ВВЕДЕНИЕ
       {
