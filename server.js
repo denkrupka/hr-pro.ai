@@ -2606,6 +2606,22 @@ function kanbanColTitle(key, lang) {
 
 // ---------- STATIC / PAGES ----------
 const PUB = path.join(__dirname, 'public');
+// Прокси видео из Supabase Storage (same-origin, форвард Range) — как на edge.
+app.get(/^\/media\/(.+\.mp4)$/, async (req, res) => {
+  const rel = req.params[0].indexOf('/') >= 0 ? req.params[0] : ('edu/' + req.params[0]);
+  const base = (process.env.SUPABASE_URL || 'https://tnemvzaxtgumtvijpfli.supabase.co').replace(/\/+$/, '');
+  const src = `${base}/storage/v1/object/public/media/${rel}`;
+  try {
+    const upstream = await fetch(src, { headers: req.headers.range ? { Range: req.headers.range } : {} });
+    if (!upstream.ok && upstream.status !== 206) return res.status(404).end();
+    res.status(upstream.status);
+    res.set('Content-Type', 'video/mp4'); res.set('Accept-Ranges', 'bytes');
+    res.set('Cache-Control', upstream.status === 206 ? 'no-store' : 'public, max-age=86400');
+    const cl = upstream.headers.get('content-length'); if (cl) res.set('Content-Length', cl);
+    const cr = upstream.headers.get('content-range'); if (cr) res.set('Content-Range', cr);
+    require('stream').Readable.fromWeb(upstream.body).pipe(res);
+  } catch (e) { res.status(502).end(); }
+});
 app.use(express.static(PUB, { index: false, etag: false, setHeaders: (res, p) => { if (/\.(js|css|html)$/.test(p)) res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); } }));
 
 app.get('/t/:code', (req, res) => res.sendFile(path.join(PUB, 'take.html')));

@@ -1782,7 +1782,14 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cal-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
 .cal-head h1{font-family:Manrope,sans-serif;font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;color:var(--text)}
 #cal-new{white-space:nowrap;flex:none;align-self:center}
-.cal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.cal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.cal-toolbar .cal-nav{flex:none}
+.cal-tools{flex:1 1 auto;justify-content:flex-end;flex-wrap:nowrap!important;min-width:0}
+.cal-tools .cal-search{flex:1 1 auto;min-width:120px;max-width:280px}
+.cal-tools .cal-search input{width:100%}
+.cal-tools .cal-filter{flex:none}
+.cal-tools .cal-viewtog{flex:none}
+.cal-toolbar .cal-legend{flex:1 1 100%}
 .cal-nav{display:flex;align-items:center;gap:10px}
 .cal-month{font-family:Manrope,sans-serif;font-weight:800;font-size:19px;color:var(--text);min-width:180px;text-align:center}
 .cal-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}

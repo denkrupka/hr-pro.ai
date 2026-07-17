@@ -2215,10 +2215,12 @@ export default {
     // Прокси видео-уроков из Supabase Storage (bucket media/edu) — same-origin + корректные Range/кэш.
     // Supabase на bytes=0- отдаёт 206 без валидного Content-Range → нативный <video> в Chrome виснет на 0:00.
     // Здесь форвардим Range и переписываем заголовки так, чтобы media-pipeline корректно стримил.
-    const mMedia = url.pathname.match(/^\/media\/([\w.\-]+\.mp4)$/);
+    const mMedia = url.pathname.match(/^\/media\/([\w.\-\/]+\.mp4)$/);
     if (mMedia) {
       const supaBase = (env.SUPABASE_URL || '').replace(/\/+$/, '');
-      const src = `${supaBase}/storage/v1/object/public/media/edu/${mMedia[1]}`;
+      // без подпапки — это видео-урок (bucket media/edu); с подпапкой (learning/…) — как есть
+      const rel = mMedia[1].indexOf('/') >= 0 ? mMedia[1] : ('edu/' + mMedia[1]);
+      const src = `${supaBase}/storage/v1/object/public/media/${rel}`;
       const range = req.headers.get('Range');
       const upstream = await fetch(src, { headers: range ? { Range: range } : {} });
       if (!upstream.ok && upstream.status !== 206) return new Response('Not found', { status: 404 });
