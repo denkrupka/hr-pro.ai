@@ -1732,11 +1732,14 @@ async function api(req, env, url, exec) {
       interested: { type: 'boolean', description: 'Подтвердил ли интерес к вакансии' },
     } };
     try {
-      const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
-        structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
+      const r = await Promise.race([
+        vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
+          structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('таймаут запроса к Vapi (проверьте настройку номера/интеграции)')), 22000)),
+      ]);
       if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
       return j({ ok: true, callId: r.callId, status: r.status });
-    } catch (e) { return j({ error: 'Звонок не удался: ' + (e.message || '') }, 502); }
+    } catch (e) { return j({ error: 'Звонок не удался: ' + (e.message || e) }, 502); }
   }
 
   // ── SETTINGS PUT / password ──
