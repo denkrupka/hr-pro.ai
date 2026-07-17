@@ -1402,16 +1402,17 @@ async function api(req, env, url, exec) {
       const ctx = await decodeVacCtx(env, S, test);
       if (!ctx.roleType || !ctx.vacName || !ctx.duties) return j({ error: 'Заполните контекст вакансии (вакансия, тип должности, обязанности)' }, 422);
       const cur = test.decodes && test.decodes[kind];
-      if (cur && cur.status === 'pending') return j({ status: 'pending' });
+      const stalePending = cur && cur.status === 'pending' && (!cur.startedAt || Date.now() - new Date(cur.startedAt).getTime() > 3 * 60000);
+      if (cur && cur.status === 'pending' && !stalePending) return j({ status: 'pending' });
       if (cur && cur.status === 'done' && !(body && body.regenerate)) return j({ status: 'done' });
       const lang = langOf();
-      test.decodes = test.decodes || {};
-      test.decodes[kind] = { status: 'pending', startedAt: new Date().toISOString(), lang };
-      await S.upsert('tests', { id: test.id, data: test });
-      // Фоновая генерация (не блокируем ответ) — Claude может считать 1–3 минуты.
-      const bg = runDecodeBackground(env, S, test.id, kind, lang);
-      if (exec && exec.waitUntil) exec.waitUntil(bg); else await bg;
-      return j({ status: 'pending' });
+      // Синхронная генерация: Cloudflare обрывает фоновые waitUntil-задачи, поэтому держим
+      // I/O-запрос открытым до готовности расшифровки и возвращаем финальный статус.
+      await runDecodeBackground(env, S, test.id, kind, lang);
+      const after = await S.one('tests', test.id);
+      const stt = after && after.decodes && after.decodes[kind];
+      if (stt && stt.status === 'error') return j({ error: stt.error || 'Ошибка генерации' }, 502);
+      return j({ status: (stt && stt.status) || 'done' });
     }
   }
 

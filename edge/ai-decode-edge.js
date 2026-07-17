@@ -13,8 +13,10 @@ import promptChat from '../data/kb/prompts/chat.txt';
 import promptProductivity from '../data/kb/prompts/productivity.txt';
 
 const MODEL = 'claude-opus-4-8';
-const MAX_TOKENS_DECODE = 32000;
-const MAX_TOKENS_CHAT = 8000;
+// На edge/Workers держим синхронный I/O-запрос, поэтому ограничиваем объём вывода,
+// чтобы уложиться в окно Cloudflare (waitUntil обрывает долгие фон-задачи).
+const MAX_TOKENS_DECODE = 12000;
+const MAX_TOKENS_CHAT = 6000;
 
 const PROD_KB = [prodKb1, prodKb2, prodKb3].filter(Boolean).join('\n\n\n===== СЛЕДУЮЩИЙ ДОКУМЕНТ =====\n\n');
 const TOOLS_KB_BLOCK = '=== БАЗА ЗНАНИЙ: методология «Тулс» (личностные качества, точки A–J, компульсивность, синдромы) ===\n\n' + toolsKb;
