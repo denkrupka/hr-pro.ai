@@ -347,6 +347,7 @@ function setView(v) {
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   { const bh = $('#brand-home'); if (bh) bh.classList.toggle('active', v === 'dashboard'); }
   ({ dashboard: renderDashboard, home: renderHome, anketas: renderAnketas, education: renderEducation, balance: renderBalance, settings: renderSettings, faq: renderFAQ, vacancies: renderRecruitment, candidates: renderCandidates, integrations: renderJobPortals, calendar: renderCalendar }[v] || renderHome)();
+  try { maybePageTour(v); } catch (e) {}   // мини-тур страницы при первом входе
 }
 
 // ============ РЕКРУТАЦИЯ (полный workflow найма) ============
@@ -4332,9 +4333,9 @@ function tourSteps() {
 let tourS = { i: 0, steps: [] };
 function maybeStartTour() { try { if (localStorage.getItem('hp_tour_v1')) return; } catch (e) { return; } setTimeout(startPortalTour, 650); }
 function tourOv() { let o = document.getElementById('tour-ov'); if (!o) { o = document.createElement('div'); o.id = 'tour-ov'; o.className = 'tour-ov'; document.body.appendChild(o); } return o; }
-function startPortalTour() { tourS = { i: 0, steps: tourSteps() }; showTourWelcome(); }
+function startPortalTour() { tourS = { i: 0, steps: tourSteps(), doneKey: 'hp_tour_v1' }; showTourWelcome(); }
 window.startPortalTour = startPortalTour;
-function tourDone() { try { localStorage.setItem('hp_tour_v1', '1'); } catch (e) {} const o = document.getElementById('tour-ov'); if (o) o.remove(); window.removeEventListener('resize', tourReposition); }
+function tourDone() { try { localStorage.setItem(tourS.doneKey || 'hp_tour_v1', '1'); } catch (e) {} const o = document.getElementById('tour-ov'); if (o) o.remove(); }
 function showTourWelcome() {
   const o = tourOv(); o.className = 'tour-ov tour-center';
   o.innerHTML = '<div class="tour-hero">' +
@@ -4357,8 +4358,12 @@ function showTourStep(idx) {
   if (!el) { if (idx < tourS.steps.length - 1) return showTourStep(idx + 1); return showTourFinish(); }
   const r = el.getBoundingClientRect(); const pad = 6;
   const sx = Math.max(2, r.left - pad), sy = Math.max(2, r.top - pad), sw = r.width + pad * 2, sh = r.height + pad * 2;
-  const tw = 340, gap = 18; let tx = r.right + gap, ty = r.top;
-  if (tx + tw > window.innerWidth - 12) tx = Math.max(12, r.left - tw - gap); // fallback left
+  const tw = 340, gap = 18; let tx, ty;
+  if (r.width > 380 || r.right + gap + tw > window.innerWidth - 8) {
+    // широкий элемент или не влезает справа → тултип снизу (или сверху, если снизу нет места)
+    tx = Math.min(Math.max(12, r.left), window.innerWidth - tw - 12);
+    ty = (r.bottom + gap + 300 > window.innerHeight) ? Math.max(12, r.top - gap - 300) : r.bottom + gap;
+  } else { tx = r.right + gap; ty = r.top; }
   const maxTy = window.innerHeight - 300; if (ty > maxTy) ty = Math.max(12, maxTy);
   const dots = tourS.steps.map((_, i) => '<span class="tour-dot ' + (i === idx ? 'on' : i < idx ? 'past' : '') + '"></span>').join('');
   const last = idx === tourS.steps.length - 1;
@@ -4375,7 +4380,54 @@ function showTourStep(idx) {
     '</div>';
   $('#tour-skip2').onclick = tourDone;
   const pv = $('#tour-prev'); if (pv) pv.onclick = () => showTourStep(idx - 1);
-  $('#tour-next').onclick = () => { if (last) showTourFinish(); else showTourStep(idx + 1); };
+  $('#tour-next').onclick = () => { if (last) { if (tourS.noFinish) tourDone(); else showTourFinish(); } else showTourStep(idx + 1); };
 }
 function tourReposition() { const o = document.getElementById('tour-ov'); if (o && !o.classList.contains('tour-center') && tourS.steps.length) showTourStep(tourS.i); }
 window.addEventListener('resize', tourReposition);
+// ---- мини-туры по страницам (при первом входе на каждую) ----
+function pageTours() {
+  const S = k => tt(k); // короткий алиас
+  const P = {
+    ru: { c1t: 'Поиск и фильтр', c1b: 'Ищите кандидатов по имени/почте и фильтруйте по вакансии.', c2t: 'Импорт из CV', c2b: 'Загрузите PDF или фото резюме — ИИ распознает и создаст карточки.',
+      h1t: 'Отправить тест', h1b: 'Введите e-mail или телефон кандидата и выберите тесты — ссылка уйдёт автоматически.',
+      cal1t: 'Новое собеседование', cal1b: 'Запланируйте встречу: кандидат, этап, дата, формат. Или кликните по дню в сетке.', cal2t: 'Этапы', cal2b: 'Цвет события — этап отбора. Кликните событие, чтобы изменить или синхронизировать с календарём.',
+      e1t: 'Программы обучения', e1b: 'Академия для вас и команды: как читать тесты, вести собеседования, не ошибаться в найме.',
+      b1t: 'Баланс и пополнение', b1b: 'Здесь видно доступные тесты и тарифы. Каждый тест — один разбор кандидата.',
+      v1t: 'Заявки и вакансии', v1b: 'Создавайте заявки, утверждайте их в вакансии, настраивайте этапы отбора и генерируйте объявление ИИ.',
+      i1t: 'Порталы трудоустройства', i1b: 'Подключите площадки (Jooble, агрегаторы) и интеграции — вакансии разлетятся автоматически.' },
+    pl: { c1t: 'Szukaj i filtruj', c1b: 'Szukaj kandydatów po imieniu/e-mailu i filtruj po wakacie.', c2t: 'Import z CV', c2b: 'Wgraj PDF lub zdjęcie CV — AI rozpozna i utworzy karty.',
+      h1t: 'Wyślij test', h1b: 'Podaj e-mail lub telefon kandydata i wybierz testy — link pójdzie automatycznie.',
+      cal1t: 'Nowa rozmowa', cal1b: 'Zaplanuj spotkanie albo kliknij dzień w siatce.', cal2t: 'Etapy', cal2b: 'Kolor = etap. Kliknij wydarzenie, aby edytować lub zsynchronizować z kalendarzem.',
+      e1t: 'Programy szkoleń', e1b: 'Akademia dla Ciebie i zespołu.', b1t: 'Saldo i doładowanie', b1b: 'Dostępne testy i pakiety. Każdy test to jedna analiza.',
+      v1t: 'Wnioski i wakaty', v1b: 'Twórz wnioski, zatwierdzaj w wakaty, ustawiaj etapy i generuj ogłoszenie AI.', i1t: 'Portale pracy', i1b: 'Podłącz portale i integracje — wakaty rozejdą się automatycznie.' },
+    en: { c1t: 'Search & filter', c1b: 'Find candidates by name/email and filter by vacancy.', c2t: 'Import from CV', c2b: 'Upload a PDF or photo of a CV — AI parses it and creates cards.',
+      h1t: 'Send a test', h1b: 'Enter a candidate email or phone and pick tests — the link goes out automatically.',
+      cal1t: 'New interview', cal1b: 'Schedule a meeting or click a day in the grid.', cal2t: 'Stages', cal2b: 'Event color = stage. Click an event to edit or sync with your calendar.',
+      e1t: 'Learning programs', e1b: 'An academy for you and your team.', b1t: 'Balance & top-up', b1b: 'Available tests and plans. Each test is one candidate analysis.',
+      v1t: 'Requisitions & vacancies', v1b: 'Create requisitions, approve into vacancies, set stages and generate the ad with AI.', i1t: 'Job portals', i1b: 'Connect portals and integrations — your vacancies spread automatically.' },
+  };
+  const L = P[LANG] || P.ru;
+  return {
+    candidates: [{ sel: '#cand-q', tag: S('t3_tag'), title: L.c1t, body: L.c1b }, { sel: '#cand-cv-lbl', tag: S('t3_tag'), title: L.c2t, body: L.c2b }],
+    home: [{ sel: '#dash-open-send', tag: S('t2_tag'), title: L.h1t, body: L.h1b }],
+    calendar: [{ sel: '#cal-new', tag: S('t4_tag'), title: L.cal1t, body: L.cal1b }, { sel: '.cal-legend', tag: S('t4_tag'), title: L.cal2t, body: L.cal2b }],
+    education: [{ sel: '#main h1, #main .page-h', tag: S('t5_tag'), title: L.e1t, body: L.e1b }],
+    balance: [{ sel: '#main h1, #main .page-h', tag: S('t6_tag'), title: L.b1t, body: L.b1b }],
+    vacancies: [{ sel: '#main h1, #main .page-h', tag: S('t1_tag'), title: L.v1t, body: L.v1b }],
+    integrations: [{ sel: '#main h1, #main .page-h', tag: S('t1_tag'), title: L.i1t, body: L.i1b }],
+  };
+}
+function runPageTour(view, steps) { tourS = { i: 0, steps: steps, doneKey: 'hp_tour_pg_' + view, noFinish: true }; showTourStep(0); }
+function maybePageTour(view) {
+  try { if (localStorage.getItem('hp_tour_pg_' + view)) return; } catch (e) { return; }
+  if (document.getElementById('tour-ov')) return;           // не перекрываем открытый тур
+  try { if (!localStorage.getItem('hp_tour_v1')) return; } catch (e) { return; } // сначала пройти общий тур на дашборде
+  const steps = pageTours()[view]; if (!steps) return;
+  // дождаться появления первого целевого элемента (страницы рендерятся асинхронно)
+  let tries = 0; const iv = setInterval(() => {
+    if (document.getElementById('tour-ov')) { clearInterval(iv); return; }
+    if (document.querySelector(steps[0].sel)) { clearInterval(iv); if (state.view === view) runPageTour(view, steps); }
+    else if (++tries > 20) clearInterval(iv);
+  }, 150);
+}
+window.maybePageTour = maybePageTour;
