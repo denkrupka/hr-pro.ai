@@ -17,7 +17,7 @@ import { generateVideoLink, videoIntegrationStatus } from './video-integrations-
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
-import { vapiConfigured } from './integrations-edge.js';
+import { vapiConfigured, startCall as vapiStartCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
@@ -1699,6 +1699,44 @@ async function api(req, env, url, exec) {
       const link = await generateVideoLink(me.settings, plat, { topic: body.topic || 'Собеседование', startTime, endTime, durationMin });
       return j({ ok: true, link });
     } catch (e) { return j({ error: e.message || 'Не удалось создать ссылку' }, 502); }
+  }
+
+  // ── Скрининг-звонок ИИ (первый контакт: мотивация + знания области) ──
+  if (p === '/api/ai-call/screening' && m === 'POST') {
+    if (!me) return needAuth();
+    if (!vapiConfigured(env)) return j({ error: 'ИИ-звонки не настроены (Vapi)' }, 503);
+    const to = String(body.to || '').replace(/[^\d+]/g, '');
+    if (!to) return j({ error: 'Укажите номер телефона' }, 400);
+    const lang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : 'ru';
+    const candidate = String(body.candidate || 'кандидат').slice(0, 80);
+    const position = String(body.position || '').slice(0, 120);
+    const company = String(body.company || me.company || '').slice(0, 120);
+    const city = String(body.city || '').slice(0, 80);
+    const agent = aiCallPrompts.agentName(lang);
+    const task = `Ты — ${agent}, виртуальный HR-менеджер компании «${company}»${city ? ' (город ' + city + ')' : ''}. Это ПЕРВЫЙ КОНТАКТ с кандидатом ${candidate} по вакансии «${position}». Говори на языке: ${lang === 'ru' ? 'русском' : lang === 'pl' ? 'польском' : 'английском'}, тепло и по-человечески, кратко и по делу.
+
+ПРАВИЛА: представься виртуальным HR-менеджером (НЕ выдавай себя за живого человека). Не обещай трудоустройство, не называй зарплату, не оценивай кандидата вслух. Записывай ответы. Общая длительность 5–8 минут.
+
+ЦЕЛЬ ЗВОНКА — за один разговор:
+1) Поздороваться, представиться, уточнить, удобно ли говорить, и подтвердить интерес к вакансии «${position}».
+2) ПРОВЕРИТЬ МОТИВАЦИЮ: почему интересна именно эта работа; что для кандидата важно в работе; опыт в этой сфере; готовность к графику/разъездам, если это нужно на позиции.
+3) ПРОВЕРИТЬ ЗНАНИЯ В ОБЛАСТИ ПОЗИЦИИ «${position}»: задай 3–4 коротких ПРАКТИЧЕСКИХ вопроса по профессии, чтобы понять реальный уровень. ${/экспедит|логист|forward|logist/i.test(position) ? 'Для логистики/экспедирования, например: что такое CMR-накладная и зачем она; какие документы сопровождают международную перевозку; действия при недостаче или повреждении груза при приёмке/сдаче; что знает про режим труда и отдыха водителя (тахограф) и дозволы/ЕКМТ.' : 'Подбери вопросы, релевантные именно этой профессии.'} Слушай ответы, при неполном ответе мягко уточни.
+4) Поблагодари, скажи, что рекрутёр свяжется по итогам, попрощайся.`;
+    const firstMessage = lang === 'ru' ? `Здравствуйте! Меня зовут ${agent}, я виртуальный HR-менеджер компании ${company}. Вам удобно сейчас пару минут поговорить о вакансии «${position}»?`
+      : lang === 'pl' ? `Dzień dobry! Nazywam się ${agent}, jestem wirtualnym menedżerem HR firmy ${company}. Czy ma Pan/Pani teraz chwilę, aby porozmawiać o stanowisku „${position}"?`
+      : `Hello! My name is ${agent}, I'm the virtual HR manager at ${company}. Do you have a couple of minutes to talk about the "${position}" position?`;
+    const schema = { type: 'object', properties: {
+      motivation_summary: { type: 'string', description: 'Краткое резюме мотивации кандидата' },
+      knowledge_summary: { type: 'string', description: 'Что кандидат знает по профессии, ответы на проф-вопросы' },
+      knowledge_score: { type: 'number', description: 'Оценка знаний по профессии от 1 до 5' },
+      interested: { type: 'boolean', description: 'Подтвердил ли интерес к вакансии' },
+    } };
+    try {
+      const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
+        structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
+      if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
+      return j({ ok: true, callId: r.callId, status: r.status });
+    } catch (e) { return j({ error: 'Звонок не удался: ' + (e.message || '') }, 502); }
   }
 
   // ── SETTINGS PUT / password ──
