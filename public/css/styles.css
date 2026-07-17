@@ -1787,7 +1787,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cal-tools{flex:1 1 auto;display:flex;align-items:center;gap:10px;justify-content:flex-end;flex-wrap:nowrap;min-width:0}
 .cal-tools .cal-search{flex:1 1 160px;min-width:0;max-width:260px}
 .cal-tools .cal-search input{width:100%}
-.cal-tools .cal-filter{flex:0 0 auto;width:150px;min-width:0}
+.cal-tools .cal-filter{flex:0 0 auto;width:160px;min-width:0;padding:9px 32px 9px 13px;font-size:13.5px;line-height:1.25;height:36px}
 .cal-tools .cal-viewtog{flex:0 0 auto}
 .cal-toolbar .cal-legend{flex:1 1 100%;order:3}
 @media(max-width:900px){.cal-tools{flex-wrap:wrap}.cal-tools .cal-search{max-width:none;flex:1 1 100%}}
