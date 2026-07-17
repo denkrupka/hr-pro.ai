@@ -341,8 +341,17 @@ async function openSearchPalette() {
 
 $$('.nav-item[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
 { const bh = $('#brand-home'); if (bh) bh.onclick = () => setView('dashboard'); }
+
+// ---- мобильная оболочка: выезжающее меню (drawer) ----
+function mnavClose() { const app = $('.app'); if (app) app.classList.remove('mnav-open'); const t = $('#mnav-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }
+function mnavToggle() { const app = $('.app'); if (!app) return; const open = app.classList.toggle('mnav-open'); const t = $('#mnav-toggle'); if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+{ const mt = $('#mnav-toggle'); if (mt) mt.onclick = mnavToggle;
+  const sc = $('#nav-scrim'); if (sc) sc.onclick = mnavClose;
+  const mb = $('#mnav-bal'); if (mb) mb.onclick = () => setView('balance');
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') mnavClose(); }); }
 function setView(v) {
   state.view = v;
+  try { mnavClose(); } catch (e) {}   // закрыть мобильное меню при навигации
   $('#main').classList.remove('vac-lock');
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   { const bh = $('#brand-home'); if (bh) bh.classList.toggle('active', v === 'dashboard'); }
@@ -1918,6 +1927,7 @@ function fillSideUser() {
   const nEl = $('#side-name'); if (nEl) nEl.textContent = nm || 'Аккаунт';
   const sEl = $('#side-sub'); if (sEl) sEl.textContent = u.company && u.company !== nm ? u.company : 'Администратор';
   const aEl = $('#side-ava'); if (aEl) aEl.textContent = (nm[0] || 'H').toUpperCase();
+  const mBal = $('#mnav-bal-num'); if (mBal) mBal.textContent = (u.balanceAvailable != null ? u.balanceAvailable : (u.balanceTotal || 0));
   // Пункт «Админка» — только для администраторов портала
   if (u.role === 'admin' && !$('#nav-admin')) {
     const btn = document.createElement('button');
