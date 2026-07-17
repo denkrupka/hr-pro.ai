@@ -4162,7 +4162,7 @@ const CI18N = {
     setup_title: 'Давайте настроим процесс собеседований', setup_sub: 'Заполните один раз — данные подставятся во все собеседования. Позже можно изменить в настройках.', setup_office: 'Адрес офиса (для очных встреч)', setup_office_ph: 'Город, улица, дом, офис', setup_phone: 'Телефон организатора (для звонков)', setup_video: 'Сервис видеосвязи', setup_save: 'Сохранить и продолжить', setup_later: 'Позже',
     save_invite: 'Запланировать и пригласить',
     inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы — приглашение шлём на его email и телефон', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)',
-    search_ph: 'Поиск: имя, телефон, email…', filter_all: 'Все этапы', view_month: 'Месяц', view_list: 'Список', link_hint: 'Создайте встречу в открывшемся окне и вставьте ссылку сюда', list_empty: 'Нет собеседований по заданным условиям',
+    search_ph: 'Поиск: имя, телефон, email…', filter_all: 'Все этапы', view_month: 'Месяц', view_list: 'Список', link_hint: 'Создайте встречу в открывшемся окне и вставьте ссылку сюда', link_created: 'Ссылка создана и вставлена ✓', list_empty: 'Нет собеседований по заданным условиям',
     edit_stages: 'Изменить этапы', st_ed_title: 'Этапы отбора', st_ed_sub: 'Переименуйте, добавьте или удалите этапы. Цвет — метка события в календаре.', st_name_ph: 'Название этапа', st_add: '+ Добавить этап', st_min: 'Оставьте хотя бы один этап', cand_email: 'Email кандидата', cand_phone: 'Телефон кандидата' },
   pl: { title: 'Kalendarz rozmów', eyebrow: 'Planowanie rozmów', neww: 'Nowa rozmowa', today: 'Dziś',
     s_screen: 'Screening', s_tests: 'Testy', s_intv: 'Rozmowa', s_final: 'Finał',
@@ -4181,7 +4181,7 @@ const CI18N = {
     setup_title: 'Skonfigurujmy proces rozmów', setup_sub: 'Wypełnij raz — dane podstawią się do wszystkich rozmów. Później można zmienić w ustawieniach.', setup_office: 'Adres biura (spotkania na żywo)', setup_office_ph: 'Miasto, ulica, biuro', setup_phone: 'Telefon organizatora (rozmowy tel.)', setup_video: 'Usługa wideo', setup_save: 'Zapisz i kontynuuj', setup_later: 'Później',
     save_invite: 'Zaplanuj i zaproś',
     inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy — zaproszenie wyślemy na jego email i telefon', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)',
-    search_ph: 'Szukaj: imię, telefon, email…', filter_all: 'Wszystkie etapy', view_month: 'Miesiąc', view_list: 'Lista', link_hint: 'Utwórz spotkanie w otwartym oknie i wklej link tutaj', list_empty: 'Brak rozmów dla podanych warunków',
+    search_ph: 'Szukaj: imię, telefon, email…', filter_all: 'Wszystkie etapy', view_month: 'Miesiąc', view_list: 'Lista', link_hint: 'Utwórz spotkanie w otwartym oknie i wklej link tutaj', link_created: 'Link utworzony i wstawiony ✓', list_empty: 'Brak rozmów dla podanych warunków',
     edit_stages: 'Edytuj etapy', st_ed_title: 'Etapy rekrutacji', st_ed_sub: 'Zmień nazwę, dodaj lub usuń etapy. Kolor — oznaczenie wydarzenia w kalendarzu.', st_name_ph: 'Nazwa etapu', st_add: '+ Dodaj etap', st_min: 'Zostaw co najmniej jeden etap', cand_email: 'Email kandydata', cand_phone: 'Telefon kandydata' },
   en: { title: 'Interview calendar', eyebrow: 'Interview scheduling', neww: 'New interview', today: 'Today',
     s_screen: 'Screening', s_tests: 'Tests', s_intv: 'Interview', s_final: 'Final',
@@ -4200,7 +4200,7 @@ const CI18N = {
     setup_title: 'Let’s set up your interview process', setup_sub: 'Fill this once — it will prefill every interview. You can change it later in settings.', setup_office: 'Office address (in-person)', setup_office_ph: 'City, street, office', setup_phone: 'Organizer phone (phone calls)', setup_video: 'Video service', setup_save: 'Save and continue', setup_later: 'Later',
     save_invite: 'Schedule & invite',
     inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base — we send the invite to their email and phone', inv_needmeet: 'Fill in the meeting details (link / address / phone)',
-    search_ph: 'Search: name, phone, email…', filter_all: 'All stages', view_month: 'Month', view_list: 'List', link_hint: 'Create the meeting in the opened window and paste the link here', list_empty: 'No interviews match the filters',
+    search_ph: 'Search: name, phone, email…', filter_all: 'All stages', view_month: 'Month', view_list: 'List', link_hint: 'Create the meeting in the opened window and paste the link here', link_created: 'Link created and inserted ✓', list_empty: 'No interviews match the filters',
     edit_stages: 'Edit stages', st_ed_title: 'Selection stages', st_ed_sub: 'Rename, add or remove stages. The color is the event marker in the calendar.', st_name_ph: 'Stage name', st_add: '+ Add stage', st_min: 'Keep at least one stage', cand_email: 'Candidate email', cand_phone: 'Candidate phone' },
 };
 function ct(k) { return (CI18N[LANG] || CI18N.ru)[k] || CI18N.ru[k] || k; }
@@ -4394,7 +4394,13 @@ function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date:
 function interviewSetup() { return (state.user && state.user.settings && state.user.settings.interviewSetup) || null; }
 function hasInterviewSetup() { const s = interviewSetup(); return !!(s && (s.office || s.phone || s.videoService)); }
 function savedInterviewers() { return (state.user && state.user.settings && state.user.settings.interviewers) || []; }
-const VIDEO_PLATFORMS = ['Google Meet', 'Microsoft Teams', 'Zoom', 'Другое'];
+const VIDEO_PLATFORMS = ['Jitsi Meet (ссылка сразу)', 'Google Meet', 'Microsoft Teams', 'Zoom'];
+// Мгновенная генерация рабочей ссылки без аккаунта/OAuth — только Jitsi это позволяет.
+function jitsiLink(candidate) {
+  const slug = String(candidate || '').replace(/[^a-zA-Z0-9А-Яа-я]/g, '').slice(0, 18) || 'Interview';
+  const rnd = Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
+  return 'https://meet.jit.si/HRPROAI-' + encodeURIComponent(slug) + '-' + rnd;
+}
 // Страница СОЗДАНИЯ встречи в выбранном сервисе (не мгновенный старт звонка).
 function videoNewUrl(svc) { const s = String(svc || '').toLowerCase();
   if (s.indexOf('teams') >= 0) return 'https://teams.microsoft.com/l/meeting/new';
@@ -4534,8 +4540,13 @@ function openCalModalInner(ev, dateIso) {
   };
   wireNiceSelect('cf-format', (v) => { if (v !== calFmtKey(f.format)) meetIn.value = ''; applyFormat(true); });
   wireNiceSelect('cf-platform', () => {});
-  // «Создать ссылку»: открываем страницу создания встречи на ВЫБРАННОЙ платформе в отдельном окне.
-  meetBtn.onclick = () => { window.open(videoNewUrl(nselValue('cf-platform') || setup.videoService), 'hrpro_meet', 'width=1000,height=760'); toast(ct('link_hint')); meetIn.focus(); };
+  // «Создать ссылку»: для Jitsi — мгновенно генерируем и вставляем рабочую ссылку (без окна/звонка);
+  // для Meet/Teams/Zoom автогенерация невозможна без OAuth — открываем страницу создания встречи.
+  meetBtn.onclick = () => {
+    const plat = nselValue('cf-platform') || setup.videoService || '';
+    if (/jitsi/i.test(plat)) { meetIn.value = jitsiLink(candIn.value); toast(ct('link_created')); }
+    else { window.open(videoNewUrl(plat), 'hrpro_meet', 'width=1000,height=760'); toast(ct('link_hint')); meetIn.focus(); }
+  };
   { const es = $('#cf-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   applyFormat(!isEdit);
 
