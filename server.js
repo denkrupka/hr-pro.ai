@@ -2525,6 +2525,36 @@ app.delete('/api/calendar/:id', requireAuth, (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
   u.calendar = (u.calendar || []).filter(x => x.id !== req.params.id); save(); res.json({ ok: true });
 });
+
+// ---------- Видеоинтеграции (Zoom / Google Meet / Teams) ----------
+const videoIntg = require('./src/video-integrations');
+app.get('/api/video-integrations', requireAuth, (req, res) => res.json({ status: videoIntg.videoIntegrationStatus(req.user.settings) }));
+app.post('/api/video-integrations', requireAuth, (req, res) => {
+  const plat = String((req.body && req.body.platform) || '');
+  if (!['zoom', 'google', 'teams'].includes(plat)) return res.status(400).json({ error: 'Неизвестная платформа' });
+  const s = req.user.settings; s.videoIntegrations = s.videoIntegrations || {};
+  const cfg = s.videoIntegrations[plat] || {};
+  const set = (k, max) => { if (typeof req.body[k] === 'string') cfg[k] = String(req.body[k]).trim().slice(0, max || 400); };
+  if (plat === 'zoom') { set('accountId', 120); set('clientId', 120); set('clientSecret', 200); }
+  else if (plat === 'google') { set('serviceAccountJson', 8000); set('calendarEmail', 200); }
+  else if (plat === 'teams') { set('tenantId', 120); set('clientId', 120); set('clientSecret', 200); set('userId', 200); }
+  s.videoIntegrations[plat] = cfg; save();
+  res.json({ ok: true, status: videoIntg.videoIntegrationStatus(s) });
+});
+app.delete('/api/video-integrations/:platform', requireAuth, (req, res) => {
+  const s = req.user.settings; if (s.videoIntegrations) delete s.videoIntegrations[req.params.platform]; save();
+  res.json({ ok: true, status: videoIntg.videoIntegrationStatus(s) });
+});
+app.post('/api/video/link', requireAuth, async (req, res) => {
+  const plat = String((req.body && req.body.platform) || '');
+  const startTime = (req.body && req.body.startTime) || new Date(Date.now() + 3600000).toISOString();
+  const durationMin = Math.max(15, Math.min(240, parseInt(req.body && req.body.durationMin, 10) || 40));
+  const endTime = new Date(new Date(startTime).getTime() + durationMin * 60000).toISOString();
+  try {
+    const link = await videoIntg.generateVideoLink(req.user.settings, plat, { topic: (req.body && req.body.topic) || 'Собеседование', startTime, endTime, durationMin });
+    res.json({ ok: true, link });
+  } catch (e) { res.status(502).json({ error: e.message || 'Не удалось создать ссылку' }); }
+});
 // Установить канбан-колонку вручную
 const KANBAN_COLS = ['new', ...recruit.STAGE_KEYS, 'hired', 'rejected'];
 app.post('/api/participants/:id/column', requireAuth, (req, res) => {

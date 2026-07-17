@@ -13,6 +13,7 @@ import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import { generateAd as genAdAI } from './ai-ad-edge.js';
 import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
 import * as aidec from './ai-decode-edge.js';
+import { generateVideoLink, videoIntegrationStatus } from './video-integrations-edge.js';
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
@@ -1658,6 +1659,46 @@ async function api(req, env, url, exec) {
       await S.upsert('users', { id: me.id, data: me });
       return j({ ok: true, delivery });
     }
+  }
+
+  // ── Видеоинтеграции (Zoom / Google Meet / Teams) ──
+  if (p === '/api/video-integrations' && m === 'GET') {
+    if (!me) return needAuth();
+    return j({ status: videoIntegrationStatus(me.settings) });
+  }
+  if (p === '/api/video-integrations' && m === 'POST') {
+    if (!me) return needAuth();
+    const plat = String(body.platform || '');
+    if (!['zoom', 'google', 'teams'].includes(plat)) return j({ error: 'Неизвестная платформа' }, 400);
+    if (!me.settings) me.settings = {};
+    me.settings.videoIntegrations = me.settings.videoIntegrations || {};
+    const cfg = me.settings.videoIntegrations[plat] || {};
+    const s = (k, max) => { if (typeof body[k] === 'string') cfg[k] = body[k].trim().slice(0, max || 400); };
+    if (plat === 'zoom') { s('accountId', 120); s('clientId', 120); s('clientSecret', 200); }
+    else if (plat === 'google') { s('serviceAccountJson', 8000); s('calendarEmail', 200); }
+    else if (plat === 'teams') { s('tenantId', 120); s('clientId', 120); s('clientSecret', 200); s('userId', 200); }
+    me.settings.videoIntegrations[plat] = cfg;
+    await saveUser(me);
+    return j({ ok: true, status: videoIntegrationStatus(me.settings) });
+  }
+  let mVint = p.match(/^\/api\/video-integrations\/([a-z]+)$/);
+  if (mVint && m === 'DELETE') {
+    if (!me) return needAuth();
+    if (me.settings && me.settings.videoIntegrations) delete me.settings.videoIntegrations[mVint[1]];
+    await saveUser(me);
+    return j({ ok: true, status: videoIntegrationStatus(me.settings) });
+  }
+  // Генерация ссылки на видеовстречу через подключённую платформу
+  if (p === '/api/video/link' && m === 'POST') {
+    if (!me) return needAuth();
+    const plat = String(body.platform || '');
+    const startTime = body.startTime || new Date(Date.now() + 3600000).toISOString();
+    const durationMin = Math.max(15, Math.min(240, parseInt(body.durationMin, 10) || 40));
+    const endTime = new Date(new Date(startTime).getTime() + durationMin * 60000).toISOString();
+    try {
+      const link = await generateVideoLink(me.settings, plat, { topic: body.topic || 'Собеседование', startTime, endTime, durationMin });
+      return j({ ok: true, link });
+    } catch (e) { return j({ error: e.message || 'Не удалось создать ссылку' }, 502); }
   }
 
   // ── SETTINGS PUT / password ──

@@ -3288,8 +3288,35 @@ function wireShare(test) { const tgl = $('#share-toggle'); if (!tgl) return; tgl
 
 // ================= SECONDARY VIEWS =================
 // ================= ИНТЕГРАЦИИ: джоб-порталы (публикация объявлений и отклики) =================
+const VIDEO_INTG = [
+  { id: 'zoom', name: 'Zoom', method: 'API-ключи', desc: 'Server-to-Server OAuth. Портал сам создаёт встречу и вставляет ссылку.',
+    fields: [{ k: 'accountId', label: 'Account ID' }, { k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', secret: true }],
+    hint: 'Zoom App Marketplace → Build App → «Server-to-Server OAuth» → скопируйте Account ID, Client ID, Client Secret. Включите scope meeting:write.' },
+  { id: 'google', name: 'Google Meet', method: 'Сервис-аккаунт', desc: 'Сервис-аккаунт Google + доступ к календарю. Meet-ссылка через Calendar API.',
+    fields: [{ k: 'calendarEmail', label: 'Email календаря (владельца встреч)' }, { k: 'serviceAccountJson', label: 'JSON-ключ сервис-аккаунта', textarea: true, secret: true }],
+    hint: 'Google Cloud → создайте сервис-аккаунт с JSON-ключом, включите Calendar API. Дайте сервис-аккаунту доступ к календарю (share) или домен-делегирование.' },
+  { id: 'teams', name: 'Microsoft Teams', method: 'Azure / Graph', desc: 'Azure-приложение (client credentials) + Graph onlineMeetings.',
+    fields: [{ k: 'tenantId', label: 'Tenant ID' }, { k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', secret: true }, { k: 'userId', label: 'ID/email организатора' }],
+    hint: 'Azure Portal → App registration → client secret + разрешение приложения OnlineMeetings.ReadWrite.All (admin consent).' },
+];
+function openVideoConnect(cfg, connected, onDone) {
+  openModal('<div class="report-head"><h2 style="margin:0;font-size:20px">' + esc(cfg.name) + '</h2></div>' +
+    '<p class="muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.5">' + esc(cfg.hint) + '</p>' +
+    cfg.fields.map(fd => '<div style="margin-bottom:10px"><label class="lbl">' + esc(fd.label) + '</label>' +
+      (fd.textarea ? '<textarea class="field" id="vi-' + fd.k + '" style="min-height:96px;font-family:monospace;font-size:12px" ' + (fd.secret && connected ? 'placeholder="•••••• (сохранено, оставьте пусто)"' : '') + '></textarea>'
+        : '<input class="field" id="vi-' + fd.k + '" ' + (fd.secret ? 'type="password" autocomplete="new-password"' : 'autocomplete="off"') + ' ' + (fd.secret && connected ? 'placeholder="•••••• (сохранено)"' : '') + '>') + '</div>').join('') +
+    '<div class="row" style="gap:8px;margin-top:14px"><button class="btn" id="vi-save">Подключить</button>' +
+      '<button class="btn ghost" onclick="closeModal()">Отмена</button></div>', true);
+  $('#vi-save').onclick = async () => {
+    const body = { platform: cfg.id };
+    cfg.fields.forEach(fd => { const el = $('#vi-' + fd.k); if (el && el.value.trim()) body[fd.k] = el.value.trim(); });
+    try { await api('/api/video-integrations', { method: 'POST', body: JSON.stringify(body) }); toast('Подключено ✓'); closeModal(); if (onDone) onDone(); }
+    catch (e) { toast(e.message); }
+  };
+}
 async function renderJobPortals() {
   const { portals, feedUrl } = await api('/api/job-portals');
+  let vstatus = {}; try { vstatus = (await api('/api/video-integrations')).status || {}; } catch (e) {}
   const badge = m => m === 'api' ? `<span class="jp-m jp-api">API</span>` : m === 'feed' ? `<span class="jp-m jp-feed">${rt('jp_by_feed')}</span>` : `<span class="jp-m jp-login">${rt('jp_by_login')}</span>`;
   const cards = portals.map(p => {
     const canTest = p.method === 'api' || p.method === 'feed';
@@ -3313,7 +3340,27 @@ async function renderJobPortals() {
       <div class="muted" style="font-size:12.5px;margin-bottom:8px">${rt('jp_feed_hint')}</div>
       <div class="row" style="gap:6px"><input class="field sm" style="flex:1" readonly value="${esc(feedUrl)}"><button class="btn ghost sm ic-btn" onclick="copyLink('${esc(feedUrl)}')">${ICON_COPY}${t('ak_copy')}</button>
       <button class="btn ghost sm" onclick="window.open('${esc(feedUrl)}','_blank')">${rt('jp_open_feed')}</button></div></div>
-    <div class="intg-grid reveal d2" style="margin-top:14px">${cards}</div>`;
+    <div class="intg-grid reveal d2" style="margin-top:14px">${cards}</div>
+    <h2 class="page-h reveal d2" style="margin-top:30px;font-size:22px">Видеосвязь</h2>
+    <p class="muted reveal d2" style="max-width:720px;line-height:1.55;margin-bottom:12px">Подключите аккаунт видеосервиса — при планировании собеседования портал сам создаст встречу и вставит ссылку.</p>
+    <div class="intg-grid reveal d2">${VIDEO_INTG.map(v => `<div class="card intg-card">
+      <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
+        <b style="font-size:15.5px">${esc(v.name)}</b>
+        <span class="cstep-st ${vstatus[v.id] ? 'ok' : ''}">${vstatus[v.id] ? 'Подключено' : 'Не подключено'}</span></div>
+      <div style="margin:6px 0 4px"><span class="jp-m jp-api">${esc(v.method)}</span></div>
+      <p class="muted" style="font-size:12.5px;margin:4px 0 8px;min-height:52px">${esc(v.desc)}</p>
+      <div class="row" style="gap:8px;flex-wrap:wrap">
+        <button class="btn ${vstatus[v.id] ? 'soft' : ''} sm" data-vi-connect="${v.id}">${vstatus[v.id] ? '✎ Изменить' : 'Подключить'}</button>
+        ${vstatus[v.id] ? `<button class="btn ghost danger sm" data-vi-off="${v.id}">Отключить</button>` : ''}</div>
+    </div>`).join('')}</div>`;
+  $$('[data-vi-connect]').forEach(b => b.onclick = () => {
+    const cfg = VIDEO_INTG.find(x => x.id === b.dataset.viConnect);
+    openVideoConnect(cfg, !!vstatus[cfg.id], renderJobPortals);
+  });
+  $$('[data-vi-off]').forEach(b => b.onclick = async () => {
+    if (!confirm('Отключить ' + (VIDEO_INTG.find(x => x.id === b.dataset.viOff) || {}).name + '?')) return;
+    await api('/api/video-integrations/' + b.dataset.viOff, { method: 'DELETE' }); renderJobPortals();
+  });
   $$('[data-jp-connect]').forEach(b => b.onclick = () => {
     const p = portals.find(x => x.id === b.dataset.jpConnect);
     openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">${rt('jp_connect')}: ${esc(p.name)}</h2></div>
@@ -4542,10 +4589,25 @@ function openCalModalInner(ev, dateIso) {
   wireNiceSelect('cf-platform', () => {});
   // «Создать ссылку»: для Jitsi — мгновенно генерируем и вставляем рабочую ссылку (без окна/звонка);
   // для Meet/Teams/Zoom автогенерация невозможна без OAuth — открываем страницу создания встречи.
-  meetBtn.onclick = () => {
+  meetBtn.onclick = async () => {
     const plat = nselValue('cf-platform') || setup.videoService || '';
-    if (/jitsi/i.test(plat)) { meetIn.value = jitsiLink(candIn.value); toast(ct('link_created')); }
-    else { window.open(videoNewUrl(plat), 'hrpro_meet', 'width=1000,height=760'); toast(ct('link_hint')); meetIn.focus(); }
+    if (/jitsi/i.test(plat)) { meetIn.value = jitsiLink(candIn.value); toast(ct('link_created')); return; }
+    const pid = /zoom/i.test(plat) ? 'zoom' : /teams/i.test(plat) ? 'teams' : /(google|meet)/i.test(plat) ? 'google' : '';
+    if (pid) {
+      const d = $('#cf-date').value, tm = $('#cf-time').value || '10:00';
+      let startTime; try { startTime = new Date(d + 'T' + tm + ':00').toISOString(); } catch (e) { startTime = new Date(Date.now() + 3600000).toISOString(); }
+      const orig = meetBtn.textContent; meetBtn.disabled = true; meetBtn.textContent = '…';
+      try {
+        const r = await api('/api/video/link', { method: 'POST', body: JSON.stringify({ platform: pid, topic: 'Собеседование' + (candIn.value ? ': ' + candIn.value : ''), startTime, durationMin: 40 }) });
+        meetIn.value = r.link; toast(ct('link_created'));
+      } catch (e) {
+        toast((e && e.message) || 'Не удалось создать ссылку'); // не подключено или ошибка → открываем страницу создания
+        window.open(videoNewUrl(plat), 'hrpro_meet', 'width=1000,height=760');
+      }
+      meetBtn.disabled = false; meetBtn.textContent = orig;
+      return;
+    }
+    window.open(videoNewUrl(plat), 'hrpro_meet', 'width=1000,height=760'); toast(ct('link_hint')); meetIn.focus();
   };
   { const es = $('#cf-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   applyFormat(!isEdit);
