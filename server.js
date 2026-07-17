@@ -485,6 +485,24 @@ app.post('/api/register', (req, res) => {
     data.vacancies.push({ id: uid(10), userId: user.id, sectionId: null, name: n, lang: 'ru', order: i, createdAt: nowISO() });
   });
   save();
+  // Приветственное письмо со ссылкой на онбординг (best-effort; шлётся только если Resend настроен)
+  try {
+    if (integ.isConfigured(user.settings, 'resend')) {
+      const lg = ['ru', 'pl', 'en'].includes(auto.uiLang) ? auto.uiLang : 'ru';
+      const onbUrl = String(BASE_URL || '').replace(/\/+$/, '') + '/onboarding.html';
+      const W = {
+        ru: { subject: 'Добро пожаловать в HR PRO AI', eyebrow: 'Добро пожаловать', headline: `Здравствуйте, ${user.name}!`,
+          body: 'Аккаунт создан. Осталось за пару минут настроить портал под вашу компанию — и можно приглашать первого кандидата.', cta: 'Настроить портал' },
+        pl: { subject: 'Witamy w HR PRO AI', eyebrow: 'Witamy', headline: `Dzień dobry, ${user.name}!`,
+          body: 'Konto utworzone. W kilka minut dostroimy portal do Twojej firmy — i możesz zaprosić pierwszego kandydata.', cta: 'Skonfiguruj portal' },
+        en: { subject: 'Welcome to HR PRO AI', eyebrow: 'Welcome', headline: `Hello, ${user.name}!`,
+          body: 'Your account is ready. Take a couple of minutes to tune the portal for your company — then invite your first candidate.', cta: 'Set up the portal' },
+      }[lg];
+      integ.sendEmail(user.settings, { to: user.email, lang: lg, baseUrl: BASE_URL, subject: W.subject,
+        eyebrow: W.eyebrow, headline: W.headline, bodyHtml: W.body, ctaLabel: W.cta, ctaUrl: onbUrl })
+        .catch(e => console.error('[welcome-email]', e.message));
+    }
+  } catch (e) { console.error('[welcome-email]', e.message); }
   res.cookie('uid', user.id, { signed: true, httpOnly: true, sameSite: 'lax', maxAge: 30 * 864e5 });
   res.json({ user: publicUser(user) });
 });

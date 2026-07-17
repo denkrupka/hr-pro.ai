@@ -227,6 +227,7 @@ async function api(req, env, url) {
     const email = String(prof.email).trim();
     const rows = await S.select('users', `email=eq.${encodeURIComponent(email.toLowerCase())}&select=data`);
     let u = rows[0] && rows[0].data;
+    let isNew = false;
     if (u) {
       if (u.blocked === true) return redir('/login?err=blocked');
       u.googleId = prof.sub; if (!u.avatar && prof.picture) u.avatar = prof.picture;
@@ -242,11 +243,13 @@ async function api(req, env, url) {
       u = { id: uid(12), email, password: '', googleId: prof.sub, avatar: prof.picture || '',
         name: gname, company: '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
         settings: { uiLang: 'ru', surname: gsurname }, role: 'user', blocked: false, adminNote: '', provider: 'google',
-        createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
+        onboarded: false, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
       if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
       await S.upsert('users', { id: u.id, data: u });
+      isNew = true;
     }
-    const dest = st.next && st.next.startsWith('/') ? st.next : '/app';
+    // новых пользователей ведём на онбординг, существующих — по next/на портал
+    const dest = isNew ? '/onboarding.html' : (st.next && st.next.startsWith('/') ? st.next : '/app');
     const headers = new Headers({ Location: url.origin + dest });
     headers.append('set-cookie', `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`);
     headers.append('set-cookie', 'goauth=; Path=/; Max-Age=0');
@@ -350,6 +353,27 @@ async function api(req, env, url) {
       settings: { uiLang, timezone: body.timezone || '' }, role: 'user', blocked: false, adminNote: '', onboarded: false, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
     if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
     await S.upsert('users', { id: u.id, data: u });
+    // Приветственное письмо со ссылкой на онбординг (best-effort, если Resend настроен)
+    try {
+      if (env.RESEND_API_KEY) {
+        const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+        const W = {
+          ru: { subj: 'Добро пожаловать в HR PRO AI', eyebrow: 'Добро пожаловать', head: `Здравствуйте, ${u.name}!`,
+            body: 'Аккаунт создан. Осталось за пару минут настроить портал под вашу компанию — и можно приглашать первого кандидата.', cta: 'Настроить портал' },
+          pl: { subj: 'Witamy w HR PRO AI', eyebrow: 'Witamy', head: `Dzień dobry, ${u.name}!`,
+            body: 'Konto utworzone. W kilka minut dostroimy portal do Twojej firmy — i możesz zaprosić pierwszego kandydata.', cta: 'Skonfiguruj portal' },
+          en: { subj: 'Welcome to HR PRO AI', eyebrow: 'Welcome', head: `Hello, ${u.name}!`,
+            body: 'Your account is ready. Take a couple of minutes to tune the portal for your company — then invite your first candidate.', cta: 'Set up the portal' },
+        }[uiLang] || null;
+        if (W) {
+          const html = wrapEmailEdge({ lang: uiLang, baseUrl: base, subject: W.subj, eyebrow: W.eyebrow,
+            headline: W.head, bodyHtml: W.body, ctaUrl: base + '/onboarding.html', ctaLabel: W.cta });
+          await fetch('https://api.resend.com/emails', { method: 'POST',
+            headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: W.subj, html }) });
+        }
+      }
+    } catch (e) {}
     const cookie = `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`;
     return j({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
   }
