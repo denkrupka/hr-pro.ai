@@ -32,7 +32,7 @@ export function knowledgeTestsOf(v) {
 
 export function processOf(v) {
   const def = { auto: false, linkDays: 3,
-    order: ['result', 'tools', 'logic', 'sales', 'knowledge'],
+    order: ['result', 'motivation', 'tools', 'logic', 'sales', 'knowledge'],
     stages: { result: true, references: true, tools: true, motivation: true, knowledge: true },
     optional: { logic: false, sales: false },
     aiCalls: { first: false, afterResult: false, afterTools: false, motivation: false, references: false },

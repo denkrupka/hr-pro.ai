@@ -573,7 +573,7 @@ async function api(req, env, url) {
     if (body.target === 'performer' || body.target === 'executor') proc.target = body.target;
     if (body.linkDays !== undefined) proc.linkDays = Math.max(1, Math.min(365, parseInt(body.linkDays, 10) || 3));
     if (Array.isArray(body.order)) {
-      const def = ['result', 'tools', 'logic', 'sales', 'knowledge'];
+      const def = ['result', 'motivation', 'tools', 'logic', 'sales', 'knowledge'];
       const clean = body.order.filter(k => def.includes(k));
       if (clean.length === def.length && new Set(clean).size === def.length) proc.order = clean;
     }
