@@ -4397,9 +4397,9 @@ function savedInterviewers() { return (state.user && state.user.settings && stat
 const VIDEO_PLATFORMS = ['Jitsi Meet (ссылка сразу)', 'Google Meet', 'Microsoft Teams', 'Zoom'];
 // Мгновенная генерация рабочей ссылки без аккаунта/OAuth — только Jitsi это позволяет.
 function jitsiLink(candidate) {
-  const slug = String(candidate || '').replace(/[^a-zA-Z0-9А-Яа-я]/g, '').slice(0, 18) || 'Interview';
+  const slug = String(candidate || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 18) || 'Interview';
   const rnd = Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
-  return 'https://meet.jit.si/HRPROAI-' + encodeURIComponent(slug) + '-' + rnd;
+  return 'https://meet.jit.si/HRPROAI-' + slug + '-' + rnd;
 }
 // Страница СОЗДАНИЯ встречи в выбранном сервисе (не мгновенный старт звонка).
 function videoNewUrl(svc) { const s = String(svc || '').toLowerCase();
