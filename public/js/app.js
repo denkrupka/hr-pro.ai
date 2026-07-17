@@ -36,7 +36,7 @@ function vidLang() { return LANG === 'pl' ? 'pl' : 'ru'; } // видео ест�
 let eduTab = 'info';
 const I18N = {
   ru: {
-    nav_vacancies: 'Рекрутация', rec_applications: 'Заявки', rec_vacancies: 'Вакансии', nav_anketas: 'Анкеты', nav_candidates: 'Кандидаты', nav_tests: 'Тесты', nav_education: 'Обучение', nav_integrations: 'Интеграции', nav_balance: 'Баланс', nav_faq: 'FAQ', nav_settings: 'Настройки', nav_logout: 'Выйти', nav_theme: 'Тема',
+    nav_vacancies: 'Рекрутация', rec_applications: 'Заявки', rec_vacancies: 'Вакансии', nav_anketas: 'Анкеты', nav_candidates: 'Кандидаты', nav_calendar: 'Календарь', nav_tests: 'Тесты', nav_education: 'Обучение', nav_integrations: 'Интеграции', nav_balance: 'Баланс', nav_faq: 'FAQ', nav_settings: 'Настройки', nav_logout: 'Выйти', nav_theme: 'Тема',
     brand_tag: 'Технология, которая<br>чувствует людей', role_admin: 'Администратор',
     edu: 'Обучение', edu_kb: 'База знаний', edu_soon: 'Материалы готовятся.', loading: 'Загрузка…',
     edu_free: 'Бесплатные', edu_paid: 'Платные', lp_programs: 'Программы обучения', lp_none: 'Программы скоро появятся.',
@@ -92,7 +92,7 @@ const I18N = {
     ae_edit_title: 'Редактирование анкеты', ae_create_title: 'Создание анкеты', ae_name: 'Название анкеты', ae_name_ph: 'Введите название', ae_pick_vac: 'Выберите вакансию', ae_slug: 'Короткая ссылка', ae_slug_ph: 'напр. sales-manager', ae_btntext: 'Текст кнопки отклика', ae_ptitle: 'Заголовок страницы', ae_ptitle_ph: 'Напр. Отклик на вакансию', ae_nocaptcha: 'Отключить капчу', ae_sendemail: 'Отправлять e-mail кандидату', ae_msgapply: 'Сообщение после отклика (без тестов)', ae_msgdone: 'Сообщение после завершения тестов', ae_tests: 'Тесты, которые получит кандидат', ae_desc: 'Описание (текст мини-сайта)', ae_save_create: 'Создать анкету', ae_preview: 'Предпросмотр',
   },
   pl: {
-    nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj', nav_theme: 'Motyw',
+    nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_calendar: 'Kalendarz', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj', nav_theme: 'Motyw',
     brand_tag: 'Technologia, która<br>czuje ludzi', role_admin: 'Administrator',
     edu: 'Szkolenia', edu_kb: 'Baza wiedzy', edu_soon: 'Materiały w przygotowaniu.', loading: 'Ładowanie…',
     edu_free: 'Bezpłatne', edu_paid: 'Płatne', lp_programs: 'Programy szkoleniowe', lp_none: 'Programy wkrótce się pojawią.',
@@ -148,7 +148,7 @@ const I18N = {
     ae_edit_title: 'Edycja ankiety', ae_create_title: 'Tworzenie ankiety', ae_name: 'Nazwa ankiety', ae_name_ph: 'Wpisz nazwę', ae_pick_vac: 'Wybierz wakat', ae_slug: 'Krótki link', ae_slug_ph: 'np. sales-manager', ae_btntext: 'Tekst przycisku zgłoszenia', ae_ptitle: 'Nagłówek strony', ae_ptitle_ph: 'Np. Zgłoszenie na wakat', ae_nocaptcha: 'Wyłącz captcha', ae_sendemail: 'Wysyłać e-mail do kandydata', ae_msgapply: 'Wiadomość po zgłoszeniu (bez testów)', ae_msgdone: 'Wiadomość po ukończeniu testów', ae_tests: 'Testy, które otrzyma kandydat', ae_desc: 'Opis (tekst mini-strony)', ae_save_create: 'Utwórz ankietę', ae_preview: 'Podgląd',
   },
   en: {
-    nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out', nav_theme: 'Theme',
+    nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_calendar: 'Calendar', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out', nav_theme: 'Theme',
     brand_tag: 'Technology that<br>reads people', role_admin: 'Administrator',
     edu: 'Learning', edu_kb: 'Knowledge base', edu_soon: 'Materials are being prepared.', loading: 'Loading…',
     edu_free: 'Free', edu_paid: 'Paid', lp_programs: 'Training programs', lp_none: 'Programs are coming soon.',
@@ -346,7 +346,7 @@ function setView(v) {
   $('#main').classList.remove('vac-lock');
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   { const bh = $('#brand-home'); if (bh) bh.classList.toggle('active', v === 'dashboard'); }
-  ({ dashboard: renderDashboard, home: renderHome, anketas: renderAnketas, education: renderEducation, balance: renderBalance, settings: renderSettings, faq: renderFAQ, vacancies: renderRecruitment, candidates: renderCandidates, integrations: renderJobPortals }[v] || renderHome)();
+  ({ dashboard: renderDashboard, home: renderHome, anketas: renderAnketas, education: renderEducation, balance: renderBalance, settings: renderSettings, faq: renderFAQ, vacancies: renderRecruitment, candidates: renderCandidates, integrations: renderJobPortals, calendar: renderCalendar }[v] || renderHome)();
 }
 
 // ============ РЕКРУТАЦИЯ (полный workflow найма) ============
@@ -4103,3 +4103,185 @@ function renderInstruct() {
       <div class="callout"><div class="co-t">Материалы</div>Подробные методики чтения тестов «Резалт», «Тулс», «Сэйлс» и «Логис» — в разделе <a href="#" onclick="setView('education');return false">Обучение</a>.</div>
     </div>`;
 }
+
+// ============ КАЛЕНДАРЬ СОБЕСЕДОВАНИЙ ============
+const CAL_STAGE = {
+  screen: { key: 'screen', color: '#6f97ff' },
+  tests:  { key: 'tests',  color: '#8b6cff' },
+  intv:   { key: 'intv',   color: '#ff7a5c' },
+  final:  { key: 'final',  color: '#43e0a0' },
+};
+const CI18N = {
+  ru: { title: 'Календарь собеседований', eyebrow: 'Планирование собеседований', neww: 'Новое собеседование', today: 'Сегодня',
+    s_screen: 'Скрининг', s_tests: 'Тесты', s_intv: 'Интервью', s_final: 'Финал',
+    upcoming: 'Ближайшие собеседования', none_up: 'Пока нет запланированных собеседований.',
+    m_new_tag: 'Новое собеседование', m_edit_tag: 'Редактирование', m_new_title: 'Запланировать собеседование', m_edit_title: 'Изменить собеседование',
+    f_candidate: 'Кандидат', f_candidate_ph: 'Имя и фамилия кандидата', f_link: 'Связать с кандидатом из базы', f_link_none: 'Не связывать',
+    f_role: 'Должность', f_role_ph: 'Например: Менеджер по продажам', f_stage: 'Этап', f_date: 'Дата', f_time: 'Время',
+    f_format: 'Формат', fmt_video: 'Видеозвонок', fmt_office: 'В офисе', fmt_phone: 'Телефон',
+    f_interviewer: 'Интервьюер', f_interviewer_ph: 'Кто проводит', f_note: 'Заметка', f_note_opt: '(ссылка на встречу, комментарий)',
+    save_new: 'Запланировать', save_edit: 'Сохранить', cancel: 'Отмена', del: 'Удалить',
+    sync: 'Добавить в календарь', sync_g: 'Google', sync_a: 'Apple / iPhone', sync_o: 'Outlook',
+    need: 'Укажите кандидата и дату', saved: 'Сохранено', deleted: 'Удалено', del_confirm: 'Удалить это собеседование?', more: 'ещё' },
+  pl: { title: 'Kalendarz rozmów', eyebrow: 'Planowanie rozmów', neww: 'Nowa rozmowa', today: 'Dziś',
+    s_screen: 'Screening', s_tests: 'Testy', s_intv: 'Rozmowa', s_final: 'Finał',
+    upcoming: 'Najbliższe rozmowy', none_up: 'Brak zaplanowanych rozmów.',
+    m_new_tag: 'Nowa rozmowa', m_edit_tag: 'Edycja', m_new_title: 'Zaplanuj rozmowę', m_edit_title: 'Edytuj rozmowę',
+    f_candidate: 'Kandydat', f_candidate_ph: 'Imię i nazwisko', f_link: 'Powiąż z kandydatem z bazy', f_link_none: 'Nie wiązać',
+    f_role: 'Stanowisko', f_role_ph: 'Np. Menedżer sprzedaży', f_stage: 'Etap', f_date: 'Data', f_time: 'Godzina',
+    f_format: 'Format', fmt_video: 'Wideorozmowa', fmt_office: 'W biurze', fmt_phone: 'Telefon',
+    f_interviewer: 'Prowadzący', f_interviewer_ph: 'Kto prowadzi', f_note: 'Notatka', f_note_opt: '(link do spotkania, komentarz)',
+    save_new: 'Zaplanuj', save_edit: 'Zapisz', cancel: 'Anuluj', del: 'Usuń',
+    sync: 'Dodaj do kalendarza', sync_g: 'Google', sync_a: 'Apple / iPhone', sync_o: 'Outlook',
+    need: 'Podaj kandydata i datę', saved: 'Zapisano', deleted: 'Usunięto', del_confirm: 'Usunąć tę rozmowę?', more: 'więcej' },
+  en: { title: 'Interview calendar', eyebrow: 'Interview scheduling', neww: 'New interview', today: 'Today',
+    s_screen: 'Screening', s_tests: 'Tests', s_intv: 'Interview', s_final: 'Final',
+    upcoming: 'Upcoming interviews', none_up: 'No interviews scheduled yet.',
+    m_new_tag: 'New interview', m_edit_tag: 'Editing', m_new_title: 'Schedule an interview', m_edit_title: 'Edit interview',
+    f_candidate: 'Candidate', f_candidate_ph: 'Candidate full name', f_link: 'Link to a candidate', f_link_none: "Don't link",
+    f_role: 'Position', f_role_ph: 'e.g. Sales manager', f_stage: 'Stage', f_date: 'Date', f_time: 'Time',
+    f_format: 'Format', fmt_video: 'Video call', fmt_office: 'In office', fmt_phone: 'Phone',
+    f_interviewer: 'Interviewer', f_interviewer_ph: 'Who runs it', f_note: 'Note', f_note_opt: '(meeting link, comment)',
+    save_new: 'Schedule', save_edit: 'Save', cancel: 'Cancel', del: 'Delete',
+    sync: 'Add to calendar', sync_g: 'Google', sync_a: 'Apple / iPhone', sync_o: 'Outlook',
+    need: 'Enter candidate and date', saved: 'Saved', deleted: 'Deleted', del_confirm: 'Delete this interview?', more: 'more' },
+};
+function ct(k) { return (CI18N[LANG] || CI18N.ru)[k] || CI18N.ru[k] || k; }
+function cStageLabel(k) { return ct('s_' + k); }
+let calState = { y: null, m: null, events: [], cands: [] };
+async function renderCalendar() {
+  if (calState.y === null) { const n = new Date(); calState.y = n.getFullYear(); calState.m = n.getMonth(); }
+  try { calState.events = (await api('/api/calendar')).events || []; } catch (e) { calState.events = []; }
+  try { if (!calState.cands.length) calState.cands = (await api('/api/candidates?lang=' + LANG)).candidates || []; } catch (e) {}
+  drawCalendar();
+}
+function calPad(n) { return String(n).padStart(2, '0'); }
+function calIso(y, m, d) { return y + '-' + calPad(m + 1) + '-' + calPad(d); }
+function calHexA(hex, a) { const h = hex.replace('#', ''); return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' + parseInt(h.slice(4, 6), 16) + ',' + a + ')'; }
+function drawCalendar() {
+  const S = calState;
+  const monNom = { ru: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+    pl: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }[LANG] || null;
+  const monShort = { ru: ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'], pl: ['STY', 'LUT', 'MAR', 'KWI', 'MAJ', 'CZE', 'LIP', 'SIE', 'WRZ', 'PAŹ', 'LIS', 'GRU'], en: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'] }[LANG] || ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const monName = monNom ? monNom[S.m] : new Date(S.y, S.m, 1).toLocaleString('en', { month: 'long' });
+  const wd = { ru: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], pl: ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'], en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }[LANG] || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const now = new Date(); const todayIso = calIso(now.getFullYear(), now.getMonth(), now.getDate());
+  const byDate = {}; S.events.forEach(e => { (byDate[e.date] = byDate[e.date] || []).push(e); });
+  Object.values(byDate).forEach(a => a.sort((x, y) => x.time.localeCompare(y.time)));
+  const first = new Date(S.y, S.m, 1); let sd = first.getDay(); sd = sd === 0 ? 6 : sd - 1;
+  const dim = new Date(S.y, S.m + 1, 0).getDate(); const dip = new Date(S.y, S.m, 0).getDate();
+  const total = Math.ceil((sd + dim) / 7) * 7; let cells = '';
+  for (let i = 0; i < total; i++) {
+    let dn, mm = S.m, yy = S.y, inM = true;
+    if (i < sd) { dn = dip - sd + 1 + i; mm = S.m - 1; inM = false; if (mm < 0) { mm = 11; yy--; } }
+    else if (i >= sd + dim) { dn = i - sd - dim + 1; mm = S.m + 1; inM = false; if (mm > 11) { mm = 0; yy++; } }
+    else dn = i - sd + 1;
+    const iso = calIso(yy, mm, dn); const isToday = iso === todayIso; const dow = i % 7;
+    const evs = byDate[iso] || []; const shown = evs.slice(0, 3);
+    const evHtml = shown.map(ev => { const st = CAL_STAGE[ev.stage] || CAL_STAGE.intv;
+      return '<div class="cal-evt" data-caledit="' + ev.id + '" style="background:' + calHexA(st.color, .12) + ';border-left:2px solid ' + st.color + '">' +
+        '<div class="cal-evt-top"><span class="cal-evt-t" style="color:' + st.color + '">' + esc(ev.time) + '</span><span class="cal-evt-st">' + esc(cStageLabel(ev.stage)) + '</span></div>' +
+        '<div class="cal-evt-c">' + esc(ev.candidate) + '</div>' + (ev.role ? '<div class="cal-evt-r">' + esc(ev.role) + '</div>' : '') + '</div>'; }).join('');
+    const more = evs.length > 3 ? '<span class="cal-more">+' + (evs.length - 3) + ' ' + ct('more') + '</span>' : '';
+    cells += '<div class="cal-cell ' + (inM ? '' : 'out') + ' ' + (isToday ? 'today' : '') + ' ' + (dow >= 5 ? 'we' : '') + '" data-caladd="' + iso + '">' +
+      '<div class="cal-cell-h"><span class="cal-num">' + dn + '</span><span class="cal-add">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + '</span></div>' +
+      '<div class="cal-evts">' + evHtml + more + '</div></div>';
+  }
+  const legend = Object.values(CAL_STAGE).map(st => '<span class="cal-leg"><i style="background:' + st.color + ';box-shadow:0 0 8px ' + calHexA(st.color, .6) + '"></i>' + cStageLabel(st.key) + '</span>').join('');
+  const up = [...S.events].filter(e => e.date >= todayIso).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)).slice(0, 6);
+  const upHtml = up.length ? up.map(ev => { const st = CAL_STAGE[ev.stage] || CAL_STAGE.intv; const parts = ev.date.split('-').map(Number); const d = parts[2], m = parts[1];
+    return '<div class="cal-up" data-caledit="' + ev.id + '" style="border-left:3px solid ' + st.color + '">' +
+      '<div class="cal-up-d"><b>' + d + '</b><span>' + monShort[m - 1] + '</span></div><div class="cal-up-sep"></div>' +
+      '<div class="cal-up-main"><div class="cal-up-c">' + esc(ev.candidate) + '</div><div class="cal-up-r">' + esc(ev.role || '') + '</div>' +
+      '<div class="cal-up-b"><span class="cal-up-t">' + esc(ev.time) + '</span><span class="cal-tag" style="color:' + st.color + ';background:' + calHexA(st.color, .12) + ';border-color:' + calHexA(st.color, .3) + '">' + esc(cStageLabel(ev.stage)) + '</span></div></div></div>'; }).join('')
+    : '<p class="muted" style="grid-column:1/-1">' + ct('none_up') + '</p>';
+  $('#main').innerHTML =
+    '<div class="cal-wrap reveal">' +
+      '<div class="cal-head">' +
+        '<div><div class="eyebrow">' + ct('eyebrow') + '</div><h1 style="margin:10px 0 0">' + ct('title') + '</h1></div>' +
+        '<button class="btn" id="cal-new">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + ' ' + ct('neww') + '</button>' +
+      '</div>' +
+      '<div class="cal-toolbar">' +
+        '<div class="cal-nav">' +
+          '<button class="btn ghost ic-btn" id="cal-prev" aria-label="prev">' + _svg('<path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
+          '<div class="cal-month">' + esc(monName) + ' ' + S.y + '</div>' +
+          '<button class="btn ghost ic-btn" id="cal-next" aria-label="next">' + _svg('<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
+          '<button class="btn ghost xs" id="cal-today">' + ct('today') + '</button>' +
+        '</div>' +
+        '<div class="cal-legend">' + legend + '</div>' +
+      '</div>' +
+      '<div class="cal-grid-card">' +
+        '<div class="cal-weekdays">' + wd.map((n, i) => '<div class="' + (i >= 5 ? 'we' : '') + '">' + n + '</div>').join('') + '</div>' +
+        '<div class="cal-grid">' + cells + '</div>' +
+      '</div>' +
+      '<div class="cal-up-sec"><div class="eyebrow">' + ct('upcoming') + '</div><div class="cal-up-grid">' + upHtml + '</div></div>' +
+    '</div>';
+  $('#cal-new').onclick = () => openCalModal(null, calIso(S.y, S.m, Math.min(now.getDate(), dim)));
+  $('#cal-prev').onclick = () => { S.m--; if (S.m < 0) { S.m = 11; S.y--; } drawCalendar(); };
+  $('#cal-next').onclick = () => { S.m++; if (S.m > 11) { S.m = 0; S.y++; } drawCalendar(); };
+  $('#cal-today').onclick = () => { S.y = now.getFullYear(); S.m = now.getMonth(); drawCalendar(); };
+  $$('[data-caladd]').forEach(c => c.onclick = () => openCalModal(null, c.dataset.caladd));
+  $$('[data-caledit]').forEach(el => el.onclick = e => { e.stopPropagation(); const ev = S.events.find(x => x.id === el.dataset.caledit); if (ev) openCalModal(ev); });
+}
+function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date: date || '', time: '10:00', format: ct('fmt_video'), interviewer: '', note: '', participantId: null }; }
+function openCalModal(ev, dateIso) {
+  const isEdit = !!ev; const f = ev ? Object.assign({}, ev) : calBlank(dateIso);
+  const stageBtns = Object.values(CAL_STAGE).map(st => '<button type="button" class="cal-stage ' + (f.stage === st.key ? 'on' : '') + '" data-calstage="' + st.key + '" style="' + (f.stage === st.key ? 'background:' + calHexA(st.color, .14) + ';border-color:' + calHexA(st.color, .5) : '') + '"><i style="background:' + st.color + '"></i>' + cStageLabel(st.key) + '</button>').join('');
+  const candOpts = '<option value="">' + ct('f_link_none') + '</option>' + calState.cands.map(c => '<option value="' + c.id + '" ' + (f.participantId === c.id ? 'selected' : '') + '>' + esc(c.name) + (c.vacancyName ? ' · ' + esc(c.vacancyName) : '') + '</option>').join('');
+  const fmt = v => '<option ' + (f.format === v ? 'selected' : '') + '>' + v + '</option>';
+  const sync = isEdit ? '<div class="cal-sync"><span class="cal-sync-l">' + ct('sync') + ':</span>' +
+      '<a class="btn ghost xs" target="_blank" id="cal-sync-g">' + ct('sync_g') + '</a>' +
+      '<button class="btn ghost xs" id="cal-sync-a">' + ct('sync_a') + '</button>' +
+      '<a class="btn ghost xs" target="_blank" id="cal-sync-o">' + ct('sync_o') + '</a></div>' : '';
+  mkDecodeModal('<div class="cal-modal">' +
+    '<div class="cal-m-head"><div><div class="db-note" style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:#b3a4ff">' + (isEdit ? ct('m_edit_tag') : ct('m_new_tag')) + '</div>' +
+      '<h2 class="db-h" style="margin:0">' + (isEdit ? ct('m_edit_title') : ct('m_new_title')) + '</h2></div></div>' +
+    '<label class="db-lb">' + ct('f_candidate') + '</label><input class="field" id="cf-candidate" value="' + esc(f.candidate) + '" placeholder="' + ct('f_candidate_ph') + '">' +
+    '<label class="db-lb">' + ct('f_link') + '</label><select class="field" id="cf-link">' + candOpts + '</select>' +
+    '<label class="db-lb">' + ct('f_role') + '</label><input class="field" id="cf-role" value="' + esc(f.role) + '" placeholder="' + ct('f_role_ph') + '">' +
+    '<label class="db-lb">' + ct('f_stage') + '</label><div class="cal-stages" id="cf-stages">' + stageBtns + '</div>' +
+    '<div class="row" style="gap:12px">' +
+      '<div style="flex:1"><label class="db-lb">' + ct('f_date') + '</label><input class="field" id="cf-date" type="date" value="' + esc(f.date) + '"></div>' +
+      '<div style="flex:1"><label class="db-lb">' + ct('f_time') + '</label><input class="field" id="cf-time" type="time" value="' + esc(f.time) + '"></div>' +
+    '</div>' +
+    '<div class="row" style="gap:12px">' +
+      '<div style="flex:1"><label class="db-lb">' + ct('f_format') + '</label><select class="field" id="cf-format">' + fmt(ct('fmt_video')) + fmt(ct('fmt_office')) + fmt(ct('fmt_phone')) + '</select></div>' +
+      '<div style="flex:1"><label class="db-lb">' + ct('f_interviewer') + '</label><input class="field" id="cf-interviewer" value="' + esc(f.interviewer) + '" placeholder="' + ct('f_interviewer_ph') + '"></div>' +
+    '</div>' +
+    '<label class="db-lb">' + ct('f_note') + ' <span style="color:#5f6885;font-weight:400">' + ct('f_note_opt') + '</span></label><input class="field" id="cf-note" value="' + esc(f.note) + '">' +
+    sync +
+    '<div class="db-modal-foot">' +
+      (isEdit ? '<button class="btn ghost danger xs ic-btn" id="cf-del" title="' + ct('del') + '">' + ICON_TRASH + '</button>' : '') +
+      '<button class="btn ghost" onclick="closeDecodeModal()">' + ct('cancel') + '</button>' +
+      '<button class="btn" id="cf-save">' + (isEdit ? ct('save_edit') : ct('save_new')) + '</button>' +
+    '</div></div>', true);
+  let stage = f.stage;
+  $$('#cf-stages .cal-stage').forEach(b => b.onclick = () => { stage = b.dataset.calstage; $$('#cf-stages .cal-stage').forEach(x => { x.classList.remove('on'); x.removeAttribute('style'); }); const st = CAL_STAGE[stage]; b.classList.add('on'); b.style.background = calHexA(st.color, .14); b.style.borderColor = calHexA(st.color, .5); });
+  $('#cf-link').onchange = e => { const c = calState.cands.find(x => x.id === e.target.value); if (c) { $('#cf-candidate').value = c.name; if (c.vacancyName && !$('#cf-role').value) $('#cf-role').value = c.vacancyName; } };
+  const collect = () => ({ candidate: $('#cf-candidate').value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: $('#cf-format').value, interviewer: $('#cf-interviewer').value.trim(), note: $('#cf-note').value.trim(), participantId: $('#cf-link').value || null });
+  if (isEdit) {
+    const upd = () => { const ev2 = Object.assign({}, f, collect()); $('#cal-sync-g').href = googleCalLink(ev2); $('#cal-sync-o').href = outlookLink(ev2); };
+    upd(); ['cf-candidate', 'cf-role', 'cf-date', 'cf-time', 'cf-format', 'cf-interviewer', 'cf-note'].forEach(id => { const el = $('#' + id); if (el) el.oninput = upd; });
+    $('#cal-sync-a').onclick = () => downloadIcs(Object.assign({}, f, collect()));
+    $('#cf-del').onclick = async () => { if (!confirm(ct('del_confirm'))) return; await api('/api/calendar/' + f.id, { method: 'DELETE' }); closeDecodeModal(); toast(ct('deleted')); renderCalendar(); };
+  }
+  $('#cf-save').onclick = async () => {
+    const d = collect(); if (!d.candidate || !d.date) return toast(ct('need'));
+    try { if (isEdit) await api('/api/calendar/' + f.id, { method: 'PUT', body: JSON.stringify(d) }); else await api('/api/calendar', { method: 'POST', body: JSON.stringify(d) });
+      closeDecodeModal(); toast(ct('saved')); renderCalendar(); } catch (e) { toast(e.message); }
+  };
+}
+function calDates(ev) { const p = ev.date.split('-').map(Number); const tm = (ev.time || '10:00').split(':').map(Number);
+  const start = new Date(p[0], p[1] - 1, p[2], tm[0] || 0, tm[1] || 0); const end = new Date(start.getTime() + 60 * 60000); return { start: start, end: end }; }
+function calZ(dt) { return dt.getUTCFullYear() + calPad(dt.getUTCMonth() + 1) + calPad(dt.getUTCDate()) + 'T' + calPad(dt.getUTCHours()) + calPad(dt.getUTCMinutes()) + '00Z'; }
+function calTitle(ev) { return (LANG === 'pl' ? 'Rozmowa: ' : LANG === 'en' ? 'Interview: ' : 'Собеседование: ') + ev.candidate + (ev.role ? ' — ' + ev.role : ''); }
+function calDetails(ev) { return [ev.role, ev.interviewer ? (LANG === 'en' ? 'Interviewer: ' : 'Интервьюер: ') + ev.interviewer : '', ev.format, ev.note].filter(Boolean).join('\n'); }
+function googleCalLink(ev) { const dd = calDates(ev);
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(calTitle(ev)) + '&dates=' + calZ(dd.start) + '/' + calZ(dd.end) + '&details=' + encodeURIComponent(calDetails(ev)) + '&location=' + encodeURIComponent(ev.format || ''); }
+function outlookLink(ev) { const dd = calDates(ev);
+  return 'https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=' + encodeURIComponent(calTitle(ev)) + '&startdt=' + dd.start.toISOString() + '&enddt=' + dd.end.toISOString() + '&body=' + encodeURIComponent(calDetails(ev)) + '&location=' + encodeURIComponent(ev.format || ''); }
+function downloadIcs(ev) { const dd = calDates(ev);
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HR PRO AI//Calendar//RU', 'BEGIN:VEVENT', 'UID:' + (ev.id || Date.now()) + '@hr-pro.ai', 'DTSTAMP:' + calZ(new Date()), 'DTSTART:' + calZ(dd.start), 'DTEND:' + calZ(dd.end), 'SUMMARY:' + calTitle(ev).replace(/[,;]/g, ' '), 'DESCRIPTION:' + calDetails(ev).replace(/\n/g, '\\n').replace(/[,;]/g, ' '), 'LOCATION:' + (ev.format || ''), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar' }); const url = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = url; a.download = 'interview-' + (ev.candidate || 'event').replace(/\s+/g, '-') + '.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }

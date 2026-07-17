@@ -1765,3 +1765,62 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .dc-input{display:flex;gap:10px;align-items:flex-end}
 .dc-input textarea{flex:1;resize:vertical}
 @media print{.decode-bar{display:none!important}}
+
+/* ====== Календарь собеседований ====== */
+.cal-wrap{max-width:1240px;margin:0 auto}
+.cal-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.cal-head h1{font-family:Manrope,sans-serif;font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;color:var(--text)}
+.cal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.cal-nav{display:flex;align-items:center;gap:10px}
+.cal-month{font-family:Manrope,sans-serif;font-weight:800;font-size:19px;color:var(--text);min-width:180px;text-align:center}
+.cal-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.cal-leg{display:inline-flex;align-items:center;gap:7px}
+.cal-leg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.cal-grid-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface);box-shadow:var(--sh-sm)}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--line);background:var(--surface-2)}
+.cal-weekdays>div{padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cal-weekdays>div.we{color:var(--faint)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-cell{position:relative;min-height:112px;padding:8px 8px 9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer;transition:background .18s}
+.cal-cell:hover{background:var(--brand-soft)}
+.cal-cell.we{background:var(--surface-2)}
+.cal-cell.out{background:var(--surface-2);opacity:.55}
+.cal-cell.today{box-shadow:inset 0 0 0 2px var(--brand);background:var(--brand-soft)}
+.cal-cell-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.cal-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:var(--text-2)}
+.cal-cell.out .cal-num{color:var(--faint)}
+.cal-cell.today .cal-num{color:#fff;background:linear-gradient(135deg,#8b6cff,#6f97ff);width:22px;height:22px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}
+.cal-add{opacity:0;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;background:rgba(139,108,255,.16);color:var(--brand);transition:opacity .18s}
+.cal-add svg{width:12px;height:12px}
+.cal-cell:hover .cal-add{opacity:1}
+.cal-evts{display:flex;flex-direction:column;gap:4px}
+.cal-evt{padding:5px 7px;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .14s,filter .18s}
+.cal-evt:hover{transform:translateX(2px);filter:brightness(1.04)}
+.cal-evt-top{display:flex;align-items:center;gap:5px;margin-bottom:1px}
+.cal-evt-t{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700}
+.cal-evt-st{font-size:8.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-evt-c{font-family:Manrope,sans-serif;font-weight:700;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-evt-r{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-more{font-size:10.5px;color:var(--faint);font-weight:600;padding-left:2px}
+.cal-up-sec{margin-top:24px}
+.cal-up-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:12px}
+.cal-up{display:flex;gap:13px;padding:14px 15px;border-radius:14px;background:var(--surface);border:1px solid var(--line);cursor:pointer;transition:transform .14s,box-shadow .18s}
+.cal-up:hover{transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.cal-up-d{flex:none;text-align:center;min-width:44px}
+.cal-up-d b{font-family:Manrope,sans-serif;font-weight:800;font-size:21px;color:var(--text);line-height:1;display:block}
+.cal-up-d span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase}
+.cal-up-sep{width:1px;background:var(--line)}
+.cal-up-main{min-width:0}
+.cal-up-c{font-family:Manrope,sans-serif;font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-up-r{font-size:12px;color:var(--muted);margin:1px 0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-up-b{display:flex;align-items:center;gap:8px}
+.cal-up-t{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--text-2)}
+.cal-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;border:1px solid;border-radius:999px;padding:2px 9px;letter-spacing:.03em}
+/* модалка (внутри тёмной db-modal) */
+.cal-modal .db-lb{margin:14px 0 6px}
+.cal-stages{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cal-stage{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:11px;cursor:pointer;text-align:left;color:#eef1fb;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);font-weight:700;font-size:13px}
+.cal-stage i{width:9px;height:9px;border-radius:50%;flex:none}
+.cal-stage.on{color:#fff}
+.cal-sync{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.cal-sync-l{font-size:12px;color:#8b93ad;font-weight:600}

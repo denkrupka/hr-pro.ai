@@ -2359,6 +2359,40 @@ app.get('/api/candidates', requireAuth, (req, res) => {
   });
   res.json({ candidates: list });
 });
+// ---------- Календарь собеседований (события на user.calendar) ----------
+const CAL_STAGES = ['screen', 'tests', 'intv', 'final'];
+function calEvent(b, base) {
+  const e = base || { id: uid(12), createdAt: nowISO() };
+  const s = k => String((b && b[k]) != null ? b[k] : (e[k] || '')).slice(0, 400);
+  e.candidate = s('candidate'); e.role = s('role');
+  e.stage = CAL_STAGES.includes(b && b.stage) ? b.stage : (e.stage || 'intv');
+  e.date = /^\d{4}-\d{2}-\d{2}$/.test(b && b.date) ? b.date : (e.date || '');
+  e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
+  e.format = s('format') || 'Видеозвонок'; e.interviewer = s('interviewer'); e.note = s('note');
+  e.participantId = (b && b.participantId) || e.participantId || null;
+  return e;
+}
+app.get('/api/calendar', requireAuth, (req, res) => {
+  const u = db().users.find(x => x.id === req.user.id);
+  res.json({ events: (u && u.calendar) || [] });
+});
+app.post('/api/calendar', requireAuth, (req, res) => {
+  const u = db().users.find(x => x.id === req.user.id);
+  u.calendar = u.calendar || [];
+  const e = calEvent(req.body || {});
+  if (!e.candidate || !e.date) return res.status(400).json({ error: 'Укажите кандидата и дату' });
+  u.calendar.push(e); save(); res.json({ event: e });
+});
+app.put('/api/calendar/:id', requireAuth, (req, res) => {
+  const u = db().users.find(x => x.id === req.user.id);
+  const e = (u.calendar || []).find(x => x.id === req.params.id);
+  if (!e) return res.status(404).json({ error: 'Не найдено' });
+  calEvent(req.body || {}, e); save(); res.json({ event: e });
+});
+app.delete('/api/calendar/:id', requireAuth, (req, res) => {
+  const u = db().users.find(x => x.id === req.user.id);
+  u.calendar = (u.calendar || []).filter(x => x.id !== req.params.id); save(); res.json({ ok: true });
+});
 // Установить канбан-колонку вручную
 const KANBAN_COLS = ['new', ...recruit.STAGE_KEYS, 'hired', 'rejected'];
 app.post('/api/participants/:id/column', requireAuth, (req, res) => {

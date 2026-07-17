@@ -1360,6 +1360,42 @@ async function api(req, env, url) {
     return j({ candidates: list });
   }
 
+  // ── Календарь собеседований (на user.calendar в Supabase) ──
+  {
+    const CAL_STAGES = ['screen', 'tests', 'intv', 'final'];
+    const calEvent = (b, base) => {
+      const e = base || { id: uid(12), createdAt: new Date().toISOString() };
+      const s = k => String((b && b[k]) != null ? b[k] : (e[k] || '')).slice(0, 400);
+      e.candidate = s('candidate'); e.role = s('role');
+      e.stage = CAL_STAGES.includes(b && b.stage) ? b.stage : (e.stage || 'intv');
+      e.date = /^\d{4}-\d{2}-\d{2}$/.test(b && b.date) ? b.date : (e.date || '');
+      e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
+      e.format = s('format') || 'Видеозвонок'; e.interviewer = s('interviewer'); e.note = s('note');
+      e.participantId = (b && b.participantId) || e.participantId || null;
+      return e;
+    };
+    if (p === '/api/calendar' && m === 'GET') { if (!me) return needAuth(); return j({ events: me.calendar || [] }); }
+    if (p === '/api/calendar' && m === 'POST') {
+      if (!me) return needAuth();
+      me.calendar = me.calendar || [];
+      const e = calEvent(body || {});
+      if (!e.candidate || !e.date) return j({ error: 'Укажите кандидата и дату' }, 400);
+      me.calendar.push(e); await S.upsert('users', { id: me.id, data: me }); return j({ event: e });
+    }
+    let mCalPut = p.match(/^\/api\/calendar\/([\w-]+)$/);
+    if (mCalPut && m === 'PUT') {
+      if (!me) return needAuth();
+      const e = (me.calendar || []).find(x => x.id === mCalPut[1]);
+      if (!e) return j({ error: 'Не найдено' }, 404);
+      calEvent(body || {}, e); await S.upsert('users', { id: me.id, data: me }); return j({ event: e });
+    }
+    if (mCalPut && m === 'DELETE') {
+      if (!me) return needAuth();
+      me.calendar = (me.calendar || []).filter(x => x.id !== mCalPut[1]);
+      await S.upsert('users', { id: me.id, data: me }); return j({ ok: true });
+    }
+  }
+
   // ── SETTINGS PUT / password ──
   if (p === '/api/settings' && m === 'PUT') {
     if (!me) return needAuth();
