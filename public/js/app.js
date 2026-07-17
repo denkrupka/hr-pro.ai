@@ -3158,12 +3158,15 @@ function onDecodeClick(testId, kind) {
   startDecode(testId, kind);
 }
 async function startDecode(testId, kind, regenerate) {
+  // Сразу показываем «генерируется…» — запрос синхронный и может идти 1–2 минуты.
+  try { decodeState.states = decodeState.states || {}; decodeState.states[kind] = { status: 'pending' }; renderDecodeBtns(testId, decodeState); } catch (e) {}
+  toast('Генерация запущена — займёт 1–2 минуты, дождитесь готовности.');
   try {
     const r = await api('/api/decode/' + testId + '/' + kind, { method: 'POST', body: JSON.stringify({ regenerate: !!regenerate, lang: LANG }) });
-    if (r.status === 'done' && !regenerate) { openDecodePage(testId, kind); await initDecodeBar(testId, decodeState.type); return; }
-    toast('Генерация запущена — займёт 1–3 минуты. Когда будет готово, придёт письмо, а кнопка станет зелёной.');
-    await initDecodeBar(testId, decodeState.type); startDecodePoll(testId);
-  } catch (e) { toast((e && e.message) || 'Ошибка запуска'); }
+    await initDecodeBar(testId, decodeState.type);
+    if (r.status === 'done') { openDecodePage(testId, kind); return; }
+    startDecodePoll(testId);
+  } catch (e) { toast((e && e.message) || 'Ошибка запуска'); try { await initDecodeBar(testId, decodeState.type); } catch (e2) {} }
 }
 function startDecodePoll(testId) {
   if (decodePoll) clearInterval(decodePoll);
