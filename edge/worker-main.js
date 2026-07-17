@@ -1646,7 +1646,7 @@ async function api(req, env, url, exec) {
       }
       if (part.tel && env.SMSAPI_TOKEN) {
         try {
-          const msg = `${H.when} (${FL[k][lang]}) — ${when}. ${detail}`.slice(0, 320);
+          const msg = `${H.when}${ev.role ? ' — ' + ev.role : ''} (${FL[k][lang]}), ${when}. ${detail}`.slice(0, 320);
           const pr = new URLSearchParams({ to: String(part.tel).replace(/[^\d+]/g, ''), message: msg, format: 'json', encoding: 'utf-8', from: env.SMSAPI_FROM || 'HR-PRO.AI' });
           await fetch(((env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '')) + '/sms.do', { method: 'POST', headers: { Authorization: 'Bearer ' + env.SMSAPI_TOKEN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: pr.toString() });
           delivery.sms = 'sent';

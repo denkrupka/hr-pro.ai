@@ -2472,7 +2472,7 @@ function interviewInviteText(ev, lang, forSms) {
     en: { hi: 'Hello!', when: 'We invite you to an interview', at: 'when', video: 'Video meeting link', office: 'Address', phone: 'We will call you from', org: 'Organizer contact' },
   }[lg];
   const line = k === 'video' ? `${L.video}: ${ev.meetingLink || ''}` : k === 'office' ? `${L.office}: ${ev.meetingLink || ''}` : `${L.phone}: ${ev.meetingLink || ''}`;
-  if (forSms) return `${L.when} (${CAL_FMT_LABEL[k][lg]}) — ${when}. ${line}`.slice(0, 320);
+  if (forSms) return `${L.when}${ev.role ? ' — ' + ev.role : ''} (${CAL_FMT_LABEL[k][lg]}), ${when}. ${line}`.slice(0, 320);
   return `${L.hi}<br><br>${L.when} — <b>${CAL_FMT_LABEL[k][lg]}</b>.<br>${L.at === 'когда' ? 'Когда' : L.at[0].toUpperCase() + L.at.slice(1)}: <b>${when}</b>.<br>${line.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + (lg === 'en' ? 'Position' : lg === 'pl' ? 'Stanowisko' : 'Должность') + ': ' + ev.role : ''}`;
 }
 app.post('/api/calendar/:id/invite', requireAuth, async (req, res) => {
