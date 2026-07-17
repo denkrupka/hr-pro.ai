@@ -94,7 +94,8 @@ function publicUser(u) {
   return { id: u.id, email: u.email, name: u.name, surname: s.surname || '', company: u.company,
     role: u.role === 'admin' ? 'admin' : 'user',
     balanceTotal: u.balanceTotal, balancePending: u.balancePending,
-    balanceAvailable: (u.balanceTotal || 0) - (u.balancePending || 0), balanceExpiresAt: balanceExpiresAt(u), settings: s };
+    balanceAvailable: (u.balanceTotal || 0) - (u.balancePending || 0), balanceExpiresAt: balanceExpiresAt(u), settings: s,
+    onboarded: u.onboarded === true };
 }
 const uid = (n = 12) => { const b = new Uint8Array(16); crypto.getRandomValues(b);
   return btoa(String.fromCharCode(...b)).replace(/[+/=]/g, '').slice(0, n); };
@@ -317,6 +318,22 @@ async function api(req, env, url) {
     return j({ user: publicUser(u) });
   }
 
+  if (p === '/api/onboarding' && m === 'POST') {
+    const u = await currentUser(env, req);
+    if (!u) return j({ error: 'Не авторизован' }, 401);
+    const f = (body && body.form) || {};
+    const cut = (v, n) => String(v == null ? '' : v).slice(0, n);
+    if (!u.settings) u.settings = {};
+    u.settings.onboarding = {
+      company: cut(f.company, 200), industry: cut(f.industry, 80), size: cut(f.size, 20),
+      myrole: cut(f.myrole, 120), goal: cut(f.goal, 20), timePer: cut(f.timePer, 12),
+      perHire: cut(f.perHire, 12), badHire: cut(f.badHire, 12), at: new Date().toISOString() };
+    if (f.company && !u.company) u.company = u.settings.onboarding.company;
+    u.onboarded = true;
+    await S.upsert('users', { id: u.id, data: u });
+    return j({ ok: true, user: publicUser(u) });
+  }
+
   if (p === '/api/register' && m === 'POST') {
     const gs = await settings();
     if (gs.registrationOpen === false) return j({ error: 'Регистрация временно закрыта' }, 403);
@@ -325,9 +342,12 @@ async function api(req, env, url) {
     const exists = await S.select('users', `email=eq.${encodeURIComponent(email.toLowerCase())}&select=id`);
     if (exists.length) return j({ error: 'Пользователь с таким email уже существует' }, 409);
     const bonus = Math.max(0, parseInt(gs.signupBonus, 10) || 0);
+    const accLang = String(req.headers.get('accept-language') || '').slice(0, 2).toLowerCase();
+    const uiLang = ['ru', 'pl', 'en'].includes(String(body.uiLang || '')) ? body.uiLang
+      : (['ru', 'pl', 'en'].includes(accLang) ? accLang : 'ru');
     const u = { id: uid(12), email, password: await hashPassword(body.password), name: body.name || email.split('@')[0],
       company: body.company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [],
-      settings: { uiLang: 'ru' }, role: 'user', blocked: false, adminNote: '', createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
+      settings: { uiLang, timezone: body.timezone || '' }, role: 'user', blocked: false, adminNote: '', onboarded: false, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
     if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
     await S.upsert('users', { id: u.id, data: u });
     const cookie = `uid=${encodeURIComponent(await signCookie(env, u.id))}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`;

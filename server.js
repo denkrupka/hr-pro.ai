@@ -426,7 +426,8 @@ function publicUser(u) {
   return { id: u.id, email: u.email, name: u.name, surname: u.settings.surname || '', company: u.company,
     role: u.role === 'admin' ? 'admin' : 'user',
     balanceTotal: u.balanceTotal, balancePending: u.balancePending,
-    balanceAvailable: u.balanceTotal - u.balancePending, balanceExpiresAt: balanceExpiresAt(u), settings: u.settings };
+    balanceAvailable: u.balanceTotal - u.balancePending, balanceExpiresAt: balanceExpiresAt(u), settings: u.settings,
+    onboarded: u.onboarded === true };
 }
 function demoFor(p) {
   if (!p) return 'women';
@@ -476,7 +477,7 @@ app.post('/api/register', (req, res) => {
     timezone: (req.body && req.body.timezone) || '' };
   const user = { id: uid(12), email, password: hashPassword(password), name: name || email.split('@')[0],
     company: company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [], settings: defaultSettings(auto),
-    role: 'user', blocked: false, adminNote: '', lastLoginAt: nowISO(), createdAt: nowISO() };
+    role: 'user', blocked: false, adminNote: '', onboarded: false, lastLoginAt: nowISO(), createdAt: nowISO() };
   data.users.push(user);
   if (bonus > 0) { logBalance(user.id, bonus, 'signup_bonus', { comment: 'Бонус при регистрации' }); addBalanceLot(user, bonus, 'signup_bonus'); }
   // стартовые вакансии
@@ -502,6 +503,27 @@ app.post('/api/login', (req, res) => {
 app.post('/api/logout', (req, res) => { res.clearCookie('uid'); res.clearCookie('impersonate_uid'); res.json({ ok: true }); });
 app.get('/api/me', requireAuth, (req, res) => { if (expireBalance(req.user) > 0) save(); res.json({ user: publicUser(req.user),
   impersonatedBy: req.adminUser ? req.adminUser.email : undefined }); });
+
+// сохранение данных онбординга + отметка о прохождении
+app.post('/api/onboarding', requireAuth, (req, res) => {
+  const form = (req.body && req.body.form) || {};
+  ensureSettings(req.user);
+  req.user.settings.onboarding = {
+    company: String(form.company || '').slice(0, 200),
+    industry: String(form.industry || '').slice(0, 80),
+    size: String(form.size || '').slice(0, 20),
+    myrole: String(form.myrole || '').slice(0, 120),
+    goal: String(form.goal || '').slice(0, 20),
+    timePer: String(form.timePer || '').slice(0, 12),
+    perHire: String(form.perHire || '').slice(0, 12),
+    badHire: String(form.badHire || '').slice(0, 12),
+    at: nowISO(),
+  };
+  if (form.company && !req.user.company) req.user.company = req.user.settings.onboarding.company;
+  req.user.onboarded = true;
+  save();
+  res.json({ ok: true, user: publicUser(req.user) });
+});
 
 // справочники (языки + публичные флаги портала)
 app.get('/api/meta', (req, res) => {

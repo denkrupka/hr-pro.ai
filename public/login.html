@@ -342,6 +342,7 @@ async function submit(e){
     const r=await fetch('/api/'+MODE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await r.json();
     if(!r.ok){toast(d.error||t('errGeneric'));btn.disabled=false;btn.innerHTML=orig;return;}
+    if(!isLogin){location.href='/onboarding.html';return;}
     location.href=params.get('next')||'/app';
   }catch(err){toast(t('errNetwork'));btn.disabled=false;btn.innerHTML=orig;}
 }
