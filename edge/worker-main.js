@@ -1464,7 +1464,8 @@ async function api(req, env, url) {
     const content = testQuestionsFor(test.type, tlang);
     let questions = content.questions;
     if (test.type === 'logic') questions = questions.map(q => ({ id: q.id, text: q.text, options: q.options, image: q.image || null, optionImages: q.optionImages || null }));
-    return j({ type: test.type, lang: tlang, title: content.title || testTitleOf(test.type), intro: content.intro || '',
+    const candTitle = test.type === 'result' ? ({ ru: 'Вступительная анкета', pl: 'Ankieta wstępna', en: 'Introductory questionnaire' }[tlang] || 'Вступительная анкета') : (content.title || testTitleOf(test.type));
+    return j({ type: test.type, lang: tlang, title: candTitle, intro: content.intro || '',
       status: test.status, timeLimitSec: content.timeLimitSec || null, scaleOptions: content.options || null,
       needProfile: !(part && part.name), questions, ...extra, participant: partView });
   }

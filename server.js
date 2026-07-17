@@ -184,25 +184,25 @@ const MAIL_SEND_SKELETON = {
 // Описание под конкретный тест (по языкам)
 const MAIL_SEND_DESC = {
   ru: {
-    result: 'Тест «Резалт» займёт от 20 до 40 минут. Он содержит простые жизненные ситуации и ваше отношение к ним — по каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.',
+    result: 'Вступительная анкета займёт от 20 до 40 минут. Он содержит простые жизненные ситуации и ваше отношение к ним — по каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.',
     tools: 'Тест «Тулс» займёт около 30–40 минут и состоит из 200 вопросов о ваших привычках, взглядах и реакциях. По каждому вопросу выберите «да», «может быть» или «нет». Правильных или неправильных ответов нет — отвечайте честно, тогда результат точнее опишет ваши сильные стороны.',
     logic: 'Тест «Логис» займёт около 15–20 минут и проверяет скорость мышления и умение решать задачи. Он состоит из логических вопросов, часть из которых сложнее других. Отвечайте спокойно и сосредоточенно.',
     sales: 'Тест «Сэйлс» займёт около 20–30 минут и оценивает ваш подход к продажам и работе с клиентами. По каждому утверждению выберите «да», «иногда» или «нет». Правильных или неправильных ответов нет — отвечайте так, как поступаете обычно.',
   },
   uk: {
-    result: 'Тест «Резалт» триватиме від 20 до 40 хвилин. Він містить прості життєві ситуації та ваше ставлення до них — на кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.',
+    result: 'Вступна анкета триватиме від 20 до 40 хвилин. Він містить прості життєві ситуації та ваше ставлення до них — на кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.',
     tools: 'Тест «Тулс» триватиме близько 30–40 хвилин і складається з 200 запитань про ваші звички, погляди та реакції. На кожне запитання оберіть «так», «можливо» або «ні». Правильних чи неправильних відповідей немає — відповідайте чесно, тоді результат точніше опише ваші сильні сторони.',
     logic: 'Тест «Логіс» триватиме близько 15–20 хвилин і перевіряє швидкість мислення та вміння розв’язувати задачі. Він складається з логічних запитань, частина з яких складніша за інші. Відповідайте спокійно та зосереджено.',
     sales: 'Тест «Сейлс» триватиме близько 20–30 хвилин і оцінює ваш підхід до продажів і роботи з клієнтами. На кожне твердження оберіть «так», «іноді» або «ні». Правильних чи неправильних відповідей немає — відповідайте так, як робите зазвичай.',
   },
   pl: {
-    result: 'Test „Result” zajmie od 20 do 40 minut. Zawiera proste sytuacje z życia i Twój stosunek do nich — przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.',
+    result: 'Ankieta wstępna zajmie od 20 do 40 minut. Zawiera proste sytuacje z życia i Twój stosunek do nich — przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.',
     tools: 'Test „Tools” zajmie około 30–40 minut i składa się z 200 pytań o Twoje nawyki, poglądy i reakcje. Przy każdym pytaniu wybierz „tak”, „może” lub „nie”. Nie ma odpowiedzi dobrych ani złych — odpowiadaj szczerze, a wynik dokładniej opisze Twoje mocne strony.',
     logic: 'Test „Logic” zajmie około 15–20 minut i sprawdza szybkość myślenia oraz umiejętność rozwiązywania zadań. Składa się z pytań logicznych, z których część jest trudniejsza. Odpowiadaj spokojnie i w skupieniu.',
     sales: 'Test „Sales” zajmie około 20–30 minut i ocenia Twoje podejście do sprzedaży i pracy z klientem. Przy każdym stwierdzeniu wybierz „tak”, „czasami” lub „nie”. Nie ma odpowiedzi dobrych ani złych — odpowiadaj tak, jak zwykle postępujesz.',
   },
   en: {
-    result: 'The “Result” test takes 20 to 40 minutes. It presents simple everyday situations and your attitude to them — for each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.',
+    result: 'The introductory questionnaire takes 20 to 40 minutes. It presents simple everyday situations and your attitude to them — for each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.',
     tools: 'The “Tools” test takes about 30–40 minutes and consists of 200 questions about your habits, views and reactions. For each question choose “yes”, “maybe” or “no”. There are no right or wrong answers — answer honestly and the result will describe your strengths more accurately.',
     logic: 'The “Logic” test takes about 15–20 minutes and measures your thinking speed and problem-solving. It consists of logic questions, some harder than others. Stay calm and focused as you answer.',
     sales: 'The “Sales” test takes about 20–30 minutes and assesses your approach to sales and working with clients. For each statement choose “yes”, “sometimes” or “no”. There are no right or wrong answers — answer the way you usually act.',
@@ -638,30 +638,48 @@ app.delete('/api/participants/:id', requireAuth, (req, res) => {
 
 // ---------- Реальная отправка приглашения кандидату (если настроены Resend/SMSAPI) ----------
 // Портал работает и без интеграций: тогда ссылку копируют вручную, как раньше.
+// Кандидатское имя теста: «Резалт» для кандидатов называется «Вступительная анкета».
+function candTestName(test, lang) {
+  const L = ['ru', 'uk', 'pl', 'en'].includes(lang) ? lang : 'ru';
+  if (test.type === 'result') return { ru: 'Вступительная анкета', uk: 'Вступна анкета', pl: 'Ankieta wstępna', en: 'Introductory questionnaire' }[L];
+  if (test.type === 'knowledge') return { ru: 'Проверка знаний', uk: 'Перевірка знань', pl: 'Test wiedzy', en: 'Knowledge test' }[L];
+  return (TEST_NAMES[L] && TEST_NAMES[L][test.type]) || test.type;
+}
 function notifyCandidate(user, p, test, vac, link) {
   try {
     const lang = (vac && vac.lang) || 'ru';
     const name = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || p.tel || '';
-    const title = (TEST_TYPES[test.type] && TEST_TYPES[test.type].title) || (test.type === 'knowledge' ? 'Проверка знаний' : test.type);
-    const fill = s => String(s || '')
-      .replace(/\{candidate\}/g, name).replace(/\{company\}/g, user.company || '')
-      .replace(/\{vacancy\}/g, vac ? vac.name : '').replace(/\{test\}/g, title).replace(/\{link\}/g, link);
-    // шаблоны клиента; если не заданы — глобальные дефолты портала, затем заводские
+    const vacName = vac ? vac.name : '';
+    const company = user.company || '';
+    const recruiter = [user.name, user.surname].filter(Boolean).join(' ');
+    const candTitle = candTestName(test, lang);   // кандидатское имя теста (result → «Вступительная анкета»)
     const gs = portalSettings();
-    const tpls = user.settings.emailTemplates || gs.defaultEmailTemplates || DEFAULT_TEMPLATES;
-    const tpl = tpls[lang] || tpls.ru || {};
+    // Письмо — по РЕДАКТИРУЕМЫМ клиентом шаблонам (mailTemplates, плейсхолдеры $...$), по типу теста.
+    const mail = (user.settings.mailTemplates && user.settings.mailTemplates.send) ? user.settings.mailTemplates
+      : (gs.defaultMailTemplates && gs.defaultMailTemplates.send) ? gs.defaultMailTemplates : DEFAULT_MAIL();
+    const sendType = mail.send[test.type] ? test.type : 'result';
+    const tpl = (mail.send[sendType] && (mail.send[sendType][lang] || mail.send[sendType].ru)) || {};
+    const fillDollar = s => String(s || '')
+      .replace(/\$vac\$/g, vacName).replace(/\$company\$/g, company).replace(/\$name\$/g, name)
+      .replace(/\$client\$/g, recruiter).replace(/\$test\$/g, candTitle).replace(/\$link\$/g, link);
     if (p.email && integ.isConfigured(user.settings, 'resend') && !isUnsubscribed(p.email)) {
-      const ctaLabel = { ru: 'Начать оценку', pl: 'Rozpocznij ocenę', en: 'Start assessment' }[lang] || 'Начать оценку';
-      const eyebrow = { ru: 'Приглашение на оценку', pl: 'Zaproszenie do oceny', en: 'Assessment invitation' }[lang] || 'Приглашение на оценку';
-      integ.sendEmail(user.settings, { to: p.email, subject: fill(tpl.subject) || 'Приглашение на тестирование',
-        lang, baseUrl: BASE_URL, unsubUrl: unsubUrlFor(p.email, lang), eyebrow, ctaLabel, ctaUrl: link,
-        bodyHtml: fill(tpl.body).replace(/\n/g, '<br>') })
+      const ctaLabel = { ru: 'Начать', pl: 'Zacznij', en: 'Start' }[lang] || 'Начать';
+      const eyebrow = { ru: 'Приглашение', pl: 'Zaproszenie', en: 'Invitation' }[lang] || 'Приглашение';
+      // $button_link$ → фирменная кнопка в месте, где его поставил автор шаблона.
+      const btn = `<div style="text-align:center;margin:20px 0"><a href="${link}" style="display:inline-block;font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;padding:14px 40px;border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${ctaLabel}</a></div>`;
+      const bodyHtml = fillDollar(tpl.body).replace(/\$button_link\$/g, 'BTN').replace(/\n/g, '<br>').replace(/BTN/g, btn);
+      const subject = fillDollar(tpl.subject) || 'Приглашение';
+      integ.sendEmail(user.settings, { to: p.email, subject, lang, baseUrl: BASE_URL, unsubUrl: unsubUrlFor(p.email, lang), eyebrow, bodyHtml,
+        ctaLabel: /\$button_link\$/.test(tpl.body || '') ? '' : ctaLabel, ctaUrl: /\$button_link\$/.test(tpl.body || '') ? '' : link })
         .catch(e => console.error('[resend]', e.message));
     }
+    // SMS — прежние шаблоны с {..}; отправитель HR-PRO.AI задаётся в integrations.
     const smsTpls = user.settings.smsTemplates || gs.defaultSmsTemplates || DEFAULT_SMS;
     const smsTpl = smsTpls[lang] || smsTpls.ru || '';
+    const fillSms = s => String(s || '').replace(/\{candidate\}/g, name).replace(/\{company\}/g, company)
+      .replace(/\{vacancy\}/g, vacName).replace(/\{test\}/g, candTitle).replace(/\{link\}/g, link);
     if (p.tel && integ.isConfigured(user.settings, 'smsapi'))
-      integ.sendSms(user.settings, { to: p.tel, message: fill(smsTpl) || (title + ': ' + link) })
+      integ.sendSms(user.settings, { to: p.tel, message: fillSms(smsTpl) || (candTitle + ': ' + link) })
         .catch(e => console.error('[smsapi]', e.message));
   } catch (e) { console.error('[notifyCandidate]', e.message); }
 }
@@ -1418,7 +1436,7 @@ app.get('/api/take/:code', (req, res) => {
   let questions = content.questions;
   if (test.type === 'logic') questions = questions.map(q => ({ id: q.id, text: q.text, options: q.options, image: q.image || null, optionImages: q.optionImages || null }));
   res.json({
-    type: test.type, lang: tlang, title: content.title || TEST_TYPES[test.type].title, intro: content.intro || '',
+    type: test.type, lang: tlang, title: candTestName(test, tlang) || content.title || TEST_TYPES[test.type].title, intro: content.intro || '',
     status: test.status, timeLimitSec: content.timeLimitSec || null,
     scaleOptions: content.options || null,
     needProfile: !(p && p.name), questions, ...extra,

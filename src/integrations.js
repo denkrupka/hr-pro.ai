@@ -173,7 +173,8 @@ async function sendSms(settings, { to, message }) {
   if (!c.token) return { skipped: true, reason: 'SMSAPI не настроен' };
   const base = (c.endpoint || 'https://api.smsapi.pl').replace(/\/+$/, '');
   const params = new URLSearchParams({ to: String(to).replace(/[^\d+]/g, ''), message: String(message || '').slice(0, 800), format: 'json', encoding: 'utf-8' });
-  if (c.from) params.set('from', c.from);
+  // Имя отправителя SMS. По умолчанию — HR-PRO.AI (должно быть зарегистрировано как «поле от» в кабинете SMSAPI).
+  params.set('from', c.from || 'HR-PRO.AI');
   const d = await http(base + '/sms.do', {
     method: 'POST', headers: { Authorization: 'Bearer ' + c.token, 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params.toString(),

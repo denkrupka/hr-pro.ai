@@ -161,30 +161,55 @@ export function wrapEmailEdge(o) {
 </html>`;
 }
 
+// Кандидатское имя теста: «Резалт» → «Вступительная анкета».
+function candTestName(type, lang) {
+  const L = ['ru', 'uk', 'pl', 'en'].includes(lang) ? lang : 'ru';
+  if (type === 'result') return { ru: 'Вступительная анкета', uk: 'Вступна анкета', pl: 'Ankieta wstępna', en: 'Introductory questionnaire' }[L];
+  if (type === 'knowledge') return { ru: 'Проверка знаний', uk: 'Перевірка знань', pl: 'Test wiedzy', en: 'Knowledge test' }[L];
+  const N = { ru: { tools: 'Тулс', logic: 'Логис', sales: 'Сэйлс' }, pl: { tools: 'Tools', logic: 'Logic', sales: 'Sales' }, en: { tools: 'Tools', logic: 'Logic', sales: 'Sales' } };
+  return (N[L] && N[L][type]) || type;
+}
 export async function notifyCandidate(env, user, p, test, vac, link, title) {
   const lang = (vac && vac.lang) || 'ru';
   const name = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || p.tel || '';
   const s = user.settings || {};
+  const candTitle = candTestName(test.type, lang);
   const fill = str => String(str || '')
     .replace(/\{candidate\}/g, name).replace(/\{company\}/g, user.company || '')
-    .replace(/\{vacancy\}/g, vac ? vac.name : '').replace(/\{test\}/g, title).replace(/\{link\}/g, link);
+    .replace(/\{vacancy\}/g, vac ? vac.name : '').replace(/\{test\}/g, candTitle).replace(/\{link\}/g, link);
 
   const out = { email: null, sms: null };
   const resendKey = env.RESEND_API_KEY;
   const unsubbed = Array.isArray(env.__unsub) && env.__unsub.includes(String(p.email || '').toLowerCase());
   if (p.email && resendKey && !unsubbed) {
-    const tpls = s.emailTemplates && Object.keys(s.emailTemplates).length ? s.emailTemplates : DEFAULT_EMAIL;
-    const tpl = tpls[lang] || tpls.ru || DEFAULT_EMAIL.ru;
     const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+    const ctaLabel = { ru: 'Начать', pl: 'Zacznij', en: 'Start' }[lang] || 'Начать';
+    // Клиентские редактируемые шаблоны (mailTemplates, по типу теста, $...$) имеют приоритет.
+    const mt = s.mailTemplates && s.mailTemplates.send;
+    let subject, bodyHtml, ctaUrl = link;
+    if (mt) {
+      const st = mt[test.type] ? test.type : 'result';
+      const t = (mt[st] && (mt[st][lang] || mt[st].ru)) || {};
+      const fd = str => String(str || '').replace(/\$vac\$/g, vac ? vac.name : '').replace(/\$company\$/g, user.company || '')
+        .replace(/\$name\$/g, name).replace(/\$client\$/g, [user.name, user.surname].filter(Boolean).join(' '))
+        .replace(/\$test\$/g, candTitle).replace(/\$link\$/g, link);
+      const btn = `<div style="text-align:center;margin:20px 0"><a href="${link}" style="display:inline-block;font-family:Manrope,Arial,sans-serif;font-weight:700;font-size:15px;color:#fff;padding:14px 40px;border-radius:13px;background:linear-gradient(135deg,#8b6cff,#6f97ff);text-decoration:none">${ctaLabel}</a></div>`;
+      bodyHtml = fd(t.body).replace(/\$button_link\$/g, 'BTNPLACE').replace(/\n/g, '<br>').replace(/BTNPLACE/g, btn);
+      subject = fd(t.subject) || 'Приглашение';
+      if (/\$button_link\$/.test(t.body || '')) ctaUrl = '';   // кнопка уже внутри тела
+    } else {
+      const tpls = s.emailTemplates && Object.keys(s.emailTemplates).length ? s.emailTemplates : DEFAULT_EMAIL;
+      const tpl = tpls[lang] || tpls.ru || DEFAULT_EMAIL.ru;
+      subject = fill(tpl.subject) || 'Приглашение на тестирование';
+      bodyHtml = fill(tpl.body).replace(/\n/g, '<br>');
+    }
     try {
       const tok = await unsubToken(env.SECRET, p.email);
       const unsubUrl = `${base}/unsubscribe?e=${btoa(String(p.email).toLowerCase())}&t=${tok}&lang=${lang}`;
-      const html = wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject: fill(tpl.subject) || 'Приглашение на тестирование',
-        ctaUrl: link, bodyHtml: fill(tpl.body).replace(/\n/g, '<br>') });
+      const html = wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject, ctaUrl, ctaLabel: ctaUrl ? ctaLabel : '', bodyHtml });
       const r = await fetch('https://api.resend.com/emails', {
         method: 'POST', headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [p.email],
-          subject: fill(tpl.subject) || 'Приглашение на тестирование', html }),
+        body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [p.email], subject, html }),
       });
       out.email = r.ok ? 'sent' : ('err ' + r.status);
     } catch (e) { out.email = 'err'; }
@@ -196,8 +221,8 @@ export async function notifyCandidate(env, user, p, test, vac, link, title) {
     const tpl = tpls[lang] || tpls.ru || DEFAULT_SMS.ru;
     const base = (env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '');
     const params = new URLSearchParams({ to: String(p.tel).replace(/[^\d+]/g, ''),
-      message: (fill(tpl) || (title + ': ' + link)).slice(0, 800), format: 'json', encoding: 'utf-8' });
-    if (env.SMSAPI_FROM) params.set('from', env.SMSAPI_FROM);
+      message: (fill(tpl) || (candTitle + ': ' + link)).slice(0, 800), format: 'json', encoding: 'utf-8' });
+    params.set('from', env.SMSAPI_FROM || 'HR-PRO.AI');
     try {
       const r = await fetch(base + '/sms.do', { method: 'POST',
         headers: { Authorization: 'Bearer ' + smsToken, 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() });
