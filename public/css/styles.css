@@ -1824,3 +1824,34 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cal-stage.on{color:#fff}
 .cal-sync{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
 .cal-sync-l{font-size:12px;color:#8b93ad;font-weight:600}
+
+/* ====== Тур по порталу ====== */
+.tour-ov{position:fixed;inset:0;z-index:3000;animation:cfade .3s ease both}
+.tour-ov.tour-center{display:grid;place-items:center;background:rgba(4,5,12,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 4000px rgba(4,5,12,.8);outline:2px solid rgba(139,108,255,.6);outline-offset:2px;transition:left .4s cubic-bezier(.55,.1,.25,1),top .4s cubic-bezier(.55,.1,.25,1),width .4s,height .4s;pointer-events:none}
+.tour-ring{position:absolute;inset:-4px;border-radius:inherit;border:2px solid rgba(139,108,255,.55);animation:cpulse 1.8s ease-out infinite}
+@keyframes cpulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.04);opacity:0}}
+.tour-tip{position:fixed;width:340px;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#111536,#0d1020);border:1px solid rgba(139,108,255,.28);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(111,108,255,.14);padding:19px 20px 17px;animation:crise .32s cubic-bezier(.22,.9,.3,1) both;color:#c3cbe4}
+.tour-tip-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.tour-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#b3a4ff;background:rgba(139,108,255,.14);border:1px solid rgba(139,108,255,.28);border-radius:7px;padding:4px 9px}
+.tour-counter{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#7d84a3}
+.tour-tip h3{font-family:Manrope,sans-serif;font-weight:800;font-size:17.5px;color:#fff;margin:0 0 8px;letter-spacing:-.01em}
+.tour-tip p{font-size:13.6px;line-height:1.6;color:#c3cbe4;margin:0}
+.tour-dots{display:flex;gap:6px;margin:15px 0 14px}
+.tour-dot{height:5px;width:5px;border-radius:99px;background:rgba(255,255,255,.14);transition:all .3s}
+.tour-dot.past{background:rgba(139,108,255,.5)}
+.tour-dot.on{width:22px;background:linear-gradient(90deg,#8b6cff,#6f97ff)}
+.tour-btns{display:flex;align-items:center;gap:9px}
+.tour-linkbtn{background:transparent;border:none;color:#7d84a3;font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 2px}
+.tour-linkbtn:hover{color:#c3cbe4}
+.tour-tip .btn.xs{padding:9px 15px}
+/* приветственная/финальная карточка */
+.tour-hero{width:100%;max-width:440px;text-align:center;border-radius:22px;padding:36px 32px;background:linear-gradient(180deg,#111536,#0d1020);border:1px solid rgba(139,108,255,.28);box-shadow:0 40px 110px rgba(0,0,0,.65);animation:crise .4s cubic-bezier(.22,.9,.3,1) both}
+.tour-hero.fin{border-color:rgba(67,224,160,.3)}
+.tour-hero-ic{width:82px;height:82px;margin:0 auto 20px;border-radius:24px;display:grid;place-items:center;background:radial-gradient(circle at 40% 30%,rgba(139,108,255,.28),rgba(11,13,24,.9));border:1px solid rgba(139,108,255,.4)}
+.tour-hero-ic svg{width:38px;height:38px;stroke:#b3a4ff;fill:none;stroke-width:1.8}
+.tour-hero-ic.ok{background:radial-gradient(circle at 40% 30%,rgba(67,224,160,.26),rgba(11,13,24,.9));border-color:rgba(67,224,160,.4)}
+.tour-hero-ic.ok svg{stroke:#43e0a0;stroke-width:2.6}
+.tour-hero h2{font-family:Manrope,sans-serif;font-weight:800;font-size:25px;color:#fff;margin:0 0 12px;letter-spacing:-.01em}
+.tour-hero p{font-size:14.5px;line-height:1.6;color:#a8b0c8;margin:0 0 24px}
+.tour-hero-btns{display:flex;gap:11px;justify-content:center}

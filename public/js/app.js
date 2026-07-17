@@ -2074,6 +2074,7 @@ async function renderDashboard() {
   portalNet('neuPortal');
   $('#dash-open-send').onclick = () => openSendModal(vacsD.vacancies, vacOptions);
   $$('.rrow[data-pid]').forEach(r => r.onclick = () => openParticipant(r.dataset.pid));
+  maybeStartTour();   // онбординг-тур при первом входе
 }
 // плюрализация «кандидат» по числу
 function candWord(n) { n = Math.abs(n) % 100; const n1 = n % 10; if (n > 10 && n < 20) return t('cand_word_5'); if (n1 > 1 && n1 < 5) return t('cand_word_2'); if (n1 === 1) return t('cand_word_1'); return t('cand_word_5'); }
@@ -4076,6 +4077,7 @@ function renderFAQ() {
     <div class="faq-layout reveal d2">
       <aside class="faq-side">
         <div class="search-wrap"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="faq-search" placeholder="${t('faq_search')}"></div>
+        <button class="btn soft sm" style="width:100%;margin-bottom:12px" onclick="startPortalTour()">${_svg('<circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2" stroke-linecap="round"/>')} ${tt('relaunch')}</button>
         <nav class="faq-nav">${nav}</nav>
       </aside>
       <div class="faq-main" id="faq-main">${cats}</div>
@@ -4285,3 +4287,95 @@ function downloadIcs(ev) { const dd = calDates(ev);
   const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HR PRO AI//Calendar//RU', 'BEGIN:VEVENT', 'UID:' + (ev.id || Date.now()) + '@hr-pro.ai', 'DTSTAMP:' + calZ(new Date()), 'DTSTART:' + calZ(dd.start), 'DTEND:' + calZ(dd.end), 'SUMMARY:' + calTitle(ev).replace(/[,;]/g, ' '), 'DESCRIPTION:' + calDetails(ev).replace(/\n/g, '\\n').replace(/[,;]/g, ' '), 'LOCATION:' + (ev.format || ''), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const blob = new Blob([ics], { type: 'text/calendar' }); const url = URL.createObjectURL(blob); const a = document.createElement('a');
   a.href = url; a.download = 'interview-' + (ev.candidate || 'event').replace(/\s+/g, '-') + '.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
+
+// ============ ТУР ПО ПОРТАЛУ (онбординг новых пользователей) ============
+const TOURI18N = {
+  ru: { w_title: 'Добро пожаловать на портал!', w_body: 'Покажем за минуту, где что находится и как отправить первому кандидату тест. Всего 6 коротких подсказок.', w_skip: 'Не сейчас', w_start: 'Начать тур',
+    skip: 'Пропустить тур', back: 'Назад', next: 'Далее', finish: 'Завершить',
+    f_title: 'Готово — теперь ваша очередь', f_body: 'Вы знаете, где что находится. Пригласите первого кандидата — и посмотрите, как ИИ раскроет его профиль.', f_replay: 'Пройти заново', f_go: 'Начать работу', relaunch: 'Тур по порталу',
+    t1_tag: 'Навигация', t1_t: 'Ваша панель управления', t1_b: 'Слева — всё меню портала: вакансии, кандидаты, календарь, тесты, обучение. Отсюда вы попадёте в любой раздел.',
+    t2_tag: 'Первый шаг', t2_t: 'Отправьте тест кандидату', t2_b: 'Раздел «Тесты» — главное действие. Введите e-mail кандидата: он получит ссылку и пройдёт тесты сам, без вашего участия.',
+    t3_tag: 'Результаты', t3_t: 'Кандидаты и их профили', t3_b: 'Каждый кандидат — карточка с тегом этапа. Клик открывает полный профиль: спектр личности, баллы и рекомендацию ИИ, итоговое решение.',
+    t4_tag: 'Планирование', t4_t: 'Календарь собеседований', t4_b: 'Планируйте собеседования, редактируйте их и синхронизируйте с Google, Apple и Outlook в один клик.',
+    t5_tag: 'Обучение', t5_t: 'Академия и материалы', t5_b: 'Программа для вас и команды: как читать графики, проводить собеседования и не ошибаться в найме.',
+    t6_tag: 'Баланс', t6_t: 'Тесты и баланс', t6_b: 'Здесь видно, сколько тестов доступно, и можно пополнить баланс. Каждый тест — это один разбор кандидата.' },
+  pl: { w_title: 'Witaj w portalu!', w_body: 'Pokażemy w minutę, gdzie co jest i jak wysłać test pierwszemu kandydatowi. Tylko 6 krótkich wskazówek.', w_skip: 'Nie teraz', w_start: 'Zacznij tur',
+    skip: 'Pomiń', back: 'Wstecz', next: 'Dalej', finish: 'Zakończ',
+    f_title: 'Gotowe — teraz Twoja kolej', f_body: 'Wiesz już, gdzie co jest. Zaproś pierwszego kandydata i zobacz, jak AI odkryje jego profil.', f_replay: 'Powtórz', f_go: 'Zaczynamy', relaunch: 'Tur po portalu',
+    t1_tag: 'Nawigacja', t1_t: 'Twój panel', t1_b: 'Po lewej — całe menu: wakaty, kandydaci, kalendarz, testy, szkolenia.',
+    t2_tag: 'Pierwszy krok', t2_t: 'Wyślij test kandydatowi', t2_b: 'Sekcja „Testy” — główne działanie. Podaj e-mail kandydata: dostanie link i wykona testy sam.',
+    t3_tag: 'Wyniki', t3_t: 'Kandydaci i ich profile', t3_b: 'Każdy kandydat to karta z tagiem etapu. Kliknięcie otwiera pełny profil: spektrum, punkty i rekomendację AI.',
+    t4_tag: 'Planowanie', t4_t: 'Kalendarz rozmów', t4_b: 'Planuj rozmowy i synchronizuj z Google, Apple i Outlook jednym kliknięciem.',
+    t5_tag: 'Szkolenia', t5_t: 'Akademia i materiały', t5_b: 'Program dla Ciebie i zespołu: jak czytać wykresy i nie mylić się w rekrutacji.',
+    t6_tag: 'Saldo', t6_t: 'Testy i saldo', t6_b: 'Tu widać dostępne testy i można doładować saldo. Każdy test to jedna analiza kandydata.' },
+  en: { w_title: 'Welcome to the portal!', w_body: "We'll show you in a minute where everything is and how to send a test to your first candidate. Just 6 short tips.", w_skip: 'Not now', w_start: 'Start tour',
+    skip: 'Skip tour', back: 'Back', next: 'Next', finish: 'Finish',
+    f_title: "You're all set", f_body: 'You know where everything is. Invite your first candidate and see how AI reveals their profile.', f_replay: 'Replay', f_go: 'Get started', relaunch: 'Portal tour',
+    t1_tag: 'Navigation', t1_t: 'Your control panel', t1_b: 'On the left is the whole menu: vacancies, candidates, calendar, tests, learning.',
+    t2_tag: 'First step', t2_t: 'Send a test to a candidate', t2_b: 'The "Tests" section is the main action. Enter a candidate email — they get a link and take the tests themselves.',
+    t3_tag: 'Results', t3_t: 'Candidates and their profiles', t3_b: 'Each candidate is a card with a stage tag. A click opens the full profile: personality spectrum, scores and the AI recommendation.',
+    t4_tag: 'Scheduling', t4_t: 'Interview calendar', t4_b: 'Plan interviews and sync them with Google, Apple and Outlook in one click.',
+    t5_tag: 'Learning', t5_t: 'Academy and materials', t5_b: 'A program for you and your team: how to read the charts and avoid hiring mistakes.',
+    t6_tag: 'Balance', t6_t: 'Tests and balance', t6_b: 'See how many tests are available and top up. Each test is one candidate analysis.' },
+};
+function tt(k) { return (TOURI18N[LANG] || TOURI18N.ru)[k] || TOURI18N.ru[k] || k; }
+function tourSteps() {
+  return [
+    { sel: '.sidebar', tag: tt('t1_tag'), title: tt('t1_t'), body: tt('t1_b') },
+    { sel: '[data-view="home"]', tag: tt('t2_tag'), title: tt('t2_t'), body: tt('t2_b') },
+    { sel: '[data-view="candidates"]', tag: tt('t3_tag'), title: tt('t3_t'), body: tt('t3_b') },
+    { sel: '[data-view="calendar"]', tag: tt('t4_tag'), title: tt('t4_t'), body: tt('t4_b') },
+    { sel: '[data-view="education"]', tag: tt('t5_tag'), title: tt('t5_t'), body: tt('t5_b') },
+    { sel: '[data-view="balance"]', tag: tt('t6_tag'), title: tt('t6_t'), body: tt('t6_b') },
+  ];
+}
+let tourS = { i: 0, steps: [] };
+function maybeStartTour() { try { if (localStorage.getItem('hp_tour_v1')) return; } catch (e) { return; } setTimeout(startPortalTour, 650); }
+function tourOv() { let o = document.getElementById('tour-ov'); if (!o) { o = document.createElement('div'); o.id = 'tour-ov'; o.className = 'tour-ov'; document.body.appendChild(o); } return o; }
+function startPortalTour() { tourS = { i: 0, steps: tourSteps() }; showTourWelcome(); }
+window.startPortalTour = startPortalTour;
+function tourDone() { try { localStorage.setItem('hp_tour_v1', '1'); } catch (e) {} const o = document.getElementById('tour-ov'); if (o) o.remove(); window.removeEventListener('resize', tourReposition); }
+function showTourWelcome() {
+  const o = tourOv(); o.className = 'tour-ov tour-center';
+  o.innerHTML = '<div class="tour-hero">' +
+    '<div class="tour-hero-ic">' + _svg('<path d="M12 3l2.2 5.5L20 9l-4 4 1.2 6L12 16l-5.2 3 1.2-6-4-4 5.8-.5z" stroke-linejoin="round"/>') + '</div>' +
+    '<h2>' + tt('w_title') + '</h2><p>' + tt('w_body') + '</p>' +
+    '<div class="tour-hero-btns"><button class="btn ghost" id="tour-skip">' + tt('w_skip') + '</button><button class="btn" id="tour-go">' + tt('w_start') + ' →</button></div></div>';
+  $('#tour-skip').onclick = tourDone; $('#tour-go').onclick = () => { tourS.i = 0; showTourStep(0); };
+}
+function showTourFinish() {
+  const o = tourOv(); o.className = 'tour-ov tour-center';
+  o.innerHTML = '<div class="tour-hero fin">' +
+    '<div class="tour-hero-ic ok">' + _svg('<path d="M4 12.5l5 5 11-11" stroke-linecap="round" stroke-linejoin="round"/>') + '</div>' +
+    '<h2>' + tt('f_title') + '</h2><p>' + tt('f_body') + '</p>' +
+    '<div class="tour-hero-btns"><button class="btn ghost" id="tour-replay">' + tt('f_replay') + '</button><button class="btn" id="tour-fin">' + tt('f_go') + '</button></div></div>';
+  $('#tour-replay').onclick = () => { tourS.i = 0; showTourStep(0); }; $('#tour-fin').onclick = tourDone;
+}
+function showTourStep(idx) {
+  tourS.i = idx; const step = tourS.steps[idx];
+  const el = document.querySelector(step.sel);
+  if (!el) { if (idx < tourS.steps.length - 1) return showTourStep(idx + 1); return showTourFinish(); }
+  const r = el.getBoundingClientRect(); const pad = 6;
+  const sx = Math.max(2, r.left - pad), sy = Math.max(2, r.top - pad), sw = r.width + pad * 2, sh = r.height + pad * 2;
+  const tw = 340, gap = 18; let tx = r.right + gap, ty = r.top;
+  if (tx + tw > window.innerWidth - 12) tx = Math.max(12, r.left - tw - gap); // fallback left
+  const maxTy = window.innerHeight - 300; if (ty > maxTy) ty = Math.max(12, maxTy);
+  const dots = tourS.steps.map((_, i) => '<span class="tour-dot ' + (i === idx ? 'on' : i < idx ? 'past' : '') + '"></span>').join('');
+  const last = idx === tourS.steps.length - 1;
+  const o = tourOv(); o.className = 'tour-ov';
+  o.innerHTML =
+    '<div class="tour-spot" style="left:' + sx + 'px;top:' + sy + 'px;width:' + sw + 'px;height:' + sh + 'px"><span class="tour-ring"></span></div>' +
+    '<div class="tour-tip" style="left:' + tx + 'px;top:' + ty + 'px">' +
+      '<div class="tour-tip-head"><span class="tour-tag">' + esc(step.tag) + '</span><span class="tour-counter">' + (idx + 1) + ' / ' + tourS.steps.length + '</span></div>' +
+      '<h3>' + esc(step.title) + '</h3><p>' + esc(step.body) + '</p>' +
+      '<div class="tour-dots">' + dots + '</div>' +
+      '<div class="tour-btns"><button class="tour-linkbtn" id="tour-skip2">' + tt('skip') + '</button><div style="flex:1"></div>' +
+        (idx > 0 ? '<button class="btn ghost xs" id="tour-prev">' + tt('back') + '</button>' : '') +
+        '<button class="btn xs" id="tour-next">' + (last ? tt('finish') : tt('next')) + ' →</button></div>' +
+    '</div>';
+  $('#tour-skip2').onclick = tourDone;
+  const pv = $('#tour-prev'); if (pv) pv.onclick = () => showTourStep(idx - 1);
+  $('#tour-next').onclick = () => { if (last) showTourFinish(); else showTourStep(idx + 1); };
+}
+function tourReposition() { const o = document.getElementById('tour-ov'); if (o && !o.classList.contains('tour-center') && tourS.steps.length) showTourStep(tourS.i); }
+window.addEventListener('resize', tourReposition);
