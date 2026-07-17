@@ -12,6 +12,7 @@ import { parseCV, cvSummary } from './cv-parse.js';
 import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import { generateAd as genAdAI } from './ai-ad-edge.js';
 import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
+import * as aidec from './ai-decode-edge.js';
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
@@ -162,7 +163,74 @@ async function sendVerifyEmailEdge(env, url, u, lang) {
   } catch (e) {}
 }
 
-async function api(req, env, url) {
+// Контекст вакансии кандидата для расшифровки (ручной ввод → вакансия → заявка).
+async function decodeVacCtx(env, S, test) {
+  const dc = test.decodeContext || {};
+  const part = test.participantId ? await S.one('participants', test.participantId) : null;
+  const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+  let rq = null;
+  if (vac && vac.requisitionId) rq = await S.one('requisitions', vac.requisitionId);
+  const candidate = part ? (((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || '') : '';
+  let duties = dc.duties || (vac && vac.duties) || '';
+  if (!duties && rq && rq.form) { const ents = Object.entries(rq.form).filter(([, v]) => typeof v === 'string' && v.trim());
+    const dk = ents.find(([k]) => /обязан|дут|dut|responsib|zadan|obowi/i.test(k)); duties = dk ? dk[1].trim() : ents.filter(([, v]) => v.trim().length > 25).map(([, v]) => v.trim()).join('; '); }
+  return { candidate, vacName: (dc.vacName || (vac && vac.name) || (rq && rq.form && rq.form.position) || '').trim(), roleType: dc.roleType || (vac && vac.roleType) || '', duties: (duties || '').trim() };
+}
+function decodeKindsForType(type) { return type === 'tools' ? ['full', 'manual', 'presentation'] : type === 'result' ? ['productivity'] : []; }
+const DECODE_LABELS = {
+  productivity: { title: 'HR PRO AI · Анализ продуктивности', eyebrow: 'Анализ теста на продуктивность', heroTitle: 'Анализ продуктивности кандидата', heroSub: 'Тип сотрудника (Виннер/Дуер/Вейтер), уровень продуктивности и мотивации, драйверы и соответствие должности — по методике и ответам теста «Резалт».' },
+  full: { title: 'HR PRO AI · Полная расшифровка', eyebrow: 'Полная расшифровка · отчёт', heroTitle: 'Расшифровка теста личностных качеств', heroSub: 'Разбор каждой из 10 точек, проверка компульсивности и синдромов, целостный психологический портрет и вердикт по должности.' },
+  manual: { title: 'HR PRO AI · Инструкция по эксплуатации', eyebrow: 'Инструкция по эксплуатации', heroTitle: 'Как работать с этим человеком', heroSub: 'Практическое руководство для руководителя: стиль управления, мотивация, контроль, обратная связь, конфликты и типичные ошибки — выведены из профиля теста.' },
+  presentation: { title: 'HR PRO AI · Сценарий предоставления оценки', eyebrow: 'Сценарий предоставления оценки', heroTitle: 'Как подать сотруднику результат теста', heroSub: 'Пошаговый сценарий встречи: как открыть разговор, разобрать сильные стороны и зоны развития, поговорить о синдромах и завершить.' },
+};
+// Фоновая генерация расшифровки: пишет статус/контент в test.decodes[kind] (Supabase).
+async function runDecodeBackground(env, S, testId, kind, lang) {
+  try {
+    const test = await S.one('tests', testId); if (!test) return;
+    const ctx = await decodeVacCtx(env, S, test);
+    let out;
+    if (test.type === 'result') {
+      const part = await S.one('participants', test.participantId);
+      const result = localizeResult(computeResult(test, part), test.type, lang);
+      let plashka = ''; try { const h = resultHintFor(test, result, lang); if (h) plashka = `Вердикт: ${h.verdict}\n` + (h.notes || []).map(n => '• ' + n).join('\n'); } catch (_) {}
+      const answersText = (result.items || []).map(it => `${it.id}. ${it.text}\nОтвет: ${it.answer || '—'}`).join('\n\n');
+      out = await aidec.runProductivity(env, { ctx, answersText, plashka, lang });
+    } else {
+      const part = await S.one('participants', test.participantId);
+      const result = computeResult(test, part);
+      out = await aidec.runTools(env, { kind, ctx, result, lang });
+    }
+    const fresh = await S.one('tests', testId) || test;
+    fresh.decodes = fresh.decodes || {};
+    fresh.decodes[kind] = { status: 'done', doneAt: new Date().toISOString(), lang, content: out.contentHtml, truncated: out.stopReason === 'max_tokens' };
+    await S.upsert('tests', { id: fresh.id, data: fresh });
+  } catch (e) {
+    try { const fresh = await S.one('tests', testId); if (fresh) { fresh.decodes = fresh.decodes || {}; fresh.decodes[kind] = { status: 'error', error: String(e.message || e).slice(0, 300), doneAt: new Date().toISOString(), lang }; await S.upsert('tests', { id: fresh.id, data: fresh }); } } catch (_) {}
+  }
+}
+// Рендер страницы готовой расшифровки (GET /decode/:id/:kind).
+async function decodePage(req, env, url, testId, kind) {
+  const S = supa(env);
+  const u = await currentUser(env, req);
+  if (!u) return new Response('Не авторизовано', { status: 401 });
+  const test = await S.one('tests', testId);
+  if (!test || test.userId !== u.id) return new Response('Не найдено', { status: 404 });
+  if (!decodeKindsForType(test.type).includes(kind)) return new Response('Не найдено', { status: 404 });
+  const st = test.decodes && test.decodes[kind];
+  if (!st || st.status !== 'done' || !st.content) return new Response('Расшифровка ещё не готова', { status: 409 });
+  const lang = ['ru', 'pl', 'en'].includes(st.lang) ? st.lang : (['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru');
+  const ctx = await decodeVacCtx(env, S, test);
+  const L = DECODE_LABELS[kind] || DECODE_LABELS.productivity;
+  const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+  let spectrumHtml = '';
+  if (test.type === 'tools') { const part = await S.one('participants', test.participantId); const result = computeResult(test, part); spectrumHtml = aidec.spectrum(result.points, result.order); }
+  const html = aidec.page({ lang, title: L.title, eyebrow: L.eyebrow, heroTitle: L.heroTitle, heroSub: L.heroSub,
+    candidate: ctx.candidate, vacancy: ctx.vacName, roleWordKey: kind === 'manual' ? 'employee' : 'candidate',
+    spectrumHtml, bodyHtml: st.content, backUrl: `${base}/result/${test.id}` });
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
+async function api(req, env, url, exec) {
   const p = url.pathname, m = req.method;
   const isWebhook = p === '/api/stripe/webhook';
   const rawBody = (isWebhook && m === 'POST') ? await req.text() : null;
@@ -1273,6 +1341,80 @@ async function api(req, env, url) {
       return j({ finalAnalysis: part.workflow.finalAnalysis });
     } catch (e) { return j({ error: 'ИИ-анализ: ' + (e.message || 'ошибка') }, 502); }
   }
+
+  // ── AI-расшифровки тестов (decode) ──
+  {
+    const langOf = () => ['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : (['ru', 'pl', 'en'].includes(body && body.lang) ? body.lang : 'ru');
+    const ownTest = async (id) => { const t = await S.one('tests', id); return t && t.userId === (me && me.id) ? t : null; };
+    // Статус расшифровок теста + контекст вакансии
+    let mDecGet = p.match(/^\/api\/decode\/([\w-]+)$/);
+    if (mDecGet && m === 'GET') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecGet[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      const ctx = await decodeVacCtx(env, S, test);
+      const kinds = decodeKindsForType(test.type); const states = {};
+      for (const k of kinds) states[k] = (test.decodes && test.decodes[k]) ? { status: test.decodes[k].status, error: test.decodes[k].error, truncated: test.decodes[k].truncated } : { status: 'none' };
+      return j({ type: test.type, kinds, states, hasChat: test.type === 'tools', chatCount: (test.aiChat || []).length, apiConfigured: aidec.hasApiKey(env), context: { candidate: ctx.candidate, vacancy: ctx.vacName, roleType: ctx.roleType, duties: ctx.duties } });
+    }
+    // Сохранить контекст вакансии
+    let mDecCtx = p.match(/^\/api\/decode\/([\w-]+)\/context$/);
+    if (mDecCtx && m === 'POST') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecCtx[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      test.decodeContext = test.decodeContext || {};
+      if (typeof body.vacName === 'string') test.decodeContext.vacName = body.vacName.slice(0, 300);
+      if (['lead', 'rank', ''].includes(body.roleType)) test.decodeContext.roleType = body.roleType;
+      if (typeof body.duties === 'string') test.decodeContext.duties = body.duties.slice(0, 4000);
+      await S.upsert('tests', { id: test.id, data: test });
+      const c = test.decodeContext;
+      return j({ ok: true, context: { vacancy: c.vacName || '', roleType: c.roleType || '', duties: c.duties || '' } });
+    }
+    // Чат «Уточнить» (Тулс)
+    let mDecChat = p.match(/^\/api\/decode\/([\w-]+)\/chat$/);
+    if (mDecChat && m === 'GET') { if (!me) return needAuth(); const test = await ownTest(mDecChat[1]); if (!test) return j({ error: 'Не найдено' }, 404); return j({ history: test.aiChat || [], apiConfigured: aidec.hasApiKey(env) }); }
+    if (mDecChat && m === 'POST') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecChat[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      if (test.type !== 'tools') return j({ error: 'Чат доступен для теста «Тулс»' }, 400);
+      if (!aidec.hasApiKey(env)) return j({ error: 'AI не настроен: ANTHROPIC_API_KEY' }, 503);
+      const message = String(body.message || '').trim(); if (!message) return j({ error: 'Пустой вопрос' }, 400);
+      const lang = langOf(); const ctx = await decodeVacCtx(env, S, test);
+      const part = await S.one('participants', test.participantId); const result = computeResult(test, part);
+      try {
+        const history = (test.aiChat || []).map(mm => ({ role: mm.role, content: mm.content }));
+        const out = await aidec.runChat(env, { history, message, ctx, result, lang });
+        test.aiChat = test.aiChat || [];
+        test.aiChat.push({ role: 'user', content: message, at: new Date().toISOString() });
+        test.aiChat.push({ role: 'assistant', content: out.answer, at: new Date().toISOString() });
+        if (test.aiChat.length > 60) test.aiChat = test.aiChat.slice(-60);
+        await S.upsert('tests', { id: test.id, data: test });
+        return j({ answer: out.answer });
+      } catch (e) { return j({ error: 'AI: ' + (e.message || 'ошибка') }, 502); }
+    }
+    // Запуск генерации расшифровки (kind: productivity|full|manual|presentation)
+    let mDecRun = p.match(/^\/api\/decode\/([\w-]+)\/([a-z]+)$/);
+    if (mDecRun && m === 'POST') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecRun[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      const kind = mDecRun[2];
+      if (!decodeKindsForType(test.type).includes(kind)) return j({ error: 'Недопустимый тип расшифровки' }, 400);
+      if (!aidec.hasApiKey(env)) return j({ error: 'AI не настроен: ANTHROPIC_API_KEY' }, 503);
+      const ctx = await decodeVacCtx(env, S, test);
+      if (!ctx.roleType || !ctx.vacName || !ctx.duties) return j({ error: 'Заполните контекст вакансии (вакансия, тип должности, обязанности)' }, 422);
+      const cur = test.decodes && test.decodes[kind];
+      if (cur && cur.status === 'pending') return j({ status: 'pending' });
+      if (cur && cur.status === 'done' && !(body && body.regenerate)) return j({ status: 'done' });
+      const lang = langOf();
+      test.decodes = test.decodes || {};
+      test.decodes[kind] = { status: 'pending', startedAt: new Date().toISOString(), lang };
+      await S.upsert('tests', { id: test.id, data: test });
+      // Фоновая генерация (не блокируем ответ) — Claude может считать 1–3 минуты.
+      const bg = runDecodeBackground(env, S, test.id, kind, lang);
+      if (exec && exec.waitUntil) exec.waitUntil(bg); else await bg;
+      return j({ status: 'pending' });
+    }
+  }
+
   let mCol = p.match(/^\/api\/participants\/([\w-]+)\/column$/);
   if (mCol && m === 'POST') {
     if (!me) return needAuth();
@@ -2030,7 +2172,10 @@ export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     try {
-      if (url.pathname.startsWith('/api/') || url.pathname === '/sitemap.xml') return await api(req, env, url);
+      if (url.pathname.startsWith('/api/') || url.pathname === '/sitemap.xml') return await api(req, env, url, ctx);
+      // Страница готовой расшифровки (открывается в новой вкладке из портала)
+      const mDec = url.pathname.match(/^\/decode\/([\w-]+)\/([a-z]+)$/);
+      if (mDec) return await decodePage(req, env, url, mDec[1], mDec[2]);
     } catch (e) {
       return j({ error: 'edge error: ' + (e.message || e) }, 500);
     }

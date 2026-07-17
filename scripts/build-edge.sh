@@ -20,5 +20,5 @@ for f in glob.glob('dist/*.html'):
 print('cache-bust v=' + stamp)
 PY
 # бандлим edge-worker в один файл dist/_worker.js
-npx esbuild edge/worker-main.js --bundle --format=esm --outfile=dist/_worker.js --platform=browser --log-level=warning
+npx esbuild edge/worker-main.js --bundle --format=esm --outfile=dist/_worker.js --platform=browser --log-level=warning --loader:.txt=text
 echo "build ok: $(du -sh dist | cut -f1), _worker.js $(du -h dist/_worker.js | cut -f1)"

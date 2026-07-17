@@ -1770,6 +1770,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cal-wrap{max-width:1240px;margin:0 auto}
 .cal-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
 .cal-head h1{font-family:Manrope,sans-serif;font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;color:var(--text)}
+#cal-new{white-space:nowrap;flex:none;align-self:center}
 .cal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .cal-nav{display:flex;align-items:center;gap:10px}
 .cal-month{font-family:Manrope,sans-serif;font-weight:800;font-size:19px;color:var(--text);min-width:180px;text-align:center}
