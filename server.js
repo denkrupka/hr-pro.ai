@@ -965,6 +965,13 @@ app.put('/api/settings', requireAuth, (req, res) => {
     if (!s.smsTemplates) s.smsTemplates = {};
     LANGS.forEach(l => { if (b.smsTemplates[l.code] != null) s.smsTemplates[l.code] = String(b.smsTemplates[l.code]); });
   }
+  if (b.interviewSetup && typeof b.interviewSetup === 'object') {
+    const is = b.interviewSetup;
+    s.interviewSetup = { office: String(is.office || '').slice(0, 300), phone: String(is.phone || '').slice(0, 60), videoService: String(is.videoService || '').slice(0, 40) };
+  }
+  if (Array.isArray(b.interviewers)) {
+    s.interviewers = b.interviewers.slice(0, 50).map(x => ({ name: String(x.name || '').slice(0, 120), email: String(x.email || '').slice(0, 160), phone: String(x.phone || '').slice(0, 60) })).filter(x => x.name);
+  }
   save();
   res.json({ user: publicUser(u) });
 });
@@ -2446,10 +2453,50 @@ function calEvent(b, base) {
   e.stage = CAL_STAGES.includes(b && b.stage) ? b.stage : (e.stage || 'intv');
   e.date = /^\d{4}-\d{2}-\d{2}$/.test(b && b.date) ? b.date : (e.date || '');
   e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
-  e.format = s('format') || 'Видеозвонок'; e.interviewer = s('interviewer'); e.note = s('note');
+  e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.note = s('note');
   e.participantId = (b && b.participantId) || e.participantId || null;
   return e;
 }
+// Приглашение кандидата на собеседование (email + SMS) по формату встречи.
+const CAL_FMT_LABEL = { video: { ru: 'видеовстреча', pl: 'wideorozmowa', en: 'video call' }, office: { ru: 'встреча в офисе', pl: 'spotkanie w biurze', en: 'in-office meeting' }, phone: { ru: 'телефонный звонок', pl: 'rozmowa telefoniczna', en: 'phone call' } };
+function fmtKey(f) { const v = String(f || '').toLowerCase(); if (['video', 'office', 'phone'].includes(v)) return v; if (/office|офис|biur/.test(v)) return 'office'; if (/phone|телеф|telefon/.test(v)) return 'phone'; return 'video'; }
+function interviewInviteText(ev, lang, forSms) {
+  const lg = ['ru', 'pl', 'en'].includes(lang) ? lang : 'ru';
+  const k = fmtKey(ev.format); const when = `${ev.date} ${ev.time || ''}`.trim();
+  const L = {
+    ru: { hi: 'Здравствуйте!', when: 'Приглашаем вас на собеседование', at: 'когда', video: 'Ссылка на видеовстречу', office: 'Адрес', phone: 'Мы позвоним вам с номера', org: 'Контакт организатора' },
+    pl: { hi: 'Dzień dobry!', when: 'Zapraszamy na rozmowę', at: 'kiedy', video: 'Link do wideorozmowy', office: 'Adres', phone: 'Zadzwonimy z numeru', org: 'Kontakt organizatora' },
+    en: { hi: 'Hello!', when: 'We invite you to an interview', at: 'when', video: 'Video meeting link', office: 'Address', phone: 'We will call you from', org: 'Organizer contact' },
+  }[lg];
+  const line = k === 'video' ? `${L.video}: ${ev.meetingLink || ''}` : k === 'office' ? `${L.office}: ${ev.meetingLink || ''}` : `${L.phone}: ${ev.meetingLink || ''}`;
+  if (forSms) return `${L.when} (${CAL_FMT_LABEL[k][lg]}) — ${when}. ${line}`.slice(0, 320);
+  return `${L.hi}<br><br>${L.when} — <b>${CAL_FMT_LABEL[k][lg]}</b>.<br>${L.at === 'когда' ? 'Когда' : L.at[0].toUpperCase() + L.at.slice(1)}: <b>${when}</b>.<br>${line.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + (lg === 'en' ? 'Position' : lg === 'pl' ? 'Stanowisko' : 'Должность') + ': ' + ev.role : ''}`;
+}
+app.post('/api/calendar/:id/invite', requireAuth, async (req, res) => {
+  const u = db().users.find(x => x.id === req.user.id);
+  const ev = (u.calendar || []).find(x => x.id === req.params.id);
+  if (!ev) return res.status(404).json({ error: 'Не найдено' });
+  if (!ev.participantId) return res.status(400).json({ error: 'Кандидат не связан с базой' });
+  const p = db().participants.find(x => x.id === ev.participantId && x.userId === u.id);
+  if (!p) return res.status(404).json({ error: 'Кандидат не найден' });
+  const lang = (u.settings && u.settings.uiLang) || 'ru';
+  const subject = { ru: 'Приглашение на собеседование', pl: 'Zaproszenie na rozmowę', en: 'Interview invitation' }[['ru', 'pl', 'en'].includes(lang) ? lang : 'ru'];
+  const delivery = { email: null, sms: null };
+  try {
+    if (p.email && integ.isConfigured(u.settings, 'resend')) {
+      await integ.sendEmail(u.settings, { to: p.email, lang, baseUrl: BASE_URL, subject, eyebrow: subject, headline: subject, bodyHtml: interviewInviteText(ev, lang, false) });
+      delivery.email = 'sent';
+    }
+  } catch (e) { delivery.email = 'error: ' + e.message; }
+  try {
+    if (p.tel && integ.isConfigured(u.settings, 'smsapi')) {
+      await integ.sendSms(u.settings, { to: p.tel, message: interviewInviteText(ev, lang, true) });
+      delivery.sms = 'sent';
+    }
+  } catch (e) { delivery.sms = 'error: ' + e.message; }
+  ev.invited = true; ev.invitedAt = nowISO(); save();
+  res.json({ ok: true, delivery });
+});
 app.get('/api/calendar', requireAuth, (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
   res.json({ events: (u && u.calendar) || [] });

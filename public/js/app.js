@@ -4142,7 +4142,13 @@ const CI18N = {
     f_interviewer: 'Интервьюер', f_interviewer_ph: 'Кто проводит', f_note: 'Заметка', f_note_opt: '(ссылка на встречу, комментарий)',
     save_new: 'Запланировать', save_edit: 'Сохранить', cancel: 'Отмена', del: 'Удалить',
     sync: 'Добавить в календарь', sync_g: 'Google', sync_a: 'Apple / iPhone', sync_o: 'Outlook',
-    need: 'Укажите кандидата и дату', saved: 'Сохранено', deleted: 'Удалено', del_confirm: 'Удалить это собеседование?', more: 'ещё' },
+    need: 'Укажите кандидата и дату', saved: 'Сохранено', deleted: 'Удалено', del_confirm: 'Удалить это собеседование?', more: 'ещё',
+    cand_search: 'Начните вводить имя или выберите из списка', cand_manual: 'Ввести вручную: ', cand_none: 'Кандидаты не найдены',
+    int_me: 'Я', int_add: '+ Другой сотрудник', int_add_name: 'Имя сотрудника', int_add_email: 'Email (для приглашения)', int_add_phone: 'Телефон', int_add_save: 'Добавить',
+    meet_video: 'Ссылка на видеовстречу', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Адрес встречи', meet_office_ph: 'Город, улица, офис', meet_phone: 'Номер для звонка', meet_phone_ph: '+48…', meet_create: 'Создать ссылку',
+    setup_title: 'Давайте настроим процесс собеседований', setup_sub: 'Заполните один раз — данные подставятся во все собеседования. Позже можно изменить в настройках.', setup_office: 'Адрес офиса (для очных встреч)', setup_office_ph: 'Город, улица, дом, офис', setup_phone: 'Телефон организатора (для звонков)', setup_video: 'Сервис видеосвязи', setup_save: 'Сохранить и продолжить', setup_later: 'Позже',
+    save_invite: 'Запланировать и пригласить',
+    inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы — приглашение шлём на его email и телефон', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)' },
   pl: { title: 'Kalendarz rozmów', eyebrow: 'Planowanie rozmów', neww: 'Nowa rozmowa', today: 'Dziś',
     s_screen: 'Screening', s_tests: 'Testy', s_intv: 'Rozmowa', s_final: 'Finał',
     upcoming: 'Najbliższe rozmowy', none_up: 'Brak zaplanowanych rozmów.',
@@ -4153,7 +4159,13 @@ const CI18N = {
     f_interviewer: 'Prowadzący', f_interviewer_ph: 'Kto prowadzi', f_note: 'Notatka', f_note_opt: '(link do spotkania, komentarz)',
     save_new: 'Zaplanuj', save_edit: 'Zapisz', cancel: 'Anuluj', del: 'Usuń',
     sync: 'Dodaj do kalendarza', sync_g: 'Google', sync_a: 'Apple / iPhone', sync_o: 'Outlook',
-    need: 'Podaj kandydata i datę', saved: 'Zapisano', deleted: 'Usunięto', del_confirm: 'Usunąć tę rozmowę?', more: 'więcej' },
+    need: 'Podaj kandydata i datę', saved: 'Zapisano', deleted: 'Usunięto', del_confirm: 'Usunąć tę rozmowę?', more: 'więcej',
+    cand_search: 'Zacznij wpisywać imię lub wybierz z listy', cand_manual: 'Wpisz ręcznie: ', cand_none: 'Nie znaleziono kandydatów',
+    int_me: 'Ja', int_add: '+ Inny pracownik', int_add_name: 'Imię pracownika', int_add_email: 'Email (do zaproszenia)', int_add_phone: 'Telefon', int_add_save: 'Dodaj',
+    meet_video: 'Link do wideorozmowy', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Adres spotkania', meet_office_ph: 'Miasto, ulica, biuro', meet_phone: 'Numer do rozmowy', meet_phone_ph: '+48…', meet_create: 'Utwórz link',
+    setup_title: 'Skonfigurujmy proces rozmów', setup_sub: 'Wypełnij raz — dane podstawią się do wszystkich rozmów. Później można zmienić w ustawieniach.', setup_office: 'Adres biura (spotkania na żywo)', setup_office_ph: 'Miasto, ulica, biuro', setup_phone: 'Telefon organizatora (rozmowy tel.)', setup_video: 'Usługa wideo', setup_save: 'Zapisz i kontynuuj', setup_later: 'Później',
+    save_invite: 'Zaplanuj i zaproś',
+    inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy — zaproszenie wyślemy na jego email i telefon', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)' },
   en: { title: 'Interview calendar', eyebrow: 'Interview scheduling', neww: 'New interview', today: 'Today',
     s_screen: 'Screening', s_tests: 'Tests', s_intv: 'Interview', s_final: 'Final',
     upcoming: 'Upcoming interviews', none_up: 'No interviews scheduled yet.',
@@ -4164,7 +4176,13 @@ const CI18N = {
     f_interviewer: 'Interviewer', f_interviewer_ph: 'Who runs it', f_note: 'Note', f_note_opt: '(meeting link, comment)',
     save_new: 'Schedule', save_edit: 'Save', cancel: 'Cancel', del: 'Delete',
     sync: 'Add to calendar', sync_g: 'Google', sync_a: 'Apple / iPhone', sync_o: 'Outlook',
-    need: 'Enter candidate and date', saved: 'Saved', deleted: 'Deleted', del_confirm: 'Delete this interview?', more: 'more' },
+    need: 'Enter candidate and date', saved: 'Saved', deleted: 'Deleted', del_confirm: 'Delete this interview?', more: 'more',
+    cand_search: 'Start typing a name or pick from the list', cand_manual: 'Enter manually: ', cand_none: 'No candidates found',
+    int_me: 'Me', int_add: '+ Another teammate', int_add_name: 'Teammate name', int_add_email: 'Email (for the invite)', int_add_phone: 'Phone', int_add_save: 'Add',
+    meet_video: 'Video meeting link', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Meeting address', meet_office_ph: 'City, street, office', meet_phone: 'Number to call', meet_phone_ph: '+48…', meet_create: 'Create link',
+    setup_title: 'Let’s set up your interview process', setup_sub: 'Fill this once — it will prefill every interview. You can change it later in settings.', setup_office: 'Office address (in-person)', setup_office_ph: 'City, street, office', setup_phone: 'Organizer phone (phone calls)', setup_video: 'Video service', setup_save: 'Save and continue', setup_later: 'Later',
+    save_invite: 'Schedule & invite',
+    inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base — we send the invite to their email and phone', inv_needmeet: 'Fill in the meeting details (link / address / phone)' },
 };
 function ct(k) { return (CI18N[LANG] || CI18N.ru)[k] || CI18N.ru[k] || k; }
 function cStageLabel(k) { return ct('s_' + k); }
@@ -4244,12 +4262,57 @@ function drawCalendar() {
   $$('[data-caladd]').forEach(c => c.onclick = () => openCalModal(null, c.dataset.caladd));
   $$('[data-caledit]').forEach(el => el.onclick = e => { e.stopPropagation(); const ev = S.events.find(x => x.id === el.dataset.caledit); if (ev) openCalModal(ev); });
 }
-function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date: date || '', time: '10:00', format: ct('fmt_video'), interviewer: '', note: '', participantId: null }; }
+function calFmtKey(f) { const v = String(f || '').toLowerCase();
+  if (v === 'video' || v === 'office' || v === 'phone') return v;
+  if (/office|офис|biur|biuro/.test(v)) return 'office';
+  if (/phone|телеф|telefon/.test(v)) return 'phone';
+  return 'video'; }
+function calFmtLabel(k) { return { video: ct('fmt_video'), office: ct('fmt_office'), phone: ct('fmt_phone') }[k] || ct('fmt_video'); }
+function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date: date || '', time: '10:00', format: 'video', interviewer: '', interviewerEmail: '', meetingLink: '', note: '', participantId: null }; }
+
+// ── Настройка процесса собеседований (адрес/телефон/видеосервис) — один раз, хранится в settings ──
+function interviewSetup() { return (state.user && state.user.settings && state.user.settings.interviewSetup) || null; }
+function hasInterviewSetup() { const s = interviewSetup(); return !!(s && (s.office || s.phone || s.videoService)); }
+function savedInterviewers() { return (state.user && state.user.settings && state.user.settings.interviewers) || []; }
+function videoNewUrl(svc) { const s = String(svc || '').toLowerCase();
+  if (s.indexOf('teams') >= 0) return 'https://teams.microsoft.com/';
+  if (s.indexOf('zoom') >= 0) return 'https://zoom.us/start/videomeeting';
+  return 'https://meet.google.com/new'; }
+async function saveSettingsPatch(patch) { try { const d = await api('/api/settings', { method: 'PUT', body: JSON.stringify(patch) }); state.user = d.user; return true; } catch (e) { toast(e.message); return false; } }
+function openInterviewSetup(onDone) {
+  const s = interviewSetup() || {};
+  const vids = ['Google Meet', 'Microsoft Teams', 'Zoom', 'Другое'];
+  const vopt = vids.map(v => '<option' + (s.videoService === v ? ' selected' : '') + '>' + esc(v) + '</option>').join('');
+  mkDecodeModal('<div class="cal-modal">' +
+    '<div class="cal-m-head"><div><div class="db-note" style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:#b3a4ff">' + ct('m_new_tag') + '</div>' +
+      '<h2 class="db-h" style="margin:0">' + ct('setup_title') + '</h2></div></div>' +
+    '<p class="db-note" style="margin:2px 0 14px">' + ct('setup_sub') + '</p>' +
+    '<label class="db-lb">' + ct('setup_video') + '</label><select class="field" id="su-video">' + vopt + '</select>' +
+    '<label class="db-lb">' + ct('setup_office') + '</label><input class="field" id="su-office" value="' + esc(s.office || '') + '" placeholder="' + ct('setup_office_ph') + '">' +
+    '<label class="db-lb">' + ct('setup_phone') + '</label><input class="field" id="su-phone" value="' + esc(s.phone || '') + '" placeholder="' + ct('meet_phone_ph') + '">' +
+    '<div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">' + ct('setup_later') + '</button><button class="btn" id="su-save">' + ct('setup_save') + '</button></div>' +
+  '</div>', true);
+  $('#su-save').onclick = async () => {
+    const setup = { videoService: $('#su-video').value, office: $('#su-office').value.trim(), phone: $('#su-phone').value.trim() };
+    await saveSettingsPatch({ interviewSetup: setup }); closeDecodeModal(); if (onDone) onDone();
+  };
+}
 function openCalModal(ev, dateIso) {
+  // Первое собеседование на портале → сначала настраиваем процесс.
+  if (!ev && !hasInterviewSetup()) return openInterviewSetup(() => openCalModalInner(null, dateIso));
+  openCalModalInner(ev, dateIso);
+}
+function openCalModalInner(ev, dateIso) {
   const isEdit = !!ev; const f = ev ? Object.assign({}, ev) : calBlank(dateIso);
+  f.format = calFmtKey(f.format);
+  const setup = interviewSetup() || {};
+  const myName = (state.user && (state.user.name || state.user.company)) || ct('int_me');
   const stageBtns = Object.values(CAL_STAGE).map(st => '<button type="button" class="cal-stage ' + (f.stage === st.key ? 'on' : '') + '" data-calstage="' + st.key + '" style="' + (f.stage === st.key ? 'background:' + calHexA(st.color, .14) + ';border-color:' + calHexA(st.color, .5) : '') + '"><i style="background:' + st.color + '"></i>' + cStageLabel(st.key) + '</button>').join('');
-  const candOpts = '<option value="">' + ct('f_link_none') + '</option>' + calState.cands.map(c => '<option value="' + c.id + '" ' + (f.participantId === c.id ? 'selected' : '') + '>' + esc(c.name) + (c.vacancyName ? ' · ' + esc(c.vacancyName) : '') + '</option>').join('');
-  const fmt = v => '<option ' + (f.format === v ? 'selected' : '') + '>' + v + '</option>';
+  const fmtOpt = k => '<option value="' + k + '"' + (f.format === k ? ' selected' : '') + '>' + calFmtLabel(k) + '</option>';
+  const intOpts = () => '<option value="' + esc(myName) + '"' + (!f.interviewer || f.interviewer === myName ? ' selected' : '') + '>' + esc(myName) + ' (' + ct('int_me') + ')</option>' +
+    savedInterviewers().map(p => '<option value="' + esc(p.name) + '"' + (f.interviewer === p.name ? ' selected' : '') + '>' + esc(p.name) + '</option>').join('') +
+    (f.interviewer && f.interviewer !== myName && !savedInterviewers().some(p => p.name === f.interviewer) ? '<option value="' + esc(f.interviewer) + '" selected>' + esc(f.interviewer) + '</option>' : '') +
+    '<option value="__add">' + ct('int_add') + '</option>';
   const sync = isEdit ? '<div class="cal-sync"><span class="cal-sync-l">' + ct('sync') + ':</span>' +
       '<a class="btn ghost xs" target="_blank" id="cal-sync-g">' + ct('sync_g') + '</a>' +
       '<button class="btn ghost xs" id="cal-sync-a">' + ct('sync_a') + '</button>' +
@@ -4257,8 +4320,12 @@ function openCalModal(ev, dateIso) {
   mkDecodeModal('<div class="cal-modal">' +
     '<div class="cal-m-head"><div><div class="db-note" style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:#b3a4ff">' + (isEdit ? ct('m_edit_tag') : ct('m_new_tag')) + '</div>' +
       '<h2 class="db-h" style="margin:0">' + (isEdit ? ct('m_edit_title') : ct('m_new_title')) + '</h2></div></div>' +
-    '<label class="db-lb">' + ct('f_candidate') + '</label><input class="field" id="cf-candidate" value="' + esc(f.candidate) + '" placeholder="' + ct('f_candidate_ph') + '">' +
-    '<label class="db-lb">' + ct('f_link') + '</label><select class="field" id="cf-link">' + candOpts + '</select>' +
+    // Кандидат — единый поиск по базе + возможность ввести вручную
+    '<label class="db-lb">' + ct('f_candidate') + '</label>' +
+    '<div class="cf-combo" style="position:relative">' +
+      '<input class="field" id="cf-candidate" autocomplete="off" value="' + esc(f.candidate) + '" placeholder="' + ct('cand_search') + '">' +
+      '<div id="cf-cand-list" class="cf-list" style="display:none"></div>' +
+    '</div>' +
     '<label class="db-lb">' + ct('f_role') + '</label><input class="field" id="cf-role" value="' + esc(f.role) + '" placeholder="' + ct('f_role_ph') + '">' +
     '<label class="db-lb">' + ct('f_stage') + '</label><div class="cal-stages" id="cf-stages">' + stageBtns + '</div>' +
     '<div class="row" style="gap:12px">' +
@@ -4266,43 +4333,116 @@ function openCalModal(ev, dateIso) {
       '<div style="flex:1"><label class="db-lb">' + ct('f_time') + '</label><input class="field" id="cf-time" type="time" value="' + esc(f.time) + '"></div>' +
     '</div>' +
     '<div class="row" style="gap:12px">' +
-      '<div style="flex:1"><label class="db-lb">' + ct('f_format') + '</label><select class="field" id="cf-format">' + fmt(ct('fmt_video')) + fmt(ct('fmt_office')) + fmt(ct('fmt_phone')) + '</select></div>' +
-      '<div style="flex:1"><label class="db-lb">' + ct('f_interviewer') + '</label><input class="field" id="cf-interviewer" value="' + esc(f.interviewer) + '" placeholder="' + ct('f_interviewer_ph') + '"></div>' +
+      '<div style="flex:1"><label class="db-lb">' + ct('f_format') + '</label><select class="field" id="cf-format">' + fmtOpt('video') + fmtOpt('office') + fmtOpt('phone') + '</select></div>' +
+      '<div style="flex:1"><label class="db-lb">' + ct('f_interviewer') + '</label><select class="field" id="cf-interviewer">' + intOpts() + '</select></div>' +
     '</div>' +
-    '<label class="db-lb">' + ct('f_note') + ' <span style="color:#5f6885;font-weight:400">' + ct('f_note_opt') + '</span></label><input class="field" id="cf-note" value="' + esc(f.note) + '">' +
+    // Ссылка на встречу / адрес / телефон — зависит от формата
+    '<label class="db-lb" id="cf-meet-lb"></label>' +
+    '<div class="row" style="gap:8px"><input class="field" id="cf-meet" style="flex:1" value="' + esc(f.meetingLink || '') + '"><button type="button" class="btn ghost" id="cf-meet-create" style="display:none;white-space:nowrap">' + ct('meet_create') + '</button></div>' +
+    '<label class="db-lb">' + ct('f_note') + ' <span style="color:#5f6885;font-weight:400">(' + ct('f_note') + ')</span></label><input class="field" id="cf-note" value="' + esc(f.note) + '">' +
     sync +
     '<div class="db-modal-foot">' +
       (isEdit ? '<button class="btn ghost danger xs ic-btn" id="cf-del" title="' + ct('del') + '">' + ICON_TRASH + '</button>' : '') +
       '<button class="btn ghost" onclick="closeDecodeModal()">' + ct('cancel') + '</button>' +
-      '<button class="btn" id="cf-save">' + (isEdit ? ct('save_edit') : ct('save_new')) + '</button>' +
+      '<button class="btn ghost" id="cf-save">' + (isEdit ? ct('save_edit') : ct('save_new')) + '</button>' +
+      '<button class="btn" id="cf-save-invite">' + ct('save_invite') + '</button>' +
     '</div></div>', true);
   let stage = f.stage;
+  let linkedId = f.participantId || null;
+  let interviewerEmail = f.interviewerEmail || '';
   $$('#cf-stages .cal-stage').forEach(b => b.onclick = () => { stage = b.dataset.calstage; $$('#cf-stages .cal-stage').forEach(x => { x.classList.remove('on'); x.removeAttribute('style'); }); const st = CAL_STAGE[stage]; b.classList.add('on'); b.style.background = calHexA(st.color, .14); b.style.borderColor = calHexA(st.color, .5); });
-  $('#cf-link').onchange = e => { const c = calState.cands.find(x => x.id === e.target.value); if (c) { $('#cf-candidate').value = c.name; if (c.vacancyName && !$('#cf-role').value) $('#cf-role').value = c.vacancyName; } };
-  const collect = () => ({ candidate: $('#cf-candidate').value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: $('#cf-format').value, interviewer: $('#cf-interviewer').value.trim(), note: $('#cf-note').value.trim(), participantId: $('#cf-link').value || null });
+
+  // Поиск кандидата: выпадающий список с фильтром; выбор подтягивает должность и связывает с базой.
+  const candIn = $('#cf-candidate'), candList = $('#cf-cand-list');
+  const setStage = k => { stage = k; $$('#cf-stages .cal-stage').forEach(x => { const on = x.dataset.calstage === k; x.classList.toggle('on', on); if (on) { const st = CAL_STAGE[k]; x.style.background = calHexA(st.color, .14); x.style.borderColor = calHexA(st.color, .5); } else { x.removeAttribute('style'); } }); };
+  const renderCandList = () => {
+    const q = candIn.value.trim().toLowerCase();
+    const list = calState.cands.filter(c => !q || (c.name || '').toLowerCase().includes(q) || (c.vacancyName || '').toLowerCase().includes(q)).slice(0, 8);
+    let html = list.map(c => '<div class="cf-opt" data-id="' + c.id + '"><b>' + esc(c.name) + '</b>' + (c.vacancyName ? '<span>' + esc(c.vacancyName) + '</span>' : '') + (c.stage ? '<i>' + esc(c.stage) + '</i>' : '') + '</div>').join('');
+    if (!list.length) html = '<div class="cf-opt muted">' + ct('cand_none') + '</div>';
+    if (q) html += '<div class="cf-opt cf-manual" data-id=""><span>' + ct('cand_manual') + '«' + esc(candIn.value.trim()) + '»</span></div>';
+    candList.innerHTML = html; candList.style.display = 'block';
+    $$('#cf-cand-list .cf-opt[data-id]').forEach(o => o.onclick = () => {
+      const id = o.dataset.id; const c = calState.cands.find(x => x.id === id);
+      if (c) { candIn.value = c.name; linkedId = c.id; if (c.vacancyName) $('#cf-role').value = c.vacancyName; if (c.stage && CAL_STAGE[c.stage]) setStage(c.stage); }
+      else { linkedId = null; } // ручной ввод — оставляем как есть
+      candList.style.display = 'none';
+    });
+  };
+  candIn.onfocus = renderCandList;
+  candIn.oninput = () => { linkedId = null; renderCandList(); };
+  document.addEventListener('click', e => { if (candList && !candList.contains(e.target) && e.target !== candIn) candList.style.display = 'none'; });
+
+  // Интервьюер: выбор себя/сотрудника или добавление нового.
+  const intSel = $('#cf-interviewer');
+  intSel.onchange = () => {
+    if (intSel.value === '__add') {
+      const nm = prompt(ct('int_add_name')); if (!nm || !nm.trim()) { intSel.value = myName; return; }
+      const em = prompt(ct('int_add_email')) || ''; const ph = prompt(ct('int_add_phone')) || '';
+      const list = savedInterviewers().concat([{ name: nm.trim(), email: em.trim(), phone: ph.trim() }]);
+      saveSettingsPatch({ interviewers: list }).then(() => { intSel.innerHTML = intOpts(); intSel.value = nm.trim(); interviewerEmail = em.trim(); });
+    } else {
+      const p = savedInterviewers().find(x => x.name === intSel.value); interviewerEmail = p ? (p.email || '') : (intSel.value === myName ? (state.user && state.user.email) || '' : '');
+    }
+  };
+
+  // Поле встречи зависит от формата (ссылка/адрес/телефон), с префиллом из настроек.
+  const meetLb = $('#cf-meet-lb'), meetIn = $('#cf-meet'), meetBtn = $('#cf-meet-create');
+  const applyFormat = (prefill) => {
+    const k = $('#cf-format').value;
+    if (k === 'office') { meetLb.textContent = ct('meet_office'); meetIn.placeholder = ct('meet_office_ph'); meetBtn.style.display = 'none'; if (prefill && !meetIn.value) meetIn.value = setup.office || ''; }
+    else if (k === 'phone') { meetLb.textContent = ct('meet_phone'); meetIn.placeholder = ct('meet_phone_ph'); meetBtn.style.display = 'none'; if (prefill && !meetIn.value) meetIn.value = setup.phone || ''; }
+    else { meetLb.textContent = ct('meet_video'); meetIn.placeholder = ct('meet_video_ph'); meetBtn.style.display = ''; }
+  };
+  $('#cf-format').onchange = () => { if ($('#cf-format').value !== calFmtKey(f.format)) meetIn.value = ''; applyFormat(true); };
+  meetBtn.onclick = () => window.open(videoNewUrl(setup.videoService), '_blank');
+  applyFormat(!isEdit);
+
+  const collect = () => ({ candidate: candIn.value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: $('#cf-format').value, interviewer: intSel.value === '__add' ? '' : intSel.value, interviewerEmail: interviewerEmail, meetingLink: meetIn.value.trim(), note: $('#cf-note').value.trim(), participantId: linkedId });
   if (isEdit) {
-    const upd = () => { const ev2 = Object.assign({}, f, collect()); $('#cal-sync-g').href = googleCalLink(ev2); $('#cal-sync-o').href = outlookLink(ev2); };
-    upd(); ['cf-candidate', 'cf-role', 'cf-date', 'cf-time', 'cf-format', 'cf-interviewer', 'cf-note'].forEach(id => { const el = $('#' + id); if (el) el.oninput = upd; });
+    const upd = () => { const ev2 = Object.assign({}, f, collect()); if ($('#cal-sync-g')) $('#cal-sync-g').href = googleCalLink(ev2); if ($('#cal-sync-o')) $('#cal-sync-o').href = outlookLink(ev2); };
+    upd(); ['cf-candidate', 'cf-role', 'cf-date', 'cf-time', 'cf-format', 'cf-meet', 'cf-note'].forEach(id => { const el = $('#' + id); if (el) el.addEventListener('input', upd); });
     $('#cal-sync-a').onclick = () => downloadIcs(Object.assign({}, f, collect()));
     $('#cf-del').onclick = async () => { if (!confirm(ct('del_confirm'))) return; await api('/api/calendar/' + f.id, { method: 'DELETE' }); closeDecodeModal(); toast(ct('deleted')); renderCalendar(); };
   }
-  $('#cf-save').onclick = async () => {
-    const d = collect(); if (!d.candidate || !d.date) return toast(ct('need'));
-    try { if (isEdit) await api('/api/calendar/' + f.id, { method: 'PUT', body: JSON.stringify(d) }); else await api('/api/calendar', { method: 'POST', body: JSON.stringify(d) });
-      closeDecodeModal(); toast(ct('saved')); renderCalendar(); } catch (e) { toast(e.message); }
+  const persist = async () => { const d = collect(); if (!d.candidate || !d.date) { toast(ct('need')); return null; }
+    try { const r = isEdit ? await api('/api/calendar/' + f.id, { method: 'PUT', body: JSON.stringify(d) }) : await api('/api/calendar', { method: 'POST', body: JSON.stringify(d) }); return (r && r.event) || Object.assign({ id: f.id }, d); } catch (e) { toast(e.message); return null; } };
+  $('#cf-save').onclick = async () => { const saved = await persist(); if (saved) { closeDecodeModal(); toast(ct('saved')); renderCalendar(); } };
+  $('#cf-save-invite').onclick = async () => {
+    const d = collect();
+    if (!d.participantId) return toast(ct('inv_nolink'));
+    if (!d.meetingLink) return toast(ct('inv_needmeet'));
+    const saved = await persist(); if (!saved) return;
+    renderCalendar();
+    confirmInterviewInvite(saved.id, d.format);
+  };
+}
+// Подтверждение и отправка приглашения кандидату (email + SMS) по формату встречи.
+function confirmInterviewInvite(eventId, format) {
+  const bodyKey = { office: 'inv_body_office', phone: 'inv_body_phone' }[calFmtKey(format)] || 'inv_body_video';
+  mkDecodeModal('<div class="cal-modal">' +
+    '<h2 class="db-h" style="margin:0 0 10px">' + ct('inv_title') + '</h2>' +
+    '<p class="db-note" style="margin:0 0 16px">' + ct(bodyKey) + '</p>' +
+    '<div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">' + ct('cancel') + '</button><button class="btn" id="inv-yes">' + ct('inv_yes') + '</button></div>' +
+  '</div>');
+  $('#inv-yes').onclick = async () => {
+    const btn = $('#inv-yes'); btn.disabled = true; btn.textContent = '…';
+    try { await api('/api/calendar/' + eventId + '/invite', { method: 'POST', body: JSON.stringify({}) }); closeDecodeModal(); toast(ct('inv_sent')); }
+    catch (e) { toast(e.message); btn.disabled = false; btn.textContent = ct('inv_yes'); }
   };
 }
 function calDates(ev) { const p = ev.date.split('-').map(Number); const tm = (ev.time || '10:00').split(':').map(Number);
   const start = new Date(p[0], p[1] - 1, p[2], tm[0] || 0, tm[1] || 0); const end = new Date(start.getTime() + 60 * 60000); return { start: start, end: end }; }
 function calZ(dt) { return dt.getUTCFullYear() + calPad(dt.getUTCMonth() + 1) + calPad(dt.getUTCDate()) + 'T' + calPad(dt.getUTCHours()) + calPad(dt.getUTCMinutes()) + '00Z'; }
 function calTitle(ev) { return (LANG === 'pl' ? 'Rozmowa: ' : LANG === 'en' ? 'Interview: ' : 'Собеседование: ') + ev.candidate + (ev.role ? ' — ' + ev.role : ''); }
-function calDetails(ev) { return [ev.role, ev.interviewer ? (LANG === 'en' ? 'Interviewer: ' : 'Интервьюер: ') + ev.interviewer : '', ev.format, ev.note].filter(Boolean).join('\n'); }
+function calLocation(ev) { return ev.meetingLink || calFmtLabel(calFmtKey(ev.format)); }
+function calDetails(ev) { return [ev.role, ev.interviewer ? (LANG === 'en' ? 'Interviewer: ' : 'Интервьюер: ') + ev.interviewer : '', calFmtLabel(calFmtKey(ev.format)) + (ev.meetingLink ? ': ' + ev.meetingLink : ''), ev.note].filter(Boolean).join('\n'); }
 function googleCalLink(ev) { const dd = calDates(ev);
-  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(calTitle(ev)) + '&dates=' + calZ(dd.start) + '/' + calZ(dd.end) + '&details=' + encodeURIComponent(calDetails(ev)) + '&location=' + encodeURIComponent(ev.format || ''); }
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(calTitle(ev)) + '&dates=' + calZ(dd.start) + '/' + calZ(dd.end) + '&details=' + encodeURIComponent(calDetails(ev)) + '&location=' + encodeURIComponent(calLocation(ev)); }
 function outlookLink(ev) { const dd = calDates(ev);
-  return 'https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=' + encodeURIComponent(calTitle(ev)) + '&startdt=' + dd.start.toISOString() + '&enddt=' + dd.end.toISOString() + '&body=' + encodeURIComponent(calDetails(ev)) + '&location=' + encodeURIComponent(ev.format || ''); }
+  return 'https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=' + encodeURIComponent(calTitle(ev)) + '&startdt=' + dd.start.toISOString() + '&enddt=' + dd.end.toISOString() + '&body=' + encodeURIComponent(calDetails(ev)) + '&location=' + encodeURIComponent(calLocation(ev)); }
 function downloadIcs(ev) { const dd = calDates(ev);
-  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HR PRO AI//Calendar//RU', 'BEGIN:VEVENT', 'UID:' + (ev.id || Date.now()) + '@hr-pro.ai', 'DTSTAMP:' + calZ(new Date()), 'DTSTART:' + calZ(dd.start), 'DTEND:' + calZ(dd.end), 'SUMMARY:' + calTitle(ev).replace(/[,;]/g, ' '), 'DESCRIPTION:' + calDetails(ev).replace(/\n/g, '\\n').replace(/[,;]/g, ' '), 'LOCATION:' + (ev.format || ''), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HR PRO AI//Calendar//RU', 'BEGIN:VEVENT', 'UID:' + (ev.id || Date.now()) + '@hr-pro.ai', 'DTSTAMP:' + calZ(new Date()), 'DTSTART:' + calZ(dd.start), 'DTEND:' + calZ(dd.end), 'SUMMARY:' + calTitle(ev).replace(/[,;]/g, ' '), 'DESCRIPTION:' + calDetails(ev).replace(/\n/g, '\\n').replace(/[,;]/g, ' '), 'LOCATION:' + calLocation(ev).replace(/[,;]/g, ' '), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const blob = new Blob([ics], { type: 'text/calendar' }); const url = URL.createObjectURL(blob); const a = document.createElement('a');
   a.href = url; a.download = 'interview-' + (ev.candidate || 'event').replace(/\s+/g, '-') + '.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); }
 
