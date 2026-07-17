@@ -56,6 +56,7 @@ export async function enqueue(env, part, spec) {
   q.push(item);
   if (isWorkingTime(cfg, now)) { try { await placeItem(env, part, item); } catch (e) { item.lastReason = e.message; } }
   else item.nextAt = nextWorkingSlot(cfg, now).toISOString();
+  part.callsActive = true;   // маркер для быстрого отбора в cron-тике (фильтр по JSON, без скана всей таблицы)
   return { item, placed: item.status === 'calling' };
 }
 
@@ -101,10 +102,19 @@ export async function tickParticipant(env, part) {
       }
     } catch (e) { item.lastReason = 'tick: ' + e.message; touched = true; }
   }
+  // Автопрогресс «оторванных» незавершённых записей журнала (напр. референс-звонок размещён напрямую, без очереди)
+  const tracked = new Set(q.map(it => it.entryId).filter(Boolean));
+  for (const entry of ((part.workflow && part.workflow.aiCallLog) || [])) {
+    if (callLog.isFinal(entry) || tracked.has(entry.id)) continue;
+    try { await callLog.refreshEntry(env, part, entry); touched = true; } catch (e) { /* пропускаем */ }
+  }
   // подчистить давние завершённые (>7 дней)
   const weekAgo = new Date(now.getTime() - 7 * 864e5).toISOString();
   const keep = q.filter(it => !(['done', 'failed', 'stopped'].includes(it.status) && (it.createdAt || '') < weekAgo));
   if (keep.length !== q.length) { part.workflow.callQueue = keep; touched = true; }
+  // снять маркер активности, когда работы больше нет (кандидат уходит из cron-выборки)
+  const active = hasPending(part);
+  if (!!part.callsActive !== active) { part.callsActive = active; touched = true; }
   return touched;
 }
 

@@ -610,10 +610,11 @@ async function api(req, env, url) {
   if (p === '/api/cron/tick' && m === 'POST') {
     const auth = req.headers.get('authorization') || '';
     if (!env.CRON_SECRET || auth !== 'Bearer ' + env.CRON_SECRET) return j({ error: 'forbidden' }, 403);
-    const parts = (await S.select('participants', 'select=data')).map(r => r.data);
+    // Тянем только кандидатов с активными звонками (фильтр по JSON-полю) — не всю таблицу.
+    const parts = (await S.select('participants', 'data->>callsActive=eq.true&select=data')).map(r => r.data);
     let processed = 0, updated = 0;
     for (const part of parts) {
-      if (!callSched.hasPending(part)) continue;
+      if (!callSched.hasPending(part)) { if (part.callsActive) { part.callsActive = false; await S.upsert('participants', { id: part.id, data: part }); } continue; }
       processed++;
       try { const touched = await callSched.tickParticipant(env, part); if (touched) { await S.upsert('participants', { id: part.id, data: part }); updated++; } }
       catch (e) { /* пропускаем проблемного кандидата */ }
@@ -666,6 +667,7 @@ async function api(req, env, url) {
         if (r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
         part.workflow = part.workflow || {}; part.workflow.references = part.workflow.references || {}; part.workflow.references.multi = part.workflow.references.multi || {};
         part.workflow.references.multi[refIndex] = Object.assign({}, part.workflow.references.multi[refIndex], { aiCall: { callId: r.callId, status: 'calling', startedAt: new Date().toISOString(), entryId: r.entry.id } });
+        part.callsActive = true;   // чтобы cron-тик подхватил и довёл референс-звонок
         await S.upsert('participants', { id: part.id, data: part });
         return j({ status: 'calling', callId: r.callId });
       } catch (e) { return j({ error: 'Vapi: ' + (e.message || 'ошибка звонка') }, 502); }
