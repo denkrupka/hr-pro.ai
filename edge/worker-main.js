@@ -14,6 +14,7 @@ import { generateAd as genAdAI } from './ai-ad-edge.js';
 import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
+import * as callSched from './call-scheduler-edge.js';
 import { vapiConfigured } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 import { buildRefInterview } from '../src/references-ai.js';
@@ -124,8 +125,9 @@ async function aiCallForEdge(env, S, owner, part, vac, kind) {
     };
     const task = aiCallPrompts.candidatePrompt(kind, vars);
     const first = aiCallPrompts.firstMessage('candidate', lang === 'de' ? 'en' : lang, { candidate: nm, company: owner.company || '', agent_name: vars.agent_name });
-    const r = await callLog.startCall(env, part, { kind, to: part.tel, lang, task, firstMessage: first, vars, maxDurationMin: cfg.maxDurationMin });
-    return !(r && r.skipped);
+    // В очередь планировщика: разместит в рабочее окно, при неответе — перезвонит (тик по cron).
+    await callSched.enqueue(env, part, { kind, cfg, opts: { to: part.tel, lang, task, firstMessage: first, vars } });
+    return true;
   } catch (e) { return false; }
 }
 // Объявление: ИИ по методологии (Claude через env), фолбэк — шаблон air.generateAd.
@@ -604,6 +606,20 @@ async function api(req, env, url) {
     for (const v of allV) { const proc = processOf(v); proc.aiCall = Object.assign({}, cfg); v.process = proc; await S.upsert('vacancies', { id: v.id, data: v }); }
     return j({ ok: true, count: allV.length, aiCall: cfg });
   }
+  // Тик планировщика звонков (дёргается Cron Worker'ом; авторизация по CRON_SECRET)
+  if (p === '/api/cron/tick' && m === 'POST') {
+    const auth = req.headers.get('authorization') || '';
+    if (!env.CRON_SECRET || auth !== 'Bearer ' + env.CRON_SECRET) return j({ error: 'forbidden' }, 403);
+    const parts = (await S.select('participants', 'select=data')).map(r => r.data);
+    let processed = 0, updated = 0;
+    for (const part of parts) {
+      if (!callSched.hasPending(part)) continue;
+      processed++;
+      try { const touched = await callSched.tickParticipant(env, part); if (touched) { await S.upsert('participants', { id: part.id, data: part }); updated++; } }
+      catch (e) { /* пропускаем проблемного кандидата */ }
+    }
+    return j({ ok: true, processed, updated });
+  }
   // Журнал ИИ-звонков кандидата (список + обновление с оркестрацией)
   let mAiCalls = p.match(/^\/api\/participants\/([\w-]+)\/ai-calls(\/refresh)?$/);
   if (mAiCalls && (m === 'GET' || m === 'POST')) {
@@ -926,6 +942,8 @@ async function api(req, env, url) {
       links.push({ type, title: testTitleOf(type), link: `${BASE}/t/${code}` });
     }
     if (owner) await S.upsert('users', { id: owner.id, data: owner });
+    // Автоворонка: звонок «первый контакт» при входе кандидата (если тумблер вкл + телефон + Vapi)
+    try { if (owner && avac && part.tel) { const called = await aiCallForEdge(env, S, owner, part, avac, 'first'); if (called) await S.upsert('participants', { id: part.id, data: part }); } } catch (e) {}
     return j({ ok: true, links, msgApply: a.msgApply, msgDone: a.msgDone });
   }
 
