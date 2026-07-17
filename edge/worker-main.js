@@ -1731,11 +1731,12 @@ async function api(req, env, url, exec) {
       knowledge_score: { type: 'number', description: 'Оценка знаний по профессии от 1 до 5' },
       interested: { type: 'boolean', description: 'Подтвердил ли интерес к вакансии' },
     } };
+    if (body.dryRun) return j({ ok: true, dryRun: true, vapiConfigured: vapiConfigured(env), hasPhone: !!env.VAPI_PHONE_NUMBER_ID, hasKey: !!env.VAPI_API_KEY, hasEleven: !!env.ELEVENLABS_API_KEY, taskLen: task.length, first: firstMessage.slice(0, 80) });
     try {
       const r = await Promise.race([
         vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
           structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('таймаут запроса к Vapi (проверьте настройку номера/интеграции)')), 22000)),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('таймаут запроса к Vapi (проверьте настройку номера/интеграции)')), 8000)),
       ]);
       if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
       return j({ ok: true, callId: r.callId, status: r.status });
