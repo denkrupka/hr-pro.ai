@@ -74,9 +74,9 @@ export async function parseEndReport(env, S, msg) {
   const reason = (sd && sd.callback_reason) || ((String(summary).match(/ПРИЧИНА:\s*([^\n]+)/i) || [])[1] || '');
   return {
     callId: call.id || msg.callId || '',
-    owner, recruiterEmail: owner.email,
+    owner, recruiterEmail: owner.email, pid: p.id || '',
     candidateName: ((p.name || '') + ' ' + (p.surname || '')).trim() || caller,
-    candidatePhone: caller,
+    candidatePhone: p.tel || caller, candidateEmail: p.email || '',
     company: owner.company || '', position: (vac && vac.name) || '',
     reason: reason && !/^[—\-\s]*$/.test(reason) ? reason.trim() : '',
     summary: String(summary).replace(/\n?(РЕКРУТ[ЁЕ]Р|ПРИЧИНА):.*$/is, '').trim(),

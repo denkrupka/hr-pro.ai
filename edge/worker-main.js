@@ -301,8 +301,9 @@ async function api(req, env, url, exec) {
                 pl: { cand: 'Kandydat', phone: 'Telefon', pos: 'Stanowisko', reason: 'Powód', said: 'Co asystent wyjaśnił', could: 'Co pozostało', sum: 'Podsumowanie' },
                 en: { cand: 'Candidate', phone: 'Phone', pos: 'Position', reason: 'Reason', said: 'What the assistant explained', could: 'What remained', sum: 'Call summary' } }[lang];
               const row = (k, v) => v ? `<b>${k}:</b> ${String(v).replace(/</g, '&lt;')}<br>` : '';
-              const bodyHtml = `${row(L.cand, info.candidateName)}${row(L.phone, info.candidatePhone)}${info.company ? row('Компания', info.company) : ''}${row(L.pos, info.position)}${row(L.reason, info.reason)}${row(L.said, info.aiAnswered)}${row(L.could, info.aiCouldNot)}${info.summary ? '<br><b>' + L.sum + ':</b><br>' + String(info.summary).slice(0, 900).replace(/\n/g, '<br>') : ''}`;
-              const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: T.subj, eyebrow: T.subj, headline: T.head, bodyHtml });
+              const bodyHtml = `${row(L.cand, info.candidateName)}${row(L.phone, info.candidatePhone)}${row('Email', info.candidateEmail)}${info.company ? row('Компания', info.company) : ''}${row(L.pos, info.position)}${row(L.reason, info.reason)}${row(L.said, info.aiAnswered)}${row(L.could, info.aiCouldNot)}${info.summary ? '<br><b>' + L.sum + ':</b><br>' + String(info.summary).slice(0, 900).replace(/\n/g, '<br>') : ''}`;
+              const cardUrlE = info.pid ? ((env.BASE_URL || url.origin).replace(/\/+$/, '') + '/app?openc=' + info.pid) : '';
+              const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: T.subj, eyebrow: T.subj, headline: T.head, bodyHtml, ctaUrl: cardUrlE, ctaLabel: cardUrlE ? 'Открыть карточку кандидата' : '' });
               try {
                 await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
                   body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [info.recruiterEmail], subject: T.subj, html }) });
@@ -310,11 +311,15 @@ async function api(req, env, url, exec) {
             }
             // Уведомление в портал + Telegram
             owner.notifs = Array.isArray(owner.notifs) ? owner.notifs : [];
-            owner.notifs.unshift({ id: ('cr-' + (info.callId || Date.now())).slice(0, 40), type: 'call_recruiter', cat: 'calls', title: 'Кандидат просит связаться: ' + info.candidateName, body: [info.position && ('Вакансия: ' + info.position), info.reason && ('Причина: ' + info.reason)].filter(Boolean).join('\n'), link: '', ts: new Date().toISOString(), read: false });
+            const contact = ['📞 ' + info.candidatePhone, info.candidateEmail && ('✉️ ' + info.candidateEmail)].filter(Boolean).join('\n');
+            const cardUrl = info.pid ? ((env.BASE_URL || url.origin).replace(/\/+$/, '') + '/app?openc=' + info.pid) : '';
+            owner.notifs.unshift({ id: ('cr-' + (info.callId || Date.now())).slice(0, 40), type: 'call_recruiter', cat: 'calls', title: 'Кандидат просит связаться: ' + info.candidateName, body: [contact, info.position && ('Вакансия: ' + info.position), info.reason && ('Причина: ' + info.reason)].filter(Boolean).join('\n'), link: cardUrl, pid: info.pid || '', ts: new Date().toISOString(), read: false });
             if (owner.notifs.length > 100) owner.notifs = owner.notifs.slice(0, 100);
             const nn = await nenv();
             if (nn.TELEGRAM_BOT_TOKEN && owner.settings && owner.settings.telegram && owner.settings.telegram.chatId) {
-              try { await fetch('https://api.telegram.org/bot' + nn.TELEGRAM_BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: owner.settings.telegram.chatId, text: '📞 <b>Кандидат просит связаться</b>\n' + info.candidateName + (info.position ? '\nВакансия: ' + info.position : '') + (info.reason ? '\nПричина: ' + info.reason : ''), parse_mode: 'HTML' }) }); } catch (_) {}
+              const tmsg = { chat_id: owner.settings.telegram.chatId, text: '📞 <b>Кандидат просит связаться</b>\n' + info.candidateName + '\n📞 ' + info.candidatePhone + (info.candidateEmail ? '\n✉️ ' + info.candidateEmail : '') + (info.position ? '\nВакансия: ' + info.position : '') + (info.reason ? '\nПричина: ' + info.reason : ''), parse_mode: 'HTML' };
+              if (cardUrl) tmsg.reply_markup = { inline_keyboard: [[{ text: '👤 Открыть карточку кандидата', url: cardUrl }]] };
+              try { await fetch('https://api.telegram.org/bot' + nn.TELEGRAM_BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(tmsg) }); } catch (_) {}
             }
             await S.upsert('users', { id: owner.id, data: owner });
           }
@@ -876,8 +881,8 @@ async function api(req, env, url, exec) {
           e._notifiedCall = true; changed = true;
           const att = (e.attempts || [])[(e.attempts || []).length - 1] || {};
           const answered = String(att.transcript || '').trim().length >= 20;
-          if (answered) await pushNotif(await nenv(), S, me, 'call_done', { title: 'ИИ-звонок завершён: ' + cand, body: e.summary ? String(e.summary).slice(0, 200) : '', link: '' });
-          else await pushNotif(await nenv(), S, me, 'call_noanswer', { title: 'ИИ не дозвонился: ' + cand, body: '', link: '' });
+          if (answered) await pushNotif(await nenv(), S, me, 'call_done', { title: 'ИИ-звонок завершён: ' + cand, body: e.summary ? String(e.summary).slice(0, 200) : '', pid: part.id });
+          else await pushNotif(await nenv(), S, me, 'call_noanswer', { title: 'ИИ не дозвонился: ' + cand, body: '', pid: part.id });
         }
         if (changed) await S.upsert('participants', { id: part.id, data: part });
       } catch (_) {}
@@ -930,7 +935,7 @@ async function api(req, env, url, exec) {
         if (!callLog.isFinal(entry)) { await callLog.refreshEntry(env, part, entry); await S.upsert('participants', { id: part.id, data: part }); }
         if (entry.status === 'done' && !entry._notified) {
           entry._notified = true;
-          try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, me, 'ref_done', { title: 'Получен референс: ' + cand, body: entry.summary ? String(entry.summary).slice(0, 200) : '', link: '' }); } catch (_) {}
+          try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, me, 'ref_done', { title: 'Получен референс: ' + cand, body: entry.summary ? String(entry.summary).slice(0, 200) : '', pid: part.id }); } catch (_) {}
           await S.upsert('participants', { id: part.id, data: part });
         }
         const cur = part.workflow.references && part.workflow.references.multi && part.workflow.references.multi[refIndex];
@@ -1198,7 +1203,7 @@ async function api(req, env, url, exec) {
       links.push({ type, title: testTitleOf(type), link: `${BASE}/t/${code}` });
     }
     if (owner) await S.upsert('users', { id: owner.id, data: owner });
-    try { if (owner) { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, owner, 'cand_new', { title: 'Новый кандидат: ' + cand, body: 'Отклик через анкету «' + a.title + '»' + (avac && avac.name ? '\nВакансия: ' + avac.name : ''), link: '' }); } } catch (_) {}
+    try { if (owner) { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, owner, 'cand_new', { title: 'Новый кандидат: ' + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + 'Отклик через анкету «' + a.title + '»' + (avac && avac.name ? '\nВакансия: ' + avac.name : ''), pid: part.id }); } } catch (_) {}
     // Автоворонка: звонок «первый контакт» при входе кандидата (если тумблер вкл + телефон + Vapi)
     try { if (owner && avac && part.tel) { const called = await aiCallForEdge(env, S, owner, part, avac, 'first'); if (called) await S.upsert('participants', { id: part.id, data: part }); } } catch (e) {}
     return j({ ok: true, links, msgApply: a.msgApply, msgDone: a.msgDone });
@@ -1540,7 +1545,7 @@ async function api(req, env, url, exec) {
     } else return j({ error: 'Неверная колонка' }, 400);
     await S.upsert('participants', { id: part.id, data: part });
     if (col === 'hired' || col === 'rejected') {
-      try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; const vc = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; await pushNotif(await nenv(), S, me, 'decision', { title: (col === 'hired' ? '✅ Кандидат принят: ' : '❌ Кандидат отклонён: ') + cand, body: (vc && vc.name ? 'Вакансия: ' + vc.name : ''), link: '' }); } catch (_) {}
+      try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; const vc = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; await pushNotif(await nenv(), S, me, 'decision', { title: (col === 'hired' ? '✅ Кандидат принят: ' : '❌ Кандидат отклонён: ') + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + (vc && vc.name ? 'Вакансия: ' + vc.name : ''), pid: part.id }); } catch (_) {}
     }
     // Письмо кандидату при смене статуса (не критично — не ломаем ответ при ошибке).
     // Шаблоны статусов: rejected/interview/reserve/accepted. Из kanban-колонки мапим только те,
@@ -2110,7 +2115,7 @@ async function api(req, env, url, exec) {
         if (called) await S.upsert('participants', { id: part.id, data: part });
         try {
           const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || part.tel || 'кандидат';
-          await pushNotif(await nenv(), S, owner, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), link: '' });
+          await pushNotif(await nenv(), S, owner, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: part.id });
         } catch (_) {}
       }
       // Последовательная отправка: запустить следующий тест из очереди этого кандидата

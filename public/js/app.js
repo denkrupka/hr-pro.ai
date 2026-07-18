@@ -2102,6 +2102,8 @@ let _notifTimer = null;
 function initNotifBell() {
   const bell = $('#notif-bell'); if (!bell) return;
   bell.onclick = (e) => { e.stopPropagation(); toggleNotifPanel(); };
+  // Открытие карточки кандидата по ссылке из уведомления (?openc=<pid>)
+  try { const oc = new URLSearchParams(location.search).get('openc'); if (oc) { history.replaceState({}, '', location.pathname); setTimeout(() => { if (typeof openParticipant === 'function') openParticipant(oc); }, 500); } } catch (e) {}
   loadNotifs();
   if (_notifTimer) clearInterval(_notifTimer);
   _notifTimer = setInterval(loadNotifs, 45000);
@@ -2118,7 +2120,7 @@ function notifListHtml(list) {
   if (!list || !list.length) return `<div class="np-empty">Пока нет уведомлений</div>`;
   const ago = (ts) => { const s = Math.floor((Date.now() - new Date(ts)) / 1000); if (s < 60) return 'только что'; if (s < 3600) return Math.floor(s / 60) + ' мин назад'; if (s < 86400) return Math.floor(s / 3600) + ' ч назад'; return Math.floor(s / 86400) + ' дн назад'; };
   const ic = { calls: '📞', tests: '📝', candidates: '👤', references: '🗣️', workflow: '📊' };
-  return list.map(n => `<div class="np-item ${n.read ? '' : 'unread'}"><div class="np-ic">${ic[n.cat] || '🔔'}</div><div class="np-txt"><b>${esc(n.title || '')}</b>${n.body ? `<span>${esc(n.body).replace(/\n/g, '<br>')}</span>` : ''}<i>${ago(n.ts)}</i></div></div>`).join('');
+  return list.map(n => `<div class="np-item ${n.read ? '' : 'unread'}${n.pid ? ' np-click' : ''}"${n.pid ? ` data-pid="${esc(n.pid)}"` : ''}><div class="np-ic">${ic[n.cat] || '🔔'}</div><div class="np-txt"><b>${esc(n.title || '')}</b>${n.body ? `<span>${esc(n.body).replace(/\n/g, '<br>')}</span>` : ''}<i>${ago(n.ts)}</i>${n.pid ? '<span class="np-open">Открыть карточку →</span>' : ''}</div></div>`).join('');
 }
 function toggleNotifPanel() {
   let panel = $('#notif-panel');
@@ -2130,6 +2132,7 @@ function toggleNotifPanel() {
   const r = bell.getBoundingClientRect();
   panel.style.top = (r.bottom + 8) + 'px'; panel.style.right = (window.innerWidth - r.right) + 'px';
   $('#np-read-all').onclick = async () => { try { await api('/api/notifications/read', { method: 'POST', body: '{}' }); await loadNotifs(); toggleNotifPanel(); } catch (e) {} };
+  panel.querySelector('.np-list').addEventListener('click', (e) => { const it = e.target.closest('.np-item[data-pid]'); if (it && it.dataset.pid) { toggleNotifPanel(); if (typeof openParticipant === 'function') openParticipant(it.dataset.pid); } });
   setTimeout(() => document.addEventListener('click', _closeNotifOnOut), 0);
 }
 function _closeNotifOnOut(e) { const panel = $('#notif-panel'); if (panel && !panel.contains(e.target) && !e.target.closest('#notif-bell')) { panel.remove(); document.removeEventListener('click', _closeNotifOnOut); } }

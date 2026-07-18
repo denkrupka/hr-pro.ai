@@ -39,22 +39,26 @@ function prefsFor(user, typeKey) {
 export function telegramConfigured(env, user) {
   return !!(env && env.TELEGRAM_BOT_TOKEN && user && user.settings && user.settings.telegram && user.settings.telegram.chatId);
 }
-async function sendTelegram(env, user, text) {
+async function sendTelegram(env, user, text, cardUrl) {
   try {
+    const msg = { chat_id: user.settings.telegram.chatId, text, parse_mode: 'HTML', disable_web_page_preview: true };
+    if (cardUrl) msg.reply_markup = { inline_keyboard: [[{ text: '👤 Открыть карточку кандидата', url: cardUrl }]] };
     await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: user.settings.telegram.chatId, text, parse_mode: 'HTML', disable_web_page_preview: true }),
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(msg),
     });
   } catch (_) {}
 }
 
 // Создать уведомление рекрутёру и доставить по включённым каналам. Сохраняет пользователя. user — объект рекрутёра (владельца).
-export async function pushNotif(env, S, user, typeKey, { title, body = '', link = '' } = {}) {
+// pid — id кандидата: добавляет ссылку/кнопку «Открыть карточку» в портал и Telegram.
+export async function pushNotif(env, S, user, typeKey, { title, body = '', link = '', pid = '' } = {}) {
   if (!user || !user.id) return;
   const t = TYPE[typeKey] || { cat: 'workflow' };
   const pr = prefsFor(user, typeKey);
   const now = new Date().toISOString();
-  const n = { id: (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : (typeKey + '-' + now)).slice(0, 40), type: typeKey, cat: t.cat, title: String(title || t.label || ''), body: String(body || ''), link: String(link || ''), ts: now, read: false };
+  const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+  const cardUrl = pid ? `${base}/app?openc=${pid}` : (link || '');
+  const n = { id: (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : (typeKey + '-' + now)).slice(0, 40), type: typeKey, cat: t.cat, title: String(title || t.label || ''), body: String(body || ''), link: cardUrl, pid: String(pid || ''), ts: now, read: false };
   if (pr.push !== false) {
     user.notifs = Array.isArray(user.notifs) ? user.notifs : [];
     user.notifs.unshift(n);
@@ -71,7 +75,7 @@ export async function pushNotif(env, S, user, typeKey, { title, body = '', link 
   }
   // Telegram
   if (pr.telegram && telegramConfigured(env, user)) {
-    await sendTelegram(env, user, `<b>${n.title}</b>${n.body ? '\n' + n.body : ''}`);
+    await sendTelegram(env, user, `<b>${n.title}</b>${n.body ? '\n' + n.body : ''}`, n.link);
   }
   try { await S.upsert('users', { id: user.id, data: user }); } catch (_) {}
   return n;

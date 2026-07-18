@@ -13,6 +13,7 @@ const recruit = require('./src/recruitment');
 const air = require('./src/ai-recruit');
 const learn = require('./src/learning');
 const integ = require('./src/integrations');
+const notif = require('./src/notifications');
 const aiDecodeRoutes = require('./src/ai-decode-routes');
 const refai = require('./src/references-ai');
 const aiCallPrompts = require('./src/ai-call-prompts');
@@ -956,6 +957,10 @@ app.put('/api/settings', requireAuth, (req, res) => {
   ['surname', 'employees', 'phone', 'timezone', 'uiLang', 'logo'].forEach(f => { if (b[f] != null) s[f] = b[f]; });
   if (b.linkDays != null) s.linkDays = Math.max(1, parseInt(b.linkDays, 10) || 3);
   ['notifySms', 'notifyComment', 'searchAllAccounts', 'askPersonalData'].forEach(f => { if (b[f] != null) s[f] = !!b[f]; });
+  if (b.notifPrefs && typeof b.notifPrefs === 'object') {
+    s.notifPrefs = s.notifPrefs || {};
+    for (const t of notif.NOTIF_TYPES) { const v = b.notifPrefs[t.key]; if (v && typeof v === 'object') s.notifPrefs[t.key] = { push: v.push !== false, email: !!v.email, telegram: !!v.telegram }; }
+  }
   if (Array.isArray(b.testOrder)) { const ord = b.testOrder.filter(t => TEST_TYPES[t]); ['result', 'tools', 'logic', 'sales'].forEach(t => { if (!ord.includes(t)) ord.push(t); }); s.testOrder = ord; }
   if (b.mailTemplates && typeof b.mailTemplates === 'object') { s.mailTemplates = cleanMailTemplates(b.mailTemplates, s.mailTemplates && s.mailTemplates.send ? s.mailTemplates : DEFAULT_MAIL()); }
   if (b.emailTemplates && typeof b.emailTemplates === 'object') {

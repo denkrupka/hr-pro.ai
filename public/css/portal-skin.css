@@ -442,3 +442,7 @@
 .tg-t{display:flex;flex-direction:column;gap:2px;min-width:0}
 .tg-t b{color:#fff;font-size:14px}
 .tg-t span{color:#a9c7e0;font-size:12px}
+.np-item.np-click{cursor:pointer}
+.np-open{color:#8b6cff;font-size:11px;font-weight:600;margin-top:4px;display:inline-block}
+.np-item.np-click:hover{background:rgba(139,108,255,.13)}
+.np-item.np-click:hover .np-open{text-decoration:underline}
