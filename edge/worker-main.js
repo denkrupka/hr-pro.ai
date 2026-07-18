@@ -1774,7 +1774,7 @@ async function api(req, env, url, exec) {
     const timer = setTimeout(() => ctrl.abort(), 9000);
     try {
       const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8, signal: ctrl.signal,
-        structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
+        structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление. В САМОМ КОНЦЕ добавь ДВЕ отдельные строки без лишнего текста:\nСТАТУС: <один из вариантов: Не удалось поговорить / Договорились о перезвоне / Готов к следующему этапу / Нашёл другую работу / Не интересна вакансия / Просил не звонить>\nПРИЧИНА: <если кандидат назвал причину отказа или почему не звонить — кратко его словами; иначе поставь прочерк>' });
       clearTimeout(timer);
       if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
       return j({ ok: true, callId: r.callId, status: r.status });

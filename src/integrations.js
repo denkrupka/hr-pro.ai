@@ -25,6 +25,20 @@ function optOutFromData(sd) {
   if (sd.do_not_call_again === true || sd.opt_out === true) return true;
   return false;
 }
+// Статус обзвона: единый итог звонка после анализа разговора.
+function deriveCallStatus(o, summary) {
+  const sm = String(summary || '');
+  const reason = (sm.match(/ПРИЧИНА:\s*([^\n]+)/i) || [])[1];
+  const cleanReason = reason && !/^[—\-\s]*$/.test(reason) ? reason.trim() : null;
+  if (o.voicemail) return { callStatus: 'Не дозвонились (автоответчик)', statusReason: null };
+  if (o.noAnswer) return { callStatus: 'Не дозвонились', statusReason: null };
+  if (o.doNotCall) return { callStatus: 'Просил не звонить', statusReason: cleanReason };
+  if (o.callbackRequested) return { callStatus: 'Договорились о перезвоне', statusReason: o.callbackWhen || cleanReason };
+  const st = (sm.match(/СТАТУС:\s*([^\n]+)/i) || [])[1];
+  if (st) return { callStatus: st.trim(), statusReason: cleanReason };
+  if (!o.transcript || String(o.transcript).trim().length < 40) return { callStatus: 'Не удалось поговорить', statusReason: null };
+  return { callStatus: 'Поговорили', statusReason: cleanReason };
+}
 
 const LANG_NAME = { ru: 'русском', pl: 'польском', en: 'английском', uk: 'украинском', de: 'немецком' };
 // Правило языка: вести на языке заявки; если кандидат отвечает на другом языке — продолжать на языке заявки, но зафиксировать язык кандидата.
@@ -32,11 +46,11 @@ function languageRule(language) {
   const L = LANG_NAME[language] || 'русском';
   return `ЯЗЫК РАЗГОВОРА: веди беседу на ${L} языке — это язык заявки. Если кандидат отвечает на ДРУГОМ языке (например, украинском, польском, английском), НЕ переходи на его язык — вежливо продолжай на ${L}. При этом обязательно отметь в итоге, на каком языке фактически говорил кандидат, если он отличается от ${L}. `;
 }
-// Правило реакции на «нет»/отказ: НЕ вешать трубку сразу — сначала выяснить причину.
-const OPT_OUT_RULE = 'РЕАКЦИЯ НА «НЕТ»/ОТКАЗ (очень важно): если на вопрос «удобно ли говорить» или в начале разговора кандидат отвечает «нет», колеблется или отказывается — НЕ вешай трубку сразу и НЕ считай это автоматически отказом. Сначала мягко и коротко уточни причину: ему неудобно именно СЕЙЧАС или дело в другом. Действуй по ситуации: '
+// Правило реакции на «нет»/отказ: НЕ вешать трубку сразу — один раз мягко выяснить причину открытым вопросом.
+const OPT_OUT_RULE = 'РЕАКЦИЯ НА «НЕТ»/ОТКАЗ (очень важно): если на вопрос «удобно ли говорить» или в начале разговора кандидат отвечает «нет», колеблется или отказывается — НЕ вешай трубку сразу и НЕ считай это автоматически отказом. Сначала ОДИН раз, мягко и ненавязчиво, уточни причину ОТКРЫТЫМ вопросом (например: «Подскажите, а почему?» / «Что именно не подходит?») — НЕ перечисляй варианты сам, дай кандидату ответить своими словами. Спрашиваешь причину только ОДИН раз, если не хочет отвечать — не настаивай. Затем действуй по ситуации: '
   + '(1) НЕУДОБНО СЕЙЧАС (занят, за рулём, не вовремя) — не дави: извинись, спроси, когда удобнее перезвонить (уточни день и примерное время), поблагодари и вежливо попрощайся. Это НЕ отказ — мы перезвоним в удобное время. '
-  + '(2) НЕ ИНТЕРЕСНА вакансия или не хочет участвовать/разговаривать по сути — поблагодари за уделённое время, скажи, что не будешь больше беспокоить по этой вакансии, и вежливо заверши звонок. '
-  + '(3) ПРОСИТ БОЛЬШЕ НЕ ЗВОНИТЬ, раздражён, называет это спамом или говорит, что с ним уже связывались и просил прекратить — искренне извинись за беспокойство, пообещай удалить контакт из обзвона и больше не звонить, вежливо заверши звонок. '
+  + '(2) НЕ ИНТЕРЕСНА вакансия (уже нашёл работу, не хочет работать в этой сфере, не устраивают условия и т.п. — запомни, что именно назвал кандидат) — поблагодари за уделённое время, скажи, что не будешь больше беспокоить по этой вакансии, и вежливо заверши звонок. '
+  + '(3) ПРОСИТ БОЛЬШЕ НЕ ЗВОНИТЬ, раздражён, называет это спамом или говорит, что с ним уже связывались и просил прекратить — искренне извинись за беспокойство, ОДИН раз мягко уточни причину (если ещё не назвал), пообещай удалить контакт из обзвона и больше не звонить, вежливо заверши звонок. '
   + 'Ни в одном случае не уговаривай и не настаивай. Заверши звонок функцией завершения, когда вопрос исчерпан. ';
 // Универсальные поля отчёта из любого звонка.
 function withUniversalFields(schema) {
@@ -314,7 +328,7 @@ async function getCall(settings, callId) {
   const voicemail = /voicemail/i.test(String(endedReason || '')) || looksLikeVoicemail(transcript);
   const sd = a.structuredData || null;
   const doNotCall = !voicemail && (optOutFromData(sd) || looksLikeOptOut(transcript));
-  return {
+  const base = {
     ok: true, id: d && d.id, status: d && d.status, endedReason,
     noAnswer: isNoAnswer(endedReason) || voicemail, voicemail,
     doNotCall, spokenLanguage: (sd && (sd.spoken_language || sd.candidate_language)) || null, alreadyContacted: !!(sd && (sd.already_contacted || sd.was_contacted_before)),
@@ -323,6 +337,9 @@ async function getCall(settings, callId) {
     transcript, summary: a.summary || null, structuredData: sd,
     recordingUrl, startedAt, endedAt, durationSec,
   };
+  const cs = deriveCallStatus(base, a.summary);
+  base.callStatus = cs.callStatus; base.statusReason = cs.statusReason;
+  return base;
 }
 // Исход «не дозвонился» (как будто не взяли трубку): голосовая почта, нет ответа, занято, отклонён.
 function isNoAnswer(endedReason) {
