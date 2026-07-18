@@ -1,0 +1,164 @@
+// Входящий ИИ-звонок: кандидат сам звонит на наш номер. Vapi (assistant-request) дёргает наш эндпоинт,
+// передаёт номер звонящего → мы находим кандидата по номеру, собираем контекст (вакансии/статусы/история/данные вакансии)
+// с СТРОГОЙ приватностью и возвращаем Vapi готового ассистента. Решения (утв. владельцем):
+//  • идентификация только по номеру (Caller ID);
+//  • раскрываем общий статус этапов, БЕЗ баллов; отказ/финальное решение НЕ озвучиваем;
+//  • ИИ информирует + договаривается о перезвоне (сам процесс не двигает);
+//  • приём круглосуточно.
+import { buildWorkflow } from './workflow-edge.js';
+import * as aiCallPrompts from '../src/ai-call-prompts.js';
+
+const VOICE_BY_LANG = { ru: 'ymDCYd8puC7gYjxIamPt', pl: 'd4Z5Fvjohw3zxGpV8XUV', en: 'EST9Ui6982FZPSi7gCHi' };
+
+// Нормализация телефона до «национального хвоста» (последние 9 цифр) — терпимо к +48 / 0048 / локальному формату.
+export function phoneKey(s) {
+  const d = String(s || '').replace(/\D/g, '').replace(/^00/, '');
+  return d.slice(-9);
+}
+
+// Найти ВСЕ записи кандидата (по всем аккаунтам/вакансиям) с этим номером. Возвращает участников (data).
+export async function findByPhone(S, number) {
+  const key = phoneKey(number);
+  if (!key || key.length < 7) return [];
+  // Эффективнее — фильтр на стороне БД по хвосту номера (у tel могут быть пробелы/дефисы, поэтому like по подстроке цифр не годится);
+  // берём всех участников и фильтруем по нормализованному ключу. При росте базы заменить на индекс/RPC по нормализованному телефону.
+  const rows = await S.select('participants', 'select=data');
+  return (rows || []).map(r => r.data).filter(p => p && p.tel && phoneKey(p.tel) === key);
+}
+
+// Человекочитаемый ОБЩИЙ статус этапа (без баллов). Отказ не раскрываем на уровне сборки контекста (см. buildStatusBlock).
+function stageStatusText(st, wf, lang) {
+  if (st.skipped) return null; // пропущенный этап не упоминаем
+  const title = st.title || st.key;
+  if (st.key === 'references') {
+    if (Array.isArray(st.refs) && st.refs.length) {
+      const total = st.refs.length, done = st.refs.filter(r => r.done).length;
+      if (done >= total) return `${title}: получены все рекомендации (${total} из ${total})`;
+      return `${title}: получено ${done} из ${total} рекомендаций, ждём остальных`;
+    }
+    return `${title}: пока не собирали`;
+  }
+  if (st.key === 'motivation') return st.done ? `${title}: проведена` : `${title}: предстоит`;
+  // тесты (result/tools/knowledge) — говорим ВЫПОЛНЕН/ПРЕДСТОИТ, без «сдал/не сдал» и без баллов
+  if (st.status === 'done') return `${title}: тест выполнен`;
+  if (st.status === 'sent') return `${title}: тест отправлен, ждём прохождения`;
+  return `${title}: ещё предстоит`;
+}
+
+// Собирает блок статуса по одной заявке (кандидат в конкретной вакансии/компании). Приватно и обобщённо.
+function buildStatusBlock(part, vac, owner, lang) {
+  const tests = part.__tests || [];
+  const wf = buildWorkflow(part, lang, vac, tests);
+  const company = (owner && owner.company) || '';
+  const position = (vac && vac.name) || (part.__vacName) || '';
+  const finalDecided = wf.column === 'rejected' || wf.column === 'hired' || wf.decision === 'rejected' || wf.decision === 'hired';
+  const lines = [];
+  lines.push(`Компания: ${company || '—'}; вакансия: ${position || '—'}.`);
+  if (finalDecided) {
+    // Отказ/финальное решение НЕ раскрываем. Нейтрально.
+    lines.push('Финальное решение по заявке принимает рекрутёр — сообщи, что по итогам с кандидатом свяжется рекрутёр, НЕ называй решение (принят/отказ).');
+  } else {
+    const parts = (wf.stages || []).map(s => stageStatusText(s, wf, lang)).filter(Boolean);
+    if (parts.length) lines.push('Статус этапов (говори ОБЩО, без баллов): ' + parts.join('; ') + '.');
+    // Следующий шаг — первый незавершённый включённый этап.
+    const next = (wf.stages || []).find(s => !s.skipped && s.passed !== true && s.status !== 'done' && !s.done);
+    if (next) lines.push(`Ближайший ожидаемый шаг: ${next.title}.`);
+  }
+  // Контекст последнего звонка (чтобы продолжить прерванный разговор).
+  const log = (part.workflow && part.workflow.aiCallLog) || [];
+  const last = log[log.length - 1];
+  if (last) {
+    const att = (last.attempts || [])[ (last.attempts || []).length - 1 ] || {};
+    const lastSummary = last.summary || att.summary || '';
+    if (lastSummary) lines.push(`Итог последнего разговора с кандидатом: ${String(lastSummary).slice(0, 400)}`);
+    const cb = last.answers && (last.answers.callback_time || last.answers.callback_when);
+    if (cb) lines.push(`В прошлый раз договаривались перезвонить: ${cb}.`);
+  }
+  return { block: lines.join('\n'), company, position, lang: (vac && vac.lang) || lang };
+}
+
+// Данные вакансии для ответов на вопросы о найме (объявление/описание/заявка).
+function vacancyInfo(vac, rq) {
+  if (!vac) return '';
+  const bits = [];
+  if (vac.name) bits.push(`Должность: ${vac.name}.`);
+  if (vac.description) bits.push(`Описание: ${String(vac.description).slice(0, 800)}`);
+  else if (vac.announcement) bits.push(`Объявление: ${String(vac.announcement).slice(0, 800)}`);
+  if (vac.duties) bits.push(`Обязанности: ${String(vac.duties).slice(0, 500)}`);
+  if (rq && rq.data) { try { bits.push(`Заявка: ${JSON.stringify(rq.data).slice(0, 500)}`); } catch (_) {} }
+  return bits.join('\n');
+}
+
+// Главная: собрать ассистента для входящего звонка по номеру звонящего.
+export async function buildInboundAssistant(env, S, caller) {
+  const matches = await findByPhone(S, caller);
+  const agent = aiCallPrompts.agentName('ru');
+  const voice = env.ELEVENLABS_API_KEY ? { provider: '11labs', voiceId: VOICE_BY_LANG.ru, model: 'eleven_multilingual_v2' } : { provider: 'azure', voiceId: 'ru-RU-SvetlanaNeural' };
+  const base = {
+    firstMessageMode: 'assistant-speaks-first',
+    endCallFunctionEnabled: true,
+    transcriber: { provider: 'deepgram', model: 'nova-2', language: 'ru' },
+    voice,
+    artifactPlan: { recordingEnabled: true, recordingFormat: 'mp3' },
+    maxDurationSeconds: 600,
+    voicemailDetection: { provider: 'vapi', backoffPlan: { maxRetries: 10, startAtSeconds: 2, frequencySeconds: 2.5 } },
+  };
+
+  // ── Неизвестный номер: общее приветствие, НИКАКИХ данных о ком-либо ──
+  if (!matches.length) {
+    const sys = `Ты — ${agent}, виртуальный ассистент отдела подбора персонала. Тебе звонит человек, чей номер НЕ найден в нашей базе кандидатов. `
+      + 'Поздоровайся, представься виртуальным ассистентом и мягко уточни, по какому вопросу звонок: по конкретной вакансии/объявлению или общий вопрос. Ответь на общие вопросы о процессе найма. '
+      + 'СТРОГО ЗАПРЕЩЕНО: раскрывать любую информацию о каких-либо кандидатах, их статусах, других людях, других компаниях или их данных — этого номера нет в базе, значит по конкретным кандидатам ты НЕ разговариваешь ни при каких условиях. '
+      + 'Если спрашивают про конкретного человека («как дела у Ивана») — вежливо откажи: такую информацию по телефону мы не предоставляем. '
+      + 'Если человек говорит, что он кандидат, но номер не совпал — предложи, что рекрутёр перезвонит, и запиши, по какой вакансии вопрос. Не придумывай данные. Разговор веди на русском (или на языке собеседника, если он явно на другом).';
+    return { assistant: { ...base, firstMessage: 'Здравствуйте! Вы позвонили в отдел подбора персонала. Меня зовут ' + agent + '. Подскажите, пожалуйста, по какому вопросу вы звоните?', model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }] } }, meta: { matched: false } };
+  }
+
+  // ── Известный номер: собрать заявки этого кандидата (по всем компаниям/вакансиям) ──
+  // Подгружаем тесты, вакансии, владельцев.
+  const byId = {};
+  for (const p of matches) {
+    p.__tests = (await S.select('tests', `participant_id=eq.${p.id}&select=data`)).map(r => r.data);
+    p.__vac = p.vacancyId ? await S.one('vacancies', p.vacancyId) : null;
+    p.__owner = p.userId ? await S.one('users', p.userId) : null;
+    p.__rq = (p.__vac && p.__vac.requisitionId) ? await S.one('requisitions', p.__vac.requisitionId) : null;
+    if (p.__vac) p.__vacName = p.__vac.name;
+  }
+  const name = ((matches[0].name || '') + ' ' + (matches[0].surname || '')).trim() || 'кандидат';
+  const apps = matches.map(p => {
+    const sb = buildStatusBlock(p, p.__vac, p.__owner, (p.__vac && p.__vac.lang) || 'ru');
+    return { company: sb.company, position: sb.position, lang: sb.lang, block: sb.block, vacInfo: vacancyInfo(p.__vac, p.__rq) };
+  });
+  const lang = apps[0].lang || 'ru';
+  const companies = [...new Set(apps.map(a => a.company).filter(Boolean))];
+  const positions = [...new Set(apps.map(a => a.position).filter(Boolean))];
+  const multi = apps.length > 1 && (companies.length > 1 || positions.length > 1);
+
+  let sys = `Ты — ${agent}, виртуальный HR-ассистент. Тебе ЗВОНИТ САМ кандидат: ${name} (звонок входящий, кандидат набрал нас). Ты уже знаешь его по номеру телефона. Говори тепло, по-человечески, кратко.\n\n`;
+  sys += 'СТРОГИЕ ПРАВИЛА ПРИВАТНОСТИ (нарушать нельзя):\n'
+    + `- Ты разговариваешь ТОЛЬКО об этом кандидате (${name}) и ТОЛЬКО о его собственных заявках, перечисленных ниже. Никого другого не обсуждаешь.\n`
+    + '- Если просят рассказать про другого человека/кандидата — вежливо откажи (такую информацию не предоставляем).\n'
+    + '- Не раскрывай баллы тестов и НЕ называй финальное решение (принят/отказ) — если решение принято, скажи, что по итогам свяжется рекрутёр.\n'
+    + '- Не раскрывай данные других компаний, кроме тех, что связаны с этим кандидатом ниже.\n\n';
+  if (multi) {
+    sys += 'У этого кандидата НЕСКОЛЬКО заявок' + (companies.length > 1 ? ' в разных компаниях' : '') + '. В начале ОБЯЗАТЕЛЬНО уточни, по какой ' + (companies.length > 1 ? 'компании и ' : '') + 'вакансии вопрос, и отвечай именно по ней. Информацию по всем заявкам ты знаешь, но озвучиваешь только по той, что назвал кандидат.\n\n';
+  }
+  sys += 'ЗАЯВКИ КАНДИДАТА:\n';
+  apps.forEach((a, i) => { sys += `\n[Заявка ${i + 1}] ${a.block}\n` + (a.vacInfo ? 'Данные вакансии для ответов на вопросы о найме:\n' + a.vacInfo + '\n' : ''); });
+  sys += '\nЧТО ДЕЛАТЬ:\n'
+    + '- Если прошлый разговор прервался (кандидату было неудобно / договаривались о перезвоне) — тепло поприветствуй, что перезвонил, и предложи продолжить с того места (см. итог последнего разговора выше).\n'
+    + '- Отвечай на вопросы о статусе процесса ОБЩО (какой этап пройден, чего ждём — например «тест выполнен, сейчас собираем рекомендации, дозвонились не до всех руководителей»), без баллов.\n'
+    + '- Отвечай на вопросы о вакансии/условиях по данным вакансии выше.\n'
+    + '- Ты можешь ИНФОРМИРОВАТЬ и ДОГОВОРИТЬСЯ О ПЕРЕЗВОНЕ (что рекрутёр или ты перезвонишь), но НЕ выполняй сам действий процесса (не отправляй тесты, не меняй этапы).\n'
+    + '- Если вопрос вне твоей компетенции или кандидат просит человека — предложи, что рекрутёр перезвонит.\n'
+    + '- Веди разговор на языке заявки; если кандидат говорит на другом языке — продолжай на языке заявки, но пометь это. Приём круглосуточный.\n'
+    + 'В конце вежливо попрощайся и заверши звонок.';
+
+  const b2 = { ...base };
+  b2.transcriber = { provider: 'deepgram', model: 'nova-2', language: lang };
+  b2.voice = env.ELEVENLABS_API_KEY ? { provider: '11labs', voiceId: VOICE_BY_LANG[lang] || VOICE_BY_LANG.ru, model: 'eleven_multilingual_v2' } : b2.voice;
+  const first = lang === 'pl' ? `Dzień dobry, ${matches[0].name || ''}! Tu ${agent}. Miło, że Pan/Pani dzwoni. W czym mogę pomóc?`
+    : lang === 'en' ? `Hello, ${matches[0].name || ''}! This is ${agent}. Glad you called. How can I help you?`
+    : `Здравствуйте, ${matches[0].name || ''}! Меня зовут ${agent}. Рада, что вы позвонили. Чем могу помочь?`;
+  return { assistant: { ...b2, firstMessage: first, model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }] } }, meta: { matched: true, apps: apps.length, name } };
+}

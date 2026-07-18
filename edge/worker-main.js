@@ -19,6 +19,7 @@ import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
 import { vapiConfigured, startCall as vapiStartCall, getCall as vapiGetCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
+import { buildInboundAssistant } from './inbound-call.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
@@ -241,6 +242,18 @@ async function api(req, env, url, exec) {
   async function settings() { const r = await S.select('settings', 'id=eq.portal&select=data'); return (r[0] && r[0].data) || {}; }
 
   if (p === '/api/health') return j({ ok: true, edge: true, ts: Date.now() });
+
+  // Входящий ИИ-звонок: Vapi assistant-request → отдаём динамического ассистента по номеру звонящего (публичный, защищён секретом).
+  if (p === '/api/vapi/inbound' && m === 'POST') {
+    const secret = env.VAPI_INBOUND_SECRET || '';
+    const provided = req.headers.get('x-vapi-secret') || url.searchParams.get('key') || '';
+    if (!secret || provided !== secret) return j({ error: 'forbidden' }, 403);
+    const call = (body.message && body.message.call) || body.call || {};
+    const caller = (call.customer && call.customer.number) || (body.message && body.message.customer && body.message.customer.number) || url.searchParams.get('caller') || '';
+    if (!caller) return j({ error: 'no caller number' }, 400);
+    try { return j(await buildInboundAssistant(env, S, caller)); }
+    catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
+  }
 
   // Публичная ИИ-проверка чек-листа гайда (без авторизации)
   if (p === '/api/guide-check' && m === 'POST') {
@@ -1702,6 +1715,14 @@ async function api(req, env, url, exec) {
   }
 
   // ── Скрининг-звонок ИИ (первый контакт: мотивация + знания области) ──
+  // Тест сборки входящего ассистента: GET /api/ai-call/inbound-preview?caller=+48... (авторизованный, для проверки логики без реального звонка).
+  if (p === '/api/ai-call/inbound-preview' && m === 'GET') {
+    if (!me) return needAuth();
+    const caller = url.searchParams.get('caller') || '';
+    if (!caller) return j({ error: 'caller обязателен' }, 400);
+    try { return j(await buildInboundAssistant(env, S, caller)); }
+    catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
+  }
   if (p === '/api/ai-call/status' && m === 'GET') {
     if (!me) return needAuth();
     const callId = url.searchParams.get('callId');
