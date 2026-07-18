@@ -1731,41 +1731,22 @@ async function api(req, env, url, exec) {
       knowledge_score: { type: 'number', description: 'Оценка знаний по профессии от 1 до 5' },
       interested: { type: 'boolean', description: 'Подтвердил ли интерес к вакансии' },
     } };
-    if (body.diag) {
-      // Диагностика достижимости Vapi из воркера: чистый fetch с AbortController, точная ошибка.
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 8000);
-      try {
-        const dr = await fetch('https://api.vapi.ai/phone-number/' + encodeURIComponent(env.VAPI_PHONE_NUMBER_ID),
-          { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY }, signal: ctrl.signal });
-        clearTimeout(timer);
-        const dt = await dr.text();
-        return j({ diag: true, status: dr.status, ok: dr.ok, body: dt.slice(0, 300) });
-      } catch (e) {
-        clearTimeout(timer);
-        return j({ diag: true, error: true, name: e && e.name, message: String(e && (e.message || e)) });
-      }
-    }
-    if (body.diagCall) {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 25000);
-      const t0 = Date.now();
-      try {
-        const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8, signal: ctrl.signal,
-          structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
-        clearTimeout(timer);
-        return j({ diagCall: true, ok: true, ms: Date.now() - t0, callId: r.callId, status: r.status });
-      } catch (e) {
-        clearTimeout(timer);
-        return j({ diagCall: true, error: true, ms: Date.now() - t0, name: e && e.name, message: String(e && (e.message || e)) });
-      }
-    }
+    // AbortController: зависание Vapi → понятный JSON, а не CF 502 (никогда не оставляем «висящий» fetch).
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
     try {
-      const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
+      const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8, signal: ctrl.signal,
         structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
+      clearTimeout(timer);
       if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
       return j({ ok: true, callId: r.callId, status: r.status });
-    } catch (e) { return j({ error: 'Звонок не удался: ' + (e && (e.message || e)) }, 502); }
+    } catch (e) {
+      clearTimeout(timer);
+      const msg = String((e && (e.message || e)) || '');
+      if (e && e.name === 'AbortError') return j({ error: 'Vapi не ответил вовремя. Попробуйте ещё раз.' }, 504);
+      if (/wallet|balance|credit|insufficient/i.test(msg)) return j({ error: 'На счёте Vapi недостаточно средств. Пополните баланс Vapi (Wallet), чтобы совершать звонки.', code: 'vapi_balance' }, 402);
+      return j({ error: 'Звонок не удался: ' + msg }, 502);
+    }
   }
 
   // ── SETTINGS PUT / password ──
