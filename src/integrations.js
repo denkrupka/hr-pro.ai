@@ -15,6 +15,25 @@ const VOICEMAIL_RULE = 'КРИТИЧЕСКИ ВАЖНО ПРО АВТООТВЕ�
 const VM_RX = /(оставьте|оставить|запишите|запиш(и|ите)).{0,20}сообщени|после\s+(звукового\s+)?сигнал|автоответчик|голосов\w*\s+почт|абонент\s+(недоступен|временно)|не\s+может\s+прин|zostaw\s+wiadomo|nagra\w+\s+wiadomo|po\s+sygnale|automatyczn\w+\s+sekretar|poczt\w*\s+głosow|niedostępn|leave\s+a\s+message|after\s+the\s+(tone|beep)|voice\s?mail|not\s+available|record\s+your\s+message|please\s+leave/i;
 function looksLikeVoicemail(transcript) { return VM_RX.test(String(transcript || '')); }
 
+const LANG_NAME = { ru: 'русском', pl: 'польском', en: 'английском', uk: 'украинском', de: 'немецком' };
+// Правило языка: вести на языке заявки; если кандидат отвечает на другом языке — продолжать на языке заявки, но зафиксировать язык кандидата.
+function languageRule(language) {
+  const L = LANG_NAME[language] || 'русском';
+  return `ЯЗЫК РАЗГОВОРА: веди беседу на ${L} языке — это язык заявки. Если кандидат отвечает на ДРУГОМ языке (например, украинском, польском, английском), НЕ переходи на его язык — вежливо продолжай на ${L}. При этом обязательно отметь в итоге, на каком языке фактически говорил кандидат, если он отличается от ${L}. `;
+}
+// Правило «не звонить».
+const OPT_OUT_RULE = 'ЕСЛИ ПРОСЯТ НЕ ЗВОНИТЬ: если собеседник раздражён, просит больше ему не звонить, говорит что с ним уже связывались/звонили по этому вопросу, называет это спамом или не хочет разговаривать — искренне извинись за беспокойство, спокойно скажи, что больше не побеспокоишь и удалишь его контакт из обзвона, вежливо попрощайся и СРАЗУ заверши звонок (функция завершения). НЕ настаивай, НЕ продолжай опрос, НЕ уговаривай. ';
+// Универсальные поля отчёта из любого звонка.
+function withUniversalFields(schema) {
+  const extra = {
+    spoken_language: { type: 'string', description: 'Язык, на котором ФАКТИЧЕСКИ говорил кандидат, если он ОТЛИЧАЕТСЯ от языка звонка (например: "украинский"). Оставь пустым, если кандидат говорил на языке звонка.' },
+    do_not_call: { type: 'boolean', description: 'true, если кандидат попросил больше ему не звонить, был против звонков, назвал это спамом или просил не беспокоить.' },
+    already_contacted: { type: 'boolean', description: 'true, если кандидат сказал, что с ним уже связывались или уже звонили по этому вопросу.' },
+  };
+  if (!schema || typeof schema !== 'object') return { type: 'object', properties: { ...extra } };
+  return { ...schema, properties: { ...(schema.properties || {}), ...extra } };
+}
+
 // Описание провайдеров: какие поля нужны и где взять ключ (показывается в UI).
 const PROVIDERS = {
   resend: {
@@ -217,9 +236,10 @@ async function startCall(settings, { to, task, firstMessage, language, structure
       { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' },
     ],
   };
-  if (structuredDataSchema) analysisPlan.structuredDataPlan = {
+  // Структурные данные извлекаем ВСЕГДА: к переданной схеме добавляем универсальные поля (язык кандидата, «не звонить», повторный контакт).
+  analysisPlan.structuredDataPlan = {
     enabled: true,
-    schema: structuredDataSchema,
+    schema: withUniversalFields(structuredDataSchema),
     messages: [
       { role: 'system', content: 'Извлеки ответы из расшифровки звонка строго по JSON-схеме. Если на пункт не ответили — оставь поле пустым. Верни только данные по схеме.' },
       { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' },
@@ -236,7 +256,7 @@ async function startCall(settings, { to, task, firstMessage, language, structure
   } else {
     // Временный ассистент: GPT-4o mini + голос ElevenLabs (если настроен)
     body.assistant = {
-      model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: VOICEMAIL_RULE + 'Ты — вежливый HR-ассистент компании. Говори кратко и по делу. Задание: ' + (task || 'тестовый звонок — поздоровайся и попрощайся.') }] },
+      model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: VOICEMAIL_RULE + languageRule(language) + OPT_OUT_RULE + 'Ты — вежливый HR-ассистент компании. Говори кратко и по делу. Задание: ' + (task || 'тестовый звонок — поздоровайся и попрощайся.') }] },
       firstMessage: firstMessage || 'Здравствуйте! Это ассистент отдела подбора персонала.',
       transcriber: { provider: 'deepgram', model: 'nova-2', language: language || 'ru' },
       endCallFunctionEnabled: true,
@@ -252,7 +272,7 @@ async function startCall(settings, { to, task, firstMessage, language, structure
   }
   // Детект автоответчика/голосовой почты: попали на voicemail → модель сама вешает трубку (endCallFunctionEnabled + VOICEMAIL_RULE),
   // voicemailMessage не задаём. Аудио-детект provider 'vapi' (BYO-SIP Zadarma) настроен на раннее срабатывание.
-  const vmDetect = { provider: 'vapi', backoffPlan: { maxRetries: 6, startAtSeconds: 2, frequencySeconds: 2.5 } };
+  const vmDetect = { provider: 'vapi', backoffPlan: { maxRetries: 12, startAtSeconds: 2, frequencySeconds: 2.5 } };
   if (body.assistantOverrides) { body.assistantOverrides.voicemailDetection = vmDetect; body.assistantOverrides.endCallFunctionEnabled = true; }
   if (body.assistant) body.assistant.voicemailDetection = vmDetect;
   const d = await http('https://api.vapi.ai/call', {
@@ -275,10 +295,13 @@ async function getCall(settings, callId) {
   const endedReason = d && d.endedReason;
   const transcript = (d && d.transcript) || (art.transcript) || null;
   const voicemail = /voicemail/i.test(String(endedReason || '')) || looksLikeVoicemail(transcript);
+  const sd = a.structuredData || null;
   return {
     ok: true, id: d && d.id, status: d && d.status, endedReason,
     noAnswer: isNoAnswer(endedReason) || voicemail, voicemail,
-    transcript, summary: a.summary || null, structuredData: a.structuredData || null,
+    doNotCall: !!(sd && sd.do_not_call), spokenLanguage: (sd && sd.spoken_language) || null, alreadyContacted: !!(sd && sd.already_contacted),
+    customerNumber: (d && d.customer && d.customer.number) || null,
+    transcript, summary: a.summary || null, structuredData: sd,
     recordingUrl, startedAt, endedAt, durationSec,
   };
 }

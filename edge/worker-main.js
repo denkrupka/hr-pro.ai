@@ -1712,6 +1712,31 @@ async function api(req, env, url, exec) {
       const r = await vapiGetCall(env, callId, ctrl.signal);
       clearTimeout(timer);
       if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
+      // Кандидат попросил больше не звонить → отметить в системе (список do-not-call) и один раз уведомить рекрутёра по email.
+      if (r.doNotCall) {
+        me.aiDncList = Array.isArray(me.aiDncList) ? me.aiDncList : [];
+        me.aiDncNotified = Array.isArray(me.aiDncNotified) ? me.aiDncNotified : [];
+        const num = r.customerNumber || '';
+        if (num && !me.aiDncList.some(x => x.number === num)) me.aiDncList.unshift({ number: num, at: new Date().toISOString(), callId });
+        me.aiDncList = me.aiDncList.slice(0, 500);
+        if (!me.aiDncNotified.includes(callId)) {
+          me.aiDncNotified.push(callId); me.aiDncNotified = me.aiDncNotified.slice(-500);
+          if (env.RESEND_API_KEY && me.email) {
+            try {
+              const lang = ['ru', 'pl', 'en'].includes((me.settings && me.settings.uiLang)) ? me.settings.uiLang : 'ru';
+              const T = { ru: { subj: 'Кандидат просит больше не звонить', head: 'Кандидат отказался от звонков', body: `По результатам ИИ-звонка кандидат <b>${num || 'номер неизвестен'}</b> попросил больше ему не звонить${r.alreadyContacted ? ' (сказал, что с ним уже связывались)' : ''}. Его контакт добавлен в список «не звонить». ИИ извинился и завершил звонок.` },
+                pl: { subj: 'Kandydat prosi, aby więcej nie dzwonić', head: 'Kandydat zrezygnował z rozmów', body: `Podczas rozmowy z AI kandydat <b>${num || 'nieznany numer'}</b> poprosił, aby więcej nie dzwonić${r.alreadyContacted ? ' (powiedział, że już się z nim kontaktowano)' : ''}. Kontakt dodano do listy „nie dzwonić". AI przeprosiło i zakończyło rozmowę.` },
+                en: { subj: 'Candidate asks not to be called again', head: 'Candidate opted out of calls', body: `During the AI call, candidate <b>${num || 'unknown number'}</b> asked not to be called again${r.alreadyContacted ? ' (said they were already contacted)' : ''}. The contact was added to the do-not-call list. The AI apologized and ended the call.` } }[lang];
+              const summaryHtml = r.summary ? `<br><br><b>Итог звонка:</b><br>${String(r.summary).slice(0, 800).replace(/\n/g, '<br>')}` : '';
+              const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: T.subj, eyebrow: T.subj, headline: T.head, bodyHtml: T.body + summaryHtml });
+              await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [me.email], subject: T.subj, html }) });
+              r.recruiterNotified = true;
+            } catch (e) { r.recruiterNotifyError = String(e && (e.message || e)); }
+          }
+          await saveUser(me);
+        }
+      }
       return j(r);
     } catch (e) { clearTimeout(timer); return j({ error: String(e && (e.message || e)) }, 502); }
   }
