@@ -1731,15 +1731,27 @@ async function api(req, env, url, exec) {
       knowledge_score: { type: 'number', description: 'Оценка знаний по профессии от 1 до 5' },
       interested: { type: 'boolean', description: 'Подтвердил ли интерес к вакансии' },
     } };
+    if (body.diag) {
+      // Диагностика достижимости Vapi из воркера: чистый fetch с AbortController, точная ошибка.
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      try {
+        const dr = await fetch('https://api.vapi.ai/phone-number/' + encodeURIComponent(env.VAPI_PHONE_NUMBER_ID),
+          { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY }, signal: ctrl.signal });
+        clearTimeout(timer);
+        const dt = await dr.text();
+        return j({ diag: true, status: dr.status, ok: dr.ok, body: dt.slice(0, 300) });
+      } catch (e) {
+        clearTimeout(timer);
+        return j({ diag: true, error: true, name: e && e.name, message: String(e && (e.message || e)) });
+      }
+    }
     try {
-      const r = await Promise.race([
-        vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
-          structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('таймаут запроса к Vapi (проверьте настройку номера/интеграции)')), 8000)),
-      ]);
+      const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
+        structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
       if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
       return j({ ok: true, callId: r.callId, status: r.status });
-    } catch (e) { return j({ error: 'Звонок не удался: ' + (e.message || e) }, 502); }
+    } catch (e) { return j({ error: 'Звонок не удался: ' + (e && (e.message || e)) }, 502); }
   }
 
   // ── SETTINGS PUT / password ──
