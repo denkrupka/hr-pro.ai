@@ -124,12 +124,15 @@ export async function buildInboundAssistant(env, S, caller) {
     p.__rq = (p.__vac && p.__vac.requisitionId) ? await S.one('requisitions', p.__vac.requisitionId) : null;
     if (p.__vac) p.__vacName = p.__vac.name;
   }
-  const name = ((matches[0].name || '') + ' ' + (matches[0].surname || '')).trim() || 'кандидат';
+  // Приоритетная запись — с непустым именем (для приветствия и языка), иначе первая.
+  const primaryIdx = Math.max(0, matches.findIndex(p => ((p.name || '') + (p.surname || '')).trim()));
+  const primary = matches[primaryIdx];
+  const name = ((primary.name || '') + ' ' + (primary.surname || '')).trim() || 'кандидат';
   const apps = matches.map(p => {
     const sb = buildStatusBlock(p, p.__vac, p.__owner, (p.__vac && p.__vac.lang) || 'ru');
     return { company: sb.company, position: sb.position, lang: sb.lang, block: sb.block, vacInfo: vacancyInfo(p.__vac, p.__rq) };
   });
-  const lang = apps[0].lang || 'ru';
+  const lang = apps[primaryIdx].lang || 'ru';
   const companies = [...new Set(apps.map(a => a.company).filter(Boolean))];
   const positions = [...new Set(apps.map(a => a.position).filter(Boolean))];
   const multi = apps.length > 1 && (companies.length > 1 || positions.length > 1);
@@ -157,8 +160,9 @@ export async function buildInboundAssistant(env, S, caller) {
   const b2 = { ...base };
   b2.transcriber = { provider: 'deepgram', model: 'nova-2', language: lang };
   b2.voice = env.ELEVENLABS_API_KEY ? { provider: '11labs', voiceId: VOICE_BY_LANG[lang] || VOICE_BY_LANG.ru, model: 'eleven_multilingual_v2' } : b2.voice;
-  const first = lang === 'pl' ? `Dzień dobry, ${matches[0].name || ''}! Tu ${agent}. Miło, że Pan/Pani dzwoni. W czym mogę pomóc?`
-    : lang === 'en' ? `Hello, ${matches[0].name || ''}! This is ${agent}. Glad you called. How can I help you?`
-    : `Здравствуйте, ${matches[0].name || ''}! Меня зовут ${agent}. Рада, что вы позвонили. Чем могу помочь?`;
+  const fn = primary.name || '';
+  const first = lang === 'pl' ? `Dzień dobry${fn ? ', ' + fn : ''}! Tu ${agent}. Miło, że Pan/Pani dzwoni. W czym mogę pomóc?`
+    : lang === 'en' ? `Hello${fn ? ', ' + fn : ''}! This is ${agent}. Glad you called. How can I help you?`
+    : `Здравствуйте${fn ? ', ' + fn : ''}! Меня зовут ${agent}. Рада, что вы позвонили. Чем могу помочь?`;
   return { assistant: { ...b2, firstMessage: first, model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }] } }, meta: { matched: true, apps: apps.length, name } };
 }
