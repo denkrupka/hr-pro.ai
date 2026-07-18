@@ -3,7 +3,7 @@ const VOICE_BY_LANG = { ru: 'ymDCYd8puC7gYjxIamPt', pl: 'd4Z5Fvjohw3zxGpV8XUV', 
 
 export function vapiConfigured(env) { return !!(env && env.VAPI_API_KEY && env.VAPI_PHONE_NUMBER_ID); }
 
-export async function startCall(env, { to, task, firstMessage, language, structuredDataSchema, summaryPrompt, maxDurationMin }) {
+export async function startCall(env, { to, task, firstMessage, language, structuredDataSchema, summaryPrompt, maxDurationMin, signal }) {
   if (!env.VAPI_API_KEY) return { skipped: true, reason: 'Vapi не настроен' };
   if (!env.VAPI_PHONE_NUMBER_ID) return { skipped: true, reason: 'Vapi: не указан Phone Number ID' };
   const body = { phoneNumberId: env.VAPI_PHONE_NUMBER_ID, customer: { number: String(to) } };
@@ -28,7 +28,7 @@ export async function startCall(env, { to, task, firstMessage, language, structu
   if (maxDurationSeconds) body.assistant.maxDurationSeconds = maxDurationSeconds;
   const r = await fetch('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body), signal,
   });
   const d = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error('Vapi: ' + ((d && d.message) || r.status));

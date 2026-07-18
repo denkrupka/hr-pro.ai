@@ -1746,6 +1746,20 @@ async function api(req, env, url, exec) {
         return j({ diag: true, error: true, name: e && e.name, message: String(e && (e.message || e)) });
       }
     }
+    if (body.diagCall) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 25000);
+      const t0 = Date.now();
+      try {
+        const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8, signal: ctrl.signal,
+          structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
+        clearTimeout(timer);
+        return j({ diagCall: true, ok: true, ms: Date.now() - t0, callId: r.callId, status: r.status });
+      } catch (e) {
+        clearTimeout(timer);
+        return j({ diagCall: true, error: true, ms: Date.now() - t0, name: e && e.name, message: String(e && (e.message || e)) });
+      }
+    }
     try {
       const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8,
         structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
