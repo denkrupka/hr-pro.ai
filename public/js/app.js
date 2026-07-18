@@ -4698,7 +4698,7 @@ function tourSteps() {
     { sel: '[data-view="candidates"]', tag: tt('t3_tag'), title: tt('t3_t'), body: tt('t3_b') },
     { sel: '[data-view="calendar"]', tag: tt('t4_tag'), title: tt('t4_t'), body: tt('t4_b') },
     { sel: '[data-view="education"]', tag: tt('t5_tag'), title: tt('t5_t'), body: tt('t5_b') },
-    { sel: '[data-view="balance"]', tag: tt('t6_tag'), title: tt('t6_t'), body: tt('t6_b') },
+    { sel: '.tests-chip', tag: tt('t6_tag'), title: tt('t6_t'), body: tt('t6_b') },
   ];
 }
 let tourS = { i: 0, steps: [] };
