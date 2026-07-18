@@ -992,6 +992,37 @@ app.post('/api/settings/password', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+// ---------- УВЕДОМЛЕНИЯ (паритет с edge) ----------
+app.get('/api/notifications', requireAuth, (req, res) => {
+  const list = Array.isArray(req.user.notifs) ? req.user.notifs : [];
+  res.json({ notifs: list.slice(0, 50), unread: list.filter(n => !n.read).length });
+});
+app.post('/api/notifications/read', requireAuth, (req, res) => {
+  const ids = Array.isArray(req.body && req.body.ids) ? req.body.ids : null;
+  req.user.notifs = (req.user.notifs || []).map(n => ((!ids || ids.includes(n.id)) ? { ...n, read: true } : n));
+  save(); res.json({ ok: true, unread: req.user.notifs.filter(n => !n.read).length });
+});
+app.get('/api/notif-catalog', requireAuth, (req, res) => {
+  const ps = (typeof portalSettings === 'function' ? portalSettings() : {}) || {};
+  const botToken = process.env.TELEGRAM_BOT_TOKEN || ps.telegramBotToken || '';
+  const tg = (req.user.settings && req.user.settings.telegram) || {};
+  res.json({ cats: notif.notifCatalog(), prefs: (req.user.settings && req.user.settings.notifPrefs) || notif.defaultNotifPrefs(),
+    telegram: { connected: !!tg.chatId, username: tg.username || '', botAvailable: !!botToken } });
+});
+app.post('/api/telegram/connect', requireAuth, (req, res) => {
+  const ps = (typeof portalSettings === 'function' ? portalSettings() : {}) || {};
+  const botUser = ps.telegramBotUsername || ''; const botToken = process.env.TELEGRAM_BOT_TOKEN || ps.telegramBotToken || '';
+  if (!botUser || !botToken) return res.status(503).json({ error: 'Telegram-бот не настроен' });
+  req.user.settings = req.user.settings || {}; req.user.settings.telegram = req.user.settings.telegram || {};
+  const token = (req.user.id.slice(0, 6) + Math.random().toString(36).slice(2, 12)).replace(/[^a-z0-9]/gi, '');
+  req.user.settings.telegram.connectToken = token; save();
+  res.json({ ok: true, link: `https://t.me/${botUser}?start=${token}`, bot: botUser });
+});
+app.post('/api/telegram/disconnect', requireAuth, (req, res) => {
+  if (req.user.settings && req.user.settings.telegram) { req.user.settings.telegram = {}; save(); }
+  res.json({ ok: true });
+});
+
 // ---------- VACANCY STATS ----------
 app.get('/api/stats/vacancies', requireAuth, (req, res) => {
   const data = db();
@@ -1258,6 +1289,7 @@ app.post('/api/a/:slug/apply', (req, res) => {
   // кандидат попал в воронку: звонок ИИ «первый контакт» и автоотправка первого теста процесса
   try { if (owner && avac) { aiCallFor(owner, p, avac, 'first'); advanceFunnel(p); } }
   catch (e) { console.error('[funnel:apply]', e.message); }
+  try { if (owner) { const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат'; notif.pushNotif(owner, 'cand_new', { title: 'Новый кандидат: ' + cand, body: (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + 'Отклик через анкету «' + a.title + '»' + (avac && avac.name ? '\nВакансия: ' + avac.name : ''), pid: p.id }, save); } } catch (e) {}
   save();
   res.json({ ok: true, links, msgApply: a.msgApply, msgDone: a.msgDone });
 });
@@ -1582,6 +1614,8 @@ app.post('/api/take/:code/submit', (req, res) => {
       if (test.type === 'result') aiCallFor(u, p, vac, 'afterResult');
       if (test.type === 'tools') { aiCallFor(u, p, vac, 'afterTools'); aiCallFor(u, p, vac, 'motivation'); }
       advanceFunnel(p);
+      const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || p.tel || 'кандидат';
+      notif.pushNotif(u, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: p.id }, save);
     }
   } catch (e) { console.error('[funnel]', e.message); }
   save();

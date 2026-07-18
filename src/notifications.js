@@ -39,11 +39,13 @@ function notifCatalog() {
 }
 
 // user — объект рекрутёра (владельца). save — функция сохранения БД. mutates user.notifs, шлёт email/telegram по настройкам.
-async function pushNotif(user, typeKey, { title, body = '', link = '' } = {}, save) {
+async function pushNotif(user, typeKey, { title, body = '', link = '', pid = '' } = {}, save) {
   if (!user || !user.id) return;
   const t = TYPE[typeKey] || { cat: 'workflow' };
   const pr = prefsFor(user, typeKey);
-  const n = { id: typeKey + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), type: typeKey, cat: t.cat, title: String(title || t.label || ''), body: String(body || ''), link: String(link || ''), ts: new Date().toISOString(), read: false };
+  const base = (process.env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+  const cardUrl = pid ? `${base}/app?openc=${pid}` : (link || '');
+  const n = { id: typeKey + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), type: typeKey, cat: t.cat, title: String(title || t.label || ''), body: String(body || ''), link: cardUrl, pid: String(pid || ''), ts: new Date().toISOString(), read: false };
   if (pr.push !== false) {
     user.notifs = Array.isArray(user.notifs) ? user.notifs : [];
     user.notifs.unshift(n);
@@ -55,7 +57,9 @@ async function pushNotif(user, typeKey, { title, body = '', link = '' } = {}, sa
   const tg = (user.settings && user.settings.telegram) || {};
   const botToken = (integ.cfgOf ? (integ.cfgOf(user.settings, 'telegram') || {}).token : '') || process.env.TELEGRAM_BOT_TOKEN || '';
   if (pr.telegram && botToken && tg.chatId) {
-    try { await fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: tg.chatId, text: '<b>' + n.title + '</b>' + (n.body ? '\n' + n.body : ''), parse_mode: 'HTML' }) }); } catch (_) {}
+    const tmsg = { chat_id: tg.chatId, text: '<b>' + n.title + '</b>' + (n.body ? '\n' + n.body : ''), parse_mode: 'HTML' };
+    if (n.link) tmsg.reply_markup = { inline_keyboard: [[{ text: '👤 Открыть карточку кандидата', url: n.link }]] };
+    try { await fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(tmsg) }); } catch (_) {}
   }
   if (typeof save === 'function') await save();
   return n;
