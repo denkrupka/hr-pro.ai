@@ -48,7 +48,7 @@ const INBOUND_SCHEMA = { type: 'object', properties: {
   ai_could_not_answer: { type: 'string', description: 'Что ассистент НЕ смог ответить (если было).' },
   call_topic: { type: 'string', description: 'С чем обратился кандидат / тема звонка.' },
 } };
-const RECRUITER_RX = /рекрут[её]р\S*\s+(перезвонит|свяж|перезвон)|переда\S+\s+(вас\s+)?рекрут|свяж\S+\s+(вас\s+)?с\s+рекрут|соедини\S*\s+с\s+(рекрут|человек|менеджер)|(хочу|можно|соедините|позовите).{0,20}(с\s+)?(живым\s+)?(человеком|рекрут)/i;
+const RECRUITER_RX = /рекрут[её]р\S*.{0,25}(перезвонит|свяж|перезвон)|переда\S+.{0,15}рекрут|соедини\S*.{0,15}(рекрут|человек|менеджер)|(хочу|можно|соедините|позовите|позвать|дайте|можете|свяжите).{0,25}(живым\s+)?(человеком|рекрут)/i;
 export function wantsRecruiter(sd, summary, transcript) {
   if (sd && sd.recruiter_callback_requested === true) return true;
   if (/РЕКРУТ[ЁЕ]Р:\s*да/i.test(String(summary || ''))) return true;
