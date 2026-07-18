@@ -26,6 +26,9 @@ export async function startCall(env, { to, task, firstMessage, language, structu
   else body.assistant.voice = { provider: 'azure', voiceId: (language === 'pl' ? 'pl-PL-AgnieszkaNeural' : language === 'en' ? 'en-US-JennyNeural' : 'ru-RU-SvetlanaNeural') };
   if (Object.keys(analysisPlan).length) body.assistant.analysisPlan = analysisPlan;
   if (maxDurationSeconds) body.assistant.maxDurationSeconds = maxDurationSeconds;
+  // Детект автоответчика/голосовой почты. provider 'vapi' — аудио-классификация, работает с BYO-SIP (Zadarma).
+  // voicemailMessage НЕ задаём → при обнаружении голосовой почты Vapi сразу вешает трубку (endedReason 'voicemail') = «не дозвонился».
+  body.assistant.voicemailDetection = { provider: 'vapi' };
   const r = await fetch('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify(body), signal,
@@ -46,9 +49,16 @@ export async function getCall(env, callId, signal) {
   const recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || null;
   const startedAt = d.startedAt || null, endedAt = d.endedAt || null;
   const durationSec = (startedAt && endedAt) ? Math.max(0, Math.round((new Date(endedAt) - new Date(startedAt)) / 1000)) : (d.durationSeconds || null);
+  const endedReason = d && d.endedReason;
   return {
-    ok: true, id: d && d.id, status: d && d.status, endedReason: d && d.endedReason,
+    ok: true, id: d && d.id, status: d && d.status, endedReason,
+    noAnswer: isNoAnswer(endedReason), voicemail: /voicemail/i.test(String(endedReason || '')),
     transcript: (d && d.transcript) || art.transcript || null, summary: a.summary || null, structuredData: a.structuredData || null,
     recordingUrl, startedAt, endedAt, durationSec,
   };
+}
+
+// Исход «не дозвонился» (как будто не взяли трубку): голосовая почта, нет ответа, занято, отклонён.
+export function isNoAnswer(endedReason) {
+  return /voicemail|no-answer|did-not-answer|customer-busy|\bbusy\b|no-?answer|not-?answer|rejected|declined/i.test(String(endedReason || ''));
 }

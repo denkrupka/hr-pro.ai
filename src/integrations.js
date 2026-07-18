@@ -242,6 +242,11 @@ async function startCall(settings, { to, task, firstMessage, language, structure
     body.assistant.artifactPlan = artifactPlan;
     if (maxDurationSeconds) body.assistant.maxDurationSeconds = maxDurationSeconds;
   }
+  // Детект автоответчика/голосовой почты: попали на voicemail → Vapi сразу вешает трубку (voicemailMessage не задаём) → «не дозвонился».
+  // provider 'vapi' — аудио-классификация, работает с BYO-SIP (Zadarma).
+  const vmDetect = { provider: 'vapi' };
+  if (body.assistantOverrides) body.assistantOverrides.voicemailDetection = vmDetect;
+  if (body.assistant) body.assistant.voicemailDetection = vmDetect;
   const d = await http('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + c.apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -259,11 +264,17 @@ async function getCall(settings, callId) {
   const recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || null;
   const startedAt = d.startedAt || null, endedAt = d.endedAt || null;
   const durationSec = (startedAt && endedAt) ? Math.max(0, Math.round((new Date(endedAt) - new Date(startedAt)) / 1000)) : (d.durationSeconds || null);
+  const endedReason = d && d.endedReason;
   return {
-    ok: true, id: d && d.id, status: d && d.status, endedReason: d && d.endedReason,
+    ok: true, id: d && d.id, status: d && d.status, endedReason,
+    noAnswer: isNoAnswer(endedReason), voicemail: /voicemail/i.test(String(endedReason || '')),
     transcript: (d && d.transcript) || (art.transcript) || null, summary: a.summary || null, structuredData: a.structuredData || null,
     recordingUrl, startedAt, endedAt, durationSec,
   };
+}
+// Исход «не дозвонился» (как будто не взяли трубку): голосовая почта, нет ответа, занято, отклонён.
+function isNoAnswer(endedReason) {
+  return /voicemail|no-answer|did-not-answer|customer-busy|\bbusy\b|no-?answer|not-?answer|rejected|declined/i.test(String(endedReason || ''));
 }
 async function vapiPing(settings) {
   const c = cfgOf(settings, 'vapi');
@@ -293,4 +304,4 @@ async function zadarmaBalance(settings) {
   return { ok: true, balance: d.balance, currency: d.currency };
 }
 
-module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, vapiPing, zadarmaBalance, zadarmaRequest };
+module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, isNoAnswer, vapiPing, zadarmaBalance, zadarmaRequest };
