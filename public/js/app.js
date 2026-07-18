@@ -2064,6 +2064,7 @@ async function renderDashboard() {
       <div class="pt-head"><div class="eyebrow">${t('dash_overview')}</div><h1 class="ptitle">${t('dash_title')}</h1></div>
       <div class="pt-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round"/></svg><input id="dash-search" placeholder="${t('search_cand_ph')}"></div>
       <button class="tests-chip" onclick="setView('balance')" title="${t('balance')}"><svg viewBox="0 0 24 24" fill="none" stroke="#43e0a0" stroke-width="1.9"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18" stroke-linecap="round"/></svg><b class="num">${tot.balance}</b><span>${t('tests_word')}</span></button>
+      <button class="notif-bell" id="notif-bell" title="Уведомления"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="notif-badge" id="notif-badge" hidden>0</span></button>
       <button class="btn pt-send" id="dash-open-send">＋ ${t('send_test')}</button>
     </div>
     <div class="dash-banner reveal"><canvas id="neuPortal"></canvas>
@@ -2092,7 +2093,81 @@ async function renderDashboard() {
   portalNet('neuPortal');
   $('#dash-open-send').onclick = () => openSendModal(vacsD.vacancies, vacOptions);
   $$('.rrow[data-pid]').forEach(r => r.onclick = () => openParticipant(r.dataset.pid));
+  initNotifBell();
   maybeStartTour();   // онбординг-тур при первом входе
+}
+
+// ── Центр уведомлений (колокольчик + панель) ──
+let _notifTimer = null;
+function initNotifBell() {
+  const bell = $('#notif-bell'); if (!bell) return;
+  bell.onclick = (e) => { e.stopPropagation(); toggleNotifPanel(); };
+  loadNotifs();
+  if (_notifTimer) clearInterval(_notifTimer);
+  _notifTimer = setInterval(loadNotifs, 45000);
+}
+async function loadNotifs() {
+  try {
+    const d = await api('/api/notifications');
+    window._notifs = d.notifs || [];
+    const b = $('#notif-badge'); if (b) { if (d.unread > 0) { b.hidden = false; b.textContent = d.unread > 99 ? '99+' : d.unread; } else b.hidden = true; }
+    const panel = $('#notif-panel'); if (panel) panel.querySelector('.np-list').innerHTML = notifListHtml(window._notifs);
+  } catch (e) {}
+}
+function notifListHtml(list) {
+  if (!list || !list.length) return `<div class="np-empty">Пока нет уведомлений</div>`;
+  const ago = (ts) => { const s = Math.floor((Date.now() - new Date(ts)) / 1000); if (s < 60) return 'только что'; if (s < 3600) return Math.floor(s / 60) + ' мин назад'; if (s < 86400) return Math.floor(s / 3600) + ' ч назад'; return Math.floor(s / 86400) + ' дн назад'; };
+  const ic = { calls: '📞', tests: '📝', candidates: '👤', references: '🗣️', workflow: '📊' };
+  return list.map(n => `<div class="np-item ${n.read ? '' : 'unread'}"><div class="np-ic">${ic[n.cat] || '🔔'}</div><div class="np-txt"><b>${esc(n.title || '')}</b>${n.body ? `<span>${esc(n.body).replace(/\n/g, '<br>')}</span>` : ''}<i>${ago(n.ts)}</i></div></div>`).join('');
+}
+function toggleNotifPanel() {
+  let panel = $('#notif-panel');
+  if (panel) { panel.remove(); document.removeEventListener('click', _closeNotifOnOut); return; }
+  panel = document.createElement('div'); panel.id = 'notif-panel'; panel.className = 'notif-panel';
+  panel.innerHTML = `<div class="np-head"><b>Уведомления</b><button class="np-read" id="np-read-all">Прочитать все</button></div><div class="np-list">${notifListHtml(window._notifs || [])}</div>`;
+  const bell = $('#notif-bell'); bell.parentElement.style.position = bell.parentElement.style.position || 'relative';
+  document.body.appendChild(panel);
+  const r = bell.getBoundingClientRect();
+  panel.style.top = (r.bottom + 8) + 'px'; panel.style.right = (window.innerWidth - r.right) + 'px';
+  $('#np-read-all').onclick = async () => { try { await api('/api/notifications/read', { method: 'POST', body: '{}' }); await loadNotifs(); toggleNotifPanel(); } catch (e) {} };
+  setTimeout(() => document.addEventListener('click', _closeNotifOnOut), 0);
+}
+function _closeNotifOnOut(e) { const panel = $('#notif-panel'); if (panel && !panel.contains(e.target) && !e.target.closest('#notif-bell')) { panel.remove(); document.removeEventListener('click', _closeNotifOnOut); } }
+// Грид настроек уведомлений (категории × каналы)
+async function renderNotifGrid() {
+  const box = $('#notif-grid'); if (!box) return;
+  try {
+    const d = await api('/api/notif-catalog'); window._notifCat = d;
+    const chans = [['push', 'Портал'], ['email', 'Email'], ['telegram', 'Telegram']];
+    let html = `<div class="ng-title">Уведомления по событиям</div>`;
+    for (const c of d.cats) {
+      html += `<div class="ng-cat">${esc(c.label)}</div><div class="ng-tbl"><div class="ng-hr"><span>Событие</span>${chans.map(ch => `<span>${ch[1]}</span>`).join('')}</div>`;
+      for (const ty of c.types) {
+        const pr = d.prefs[ty.key] || {};
+        html += `<div class="ng-row"><span class="ng-lbl">${esc(ty.label)}</span>${chans.map(ch => `<span><input type="checkbox" data-np="${ty.key}" data-npc="${ch[0]}" ${(ch[0] === 'push' ? pr.push !== false : !!pr[ch[0]]) ? 'checked' : ''}></span>`).join('')}</div>`;
+      }
+      html += `</div>`;
+    }
+    if (!d.telegram.botAvailable) html += `<div class="muted" style="margin-top:8px;font-size:12px">Telegram-уведомления недоступны (бот не настроен).</div>`;
+    else if (!d.telegram.connected) html += `<div class="muted" style="margin-top:8px;font-size:12px">Чтобы получать в Telegram — подключите его во вкладке «Профиль».</div>`;
+    box.innerHTML = html;
+  } catch (e) { box.innerHTML = ''; }
+}
+function collectNotifPrefs() { const prefs = {}; $$('input[data-np]').forEach(cb => { const k = cb.dataset.np, c = cb.dataset.npc; (prefs[k] = prefs[k] || {})[c] = cb.checked; }); return prefs; }
+// Карточка подключения Telegram (в профиле)
+async function renderTgConnect() {
+  const box = $('#tg-connect'); if (!box) return;
+  try {
+    const d = await api('/api/notif-catalog'); const tg = d.telegram || {};
+    if (!tg.botAvailable) { box.innerHTML = `<div class="tg-in"><div class="tg-t"><b>Telegram-уведомления</b><span>Бот пока не настроен.</span></div></div>`; return; }
+    if (tg.connected) {
+      box.innerHTML = `<div class="tg-in"><div class="tg-t"><b>Telegram подключён ✓</b><span>${tg.username ? '@' + esc(tg.username) : 'Уведомления приходят в Telegram'}</span></div><button type="button" class="btn ghost sm danger" id="tg-off">Отключить</button></div>`;
+      $('#tg-off').onclick = async () => { try { await api('/api/telegram/disconnect', { method: 'POST', body: '{}' }); renderTgConnect(); } catch (e) {} };
+    } else {
+      box.innerHTML = `<div class="tg-in"><div class="tg-t"><b>Telegram-уведомления</b><span>Подключите, чтобы получать важные уведомления в Telegram.</span></div><button type="button" class="btn sm" id="tg-on">Подключить Telegram</button></div>`;
+      $('#tg-on').onclick = async () => { try { const r = await api('/api/telegram/connect', { method: 'POST', body: '{}' }); window.open(r.link, '_blank'); toast('Откройте бота и нажмите «Старт»'); setTimeout(renderTgConnect, 6000); } catch (e) { toast(e.message); } };
+    }
+  } catch (e) { box.innerHTML = ''; }
 }
 // плюрализация «кандидат» по числу
 function candWord(n) { n = Math.abs(n) % 100; const n1 = n % 10; if (n > 10 && n < 20) return t('cand_word_5'); if (n1 > 1 && n1 < 5) return t('cand_word_2'); if (n1 === 1) return t('cand_word_1'); return t('cand_word_5'); }
@@ -3959,7 +4034,10 @@ function settingsBody(u) {
           <button type="button" class="btn ghost sm" id="logo-btn">${t(`prof_upload`)}</button>
           <button type="button" class="btn ghost sm danger ${s.logo ? '' : 'hidden'}" id="logo-clear">${t(`prof_remove`)}</button></div>
         <input type="hidden" id="st-logo" value="${esc(s.logo || '')}"></div>
-    </div><button class="btn" style="margin-top:16px" id="st-save">${t(`save`)}</button></div>`;
+    </div>
+    <div id="tg-connect" class="tg-card"></div>
+    <button class="btn" style="margin-top:16px" id="st-save">${t(`save`)}</button></div>`;
+    renderTgConnect();
     $('#logo-btn').onclick = () => $('#logo-file').click();
     $('#logo-file').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => openLogoCrop(r.result, url => { $('#st-logo').value = url; $('#logo-prev').innerHTML = `<img src="${url}">`; $('#logo-clear').classList.remove('hidden'); }); r.readAsDataURL(f); e.target.value = ''; };
     $('#logo-clear').onclick = () => { $('#st-logo').value = ''; $(`#logo-prev`).innerHTML = `<span class="muted">${t(`prof_no_logo`)}</span>`; $('#logo-clear').classList.add('hidden'); };
@@ -3977,9 +4055,11 @@ function settingsBody(u) {
       ${switchRow('notifyComment', t(`notif_comment`), s.notifyComment)}
       ${switchRow('searchAllAccounts', t(`notif_search`), s.searchAllAccounts)}
       ${switchRow('askPersonalData', t(`notif_personal`), s.askPersonalData)}
+      <div id="notif-grid" class="notif-grid-wrap"><div class="muted" style="padding:10px 0">Загрузка…</div></div>
       <button class="btn" style="margin-top:18px" id="st-save">${t(`save`)}</button></div>`;
     $$('.switch[data-switch]').forEach(sw => sw.onclick = () => sw.classList.toggle('on'));
-    $('#st-save').onclick = () => { const g = id => $('.switch[data-switch="' + id + '"]').classList.contains('on'); saveSettings({ notifySms: g('notifySms'), notifyComment: g('notifyComment'), searchAllAccounts: g('searchAllAccounts'), askPersonalData: g('askPersonalData') }); };
+    renderNotifGrid();
+    $('#st-save').onclick = () => { const g = id => $('.switch[data-switch="' + id + '"]').classList.contains('on'); saveSettings({ notifySms: g('notifySms'), notifyComment: g('notifyComment'), searchAllAccounts: g('searchAllAccounts'), askPersonalData: g('askPersonalData'), notifPrefs: collectNotifPrefs() }); };
   } else if (settingsTab === 'templates') {
     const langs = state.langs.length ? state.langs : Object.keys(LANG_NAME).map(c => ({ code: c, name: LANG_NAME[c] }));
     if (!langs.some(l => l.code === tplLang)) tplLang = langs[0].code;

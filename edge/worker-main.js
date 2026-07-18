@@ -20,6 +20,7 @@ import * as callSched from './call-scheduler-edge.js';
 import { vapiConfigured, startCall as vapiStartCall, getCall as vapiGetCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 import { buildInboundAssistant, parseEndReport as inboundParseEndReport } from './inbound-call.js';
+import { pushNotif, defaultNotifPrefs, notifCatalog, NOTIF_TYPES } from './notifications-edge.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
@@ -239,9 +240,41 @@ async function api(req, env, url, exec) {
   const body = (!isWebhook && (m === 'POST' || m === 'PUT')) ? await req.json().catch(() => ({})) : {};
   const S = supa(env);
 
-  async function settings() { const r = await S.select('settings', 'id=eq.portal&select=data'); return (r[0] && r[0].data) || {}; }
+  let _portal = null;
+  async function settings() { const r = await S.select('settings', 'id=eq.portal&select=data'); const d = (r[0] && r[0].data) || {}; _portal = d; return d; }
+  // env + токен Telegram-бота (лежит в настройках портала, т.к. Cloudflare env недоступен по API).
+  async function nenv() { const pt = _portal || await settings(); return { ...env, TELEGRAM_BOT_TOKEN: env.TELEGRAM_BOT_TOKEN || pt.telegramBotToken || '', BASE_URL: env.BASE_URL || url.origin }; }
 
   if (p === '/api/health') return j({ ok: true, edge: true, ts: Date.now() });
+
+  // Telegram-вебхук: /start <connectToken> привязывает чат к рекрутёру. Защита секретом (secret_token в заголовке).
+  if (p === '/api/telegram/webhook' && m === 'POST') {
+    try {
+      const pt = await settings();
+      const sec = pt.telegramWebhookSecret || '';
+      if (sec && req.headers.get('x-telegram-bot-api-secret-token') !== sec) return j({ ok: true });
+      const msg = body.message || body.edited_message || {};
+      const text = String(msg.text || '');
+      const chatId = msg.chat && msg.chat.id;
+      const mStart = text.match(/^\/start\s+([A-Za-z0-9_-]{6,})/);
+      const botToken = env.TELEGRAM_BOT_TOKEN || pt.telegramBotToken || '';
+      if (mStart && chatId && botToken) {
+        const token = mStart[1];
+        const rows = (await S.select('users', `data->settings->telegram->>connectToken=eq.${encodeURIComponent(token)}&select=data`)).map(r => r.data);
+        const u = rows[0];
+        if (u) {
+          u.settings = u.settings || {}; u.settings.telegram = u.settings.telegram || {};
+          u.settings.telegram.chatId = String(chatId); u.settings.telegram.connected = true; u.settings.telegram.connectToken = null;
+          u.settings.telegram.username = (msg.from && msg.from.username) || '';
+          await S.upsert('users', { id: u.id, data: u });
+          await fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: '✅ Telegram подключён к HR PRO AI. Сюда будут приходить уведомления.' }) });
+        } else if (botToken) {
+          await fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: 'Код привязки не найден. Откройте «Подключить Telegram» в портале HR PRO AI ещё раз.' }) });
+        }
+      }
+    } catch (_) {}
+    return j({ ok: true });
+  }
 
   // Входящий ИИ-звонок: Vapi assistant-request → отдаём динамического ассистента по номеру звонящего (публичный, защищён секретом).
   if (p === '/api/vapi/inbound' && m === 'POST') {
@@ -274,6 +307,14 @@ async function api(req, env, url, exec) {
                 await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
                   body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [info.recruiterEmail], subject: T.subj, html }) });
               } catch (e) {}
+            }
+            // Уведомление в портал + Telegram
+            owner.notifs = Array.isArray(owner.notifs) ? owner.notifs : [];
+            owner.notifs.unshift({ id: ('cr-' + (info.callId || Date.now())).slice(0, 40), type: 'call_recruiter', cat: 'calls', title: 'Кандидат просит связаться: ' + info.candidateName, body: [info.position && ('Вакансия: ' + info.position), info.reason && ('Причина: ' + info.reason)].filter(Boolean).join('\n'), link: '', ts: new Date().toISOString(), read: false });
+            if (owner.notifs.length > 100) owner.notifs = owner.notifs.slice(0, 100);
+            const nn = await nenv();
+            if (nn.TELEGRAM_BOT_TOKEN && owner.settings && owner.settings.telegram && owner.settings.telegram.chatId) {
+              try { await fetch('https://api.telegram.org/bot' + nn.TELEGRAM_BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: owner.settings.telegram.chatId, text: '📞 <b>Кандидат просит связаться</b>\n' + info.candidateName + (info.position ? '\nВакансия: ' + info.position : '') + (info.reason ? '\nПричина: ' + info.reason : ''), parse_mode: 'HTML' }) }); } catch (_) {}
             }
             await S.upsert('users', { id: owner.id, data: owner });
           }
@@ -1139,6 +1180,7 @@ async function api(req, env, url, exec) {
       links.push({ type, title: testTitleOf(type), link: `${BASE}/t/${code}` });
     }
     if (owner) await S.upsert('users', { id: owner.id, data: owner });
+    try { if (owner) { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, owner, 'cand_new', { title: 'Новый кандидат: ' + cand, body: 'Отклик через анкету «' + a.title + '»' + (avac && avac.name ? '\nВакансия: ' + avac.name : ''), link: '' }); } } catch (_) {}
     // Автоворонка: звонок «первый контакт» при входе кандидата (если тумблер вкл + телефон + Vapi)
     try { if (owner && avac && part.tel) { const called = await aiCallForEdge(env, S, owner, part, avac, 'first'); if (called) await S.upsert('participants', { id: part.id, data: part }); } } catch (e) {}
     return j({ ok: true, links, msgApply: a.msgApply, msgDone: a.msgDone });
@@ -1841,6 +1883,42 @@ async function api(req, env, url, exec) {
     }
   }
 
+  // ── Уведомления (центр в портале) ──
+  if (p === '/api/notifications' && m === 'GET') {
+    if (!me) return needAuth();
+    const list = Array.isArray(me.notifs) ? me.notifs : [];
+    return j({ notifs: list.slice(0, 50), unread: list.filter(n => !n.read).length });
+  }
+  if (p === '/api/notifications/read' && m === 'POST') {
+    if (!me) return needAuth();
+    const ids = Array.isArray(body.ids) ? body.ids : null;
+    me.notifs = (me.notifs || []).map(n => ((!ids || ids.includes(n.id)) ? { ...n, read: true } : n));
+    await saveUser(me);
+    return j({ ok: true, unread: me.notifs.filter(n => !n.read).length });
+  }
+  if (p === '/api/notif-catalog' && m === 'GET') {
+    if (!me) return needAuth();
+    const pt = await settings();
+    return j({ cats: notifCatalog(), prefs: (me.settings && me.settings.notifPrefs) || defaultNotifPrefs(),
+      telegram: { connected: !!(me.settings && me.settings.telegram && me.settings.telegram.chatId), username: (me.settings && me.settings.telegram && me.settings.telegram.username) || '', botAvailable: !!(env.TELEGRAM_BOT_TOKEN || pt.telegramBotToken) } });
+  }
+  if (p === '/api/telegram/connect' && m === 'POST') {
+    if (!me) return needAuth();
+    const pt = await settings();
+    const botUser = pt.telegramBotUsername || '';
+    if (!botUser || !(env.TELEGRAM_BOT_TOKEN || pt.telegramBotToken)) return j({ error: 'Telegram-бот не настроен' }, 503);
+    me.settings = me.settings || {}; me.settings.telegram = me.settings.telegram || {};
+    const token = (me.id.slice(0, 6) + Math.random().toString(36).slice(2, 12)).replace(/[^a-z0-9]/gi, '');
+    me.settings.telegram.connectToken = token;
+    await saveUser(me);
+    return j({ ok: true, link: `https://t.me/${botUser}?start=${token}`, bot: botUser });
+  }
+  if (p === '/api/telegram/disconnect' && m === 'POST') {
+    if (!me) return needAuth();
+    if (me.settings && me.settings.telegram) { me.settings.telegram = {}; await saveUser(me); }
+    return j({ ok: true });
+  }
+
   // ── SETTINGS PUT / password ──
   if (p === '/api/settings' && m === 'PUT') {
     if (!me) return needAuth();
@@ -1851,6 +1929,10 @@ async function api(req, env, url, exec) {
     ['surname', 'employees', 'phone', 'timezone', 'uiLang', 'logo'].forEach(f => { if (body[f] != null) s[f] = body[f]; });
     if (body.linkDays != null) s.linkDays = Math.max(1, parseInt(body.linkDays, 10) || 3);
     ['notifySms', 'notifyComment', 'searchAllAccounts', 'askPersonalData'].forEach(f => { if (body[f] != null) s[f] = !!body[f]; });
+    if (body.notifPrefs && typeof body.notifPrefs === 'object') {
+      s.notifPrefs = s.notifPrefs || {};
+      for (const t of NOTIF_TYPES) { const v = body.notifPrefs[t.key]; if (v && typeof v === 'object') s.notifPrefs[t.key] = { push: v.push !== false, email: !!v.email, telegram: !!v.telegram }; }
+    }
     if (Array.isArray(body.testOrder)) s.testOrder = body.testOrder;
     if (body.emailTemplates) { s.emailTemplates = s.emailTemplates || {}; LANGS.forEach(l => { const t = body.emailTemplates[l.code]; if (t) s.emailTemplates[l.code] = { subject: String(t.subject || ''), body: String(t.body || '') }; }); }
     if (body.smsTemplates) { s.smsTemplates = s.smsTemplates || {}; LANGS.forEach(l => { if (body.smsTemplates[l.code] != null) s.smsTemplates[l.code] = String(body.smsTemplates[l.code]); }); }
@@ -2005,6 +2087,10 @@ async function api(req, env, url, exec) {
         if (test.type === 'result') called = await aiCallForEdge(env, S, owner, part, vac, 'afterResult') || called;
         if (test.type === 'tools') { called = await aiCallForEdge(env, S, owner, part, vac, 'afterTools') || called; called = await aiCallForEdge(env, S, owner, part, vac, 'motivation') || called; }
         if (called) await S.upsert('participants', { id: part.id, data: part });
+        try {
+          const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || part.tel || 'кандидат';
+          await pushNotif(await nenv(), S, owner, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), link: '' });
+        } catch (_) {}
       }
       // Последовательная отправка: запустить следующий тест из очереди этого кандидата
       const rows = await S.select('tests', `participant_id=eq.${test.participantId}&select=data`);
