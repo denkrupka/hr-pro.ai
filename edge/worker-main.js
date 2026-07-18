@@ -868,6 +868,19 @@ async function api(req, env, url, exec) {
     if (mAiCalls[2] === '/refresh' && m === 'POST') {
       try { await callLog.refreshAll(env, part); await S.upsert('participants', { id: part.id, data: part }); }
       catch (e) { return j({ error: e.message }, 502); }
+      try {
+        const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.tel || 'кандидат';
+        let changed = false;
+        for (const e of (part.workflow.aiCallLog || [])) {
+          if (!callLog.isFinal(e) || e._notifiedCall || e.kind === 'references') continue;
+          e._notifiedCall = true; changed = true;
+          const att = (e.attempts || [])[(e.attempts || []).length - 1] || {};
+          const answered = String(att.transcript || '').trim().length >= 20;
+          if (answered) await pushNotif(await nenv(), S, me, 'call_done', { title: 'ИИ-звонок завершён: ' + cand, body: e.summary ? String(e.summary).slice(0, 200) : '', link: '' });
+          else await pushNotif(await nenv(), S, me, 'call_noanswer', { title: 'ИИ не дозвонился: ' + cand, body: '', link: '' });
+        }
+        if (changed) await S.upsert('participants', { id: part.id, data: part });
+      } catch (_) {}
     }
     return j({ calls: callLog.publicView(part, clang), motivation: (part.workflow && part.workflow.aiMotivation) || null });
   }
@@ -915,6 +928,11 @@ async function api(req, env, url, exec) {
       if (!entry) return j({ status: 'none' });
       try {
         if (!callLog.isFinal(entry)) { await callLog.refreshEntry(env, part, entry); await S.upsert('participants', { id: part.id, data: part }); }
+        if (entry.status === 'done' && !entry._notified) {
+          entry._notified = true;
+          try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, me, 'ref_done', { title: 'Получен референс: ' + cand, body: entry.summary ? String(entry.summary).slice(0, 200) : '', link: '' }); } catch (_) {}
+          await S.upsert('participants', { id: part.id, data: part });
+        }
         const cur = part.workflow.references && part.workflow.references.multi && part.workflow.references.multi[refIndex];
         const filled = cur && cur.answers ? Object.keys(cur.answers).length : (entry.filled || 0);
         const st = entry.status === 'done' ? 'done' : (entry.status === 'failed' ? 'error' : 'calling');
@@ -1521,6 +1539,9 @@ async function api(req, env, url, exec) {
       else if (part.workflow.decision) part.workflow.decision = null;
     } else return j({ error: 'Неверная колонка' }, 400);
     await S.upsert('participants', { id: part.id, data: part });
+    if (col === 'hired' || col === 'rejected') {
+      try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; const vc = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; await pushNotif(await nenv(), S, me, 'decision', { title: (col === 'hired' ? '✅ Кандидат принят: ' : '❌ Кандидат отклонён: ') + cand, body: (vc && vc.name ? 'Вакансия: ' + vc.name : ''), link: '' }); } catch (_) {}
+    }
     // Письмо кандидату при смене статуса (не критично — не ломаем ответ при ошибке).
     // Шаблоны статусов: rejected/interview/reserve/accepted. Из kanban-колонки мапим только те,
     // что имеют явный смысл уведомления: rejected→rejected, hired→accepted.
