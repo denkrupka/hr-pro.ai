@@ -57,7 +57,7 @@ export async function startCall(env, { to, task, firstMessage, language, structu
   if (maxDurationSeconds) body.assistant.maxDurationSeconds = maxDurationSeconds;
   // Аудио-детект автоответчика (provider 'vapi' — работает с BYO-SIP Zadarma), настроен на раннее срабатывание.
   // Основная защита — правило VOICEMAIL_RULE + endCallFunctionEnabled (модель сама вешает трубку): voicemailMessage НЕ задаём.
-  body.assistant.voicemailDetection = { provider: 'vapi', backoffPlan: { maxRetries: 12, startAtSeconds: 2, frequencySeconds: 2.5 } };
+  body.assistant.voicemailDetection = { provider: 'vapi', backoffPlan: { maxRetries: 10, startAtSeconds: 2, frequencySeconds: 2.5 } };
   const r = await fetch('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify(body), signal,

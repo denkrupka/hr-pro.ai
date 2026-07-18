@@ -272,7 +272,7 @@ async function startCall(settings, { to, task, firstMessage, language, structure
   }
   // Детект автоответчика/голосовой почты: попали на voicemail → модель сама вешает трубку (endCallFunctionEnabled + VOICEMAIL_RULE),
   // voicemailMessage не задаём. Аудио-детект provider 'vapi' (BYO-SIP Zadarma) настроен на раннее срабатывание.
-  const vmDetect = { provider: 'vapi', backoffPlan: { maxRetries: 12, startAtSeconds: 2, frequencySeconds: 2.5 } };
+  const vmDetect = { provider: 'vapi', backoffPlan: { maxRetries: 10, startAtSeconds: 2, frequencySeconds: 2.5 } };
   if (body.assistantOverrides) { body.assistantOverrides.voicemailDetection = vmDetect; body.assistantOverrides.endCallFunctionEnabled = true; }
   if (body.assistant) body.assistant.voicemailDetection = vmDetect;
   const d = await http('https://api.vapi.ai/call', {

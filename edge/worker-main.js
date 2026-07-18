@@ -1772,7 +1772,6 @@ async function api(req, env, url, exec) {
     // AbortController: зависание Vapi → понятный JSON, а не CF 502. Таймаут 9с — гарантированно ниже лимита CF.
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 9000);
-    const t0 = Date.now();
     try {
       const r = await vapiStartCall(env, { to, task, firstMessage, language: lang, maxDurationMin: 8, signal: ctrl.signal,
         structuredDataSchema: schema, summaryPrompt: 'Кратко резюмируй разговор: интерес, мотивация, уровень знаний по профессии, общее впечатление.' });
@@ -1782,7 +1781,6 @@ async function api(req, env, url, exec) {
     } catch (e) {
       clearTimeout(timer);
       const msg = String((e && (e.message || e)) || '');
-      if (body.diagCall) return j({ diagCall: true, ms: Date.now() - t0, name: e && e.name, message: msg });
       if (e && e.name === 'AbortError') return j({ error: 'Vapi не ответил вовремя. Попробуйте ещё раз.' }, 504);
       if (/wallet|balance|credit|insufficient/i.test(msg)) return j({ error: 'На счёте Vapi недостаточно средств. Пополните баланс Vapi (Wallet), чтобы совершать звонки.', code: 'vapi_balance' }, 402);
       return j({ error: 'Звонок не удался: ' + msg }, 502);
