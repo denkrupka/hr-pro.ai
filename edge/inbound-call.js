@@ -8,7 +8,7 @@
 import { buildWorkflow } from './workflow-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 
-const VOICE_BY_LANG = { ru: 'ymDCYd8puC7gYjxIamPt', pl: 'd4Z5Fvjohw3zxGpV8XUV', en: 'EST9Ui6982FZPSi7gCHi' };
+const VOICE_BY_LANG = { ru: 'YjESejviApN7SHrbfnA2', pl: 'd4Z5Fvjohw3zxGpV8XUV', en: 'EST9Ui6982FZPSi7gCHi' };
 
 // Нормализация телефона до «национального хвоста» (последние 9 цифр) — терпимо к +48 / 0048 / локальному формату.
 export function phoneKey(s) {
