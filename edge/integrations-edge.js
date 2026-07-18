@@ -5,8 +5,20 @@ const VOICE_BY_LANG = { ru: 'ymDCYd8puC7gYjxIamPt', pl: 'd4Z5Fvjohw3zxGpV8XUV', 
 const VOICEMAIL_RULE = 'КРИТИЧЕСКИ ВАЖНО ПРО АВТООТВЕТЧИК: если в начале звучит записанное приветствие, длинная непрерывная реплика без пауз для тебя, гудок/сигнал «бип», просьба оставить сообщение после сигнала, музыка ожидания, автоматическое меню (IVR) или тишина вместо живого человека — это НЕ живой собеседник, а голосовая почта/автоответчик. ВАЖНО: приветствие автоответчика может быть НА ЛЮБОМ ЯЗЫКЕ (например, польском или английском), даже если ты ведёшь звонок по-русски — номер может быть в другой стране. Распознавай автоответчик по СМЫСЛУ на любом языке (напр. польское «poczta głosowa / zostaw wiadomość / nagraj po sygnale», английское «leave a message after the beep»). В этом случае НЕМЕДЛЕННО заверши звонок (вызови функцию завершения звонка), НЕ говори ничего и НЕ оставляй сообщений. Не пытайся вести диалог с записью. ';
 
 // Признаки того, что попали на голосовую почту/автоответчик (ru/pl/en) — по транскрипту.
-const VM_RX = /(оставьте|оставить|запишите|запиш(и|ите)).{0,20}сообщени|после\s+(звукового\s+)?сигнал|автоответчик|голосов\w*\s+почт|абонент\s+(недоступен|временно)|не\s+может\s+прин|zostaw\s+wiadomo|nagra\w+\s+wiadomo|po\s+sygnale|automatyczn\w+\s+sekretar|poczt\w*\s+głosow|niedostępn|leave\s+a\s+message|after\s+the\s+(tone|beep)|voice\s?mail|not\s+available|record\s+your\s+message|please\s+leave/i;
+const VM_RX = /(оставьте|оставить|запишите|запиш(и|ите)).{0,20}сообщени|после\s+(звукового\s+)?сигнал|автоответчик|голосов\S*\s+почт|абонент\s+(недоступен|временно)|не\s+может\s+прин|zostaw\s+wiadomo|nagra\S+\s+wiadomo|po\s+sygnale|automatyczn\S+\s+sekretar|poczt\S*\s+głosow|niedostępn|leave\s+a\s+message|after\s+the\s+(tone|beep)|voice\s?mail|not\s+available|record\s+your\s+message|please\s+leave/i;
 export function looksLikeVoicemail(transcript) { return VM_RX.test(String(transcript || '')); }
+
+// Признаки просьбы «не звонить» — по словам кандидата ИЛИ по ответу нашего ИИ (он по правилу обещает не звонить/удалить контакт). ru/pl/en.
+const OPTOUT_RX = /не\s+(звони|звоните)|не\s+буду.{0,14}звонить|(больше\s+)?не\s+(надо|нужно|стоит)\s+(мне\s+)?звонить|не\s+беспоко|уже\s+звонили|это\s+спам|отстаньте|удал\S+\s+(ваш\s+)?контакт|удал\S+\s+из\s+обзвон|proszę\s+(już\s+)?nie\s+dzwoni|nie\s+dzwońcie|to\s+spam|już\s+dzwonili|(please\s+)?(do\s+not|don'?t)\s+call|stop\s+calling|already\s+called|remove\s+(me|my)\b/i;
+export function looksLikeOptOut(transcript) { return OPTOUT_RX.test(String(transcript || '')); }
+// Из авто-полей Vapi тоже вытащим сигнал (имена полей у Vapi могут отличаться от нашей схемы).
+export function optOutFromData(sd) {
+  if (!sd || typeof sd !== 'object') return false;
+  if (sd.do_not_call === true) return true;
+  if (sd.user_consent_to_call_again && /^(no|false|нет)$/i.test(String(sd.user_consent_to_call_again))) return true;
+  if (sd.do_not_call_again === true || sd.opt_out === true) return true;
+  return false;
+}
 
 const LANG_NAME = { ru: 'русском', pl: 'польском', en: 'английском', uk: 'украинском', de: 'немецком' };
 // Правило языка: вести разговор на языке заявки; если кандидат отвечает на другом языке — продолжать на языке заявки, но зафиксировать язык кандидата.
@@ -14,15 +26,21 @@ function languageRule(language) {
   const L = LANG_NAME[language] || 'русском';
   return `ЯЗЫК РАЗГОВОРА: веди беседу на ${L} языке — это язык заявки. Если кандидат отвечает на ДРУГОМ языке (например, украинском, польском, английском), НЕ переходи на его язык — вежливо продолжай на ${L}. При этом обязательно отметь в итоге, на каком языке фактически говорил кандидат, если он отличается от ${L}. `;
 }
-// Правило «не звонить»: кандидат раздражён / просит не звонить / говорит что уже связывались → извиниться, пообещать не беспокоить, завершить.
-const OPT_OUT_RULE = 'ЕСЛИ ПРОСЯТ НЕ ЗВОНИТЬ: если собеседник раздражён, просит больше ему не звонить, говорит что с ним уже связывались/звонили по этому вопросу, называет это спамом или не хочет разговаривать — искренне извинись за беспокойство, спокойно скажи, что больше не побеспокоишь и удалишь его контакт из обзвона, вежливо попрощайся и СРАЗУ заверши звонок (функция завершения). НЕ настаивай, НЕ продолжай опрос, НЕ уговаривай. ';
+// Правило реакции на «нет»/отказ: НЕ вешать трубку сразу — сначала выяснить причину и действовать по ситуации.
+const OPT_OUT_RULE = 'РЕАКЦИЯ НА «НЕТ»/ОТКАЗ (очень важно): если на вопрос «удобно ли говорить» или в начале разговора кандидат отвечает «нет», колеблется или отказывается — НЕ вешай трубку сразу и НЕ считай это автоматически отказом. Сначала мягко и коротко уточни причину: ему неудобно именно СЕЙЧАС или дело в другом. Действуй по ситуации: '
+  + '(1) НЕУДОБНО СЕЙЧАС (занят, за рулём, не вовремя) — не дави: извинись, спроси, когда удобнее перезвонить (уточни день и примерное время), поблагодари и вежливо попрощайся. Это НЕ отказ — мы перезвоним в удобное время. '
+  + '(2) НЕ ИНТЕРЕСНА вакансия или не хочет участвовать/разговаривать по сути — поблагодари за уделённое время, скажи, что не будешь больше беспокоить по этой вакансии, и вежливо заверши звонок. '
+  + '(3) ПРОСИТ БОЛЬШЕ НЕ ЗВОНИТЬ, раздражён, называет это спамом или говорит, что с ним уже связывались и просил прекратить — искренне извинись за беспокойство, пообещай удалить контакт из обзвона и больше не звонить, вежливо заверши звонок. '
+  + 'Ни в одном случае не уговаривай и не настаивай. Заверши звонок функцией завершения, когда вопрос исчерпан. ';
 
 // Универсальные поля отчёта, которые извлекаем ИЗ ЛЮБОГО звонка (язык кандидата, просьба не звонить, повторный контакт).
 function withUniversalFields(schema) {
   const extra = {
     spoken_language: { type: 'string', description: 'Язык, на котором ФАКТИЧЕСКИ говорил кандидат, если он ОТЛИЧАЕТСЯ от языка звонка (например: "украинский"). Оставь пустым, если кандидат говорил на языке звонка.' },
-    do_not_call: { type: 'boolean', description: 'true, если кандидат попросил больше ему не звонить, был против звонков, назвал это спамом или просил не беспокоить.' },
+    do_not_call: { type: 'boolean', description: 'true ТОЛЬКО если кандидат прямо просил больше ему не звонить, был против звонков, назвал это спамом или просил прекратить. НЕ ставь true, если ему просто сейчас неудобно говорить.' },
     already_contacted: { type: 'boolean', description: 'true, если кандидат сказал, что с ним уже связывались или уже звонили по этому вопросу.' },
+    callback_requested: { type: 'boolean', description: 'true, если кандидату сейчас неудобно и он согласен, чтобы перезвонили позже.' },
+    callback_when: { type: 'string', description: 'Когда кандидат просил перезвонить (как он это сказал, например «завтра после обеда», «вечером»). Пусто, если перезвон не обсуждали.' },
   };
   if (!schema || typeof schema !== 'object') return { type: 'object', properties: { ...extra } };
   return { ...schema, properties: { ...(schema.properties || {}), ...extra } };
@@ -82,10 +100,13 @@ export async function getCall(env, callId, signal) {
   const transcript = (d && d.transcript) || art.transcript || null;
   const voicemail = /voicemail/i.test(String(endedReason || '')) || looksLikeVoicemail(transcript);
   const sd = a.structuredData || null;
+  // «Не звонить» надёжно: наша схема ИЛИ авто-поля Vapi ИЛИ эвристика по транскрипту (без voicemail — там ИИ тоже прощается).
+  const doNotCall = !voicemail && (optOutFromData(sd) || looksLikeOptOut(transcript));
   return {
     ok: true, id: d && d.id, status: d && d.status, endedReason,
     noAnswer: isNoAnswer(endedReason) || voicemail, voicemail,
-    doNotCall: !!(sd && sd.do_not_call), spokenLanguage: (sd && sd.spoken_language) || null, alreadyContacted: !!(sd && sd.already_contacted),
+    doNotCall, spokenLanguage: (sd && (sd.spoken_language || sd.candidate_language)) || null, alreadyContacted: !!(sd && (sd.already_contacted || (sd.was_contacted_before))),
+    callbackRequested: !!(sd && sd.callback_requested), callbackWhen: (sd && sd.callback_when) || null,
     customerNumber: (d && d.customer && d.customer.number) || null,
     transcript, summary: a.summary || null, structuredData: sd,
     recordingUrl, startedAt, endedAt, durationSec,
