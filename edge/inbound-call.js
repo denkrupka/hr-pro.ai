@@ -166,6 +166,7 @@ export async function buildInboundAssistant(env, S, caller) {
   const base = {
     firstMessageMode: 'assistant-speaks-first',
     endCallFunctionEnabled: true,
+    endCallPhrases: ['до свидания', 'всего доброго', 'всего хорошего', 'хорошего дня', 'до связи', 'goodbye', 'have a nice day', 'do widzenia', 'wszystkiego dobrego', 'miłego dnia'],
     transcriber: { provider: 'deepgram', model: 'nova-2', language: 'ru' },
     voice,
     artifactPlan: { recordingEnabled: true, recordingFormat: 'mp3' },

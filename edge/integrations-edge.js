@@ -35,6 +35,8 @@ export function deriveCallStatus(o, summary) {
   return { callStatus: 'Поговорили', statusReason: cleanReason };
 }
 
+// Фразы прощания — Vapi сам вешает трубку, когда ассистент их произносит (надёжнее, чем функция завершения).
+const END_CALL_PHRASES = ['до свидания', 'всего доброго', 'всего хорошего', 'хорошего дня', 'до связи', 'goodbye', 'have a nice day', 'do widzenia', 'wszystkiego dobrego', 'miłego dnia'];
 const LANG_NAME = { ru: 'русском', pl: 'польском', en: 'английском', uk: 'украинском', de: 'немецком' };
 // Правило языка: вести разговор на языке заявки; если кандидат отвечает на другом языке — продолжать на языке заявки, но зафиксировать язык кандидата.
 function languageRule(language) {
@@ -82,6 +84,7 @@ export async function startCall(env, { to, task, firstMessage, language, structu
     firstMessage: firstMessage || 'Здравствуйте! Это ассистент отдела подбора персонала.',
     transcriber: { provider: 'deepgram', model: 'nova-2', language: language || 'ru' },
     endCallFunctionEnabled: true,
+    endCallPhrases: END_CALL_PHRASES,
     artifactPlan,
   };
   if (env.ELEVENLABS_API_KEY) body.assistant.voice = { provider: '11labs', voiceId: VOICE_BY_LANG[vlang], model: 'eleven_multilingual_v2' };

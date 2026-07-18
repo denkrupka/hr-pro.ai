@@ -291,6 +291,7 @@ async function startCall(settings, { to, task, firstMessage, language, structure
       firstMessage: firstMessage || 'Здравствуйте! Это ассистент отдела подбора персонала.',
       transcriber: { provider: 'deepgram', model: 'nova-2', language: language || 'ru' },
       endCallFunctionEnabled: true,
+      endCallPhrases: ['до свидания', 'всего доброго', 'всего хорошего', 'хорошего дня', 'до связи', 'goodbye', 'have a nice day', 'do widzenia', 'wszystkiego dobrego', 'miłego dnia'],
     };
     // Голос агента по языку звонка (ElevenLabs Voice ID). Свой voiceId в конфиге переопределяет карту.
     const VOICE_BY_LANG = { ru: 'YjESejviApN7SHrbfnA2', pl: 'd4Z5Fvjohw3zxGpV8XUV', en: 'EST9Ui6982FZPSi7gCHi' };
