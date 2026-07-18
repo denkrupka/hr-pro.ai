@@ -17,7 +17,7 @@ import { generateVideoLink, videoIntegrationStatus } from './video-integrations-
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
-import { vapiConfigured, startCall as vapiStartCall } from './integrations-edge.js';
+import { vapiConfigured, startCall as vapiStartCall, getCall as vapiGetCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
@@ -1702,6 +1702,19 @@ async function api(req, env, url, exec) {
   }
 
   // ── Скрининг-звонок ИИ (первый контакт: мотивация + знания области) ──
+  if (p === '/api/ai-call/status' && m === 'GET') {
+    if (!me) return needAuth();
+    const callId = url.searchParams.get('callId');
+    if (!callId) return j({ error: 'callId обязателен' }, 400);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 15000);
+    try {
+      const r = await vapiGetCall(env, callId, ctrl.signal);
+      clearTimeout(timer);
+      if (r && r.skipped) return j({ error: r.reason || 'ИИ-звонки не настроены' }, 503);
+      return j(r);
+    } catch (e) { clearTimeout(timer); return j({ error: String(e && (e.message || e)) }, 502); }
+  }
   if (p === '/api/ai-call/screening' && m === 'POST') {
     if (!me) return needAuth();
     if (!vapiConfigured(env)) return j({ error: 'ИИ-звонки не настроены (Vapi)' }, 503);

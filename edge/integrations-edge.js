@@ -35,9 +35,9 @@ export async function startCall(env, { to, task, firstMessage, language, structu
   return { ok: true, callId: d && d.id, status: d && d.status };
 }
 
-export async function getCall(env, callId) {
+export async function getCall(env, callId, signal) {
   if (!env.VAPI_API_KEY) return { skipped: true, reason: 'Vapi не настроен' };
-  const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(callId), { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY } });
+  const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(callId), { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY }, signal });
   const d = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error('Vapi: ' + ((d && d.message) || r.status));
   const a = (d && d.analysis) || {};
