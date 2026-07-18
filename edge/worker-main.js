@@ -19,7 +19,7 @@ import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
 import { vapiConfigured, startCall as vapiStartCall, getCall as vapiGetCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
-import { buildInboundAssistant } from './inbound-call.js';
+import { buildInboundAssistant, parseEndReport as inboundParseEndReport } from './inbound-call.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
@@ -249,8 +249,40 @@ async function api(req, env, url, exec) {
     if (!secret) { try { secret = (await settings()).vapiInboundSecret || ''; } catch (_) {} }
     const provided = req.headers.get('x-vapi-secret') || url.searchParams.get('key') || '';
     if (!secret || provided !== secret) return j({ error: 'forbidden' }, 403);
-    const call = (body.message && body.message.call) || body.call || {};
-    const caller = (call.customer && call.customer.number) || (body.message && body.message.customer && body.message.customer.number) || url.searchParams.get('caller') || '';
+    const msg = body.message || {};
+    // Отчёт по завершении входящего → если кандидат просил рекрутёра, уведомляем рекрутёра письмом (один раз на звонок).
+    if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
+      try {
+        const info = await inboundParseEndReport(env, S, msg);
+        if (info && info.owner) {
+          const owner = info.owner;
+          owner.inboundNotified = Array.isArray(owner.inboundNotified) ? owner.inboundNotified : [];
+          if (info.callId && !owner.inboundNotified.includes(info.callId)) {
+            owner.inboundNotified.push(info.callId); owner.inboundNotified = owner.inboundNotified.slice(-500);
+            if (env.RESEND_API_KEY && info.recruiterEmail) {
+              const lang = ['ru', 'pl', 'en'].includes(info.lang) ? info.lang : 'ru';
+              const T = { ru: { subj: 'Кандидат просит связаться — входящий звонок', head: 'Кандидат просит, чтобы вы перезвонили' },
+                pl: { subj: 'Kandydat prosi o kontakt — rozmowa przychodząca', head: 'Kandydat prosi o oddzwonienie' },
+                en: { subj: 'Candidate asks to be contacted — inbound call', head: 'Candidate requests a callback' } }[lang];
+              const L = { ru: { cand: 'Кандидат', phone: 'Телефон', pos: 'Вакансия', reason: 'Причина обращения', said: 'Что ассистент разъяснил', could: 'Что осталось нерешённым', sum: 'Кратко о разговоре' },
+                pl: { cand: 'Kandydat', phone: 'Telefon', pos: 'Stanowisko', reason: 'Powód', said: 'Co asystent wyjaśnił', could: 'Co pozostało', sum: 'Podsumowanie' },
+                en: { cand: 'Candidate', phone: 'Phone', pos: 'Position', reason: 'Reason', said: 'What the assistant explained', could: 'What remained', sum: 'Call summary' } }[lang];
+              const row = (k, v) => v ? `<b>${k}:</b> ${String(v).replace(/</g, '&lt;')}<br>` : '';
+              const bodyHtml = `${row(L.cand, info.candidateName)}${row(L.phone, info.candidatePhone)}${info.company ? row('Компания', info.company) : ''}${row(L.pos, info.position)}${row(L.reason, info.reason)}${row(L.said, info.aiAnswered)}${row(L.could, info.aiCouldNot)}${info.summary ? '<br><b>' + L.sum + ':</b><br>' + String(info.summary).slice(0, 900).replace(/\n/g, '<br>') : ''}`;
+              const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: T.subj, eyebrow: T.subj, headline: T.head, bodyHtml });
+              try {
+                await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [info.recruiterEmail], subject: T.subj, html }) });
+              } catch (e) {}
+            }
+            await S.upsert('users', { id: owner.id, data: owner });
+          }
+        }
+      } catch (e) {}
+      return j({ ok: true });
+    }
+    const call = msg.call || body.call || {};
+    const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || url.searchParams.get('caller') || '';
     if (!caller) return j({ error: 'no caller number' }, 400);
     try { return j(await buildInboundAssistant(env, S, caller)); }
     catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }

@@ -39,6 +39,52 @@ export function phoneKey(s) {
   return d.slice(-9);
 }
 
+// Отчёт по входящему: сбор данных для уведомления рекрутёра при эскалации.
+const INBOUND_SUMMARY = 'Кратко резюмируй входящий звонок кандидата: с чем он обратился, что ассистент разъяснил, что осталось нерешённым. В САМОМ КОНЦЕ добавь две строки: "РЕКРУТЁР: да" или "РЕКРУТЁР: нет" (да — если кандидат просил связать с рекрутёром/человеком или чтобы рекрутёр перезвонил); "ПРИЧИНА: <зачем нужен рекрутёр или нерешённый вопрос; иначе прочерк>".';
+const INBOUND_SCHEMA = { type: 'object', properties: {
+  recruiter_callback_requested: { type: 'boolean', description: 'true, если кандидат просил связать его с рекрутёром/живым человеком или чтобы рекрутёр ему перезвонил.' },
+  callback_reason: { type: 'string', description: 'Зачем кандидату нужен рекрутёр / какой вопрос остался нерешённым (кратко).' },
+  ai_answered: { type: 'string', description: 'Что ассистент уже разъяснил кандидату в этом разговоре.' },
+  ai_could_not_answer: { type: 'string', description: 'Что ассистент НЕ смог ответить (если было).' },
+  call_topic: { type: 'string', description: 'С чем обратился кандидат / тема звонка.' },
+} };
+const RECRUITER_RX = /рекрут[её]р\S*\s+(перезвонит|свяж|перезвон)|переда\S+\s+(вас\s+)?рекрут|свяж\S+\s+(вас\s+)?с\s+рекрут|соедини\S*\s+с\s+(рекрут|человек|менеджер)|(хочу|можно|соедините|позовите).{0,20}(с\s+)?(живым\s+)?(человеком|рекрут)/i;
+export function wantsRecruiter(sd, summary, transcript) {
+  if (sd && sd.recruiter_callback_requested === true) return true;
+  if (/РЕКРУТ[ЁЕ]Р:\s*да/i.test(String(summary || ''))) return true;
+  return RECRUITER_RX.test(String(transcript || ''));
+}
+// Разобрать end-of-call-report Vapi: если кандидат просил рекрутёра — вернуть данные для письма, иначе null.
+export async function parseEndReport(env, S, msg) {
+  const call = msg.call || {};
+  const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || '';
+  const a = msg.analysis || {};
+  const art = msg.artifact || {};
+  const transcript = msg.transcript || art.transcript || '';
+  const summary = a.summary || msg.summary || '';
+  const sd = a.structuredData || null;
+  if (!caller || !wantsRecruiter(sd, summary, transcript)) return null;
+  const matches = await findByPhone(S, caller);
+  if (!matches.length) return null;
+  const idx = Math.max(0, matches.findIndex(p => ((p.name || '') + (p.surname || '')).trim()));
+  const p = matches[idx];
+  const owner = p.userId ? await S.one('users', p.userId) : null;
+  if (!owner || !owner.email) return null;
+  const vac = p.vacancyId ? await S.one('vacancies', p.vacancyId) : null;
+  const reason = (sd && sd.callback_reason) || ((String(summary).match(/ПРИЧИНА:\s*([^\n]+)/i) || [])[1] || '');
+  return {
+    callId: call.id || msg.callId || '',
+    owner, recruiterEmail: owner.email,
+    candidateName: ((p.name || '') + ' ' + (p.surname || '')).trim() || caller,
+    candidatePhone: caller,
+    company: owner.company || '', position: (vac && vac.name) || '',
+    reason: reason && !/^[—\-\s]*$/.test(reason) ? reason.trim() : '',
+    summary: String(summary).replace(/\n?(РЕКРУТ[ЁЕ]Р|ПРИЧИНА):.*$/is, '').trim(),
+    aiAnswered: (sd && sd.ai_answered) || '', aiCouldNot: (sd && sd.ai_could_not_answer) || '',
+    lang: (vac && vac.lang) || 'ru',
+  };
+}
+
 // Найти ВСЕ записи кандидата (по всем аккаунтам/вакансиям) с этим номером. Возвращает участников (data).
 export async function findByPhone(S, number) {
   const key = phoneKey(number);
@@ -181,13 +227,21 @@ export async function buildInboundAssistant(env, S, caller) {
     + '- НАЗВАНИЯ ДОЛЖНОСТЕЙ и КОМПАНИЙ произноси естественно на языке разговора: если название на другом языке (например польское «Kierownik robót» в русском разговоре) — переведи или произнеси корректно («руководитель работ»), НЕ читай по буквам и не по-английски.\n'
     + '- Если кандидат перезвонил и не помнит/не понимает причину — НЕ повторяй одну и ту же фразу. Коротко и по-человечески напомни: ты виртуальный HR-менеджер, вы связывались по вакансии (назови её), и сразу скажи, что сейчас по ней происходит.\n'
     + '- Отвечай о статусе процесса ОБЩО (какой этап пройден, чего ждём — напр. «тест выполнен, сейчас собираем рекомендации»), без баллов; о вакансии/условиях — по данным выше.\n'
-    + '- Можешь ИНФОРМИРОВАТЬ и договориться о перезвоне (рекрутёр или ты перезвонишь), но сам процесс не двигай (тесты не шлёшь, этапы не меняешь).\n'
+    + '- ЗАКРЫВАЙ ВОПРОС САМА ПО МАКСИМУМУ: сначала выясни, что именно нужно кандидату и почему; если можешь ответить по данным выше — ответь сама. Не спеши переводить на рекрутёра.\n'
+    + '- Просить связать с рекрутёром/человеком предлагай ТОЛЬКО если реально не можешь помочь сама. В этом случае обязательно выясни и запомни ПРИЧИНУ (зачем нужен рекрутёр, какой вопрос остался), скажи, что рекрутёр перезвонит в ближайшее время. Систему уведомлять не нужно — это произойдёт автоматически.\n'
+    + '- Сам процесс не двигай (тесты не шлёшь, этапы не меняешь).\n'
     + '- Веди разговор на языке заявки; приём круглосуточный.\n'
     + '- ЗАВЕРШЕНИЕ: как только попрощались С ОБЕИХ СТОРОН (кандидат сказал «до свидания»/«пока» и ты ответила прощанием) — СРАЗУ заверши звонок функцией завершения, НЕ держи линию и не добавляй лишних фраз.';
 
   const b2 = { ...base };
   b2.transcriber = { provider: 'deepgram', model: 'nova-2', language: lang };
   b2.voice = env.ELEVENLABS_API_KEY ? { provider: '11labs', voiceId: VOICE_BY_LANG[lang] || VOICE_BY_LANG.ru, model: 'eleven_multilingual_v2' } : b2.voice;
+  // Отчёт по завершении → на наш server.url (для письма рекрутёру при эскалации). Summary/структурные данные.
+  b2.serverMessages = ['end-of-call-report'];
+  b2.analysisPlan = {
+    summaryPlan: { enabled: true, messages: [{ role: 'system', content: INBOUND_SUMMARY }, { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
+    structuredDataPlan: { enabled: true, schema: INBOUND_SCHEMA, messages: [{ role: 'system', content: 'Извлеки данные строго по JSON-схеме из расшифровки звонка. Если пункта нет — оставь пустым.' }, { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
+  };
   const fn = localizeName(primary.name || '', lang);
   const first = lang === 'pl' ? `Dzień dobry${fn ? ', ' + fn : ''}! Nazywam się ${agent}, jestem wirtualnym menedżerem HR. Miło, że Pan/Pani dzwoni. W czym mogę pomóc?`
     : lang === 'en' ? `Hello${fn ? ', ' + fn : ''}! My name is ${agent}, I'm a virtual HR manager. Glad you called. How can I help you?`
