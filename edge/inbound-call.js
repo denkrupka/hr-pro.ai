@@ -115,15 +115,17 @@ export async function buildInboundAssistant(env, S, caller) {
   }
 
   // ── Известный номер: собрать заявки этого кандидата (по всем компаниям/вакансиям) ──
-  // Подгружаем тесты, вакансии, владельцев.
-  const byId = {};
-  for (const p of matches) {
-    p.__tests = (await S.select('tests', `participant_id=eq.${p.id}&select=data`)).map(r => r.data);
-    p.__vac = p.vacancyId ? await S.one('vacancies', p.vacancyId) : null;
-    p.__owner = p.userId ? await S.one('users', p.userId) : null;
-    p.__rq = (p.__vac && p.__vac.requisitionId) ? await S.one('requisitions', p.__vac.requisitionId) : null;
-    if (p.__vac) p.__vacName = p.__vac.name;
-  }
+  // Подгружаем тесты, вакансии, владельцев — ВСЁ параллельно (входящий SIP чувствителен к задержке ответа).
+  await Promise.all(matches.map(async (p) => {
+    const [tests, vac, owner] = await Promise.all([
+      S.select('tests', `participant_id=eq.${p.id}&select=data`).then(r => (r || []).map(x => x.data)),
+      p.vacancyId ? S.one('vacancies', p.vacancyId) : Promise.resolve(null),
+      p.userId ? S.one('users', p.userId) : Promise.resolve(null),
+    ]);
+    p.__tests = tests; p.__vac = vac; p.__owner = owner;
+    p.__rq = (vac && vac.requisitionId) ? await S.one('requisitions', vac.requisitionId) : null;
+    if (vac) p.__vacName = vac.name;
+  }));
   // Приоритетная запись — с непустым именем (для приветствия и языка), иначе первая.
   const primaryIdx = Math.max(0, matches.findIndex(p => ((p.name || '') + (p.surname || '')).trim()));
   const primary = matches[primaryIdx];
