@@ -143,9 +143,11 @@ async function tick(dbData, save) {
         if (!callLog.isFinal(entry)) await callLog.refreshEntry(settings, p, entry, null);
         if (!callLog.isFinal(entry)) { touched = true; continue; }   // ещё идёт / докручивается
         const last = (entry.attempts || [])[entry.attempts.length - 1] || {};
-        const answered = String(last.transcript || '').trim().length >= 20;
         const reason = String(last.endedReason || '');
-        const noAnswer = !answered && (NO_ANSWER.some(x => reason.includes(x)) || !last.transcript);
+        // Голосовая почта/автоответчик = «не дозвонился», даже если приветствие записалось в транскрипт (иначе ложное «answered»).
+        const voicemail = NO_ANSWER.some(x => reason.includes(x)) || integ.looksLikeVoicemail(last.transcript);
+        const answered = !voicemail && String(last.transcript || '').trim().length >= 20;
+        const noAnswer = voicemail || (!answered && !last.transcript);
         if (noAnswer && item.attempts < item.cfg.retryCount) {
           item.status = 'pending'; item.nextAt = new Date(now.getTime() + item.cfg.retryAfterMin * 60000).toISOString(); item.lastReason = 'неответ, перезвон';
         } else if (noAnswer) {

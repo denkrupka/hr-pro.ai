@@ -8,6 +8,13 @@
 
 const crypto = require('crypto');
 
+// Универсальное правило: попал на автоответчик/голосовую почту → сразу завершить звонок, ничего не наговаривая.
+const VOICEMAIL_RULE = 'КРИТИЧЕСКИ ВАЖНО ПРО АВТООТВЕТЧИК: если в начале звучит записанное приветствие, длинная непрерывная реплика без пауз для тебя, гудок/сигнал «бип», просьба оставить сообщение после сигнала, музыка ожидания, автоматическое меню (IVR) или тишина вместо живого человека — это НЕ живой собеседник, а голосовая почта/автоответчик. В этом случае НЕМЕДЛЕННО заверши звонок (вызови функцию завершения звонка), НЕ говори ничего и НЕ оставляй сообщений. Не пытайся вести диалог с записью. ';
+
+// Признаки того, что попали на голосовую почту/автоответчик (ru/pl/en) — по транскрипту.
+const VM_RX = /(оставьте|оставить|запишите|запиш(и|ите)).{0,20}сообщени|после\s+(звукового\s+)?сигнал|автоответчик|голосов\w*\s+почт|абонент\s+(недоступен|временно)|не\s+может\s+прин|zostaw\s+wiadomo|nagra\w+\s+wiadomo|po\s+sygnale|automatyczn\w+\s+sekretar|poczt\w*\s+głosow|niedostępn|leave\s+a\s+message|after\s+the\s+(tone|beep)|voice\s?mail|not\s+available|record\s+your\s+message|please\s+leave/i;
+function looksLikeVoicemail(transcript) { return VM_RX.test(String(transcript || '')); }
+
 // Описание провайдеров: какие поля нужны и где взять ключ (показывается в UI).
 const PROVIDERS = {
   resend: {
@@ -229,9 +236,10 @@ async function startCall(settings, { to, task, firstMessage, language, structure
   } else {
     // Временный ассистент: GPT-4o mini + голос ElevenLabs (если настроен)
     body.assistant = {
-      model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: 'Ты — вежливый HR-ассистент компании. Говори кратко и по делу. Задание: ' + (task || 'тестовый звонок — поздоровайся и попрощайся.') }] },
+      model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: VOICEMAIL_RULE + 'Ты — вежливый HR-ассистент компании. Говори кратко и по делу. Задание: ' + (task || 'тестовый звонок — поздоровайся и попрощайся.') }] },
       firstMessage: firstMessage || 'Здравствуйте! Это ассистент отдела подбора персонала.',
       transcriber: { provider: 'deepgram', model: 'nova-2', language: language || 'ru' },
+      endCallFunctionEnabled: true,
     };
     // Голос агента по языку звонка (ElevenLabs Voice ID). Свой voiceId в конфиге переопределяет карту.
     const VOICE_BY_LANG = { ru: 'ymDCYd8puC7gYjxIamPt', pl: 'd4Z5Fvjohw3zxGpV8XUV', en: 'EST9Ui6982FZPSi7gCHi' };
@@ -242,10 +250,10 @@ async function startCall(settings, { to, task, firstMessage, language, structure
     body.assistant.artifactPlan = artifactPlan;
     if (maxDurationSeconds) body.assistant.maxDurationSeconds = maxDurationSeconds;
   }
-  // Детект автоответчика/голосовой почты: попали на voicemail → Vapi сразу вешает трубку (voicemailMessage не задаём) → «не дозвонился».
-  // provider 'vapi' — аудио-классификация, работает с BYO-SIP (Zadarma).
-  const vmDetect = { provider: 'vapi' };
-  if (body.assistantOverrides) body.assistantOverrides.voicemailDetection = vmDetect;
+  // Детект автоответчика/голосовой почты: попали на voicemail → модель сама вешает трубку (endCallFunctionEnabled + VOICEMAIL_RULE),
+  // voicemailMessage не задаём. Аудио-детект provider 'vapi' (BYO-SIP Zadarma) настроен на раннее срабатывание.
+  const vmDetect = { provider: 'vapi', backoffPlan: { maxRetries: 8, startAtSeconds: 0, frequencySeconds: 1.5 }, beepMaxAwaitSeconds: 5 };
+  if (body.assistantOverrides) { body.assistantOverrides.voicemailDetection = vmDetect; body.assistantOverrides.endCallFunctionEnabled = true; }
   if (body.assistant) body.assistant.voicemailDetection = vmDetect;
   const d = await http('https://api.vapi.ai/call', {
     method: 'POST', headers: { Authorization: 'Bearer ' + c.apiKey, 'Content-Type': 'application/json' },
@@ -265,10 +273,12 @@ async function getCall(settings, callId) {
   const startedAt = d.startedAt || null, endedAt = d.endedAt || null;
   const durationSec = (startedAt && endedAt) ? Math.max(0, Math.round((new Date(endedAt) - new Date(startedAt)) / 1000)) : (d.durationSeconds || null);
   const endedReason = d && d.endedReason;
+  const transcript = (d && d.transcript) || (art.transcript) || null;
+  const voicemail = /voicemail/i.test(String(endedReason || '')) || looksLikeVoicemail(transcript);
   return {
     ok: true, id: d && d.id, status: d && d.status, endedReason,
-    noAnswer: isNoAnswer(endedReason), voicemail: /voicemail/i.test(String(endedReason || '')),
-    transcript: (d && d.transcript) || (art.transcript) || null, summary: a.summary || null, structuredData: a.structuredData || null,
+    noAnswer: isNoAnswer(endedReason) || voicemail, voicemail,
+    transcript, summary: a.summary || null, structuredData: a.structuredData || null,
     recordingUrl, startedAt, endedAt, durationSec,
   };
 }
@@ -304,4 +314,4 @@ async function zadarmaBalance(settings) {
   return { ok: true, balance: d.balance, currency: d.currency };
 }
 
-module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, isNoAnswer, vapiPing, zadarmaBalance, zadarmaRequest };
+module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, isNoAnswer, looksLikeVoicemail, vapiPing, zadarmaBalance, zadarmaRequest };
