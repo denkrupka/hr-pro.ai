@@ -245,7 +245,8 @@ async function api(req, env, url, exec) {
 
   // Входящий ИИ-звонок: Vapi assistant-request → отдаём динамического ассистента по номеру звонящего (публичный, защищён секретом).
   if (p === '/api/vapi/inbound' && m === 'POST') {
-    const secret = env.VAPI_INBOUND_SECRET || '';
+    let secret = env.VAPI_INBOUND_SECRET || '';
+    if (!secret) { try { secret = (await settings()).vapiInboundSecret || ''; } catch (_) {} }
     const provided = req.headers.get('x-vapi-secret') || url.searchParams.get('key') || '';
     if (!secret || provided !== secret) return j({ error: 'forbidden' }, 403);
     const call = (body.message && body.message.call) || body.call || {};
