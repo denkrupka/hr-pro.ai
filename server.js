@@ -1615,7 +1615,15 @@ app.post('/api/take/:code/submit', (req, res) => {
       if (test.type === 'tools') { aiCallFor(u, p, vac, 'afterTools'); aiCallFor(u, p, vac, 'motivation'); }
       advanceFunnel(p);
       const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || p.tel || 'кандидат';
-      notif.pushNotif(u, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: p.id }, save);
+      let failed = false;
+      try {
+        const wf = buildWorkflow(p, vac.lang || 'ru');
+        const st = ([...(wf.stages || []), ...(wf.optional || [])]).find(x => x.key === test.type);
+        if (st && st.passed === false) failed = true;
+      } catch (_) {}
+      const contacts = (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '');
+      if (failed) notif.pushNotif(u, 'test_failed', { title: 'Кандидат НЕ прошёл тест: ' + cand, body: contacts + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: p.id }, save);
+      else notif.pushNotif(u, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: contacts + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: p.id }, save);
     }
   } catch (e) { console.error('[funnel]', e.message); }
   save();
@@ -2238,6 +2246,19 @@ app.post('/api/participants/:id/ai-calls/refresh', requireAuth, async (req, res)
   const lang = (vac && vac.lang) || 'ru';
   try { await callLog.refreshAll(req.user.settings, p, save); }
   catch (e) { return res.status(502).json({ error: e.message }); }
+  try {
+    const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.tel || 'кандидат';
+    let changed = false;
+    for (const e of ((p.workflow && p.workflow.aiCallLog) || [])) {
+      if (!callLog.isFinal(e) || e._notifiedCall || e.kind === 'references') continue;
+      e._notifiedCall = true; changed = true;
+      const att = (e.attempts || [])[(e.attempts || []).length - 1] || {};
+      const answered = String(att.transcript || '').trim().length >= 20;
+      if (answered) notif.pushNotif(req.user, 'call_done', { title: 'ИИ-звонок завершён: ' + cand, body: e.summary ? String(e.summary).slice(0, 200) : '', pid: p.id }, save);
+      else notif.pushNotif(req.user, 'call_noanswer', { title: 'ИИ не дозвонился: ' + cand, body: '', pid: p.id }, save);
+    }
+    if (changed) save();
+  } catch (_) {}
   res.json({ calls: callLog.publicView(p, lang), motivation: (p.workflow && p.workflow.aiMotivation) || null });
 });
 // ---------- Собеседования (несколько карточек на кандидата) ----------
@@ -2630,6 +2651,8 @@ app.post('/api/participants/:id/column', requireAuth, (req, res) => {
   } else return res.status(400).json({ error: 'Неверная колонка' });
   if (col === 'hired' || col === 'rejected') {
     try { const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат'; const vc = db().vacancies.find(v => v.id === p.vacancyId); notif.pushNotif(req.user, 'decision', { title: (col === 'hired' ? '✅ Кандидат принят: ' : '❌ Кандидат отклонён: ') + cand, body: (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + (vc && vc.name ? 'Вакансия: ' + vc.name : ''), pid: p.id }, save); } catch (e) {}
+  } else if (typeof col === 'string' && col && col !== 'new') {
+    try { const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат'; const vc = db().vacancies.find(v => v.id === p.vacancyId); const stTitle = kanbanColTitle(col, (vc && vc.lang) || 'ru'); notif.pushNotif(req.user, 'stage_change', { title: 'Смена этапа: ' + cand, body: (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + 'Этап: ' + stTitle + (vc && vc.name ? '\nВакансия: ' + vc.name : ''), pid: p.id }, save); } catch (e) {}
   }
   save(); res.json({ ok: true });
 });

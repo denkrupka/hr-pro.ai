@@ -1546,6 +1546,8 @@ async function api(req, env, url, exec) {
     await S.upsert('participants', { id: part.id, data: part });
     if (col === 'hired' || col === 'rejected') {
       try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; const vc = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; await pushNotif(await nenv(), S, me, 'decision', { title: (col === 'hired' ? '✅ Кандидат принят: ' : '❌ Кандидат отклонён: ') + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + (vc && vc.name ? 'Вакансия: ' + vc.name : ''), pid: part.id }); } catch (_) {}
+    } else if (typeof col === 'string' && col && col !== 'new') {
+      try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; const vc = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; const stTitle = kanbanColTitle(col, (vc && vc.lang) || 'ru'); await pushNotif(await nenv(), S, me, 'stage_change', { title: 'Смена этапа: ' + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + 'Этап: ' + stTitle + (vc && vc.name ? '\nВакансия: ' + vc.name : ''), pid: part.id }); } catch (_) {}
     }
     // Письмо кандидату при смене статуса (не критично — не ломаем ответ при ошибке).
     // Шаблоны статусов: rejected/interview/reserve/accepted. Из kanban-колонки мапим только те,
@@ -2132,7 +2134,16 @@ async function api(req, env, url, exec) {
         if (called) await S.upsert('participants', { id: part.id, data: part });
         try {
           const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || part.tel || 'кандидат';
-          await pushNotif(await nenv(), S, owner, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: part.id });
+          let failed = false;
+          try {
+            const allTests = (await S.select('tests', `participant_id=eq.${part.id}&select=data`)).map(r => r.data);
+            const wf = buildWorkflow(part, (vac.lang || langOf() || 'ru'), vac, allTests);
+            const st = ([...(wf.stages || []), ...(wf.optional || [])]).find(x => x.key === test.type);
+            if (st && st.passed === false) failed = true;
+          } catch (_) {}
+          const contacts = (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '');
+          if (failed) await pushNotif(await nenv(), S, owner, 'test_failed', { title: 'Кандидат НЕ прошёл тест: ' + cand, body: contacts + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: part.id });
+          else await pushNotif(await nenv(), S, owner, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: contacts + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: part.id });
         } catch (_) {}
       }
       // Последовательная отправка: запустить следующий тест из очереди этого кандидата
