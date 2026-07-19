@@ -209,9 +209,13 @@ export async function buildInboundAssistant(env, S, caller) {
   const companies = [...new Set(apps.map(a => a.company).filter(Boolean))];
   const positions = [...new Set(apps.map(a => a.position).filter(Boolean))];
   const multi = apps.length > 1 && (companies.length > 1 || positions.length > 1);
+  const compJoin = (arr) => arr.length === 1 ? arr[0] : arr.slice(0, -1).join(', ') + ' и ' + arr[arr.length - 1];
+  const compRu = companies.length ? (companies.length === 1 ? 'компании ' + companies[0] : 'компаний ' + compJoin(companies)) : '';
 
-  let sys = `Ты — ${agent}, виртуальный HR-ассистент. Тебе ЗВОНИТ САМ кандидат: ${dispName} (звонок входящий, кандидат набрал нас). Ты уже знаешь его по номеру телефона. Говори тепло, по-человечески, кратко.\n`;
-  sys += `ИМЯ КАНДИДАТА: обращайся к нему «${dispName}». Произноси имя на языке разговора с естественным ударением; НЕ читай его по-английски, даже если в системе оно записано латиницей.\n\n`;
+  let sys = `Ты — ${agent}, виртуальный HR-менеджер${compRu ? ' ' + compRu : ''}. Тебе ЗВОНИТ САМ кандидат: ${dispName} (звонок входящий, кандидат набрал нас). Ты уже знаешь его по номеру телефона. Говори тепло, по-человечески, кратко.\n`;
+  sys += `ИМЯ КАНДИДАТА: обращайся к нему «${dispName}». Произноси имя на языке разговора с естественным ударением; НЕ читай его по-английски, даже если в системе оно записано латиницей.\n`;
+  if (companies.length) sys += `КОМПАНИЯ: при представлении обязательно называй, что ты виртуальный HR-менеджер ${compRu}${companies.length > 1 ? ' (кандидат откликался в каждую из этих компаний — назови ВСЕ)' : ''}.\n`;
+  sys += '\n';
   sys += 'СТРОГИЕ ПРАВИЛА ПРИВАТНОСТИ (нарушать нельзя):\n'
     + `- Ты разговариваешь ТОЛЬКО об этом кандидате (${dispName}) и ТОЛЬКО о его собственных заявках, перечисленных ниже. Никого другого не обсуждаешь.\n`
     + '- Если просят рассказать про другого человека/кандидата — вежливо откажи (такую информацию не предоставляем).\n'
@@ -245,8 +249,10 @@ export async function buildInboundAssistant(env, S, caller) {
     structuredDataPlan: { enabled: true, schema: INBOUND_SCHEMA, messages: [{ role: 'system', content: 'Извлеки данные строго по JSON-схеме из расшифровки звонка. Если пункта нет — оставь пустым.' }, { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
   };
   const fn = localizeName(primary.name || '', lang);
-  const first = lang === 'pl' ? `Dzień dobry${fn ? ', ' + fn : ''}! Nazywam się ${agent}, jestem wirtualnym menedżerem HR. Miło, że Pan/Pani dzwoni. W czym mogę pomóc?`
-    : lang === 'en' ? `Hello${fn ? ', ' + fn : ''}! My name is ${agent}, I'm a virtual HR manager. Glad you called. How can I help you?`
-    : `Здравствуйте${fn ? ', ' + fn : ''}! Меня зовут ${agent}, я виртуальный HR-менеджер. Рада, что вы позвонили. Чем могу помочь?`;
+  const compPl = companies.length ? ' firm' + (companies.length === 1 ? 'y ' + companies[0] : ' ' + companies.slice(0, -1).join(', ') + ' i ' + companies[companies.length - 1]) : '';
+  const compEn = companies.length ? ' at ' + compJoin(companies) : '';
+  const first = lang === 'pl' ? `Dzień dobry${fn ? ', ' + fn : ''}! Nazywam się ${agent}, jestem wirtualnym menedżerem HR${compPl}. Miło, że Pan/Pani dzwoni. W czym mogę pomóc?`
+    : lang === 'en' ? `Hello${fn ? ', ' + fn : ''}! My name is ${agent}, I'm a virtual HR manager${compEn}. Glad you called. How can I help you?`
+    : `Здравствуйте${fn ? ', ' + fn : ''}! Меня зовут ${agent}, я виртуальный HR-менеджер${compRu ? ' ' + compRu : ''}. Рада, что вы позвонили. Чем могу помочь?`;
   return { assistant: { ...b2, firstMessage: first, model: { provider: 'openai', model: 'gpt-4o-mini', messages: [{ role: 'system', content: sys }] } }, meta: { matched: true, apps: apps.length, name } };
 }
