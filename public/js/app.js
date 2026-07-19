@@ -387,7 +387,7 @@ const RI18N = {
     kn_new_test: 'Новый тест', kn_name: 'Название теста', kn_name_ph: 'напр. Знание ассортимента', kn_del_test: 'Удалить тест',
     kn_ai: 'Составить тест ИИ', kn_del_confirm: 'Вы действительно хотите удалить тест',
     jp_title: 'Порталы трудоустройства', jp_on: 'Подключено', jp_off: 'Не подключено', jp_connect: 'Подключить', jp_edit: 'Изменить доступы', jp_disconnect: 'Отключить', jp_login: 'Логин кабинета работодателя', jp_pass: 'Пароль', jp_connected: 'Портал подключён',
-    jp_intro: 'Три способа: 1) агрегаторы (Indeed, Google for Jobs, Adzuna, Trovit) сами забирают ваши вакансии из публичного фида — просто дайте им ссылку ниже; 2) порталы с API (Jooble) — вставьте ключ, работает сразу; 3) остальные (pracuj.pl, OLX и др.) — вход по логину кабинета или партнёрскому доступу.',
+    jp_intro: 'Публикуйте вакансии на джоб-порталах. Три способа: 1) агрегаторы (Indeed, Google for Jobs, Adzuna, Trovit) сами забирают вакансии из вашего фида — ссылку скопируйте прямо в карточке агрегатора; 2) порталы с API (Jooble) — вставьте ключ, работает сразу; 3) остальные (pracuj.pl, OLX и др.) — вход по логину кабинета или партнёрскому доступу.',
     jp_by_feed: 'по фиду', jp_by_login: 'по логину', jp_copy_feed: 'Скопировать фид', jp_test: 'Проверить', jp_jobs_found: 'вакансий в API', jp_feed_ready: 'Фид готов',
     jp_feed_h: 'Фид ваших вакансий (JobPosting XML)', jp_feed_hint: 'Опубликованные вакансии в стандарте, который принимают агрегаторы. Добавьте эту ссылку в кабинете любого портала-агрегатора — вакансии проиндексируются автоматически.', jp_open_feed: 'Открыть',
     adp_tab_editor: 'Объявление', adp_tab_list: 'Объявления', adp_portal: 'Портал', adp_title: 'Название', adp_url: 'Ссылка на публикацию', adp_add: 'Добавить размещение', adp_link: 'Ссылка с меткой', adp_resp: 'Отклики', adp_motiv: 'Мотивация', adp_knowl: 'Знания', adp_conv: 'Конверсия', adp_empty: 'Размещений пока нет. Добавьте портал, где опубликовано объявление.',
@@ -507,7 +507,7 @@ const RI18N = {
     kn_new_test: 'Nowy test', kn_name: 'Nazwa testu', kn_name_ph: 'np. Znajomość asortymentu', kn_del_test: 'Usuń test',
     kn_ai: 'Utwórz test AI', kn_del_confirm: 'Czy na pewno chcesz usunąć test',
     jp_title: 'Portale pracy', jp_on: 'Połączono', jp_off: 'Nie połączono', jp_connect: 'Połącz', jp_edit: 'Zmień dostępy', jp_disconnect: 'Odłącz', jp_login: 'Login konta pracodawcy', jp_pass: 'Hasło', jp_connected: 'Portal połączony',
-    jp_intro: 'Trzy sposoby: 1) agregatory (Indeed, Google for Jobs, Adzuna, Trovit) same pobierają Twoje oferty z publicznego feeda — podaj im link poniżej; 2) portale z API (Jooble) — wklej klucz, działa od razu; 3) pozostałe (pracuj.pl, OLX i in.) — logowanie do konta lub dostęp partnerski.',
+    jp_intro: 'Publikuj oferty na portalach pracy. Trzy sposoby: 1) agregatory (Indeed, Google for Jobs, Adzuna, Trovit) same pobierają oferty z Twojego feeda — link skopiuj bezpośrednio w karcie agregatora; 2) portale z API (Jooble) — wklej klucz, działa od razu; 3) pozostałe (pracuj.pl, OLX i in.) — logowanie do konta lub dostęp partnerski.',
     jp_by_feed: 'przez feed', jp_by_login: 'przez login', jp_copy_feed: 'Kopiuj feed', jp_test: 'Sprawdź', jp_jobs_found: 'ofert w API', jp_feed_ready: 'Feed gotowy',
     jp_feed_h: 'Feed Twoich ofert (JobPosting XML)', jp_feed_hint: 'Opublikowane oferty w standardzie akceptowanym przez agregatory. Dodaj ten link w koncie dowolnego portalu-agregatora — oferty zaindeksują się automatycznie.', jp_open_feed: 'Otwórz',
     adp_tab_editor: 'Ogłoszenie', adp_tab_list: 'Ogłoszenia', adp_portal: 'Portal', adp_title: 'Nazwa', adp_url: 'Link do publikacji', adp_add: 'Dodaj publikację', adp_link: 'Link z tagiem', adp_resp: 'Zgłoszenia', adp_motiv: 'Motywacja', adp_knowl: 'Wiedza', adp_conv: 'Konwersja', adp_empty: 'Brak publikacji. Dodaj portal, gdzie opublikowano ogłoszenie.',
@@ -627,7 +627,7 @@ const RI18N = {
     kn_new_test: 'New test', kn_name: 'Test name', kn_name_ph: 'e.g. Product knowledge', kn_del_test: 'Delete test',
     kn_ai: 'Generate test with AI', kn_del_confirm: 'Do you really want to delete the test',
     jp_title: 'Job boards', jp_on: 'Connected', jp_off: 'Not connected', jp_connect: 'Connect', jp_edit: 'Edit credentials', jp_disconnect: 'Disconnect', jp_login: 'Employer account login', jp_pass: 'Password', jp_connected: 'Portal connected',
-    jp_intro: 'Three ways: 1) aggregators (Indeed, Google for Jobs, Adzuna, Trovit) pull your jobs from a public feed — just give them the link below; 2) boards with an API (Jooble) — paste the key, works instantly; 3) the rest (pracuj.pl, OLX, etc.) — account login or partner access.',
+    jp_intro: 'Publish your jobs to job boards. Three ways: 1) aggregators (Indeed, Google for Jobs, Adzuna, Trovit) pull your jobs from your feed — copy the link right in the aggregator’s card; 2) boards with an API (Jooble) — paste the key, works instantly; 3) the rest (pracuj.pl, OLX, etc.) — account login or partner access.',
     jp_by_feed: 'via feed', jp_by_login: 'via login', jp_copy_feed: 'Copy feed', jp_test: 'Test', jp_jobs_found: 'jobs in API', jp_feed_ready: 'Feed ready',
     jp_feed_h: 'Your jobs feed (JobPosting XML)', jp_feed_hint: 'Your published jobs in the standard aggregators accept. Add this link in any aggregator’s dashboard — jobs get indexed automatically.', jp_open_feed: 'Open',
     adp_tab_editor: 'Job ad', adp_tab_list: 'Placements', adp_portal: 'Portal', adp_title: 'Title', adp_url: 'Publication link', adp_add: 'Add placement', adp_link: 'Tagged link', adp_resp: 'Applications', adp_motiv: 'Motivation', adp_knowl: 'Knowledge', adp_conv: 'Conversion', adp_empty: 'No placements yet. Add the portal where the ad is published.',
@@ -3423,10 +3423,6 @@ async function renderJobPortals() {
     </div>
     <div id="intg-ads" style="display:${activeTab === 'ads' ? 'block' : 'none'}">
       <p class="muted d1" style="max-width:720px;line-height:1.55">${rt('jp_intro')}</p>
-      <div class="card d1" style="margin-top:12px"><label class="lbl">${rt('jp_feed_h')}</label>
-        <div class="muted" style="font-size:12.5px;margin-bottom:8px">${rt('jp_feed_hint')}</div>
-        <div class="row" style="gap:6px"><input class="field sm" style="flex:1" readonly value="${esc(feedUrl)}"><button class="btn ghost sm ic-btn" onclick="copyLink('${esc(feedUrl)}')">${ICON_COPY}${t('ak_copy')}</button>
-        <button class="btn ghost sm" onclick="window.open('${esc(feedUrl)}','_blank')">${rt('jp_open_feed')}</button></div></div>
       <div class="intg-grid d2" style="margin-top:14px">${cards}</div>
     </div>
     <div id="intg-video" style="display:${activeTab === 'video' ? 'block' : 'none'}">
