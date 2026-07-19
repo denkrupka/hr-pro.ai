@@ -160,7 +160,8 @@ async function renderAdmLeads() {
 }
 // Карточка лида: данные + журнал звонков Софии с транскрипциями и записями
 async function openLead(lid) {
-  const d = await api('/api/admin/leads/' + lid + '/refresh', { method: 'POST' }).catch(() => null) || await api('/api/admin/leads/' + lid);
+  await api('/api/admin/leads/' + lid + '/refresh', { method: 'POST' }).catch(() => null); // подтянуть свежие транскрипты из Vapi
+  const d = await api('/api/admin/leads/' + lid);
   const l = d.lead;
   const user = d.user || null;
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'leads'));
