@@ -3411,31 +3411,48 @@ async function renderJobPortals() {
         ${canTest ? `<button class="btn ghost sm" data-jp-test="${p.id}">${rt('jp_test')}</button><span style="font-size:12px" id="jp-res-${p.id}"></span>` : ''}</div>
     </div>`;
   }).join('');
+  const activeTab = renderJobPortals._tab || 'ads';
+  const T = { ads: { ru: 'Объявления', pl: 'Ogłoszenia', en: 'Job ads' }, video: { ru: 'Видеоконференции', pl: 'Wideokonferencje', en: 'Video calls' } };
+  const tl = k => (T[k][LANG] || T[k].ru);
+  const tabStyle = on => 'padding:9px 16px;border-radius:10px;border:1px solid ' + (on ? 'rgba(139,108,255,.5)' : 'rgba(255,255,255,.12)') + ';background:' + (on ? 'rgba(139,108,255,.16)' : 'transparent') + ';color:' + (on ? '#fff' : '#9aa3bf') + ';font:600 13.5px Inter,sans-serif;cursor:pointer';
   $('#main').innerHTML = `<div class="eyebrow reveal">${t('nav_integrations')}</div>
     <h1 class="page-h reveal d1" style="margin-top:10px">${rt('jp_title')}</h1>
-    <p class="muted reveal d1" style="max-width:720px;line-height:1.55">${rt('jp_intro')}</p>
-    <div class="card reveal d1" style="margin-top:12px"><label class="lbl">${rt('jp_feed_h')}</label>
-      <div class="muted" style="font-size:12.5px;margin-bottom:8px">${rt('jp_feed_hint')}</div>
-      <div class="row" style="gap:6px"><input class="field sm" style="flex:1" readonly value="${esc(feedUrl)}"><button class="btn ghost sm ic-btn" onclick="copyLink('${esc(feedUrl)}')">${ICON_COPY}${t('ak_copy')}</button>
-      <button class="btn ghost sm" onclick="window.open('${esc(feedUrl)}','_blank')">${rt('jp_open_feed')}</button></div></div>
-    <div class="intg-grid reveal d2" style="margin-top:14px">${cards}</div>
-    <h2 class="page-h reveal d2" style="margin-top:30px;font-size:22px">Видеосвязь</h2>
-    <p class="muted reveal d2" style="max-width:720px;line-height:1.55;margin-bottom:12px">Подключите аккаунт видеосервиса — при планировании собеседования портал сам создаст встречу и вставит ссылку.</p>
-    <div class="intg-grid reveal d2">${VIDEO_INTG.map(v => {
-      const acc = (vstatus.accounts && vstatus.accounts[v.id]) || '';
-      const configured = !vstatus.configured || vstatus.configured[v.id] !== false; // владелец завёл OAuth-приложение
-      return `<div class="card intg-card">
-      <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
-        <b style="font-size:15.5px">${esc(v.name)}</b>
-        <span class="cstep-st ${vstatus[v.id] ? 'ok' : ''}">${vstatus[v.id] ? 'Подключено' : 'Не подключено'}</span></div>
-      <div style="margin:6px 0 4px"><span class="jp-m jp-api">${esc(v.method)}</span></div>
-      <p class="muted" style="font-size:12.5px;margin:4px 0 8px;min-height:52px">${vstatus[v.id] && acc ? 'Аккаунт: <b>' + esc(acc) + '</b>' : esc(v.desc)}</p>
-      <div class="row" style="gap:8px;flex-wrap:wrap">
-        ${configured
-          ? `<button class="btn ${vstatus[v.id] ? 'soft' : ''} sm" data-vi-connect="${v.id}">${vstatus[v.id] ? '↻ Переподключить' : 'Подключить'}</button>`
-          : `<span class="muted" style="font-size:12px">Скоро — сервис ещё не настроен администратором</span>`}
-        ${vstatus[v.id] ? `<button class="btn ghost danger sm" data-vi-off="${v.id}">Отключить</button>` : ''}</div>
-    </div>`; }).join('')}</div>`;
+    <div class="reveal d1" style="display:flex;gap:8px;margin:16px 0 8px">
+      <button data-itab="ads" style="${tabStyle(activeTab === 'ads')}">${tl('ads')}</button>
+      <button data-itab="video" style="${tabStyle(activeTab === 'video')}">${tl('video')}</button>
+    </div>
+    <div id="intg-ads" style="display:${activeTab === 'ads' ? 'block' : 'none'}">
+      <p class="muted d1" style="max-width:720px;line-height:1.55">${rt('jp_intro')}</p>
+      <div class="card d1" style="margin-top:12px"><label class="lbl">${rt('jp_feed_h')}</label>
+        <div class="muted" style="font-size:12.5px;margin-bottom:8px">${rt('jp_feed_hint')}</div>
+        <div class="row" style="gap:6px"><input class="field sm" style="flex:1" readonly value="${esc(feedUrl)}"><button class="btn ghost sm ic-btn" onclick="copyLink('${esc(feedUrl)}')">${ICON_COPY}${t('ak_copy')}</button>
+        <button class="btn ghost sm" onclick="window.open('${esc(feedUrl)}','_blank')">${rt('jp_open_feed')}</button></div></div>
+      <div class="intg-grid d2" style="margin-top:14px">${cards}</div>
+    </div>
+    <div id="intg-video" style="display:${activeTab === 'video' ? 'block' : 'none'}">
+      <p class="muted d1" style="max-width:720px;line-height:1.55;margin-bottom:12px">Подключите аккаунт видеосервиса — при планировании собеседования портал сам создаст встречу и вставит ссылку.</p>
+      <div class="intg-grid d2">${VIDEO_INTG.map(v => {
+        const acc = (vstatus.accounts && vstatus.accounts[v.id]) || '';
+        const configured = !vstatus.configured || vstatus.configured[v.id] !== false; // владелец завёл OAuth-приложение
+        return `<div class="card intg-card">
+        <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
+          <b style="font-size:15.5px">${esc(v.name)}</b>
+          <span class="cstep-st ${vstatus[v.id] ? 'ok' : ''}">${vstatus[v.id] ? 'Подключено' : 'Не подключено'}</span></div>
+        <div style="margin:6px 0 4px"><span class="jp-m jp-api">${esc(v.method)}</span></div>
+        <p class="muted" style="font-size:12.5px;margin:4px 0 8px;min-height:52px">${vstatus[v.id] && acc ? 'Аккаунт: <b>' + esc(acc) + '</b>' : esc(v.desc)}</p>
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          ${configured
+            ? `<button class="btn ${vstatus[v.id] ? 'soft' : ''} sm" data-vi-connect="${v.id}">${vstatus[v.id] ? '↻ Переподключить' : 'Подключить'}</button>`
+            : `<span class="muted" style="font-size:12px">Скоро — сервис ещё не настроен администратором</span>`}
+          ${vstatus[v.id] ? `<button class="btn ghost danger sm" data-vi-off="${v.id}">Отключить</button>` : ''}</div>
+      </div>`; }).join('')}</div>
+    </div>`;
+  $$('[data-itab]').forEach(b => b.onclick = () => {
+    const tab = b.dataset.itab; renderJobPortals._tab = tab;
+    $('#intg-ads').style.display = tab === 'ads' ? 'block' : 'none';
+    $('#intg-video').style.display = tab === 'video' ? 'block' : 'none';
+    $$('[data-itab]').forEach(x => x.setAttribute('style', tabStyle(x === b)));
+  });
   $$('[data-vi-connect]').forEach(b => b.onclick = () => openVideoOAuth(b.dataset.viConnect, renderJobPortals));
   $$('[data-vi-off]').forEach(b => b.onclick = async () => {
     if (!confirm('Отключить ' + (VIDEO_INTG.find(x => x.id === b.dataset.viOff) || {}).name + '?')) return;
