@@ -2522,6 +2522,8 @@ function calEvent(b, base) {
   e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
   e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.videoPlatform = s('videoPlatform'); e.note = s('note');
   e.participantId = (b && b.participantId) || e.participantId || null;
+  // Контакты кандидата при ручном вводе (без связи с базой) — для приглашения
+  e.candEmail = e.participantId ? '' : s('candEmail'); e.candTel = e.participantId ? '' : s('candTel');
   e.interviewId = (b && b.interviewId) || e.interviewId || null;
   return e;
 }
@@ -2559,22 +2561,28 @@ app.post('/api/calendar/:id/invite', requireAuth, async (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
   const ev = (u.calendar || []).find(x => x.id === req.params.id);
   if (!ev) return res.status(404).json({ error: 'Не найдено' });
-  if (!ev.participantId) return res.status(400).json({ error: 'Кандидат не связан с базой' });
-  const p = db().participants.find(x => x.id === ev.participantId && x.userId === u.id);
-  if (!p) return res.status(404).json({ error: 'Кандидат не найден' });
+  // Получатель: связанный кандидат из базы ИЛИ введённые вручную email/телефон
+  let toEmail = '', toTel = '', candName = ev.candidate || '';
+  if (ev.participantId) {
+    const p = db().participants.find(x => x.id === ev.participantId && x.userId === u.id);
+    if (!p) return res.status(404).json({ error: 'Кандидат не найден' });
+    toEmail = p.email || ''; toTel = p.tel || ''; candName = ((p.name || '') + ' ' + (p.surname || '')).trim() || candName;
+  } else {
+    toEmail = ev.candEmail || ''; toTel = ev.candTel || '';
+  }
+  if (!toEmail && !toTel) return res.status(400).json({ error: 'Нет email или телефона кандидата' });
   const lang = (u.settings && u.settings.uiLang) || 'ru';
   const subject = { ru: 'Приглашение на собеседование', pl: 'Zaproszenie na rozmowę', en: 'Interview invitation' }[['ru', 'pl', 'en'].includes(lang) ? lang : 'ru'];
   const delivery = { email: null, sms: null };
   try {
-    if (p.email && integ.isConfigured(u.settings, 'resend')) {
-      const candName = ((p.name || '') + ' ' + (p.surname || '')).trim();
-      await integ.sendEmail(u.settings, { to: p.email, lang, baseUrl: BASE_URL, subject, eyebrow: subject, headline: inviteGreeting(candName, lang), bodyHtml: interviewInviteText(ev, lang, false) });
+    if (toEmail && integ.isConfigured(u.settings, 'resend')) {
+      await integ.sendEmail(u.settings, { to: toEmail, lang, baseUrl: BASE_URL, subject, eyebrow: subject, headline: inviteGreeting(candName, lang), bodyHtml: interviewInviteText(ev, lang, false) });
       delivery.email = 'sent';
     }
   } catch (e) { delivery.email = 'error: ' + e.message; }
   try {
-    if (p.tel && integ.isConfigured(u.settings, 'smsapi')) {
-      await integ.sendSms(u.settings, { to: p.tel, message: interviewInviteText(ev, lang, true) });
+    if (toTel && integ.isConfigured(u.settings, 'smsapi')) {
+      await integ.sendSms(u.settings, { to: toTel, message: interviewInviteText(ev, lang, true) });
       delivery.sms = 'sent';
     }
   } catch (e) { delivery.sms = 'error: ' + e.message; }

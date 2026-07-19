@@ -4282,6 +4282,7 @@ const CI18N = {
     upcoming: 'Ближайшие собеседования', none_up: 'Пока нет запланированных собеседований.',
     m_new_tag: 'Новое собеседование', m_edit_tag: 'Редактирование', m_new_title: 'Запланировать собеседование', m_edit_title: 'Изменить собеседование',
     f_candidate: 'Кандидат', f_candidate_ph: 'Имя и фамилия кандидата', f_link: 'Связать с кандидатом из базы', f_link_none: 'Не связывать',
+    f_cand_email: 'Email кандидата', f_cand_email_ph: 'email@example.com', f_cand_tel: 'Телефон кандидата', f_cand_tel_ph: '+48…', f_cand_contact_hint: 'Укажите email и/или телефон — на них отправим приглашение',
     f_role: 'Должность', f_role_ph: 'Например: Менеджер по продажам', f_stage: 'Этап', f_date: 'Дата', f_time: 'Время',
     f_format: 'Формат', fmt_video: 'Видеозвонок', fmt_office: 'В офисе', fmt_phone: 'Телефон',
     f_interviewer: 'Интервьюер', f_interviewer_ph: 'Кто проводит', f_note: 'Заметка', f_note_opt: '(ссылка на встречу, комментарий)',
@@ -4293,7 +4294,7 @@ const CI18N = {
     meet_video: 'Ссылка на видеовстречу', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Адрес встречи', meet_office_ph: 'Город, улица, офис', meet_phone: 'Номер, с которого будет звонок', meet_phone_ph: '+48…', meet_create: 'Создать ссылку', meet_platform: 'Платформа видеосвязи',
     setup_title: 'Давайте настроим процесс собеседований', setup_sub: 'Заполните один раз — данные подставятся во все собеседования. Позже можно изменить в настройках.', setup_office: 'Адрес офиса (для очных встреч)', setup_office_ph: 'Город, улица, дом, офис', setup_phone: 'Телефон организатора (для звонков)', setup_video: 'Сервис видеосвязи', setup_save: 'Сохранить и продолжить', setup_later: 'Позже',
     save_invite: 'Запланировать и пригласить',
-    inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы — приглашение шлём на его email и телефон', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)',
+    inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы или введите email/телефон вручную', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)',
     search_ph: 'Поиск: имя, телефон, email…', filter_all: 'Все этапы', view_month: 'Месяц', view_list: 'Список', link_hint: 'Создайте встречу в открывшемся окне и вставьте ссылку сюда', link_created: 'Ссылка создана и вставлена ✓', list_empty: 'Нет собеседований по заданным условиям',
     edit_stages: 'Изменить этапы', st_ed_title: 'Этапы отбора', st_ed_sub: 'Переименуйте, добавьте или удалите этапы. Цвет — метка события в календаре.', st_name_ph: 'Название этапа', st_add: '+ Добавить этап', st_min: 'Оставьте хотя бы один этап', cand_email: 'Email кандидата', cand_phone: 'Телефон кандидата' },
   pl: { title: 'Kalendarz rozmów', eyebrow: 'Planowanie rozmów', neww: 'Nowa rozmowa', today: 'Dziś',
@@ -4301,6 +4302,7 @@ const CI18N = {
     upcoming: 'Najbliższe rozmowy', none_up: 'Brak zaplanowanych rozmów.',
     m_new_tag: 'Nowa rozmowa', m_edit_tag: 'Edycja', m_new_title: 'Zaplanuj rozmowę', m_edit_title: 'Edytuj rozmowę',
     f_candidate: 'Kandydat', f_candidate_ph: 'Imię i nazwisko', f_link: 'Powiąż z kandydatem z bazy', f_link_none: 'Nie wiązać',
+    f_cand_email: 'Email kandydata', f_cand_email_ph: 'email@example.com', f_cand_tel: 'Telefon kandydata', f_cand_tel_ph: '+48…', f_cand_contact_hint: 'Podaj email i/lub telefon — na nie wyślemy zaproszenie',
     f_role: 'Stanowisko', f_role_ph: 'Np. Menedżer sprzedaży', f_stage: 'Etap', f_date: 'Data', f_time: 'Godzina',
     f_format: 'Format', fmt_video: 'Wideorozmowa', fmt_office: 'W biurze', fmt_phone: 'Telefon',
     f_interviewer: 'Prowadzący', f_interviewer_ph: 'Kto prowadzi', f_note: 'Notatka', f_note_opt: '(link do spotkania, komentarz)',
@@ -4312,7 +4314,7 @@ const CI18N = {
     meet_video: 'Link do wideorozmowy', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Adres spotkania', meet_office_ph: 'Miasto, ulica, biuro', meet_phone: 'Numer, z którego zadzwonimy', meet_phone_ph: '+48…', meet_create: 'Utwórz link', meet_platform: 'Platforma wideo',
     setup_title: 'Skonfigurujmy proces rozmów', setup_sub: 'Wypełnij raz — dane podstawią się do wszystkich rozmów. Później można zmienić w ustawieniach.', setup_office: 'Adres biura (spotkania na żywo)', setup_office_ph: 'Miasto, ulica, biuro', setup_phone: 'Telefon organizatora (rozmowy tel.)', setup_video: 'Usługa wideo', setup_save: 'Zapisz i kontynuuj', setup_later: 'Później',
     save_invite: 'Zaplanuj i zaproś',
-    inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy — zaproszenie wyślemy na jego email i telefon', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)',
+    inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy albo wpisz email/telefon ręcznie', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)',
     search_ph: 'Szukaj: imię, telefon, email…', filter_all: 'Wszystkie etapy', view_month: 'Miesiąc', view_list: 'Lista', link_hint: 'Utwórz spotkanie w otwartym oknie i wklej link tutaj', link_created: 'Link utworzony i wstawiony ✓', list_empty: 'Brak rozmów dla podanych warunków',
     edit_stages: 'Edytuj etapy', st_ed_title: 'Etapy rekrutacji', st_ed_sub: 'Zmień nazwę, dodaj lub usuń etapy. Kolor — oznaczenie wydarzenia w kalendarzu.', st_name_ph: 'Nazwa etapu', st_add: '+ Dodaj etap', st_min: 'Zostaw co najmniej jeden etap', cand_email: 'Email kandydata', cand_phone: 'Telefon kandydata' },
   en: { title: 'Interview calendar', eyebrow: 'Interview scheduling', neww: 'New interview', today: 'Today',
@@ -4320,6 +4322,7 @@ const CI18N = {
     upcoming: 'Upcoming interviews', none_up: 'No interviews scheduled yet.',
     m_new_tag: 'New interview', m_edit_tag: 'Editing', m_new_title: 'Schedule an interview', m_edit_title: 'Edit interview',
     f_candidate: 'Candidate', f_candidate_ph: 'Candidate full name', f_link: 'Link to a candidate', f_link_none: "Don't link",
+    f_cand_email: 'Candidate email', f_cand_email_ph: 'email@example.com', f_cand_tel: 'Candidate phone', f_cand_tel_ph: '+48…', f_cand_contact_hint: 'Enter email and/or phone — we send the invite there',
     f_role: 'Position', f_role_ph: 'e.g. Sales manager', f_stage: 'Stage', f_date: 'Date', f_time: 'Time',
     f_format: 'Format', fmt_video: 'Video call', fmt_office: 'In office', fmt_phone: 'Phone',
     f_interviewer: 'Interviewer', f_interviewer_ph: 'Who runs it', f_note: 'Note', f_note_opt: '(meeting link, comment)',
@@ -4331,7 +4334,7 @@ const CI18N = {
     meet_video: 'Video meeting link', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Meeting address', meet_office_ph: 'City, street, office', meet_phone: 'Number we will call from', meet_phone_ph: '+48…', meet_create: 'Create link', meet_platform: 'Video platform',
     setup_title: 'Let’s set up your interview process', setup_sub: 'Fill this once — it will prefill every interview. You can change it later in settings.', setup_office: 'Office address (in-person)', setup_office_ph: 'City, street, office', setup_phone: 'Organizer phone (phone calls)', setup_video: 'Video service', setup_save: 'Save and continue', setup_later: 'Later',
     save_invite: 'Schedule & invite',
-    inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base — we send the invite to their email and phone', inv_needmeet: 'Fill in the meeting details (link / address / phone)',
+    inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base, or enter an email/phone manually', inv_needmeet: 'Fill in the meeting details (link / address / phone)',
     search_ph: 'Search: name, phone, email…', filter_all: 'All stages', view_month: 'Month', view_list: 'List', link_hint: 'Create the meeting in the opened window and paste the link here', link_created: 'Link created and inserted ✓', list_empty: 'No interviews match the filters',
     edit_stages: 'Edit stages', st_ed_title: 'Selection stages', st_ed_sub: 'Rename, add or remove stages. The color is the event marker in the calendar.', st_name_ph: 'Stage name', st_add: '+ Add stage', st_min: 'Keep at least one stage', cand_email: 'Candidate email', cand_phone: 'Candidate phone' },
 };
@@ -4586,6 +4589,14 @@ function openCalModalInner(ev, dateIso, prefill) {
       '<div id="cf-cand-list" class="cf-list" style="display:none"></div>' +
     '</div>' +
     '<div id="cf-cand-contact" class="cf-contact" style="display:none"></div>' +
+    // Ручной ввод кандидата: email + телефон (для отправки приглашения)
+    '<div id="cf-cand-manual" style="display:none">' +
+      '<div class="db-note" style="margin:2px 0 8px;font-size:11.5px;color:#8b93ad">' + ct('f_cand_contact_hint') + '</div>' +
+      '<div class="row" style="gap:12px">' +
+        '<div style="flex:1"><label class="db-lb">' + ct('f_cand_email') + '</label><input class="field" id="cf-cand-email" type="email" autocomplete="off" value="' + esc(f.candEmail || '') + '" placeholder="' + ct('f_cand_email_ph') + '"></div>' +
+        '<div style="flex:1"><label class="db-lb">' + ct('f_cand_tel') + '</label><input class="field" id="cf-cand-tel" autocomplete="off" value="' + esc(f.candTel || '') + '" placeholder="' + ct('f_cand_tel_ph') + '"></div>' +
+      '</div>' +
+    '</div>' +
     '<label class="db-lb">' + ct('f_role') + '</label><input class="field" id="cf-role" value="' + esc(f.role) + '" placeholder="' + ct('f_role_ph') + '">' +
     '<label class="db-lb" style="display:flex;align-items:center;justify-content:space-between">' + ct('f_stage') + '<button type="button" class="cf-editstages" id="cf-edit-stages">' + ct('edit_stages') + '</button></label><div class="cal-stages" id="cf-stages">' + stageBtns + '</div>' +
     '<div class="row" style="gap:12px">' +
@@ -4625,8 +4636,12 @@ function openCalModalInner(ev, dateIso, prefill) {
         (c.tel ? '<span class="cf-ct-i">' + _svg('<path d="M6 3h3l2 5-2.5 1.5a12 12 0 0 0 5 5L14 14l5 2v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4 6.2 2 2 0 0 1 6 4V3Z" stroke-linecap="round" stroke-linejoin="round"/>') + esc(c.tel) + '</span>' : '');
     } else { contactEl.style.display = 'none'; contactEl.innerHTML = ''; }
   };
+  // Поля ручного ввода email/телефона — показываем, когда кандидат не связан с базой, но имя введено.
+  const manualEl = $('#cf-cand-manual');
+  const toggleManual = () => { if (manualEl) manualEl.style.display = (!linkedId && candIn.value.trim()) ? 'block' : 'none'; };
   // Контакты уже связанного кандидата (режим редактирования)
   if (linkedId) { const c0 = calState.cands.find(x => x.id === linkedId); if (c0) showContact(c0); }
+  toggleManual();
   const renderCandList = () => {
     const q = candIn.value.trim().toLowerCase();
     // Показываем всех подходящих (список прокручивается); при пустом запросе — все кандидаты.
@@ -4639,11 +4654,12 @@ function openCalModalInner(ev, dateIso, prefill) {
       const id = o.dataset.id; const c = calState.cands.find(x => x.id === id);
       if (c) { candIn.value = c.name; linkedId = c.id; if (c.vacancyName) $('#cf-role').value = c.vacancyName; showContact(c); }
       else { linkedId = null; showContact(null); } // ручной ввод — оставляем как есть
+      toggleManual();
       candList.style.display = 'none';
     });
   };
   candIn.onfocus = renderCandList;
-  candIn.oninput = () => { linkedId = null; showContact(null); renderCandList(); };
+  candIn.oninput = () => { linkedId = null; showContact(null); toggleManual(); renderCandList(); };
   document.addEventListener('click', e => { if (candList && !candList.contains(e.target) && e.target !== candIn) candList.style.display = 'none'; });
 
   // Интервьюер: выбор себя/сотрудника или добавление нового (кастомный дропдаун).
@@ -4696,7 +4712,7 @@ function openCalModalInner(ev, dateIso, prefill) {
   { const es = $('#cf-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   applyFormat(!isEdit);
 
-  const collect = () => ({ candidate: candIn.value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: nselValue('cf-format'), interviewer: nselValue('cf-interviewer') === '__add' ? '' : nselValue('cf-interviewer'), interviewerEmail: interviewerEmail, meetingLink: meetIn.value.trim(), videoPlatform: nselValue('cf-platform') || '', note: $('#cf-note').value.trim(), participantId: linkedId, interviewId: f.interviewId || null });
+  const collect = () => ({ candidate: candIn.value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: nselValue('cf-format'), interviewer: nselValue('cf-interviewer') === '__add' ? '' : nselValue('cf-interviewer'), interviewerEmail: interviewerEmail, meetingLink: meetIn.value.trim(), videoPlatform: nselValue('cf-platform') || '', note: $('#cf-note').value.trim(), participantId: linkedId, candEmail: linkedId ? '' : (($('#cf-cand-email') || {}).value || '').trim(), candTel: linkedId ? '' : (($('#cf-cand-tel') || {}).value || '').trim(), interviewId: f.interviewId || null });
   if (isEdit) {
     const upd = () => { const ev2 = Object.assign({}, f, collect()); if ($('#cal-sync-g')) $('#cal-sync-g').href = googleCalLink(ev2); if ($('#cal-sync-o')) $('#cal-sync-o').href = outlookLink(ev2); };
     upd(); ['cf-candidate', 'cf-role', 'cf-date', 'cf-time', 'cf-format', 'cf-meet', 'cf-note'].forEach(id => { const el = $('#' + id); if (el) el.addEventListener('input', upd); });
@@ -4708,7 +4724,7 @@ function openCalModalInner(ev, dateIso, prefill) {
   $('#cf-save').onclick = async () => { const saved = await persist(); if (saved) { closeDecodeModal(); toast(ct('saved')); renderCalendar(); } };
   $('#cf-save-invite').onclick = async () => {
     const d = collect();
-    if (!d.participantId) return toast(ct('inv_nolink'));
+    if (!d.participantId && !d.candEmail && !d.candTel) return toast(ct('inv_nolink'));
     if (!d.meetingLink) return toast(ct('inv_needmeet'));
     const saved = await persist(); if (!saved) return;
     renderCalendar();

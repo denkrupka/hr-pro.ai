@@ -1712,6 +1712,8 @@ async function api(req, env, url, exec) {
       e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
       e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.videoPlatform = s('videoPlatform'); e.note = s('note');
       e.participantId = (b && b.participantId) || e.participantId || null;
+      // Контакты кандидата при ручном вводе (без связи с базой) — для приглашения
+      e.candEmail = e.participantId ? '' : s('candEmail'); e.candTel = e.participantId ? '' : s('candTel');
       e.interviewId = (b && b.interviewId) || e.interviewId || null;
       return e;
     };
@@ -1757,9 +1759,16 @@ async function api(req, env, url, exec) {
       if (!me) return needAuth();
       const ev = (me.calendar || []).find(x => x.id === mCalInv[1]);
       if (!ev) return j({ error: 'Не найдено' }, 404);
-      if (!ev.participantId) return j({ error: 'Кандидат не связан с базой' }, 400);
-      const part = await S.one('participants', ev.participantId);
-      if (!part || part.userId !== me.id) return j({ error: 'Кандидат не найден' }, 404);
+      // Получатель: связанный кандидат из базы ИЛИ введённые вручную email/телефон
+      let toEmail = '', toTel = '', candName = ev.candidate || '';
+      if (ev.participantId) {
+        const part = await S.one('participants', ev.participantId);
+        if (!part || part.userId !== me.id) return j({ error: 'Кандидат не найден' }, 404);
+        toEmail = part.email || ''; toTel = part.tel || ''; candName = ((part.name || '') + ' ' + (part.surname || '')).trim() || candName;
+      } else {
+        toEmail = ev.candEmail || ''; toTel = ev.candTel || '';
+      }
+      if (!toEmail && !toTel) return j({ error: 'Нет email или телефона кандидата' }, 400);
       const lang = ['ru', 'pl', 'en'].includes((me.settings && me.settings.uiLang)) ? me.settings.uiLang : 'ru';
       const FL = { video: { ru: 'видеовстреча', pl: 'wideorozmowa', en: 'video call' }, office: { ru: 'встреча в офисе', pl: 'spotkanie w biurze', en: 'in-office meeting' }, phone: { ru: 'телефонный звонок', pl: 'rozmowa telefoniczna', en: 'phone call' } };
       const fk = (f) => { const v = String(f || '').toLowerCase(); if (['video', 'office', 'phone'].includes(v)) return v; if (/office|офис|biur/.test(v)) return 'office'; if (/phone|телеф|telefon/.test(v)) return 'phone'; return 'video'; };
@@ -1769,21 +1778,20 @@ async function api(req, env, url, exec) {
         en: { hi: 'Hello!', when: 'We invite you to an interview', kwhen: 'When', link: 'Video meeting link', addr: 'Address', call: 'We will call you from', pos: 'Position', subj: 'Interview invitation' } }[lang];
       const detail = k === 'video' ? `${H.link}: ${ev.meetingLink || ''}` : k === 'office' ? `${H.addr}: ${ev.meetingLink || ''}` : `${H.call}: ${ev.meetingLink || ''}`;
       const delivery = { email: null, sms: null };
-      if (part.email && env.RESEND_API_KEY) {
+      if (toEmail && env.RESEND_API_KEY) {
         try {
-          const candName = ((part.name || '') + ' ' + (part.surname || '')).trim();
           const greet = { ru: `Здравствуйте${candName ? ', ' + candName : ''}!`, pl: `Dzień dobry${candName ? ', ' + candName : ''}!`, en: `Hello${candName ? ', ' + candName : ''}!` }[lang];
           const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: H.subj, eyebrow: H.subj, headline: greet,
             bodyHtml: `${H.when} — <b>${FL[k][lang]}</b>.<br>${H.kwhen}: <b>${when}</b>.<br>${detail.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + H.pos + ': ' + ev.role : ''}` });
           await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [part.email], subject: H.subj, html }) });
+            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [toEmail], subject: H.subj, html }) });
           delivery.email = 'sent';
         } catch (e) { delivery.email = 'error'; }
       }
-      if (part.tel && env.SMSAPI_TOKEN) {
+      if (toTel && env.SMSAPI_TOKEN) {
         try {
           const msg = `${H.when}${ev.role ? ' — ' + ev.role : ''} (${FL[k][lang]}), ${when}. ${detail}`.slice(0, 320);
-          const pr = new URLSearchParams({ to: String(part.tel).replace(/[^\d+]/g, ''), message: msg, format: 'json', encoding: 'utf-8', from: env.SMSAPI_FROM || 'HR-PRO.AI' });
+          const pr = new URLSearchParams({ to: String(toTel).replace(/[^\d+]/g, ''), message: msg, format: 'json', encoding: 'utf-8', from: env.SMSAPI_FROM || 'HR-PRO.AI' });
           await fetch(((env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '')) + '/sms.do', { method: 'POST', headers: { Authorization: 'Bearer ' + env.SMSAPI_TOKEN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: pr.toString() });
           delivery.sms = 'sent';
         } catch (e) { delivery.sms = 'error'; }
