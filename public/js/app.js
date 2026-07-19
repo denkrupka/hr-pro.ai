@@ -2821,7 +2821,12 @@ function candidateStepsPanel(wf) {
   };
   window.__cstepAI = []; window.__aicRes = [];
   const rows = [];
+  let insertIdx = -1; // позиция вставки собеседований — перед первым НЕзавершённым этапом (текущая позиция кандидата)
+  const stageDone = (s) => s.skipped || s.passed === true || s.status === 'done' || !!s.done
+    || (s.items && s.items.length && s.items.every(it => it.status === 'done'))
+    || (s.refs && s.refs.length && s.refs.every(r => r.done));
   wf.stages.forEach(s => {
+    if (insertIdx === -1 && !stageDone(s)) insertIdx = rows.length;
     // Несколько тестов знаний — отдельная плашка на каждый
     if (s.skipped) {
       rows.push(mkRow(s));
@@ -2841,18 +2846,20 @@ function candidateStepsPanel(wf) {
           aiCall: s.aiCall, phone: r.phone, aiStatus: r.aiStatus }));
       });
     } else rows.push(mkRow(Object.assign({ skipKey: s.key }, s)));
-    if (s.key === 'tools' && wf.optional) wf.optional.forEach(o => rows.push(mkRow(Object.assign({ skipKey: 'opt:' + o.key }, o))));
+    if (s.key === 'tools' && wf.optional) wf.optional.forEach(o => { if (insertIdx === -1 && !(o.skipped || o.status === 'done')) insertIdx = rows.length; rows.push(mkRow(Object.assign({ skipKey: 'opt:' + o.key }, o))); });
   });
-  // Карточки собеседований — над итоговым решением; повторное приглашение добавляет новую
-  (wf.interviews || []).forEach((iv, i) => {
+  if (insertIdx === -1) insertIdx = rows.length; // все этапы завершены — собеседование в конце (перед решением)
+  // Карточки собеседований — на ТЕКУЩЕЙ позиции кандидата (между завершённым и следующим этапом); повторное приглашение добавляет новую
+  const ivRows = (wf.interviews || []).map((iv, i) => {
     const filled = iv.impressions || iv.notes || iv.date;
-    rows.push(`<div class="cstep ${filled ? 'ok' : ''}">
+    return `<div class="cstep ${filled ? 'ok' : ''}">
       <div class="cstep-row"><span class="cstep-ic" style="background:#fff4e0;color:#b5791a">${_svg('<path d="M8 2v3M16 2v3M3.5 9h17"/><rect x="3.5" y="4" width="17" height="17" rx="2.5"/>')}</span>
       <div class="cstep-main"><b>${rt('iv_title')} ${i + 1}${iv.date ? ' · ' + esc(iv.date.replace('T', ' ')) : ''}</b>
       ${iv.impressions ? `<span class="cstep-ai">${esc(iv.impressions)}</span>` : ''}</div>
       <span class="cstep-st ${filled ? 'done' : 'sent'}">${filled ? rt('iv_done') : rt('iv_planned')}</span>
-      <div class="cstep-act"><button class="btn ${filled ? 'ghost' : 'soft'} xs" data-civ="${iv.id}">${filled ? '✎' : rt('iv_fill')}</button></div></div></div>`);
+      <div class="cstep-act"><button class="btn ${filled ? 'ghost' : 'soft'} xs" data-civ="${iv.id}">${filled ? '✎' : rt('iv_fill')}</button></div></div></div>`;
   });
+  if (ivRows.length) rows.splice(insertIdx, 0, ...ivRows);
   const dec = wf.decision, auto = wf.autoDecision || {}, rec = !dec ? auto.decision : null;
   const decTxt = dec === 'hired' ? rt('wf_hired') : dec === 'rejected' ? rt('wf_rejected') : rec ? (auto.verdict || '') : rt('wf_inprogress');
   const decCls = dec === 'hired' ? 'd-hired' : dec === 'rejected' ? 'd-rej' : rec === 'hired' ? 'd-rec-hire' : rec === 'rejected' ? 'd-rec-rej' : '';

@@ -2211,6 +2211,10 @@ app.get('/api/participants/:id/references/ai-call/:refIndex', requireAuth, async
   }
   try {
     if (!callLog.isFinal(entry)) await callLog.refreshEntry(req.user.settings, p, entry, save);
+    if (entry.status === 'done' && !entry._notified) {
+      entry._notified = true;
+      try { const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат'; notif.pushNotif(req.user, 'ref_done', { title: 'Получен референс: ' + cand, body: entry.summary ? String(entry.summary).slice(0, 200) : '', pid: p.id }, save); } catch (e) {}
+    }
     const cur = p.workflow.references && p.workflow.references.multi && p.workflow.references.multi[refIndex];
     const filled = cur && cur.answers ? Object.keys(cur.answers).length : (entry.filled || 0);
     const st = entry.status === 'done' ? 'done' : (entry.status === 'failed' ? 'error' : 'calling');
@@ -2624,6 +2628,9 @@ app.post('/api/participants/:id/column', requireAuth, (req, res) => {
     else if (col === 'rejected') p.workflow.decision = 'rejected';
     else if (p.workflow.decision) p.workflow.decision = null; // вернули в работу
   } else return res.status(400).json({ error: 'Неверная колонка' });
+  if (col === 'hired' || col === 'rejected') {
+    try { const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат'; const vc = db().vacancies.find(v => v.id === p.vacancyId); notif.pushNotif(req.user, 'decision', { title: (col === 'hired' ? '✅ Кандидат принят: ' : '❌ Кандидат отклонён: ') + cand, body: (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + (vc && vc.name ? 'Вакансия: ' + vc.name : ''), pid: p.id }, save); } catch (e) {}
+  }
   save(); res.json({ ok: true });
 });
 // Доска/дашборд вакансии: воронка + канбан-кандидаты
