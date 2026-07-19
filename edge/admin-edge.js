@@ -1,6 +1,7 @@
 // Админ-API портала для edge (/api/admin/*). Работает поверх Supabase REST (все клиенты).
 // requireAdmin выполняется вызывающей стороной (worker-main проверяет me.role==='admin').
 import { wrapEmailEdge } from './notify-edge.js';
+import { applyCallResult as salesApplyCallResult } from '../src/sales-agent.js';
 const dayKey = iso => String(iso || '').slice(0, 10);
 const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return d; };
 const within = (iso, days) => iso && new Date(iso) >= daysAgo(days);
@@ -52,6 +53,71 @@ export async function handleAdmin(p, m, ctx) {
     createdAt: u.createdAt || null, lastLoginAt: u.lastLoginAt || null,
     balanceTotal: u.balanceTotal || 0, balancePending: u.balancePending || 0,
     balanceAvailable: (u.balanceTotal || 0) - (u.balancePending || 0), counters: ctr });
+
+  // ── Лиды (заявки на перезвон с лендинга + входящие в отдел продаж) ──
+  if (p === '/api/admin/leads' && m === 'GET') {
+    const rows = (await S.select('leads', 'select=data')).map(r => r.data).filter(Boolean);
+    const qq = String(q.get('q') || '').toLowerCase().trim();
+    const st = String(q.get('status') || 'all');
+    let list = rows;
+    if (qq) list = list.filter(l => (l.name || '').toLowerCase().includes(qq) || (l.phone || '').includes(qq) || (l.email || '').toLowerCase().includes(qq) || (l.company || '').toLowerCase().includes(qq));
+    if (st !== 'all') list = list.filter(l => (l.status || 'new') === st);
+    list.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    // Имена сконвертированных клиентов — для ссылки на карточку.
+    const userIds = [...new Set(list.map(l => l.userId).filter(Boolean))];
+    const usersById = {};
+    if (userIds.length) {
+      const us = await allUsers();
+      us.forEach(u => { if (userIds.includes(u.id)) usersById[u.id] = { id: u.id, email: u.email, name: u.name || '', company: u.company || '' }; });
+    }
+    const items = list.map(l => ({ id: l.id, name: l.name || '', phone: l.phone || '', email: l.email || '', company: l.company || '',
+      lang: l.lang || 'ru', source: l.source || '', status: l.status || 'new', createdAt: l.createdAt || null,
+      calls: (l.aiCallLog || []).length, lastCallAt: (l.aiCallLog || []).length ? (l.aiCallLog[l.aiCallLog.length - 1].createdAt || null) : null,
+      interest: l.interest || '', callbackWhen: l.callbackWhen || '', userId: l.userId || null, user: l.userId ? (usersById[l.userId] || null) : null }));
+    return j(pageOf(items, q.get('page'), q.get('perPage') || 50));
+  }
+  let mLead = p.match(/^\/api\/admin\/leads\/([\w-]+)$/);
+  if (mLead && m === 'GET') {
+    const rows = await S.select('leads', `id=eq.${mLead[1]}&select=data`);
+    const l = rows[0] && rows[0].data;
+    if (!l) return j({ error: 'Не найдено' }, 404);
+    let user = null;
+    if (l.userId) { const u = await S.one('users', l.userId); if (u) user = { id: u.id, email: u.email, name: u.name || '', company: u.company || '', createdAt: u.createdAt }; }
+    return j({ lead: l, user });
+  }
+  if (mLead && m === 'DELETE') {
+    await S.del('leads', `id=eq.${mLead[1]}`);
+    await logAdmin('lead_delete', 'lead', mLead[1]);
+    return j({ ok: true });
+  }
+  let mLeadR = p.match(/^\/api\/admin\/leads\/([\w-]+)\/refresh$/);
+  if (mLeadR && m === 'POST') {
+    // Подтянуть из Vapi транскрипты/записи незавершённых звонков лида.
+    const rows = await S.select('leads', `id=eq.${mLeadR[1]}&select=data,phone_key`);
+    const l = rows[0] && rows[0].data;
+    if (!l) return j({ error: 'Не найдено' }, 404);
+    if (env.VAPI_API_KEY) {
+      for (const e of (l.aiCallLog || [])) {
+        if (!e.callId || (e.status === 'done' && e.transcript)) continue;
+        try {
+          const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(e.callId), { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY } });
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) continue;
+          const art = d.artifact || {}; const rec = art.recording || {};
+          if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          e.transcript = d.transcript || art.transcript || e.transcript || '';
+          e.recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
+          const a = d.analysis || {};
+          e.summary = a.summary || e.summary || '';
+          e.answers = a.structuredData || e.answers || null;
+          if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+          if (e.status === 'done') salesApplyCallResult(l, { summary: e.summary, sd: e.answers, transcript: e.transcript });
+        } catch (_) {}
+      }
+      await S.upsert('leads', { id: l.id, phone_key: rows[0].phone_key || null, data: l });
+    }
+    return j({ lead: l });
+  }
 
   // ── Дашборд ──
   if (p === '/api/admin/stats' && m === 'GET') {

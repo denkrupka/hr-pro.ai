@@ -66,7 +66,7 @@ function exportCsv(name, headers, rows) {
 const TEST_LABEL = { tools: 'Тулс', result: 'Резалт', logic: 'Логис', sales: 'Сэйлс', knowledge: 'Знания' };
 const KIND_LABEL = { purchase: 'Покупка', admin_add: 'Начисление', admin_sub: 'Списание', test_spend: 'Тест', refund: 'Возврат', signup_bonus: 'Бонус' };
 
-const state = { me: null, view: 'dashboard', clientsQ: { q: '', status: 'all', sort: 'created_desc', page: 1 }, payQ: { q: '', method: 'all', from: '', to: '', page: 1, tab: 'purchases' }, currency: 'eur' };
+const state = { me: null, view: 'dashboard', clientsQ: { q: '', status: 'all', sort: 'created_desc', page: 1 }, leadsQ: { q: '', status: 'all', page: 1 }, payQ: { q: '', method: 'all', from: '', to: '', page: 1, tab: 'purchases' }, currency: 'eur' };
 
 // ---------- Каркас ----------
 // Админ-панель — только тёмный hi-tech дизайн
@@ -79,7 +79,7 @@ $$('.nav-item[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view
 function setView(v) {
   state.view = v;
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
-  ({ dashboard: renderAdmDashboard, clients: renderAdmClients, payments: renderAdmPayments, plans: renderAdmPlans,
+  ({ dashboard: renderAdmDashboard, leads: renderAdmLeads, clients: renderAdmClients, payments: renderAdmPayments, plans: renderAdmPlans,
     integrations: renderAdmIntegrations, content: renderAdmContent, blog: renderAdmBlog, log: renderAdmLog }[v] || renderAdmDashboard)();
 }
 
@@ -120,6 +120,87 @@ async function renderAdmDashboard() {
     </div>`;
   $$('[data-uid]').forEach(r => r.onclick = () => openClient(r.dataset.uid));
   $$('[data-pay]').forEach(r => r.onclick = () => { state.payQ.q = r.dataset.pay; state.payQ.page = 1; setView('payments'); });
+}
+
+// ---------- Лиды отдела продаж ----------
+const LEAD_ST = {
+  new: ['Новый', 'st-on'], no_answer: ['Не дозвонились', 'st-off'], talked: ['Поговорили', 'm-stripe'],
+  callback: ['Перезвонить', 'm-demo'], registered: ['Регистрируется', 'st-on'], refused: ['Отказ', 'st-off'], converted: ['Клиент ✓', 'st-on'],
+};
+const leadStBadge = s => { const [t, c] = LEAD_ST[s] || [s || 'new', '']; return `<span class="blk ${c}">${t}</span>`; };
+const LEAD_SRC = { callback: 'Кнопка «Перезвоним»', inbound: 'Входящий звонок', landing_popup: 'Лид-магнит (email)' };
+async function renderAdmLeads() {
+  const q = state.leadsQ;
+  const d = await api(`/api/admin/leads?q=${encodeURIComponent(q.q)}&status=${q.status}&page=${q.page}`);
+  const rows = d.items.map(l => `<tr class="adm-row" data-lid="${l.id}">
+    <td><div class="cand"><span class="avatar" style="width:32px;height:32px;background:${avColor(l.phone || l.email || l.id)}">${initials(l.name, l.phone || l.email)}</span>
+      <div><b>${esc(l.name || l.phone || l.email || '—')}</b><div class="muted" style="font-size:12px">${esc(l.company || '')}</div></div></div></td>
+    <td class="mono">${esc(l.phone || '—')}</td>
+    <td class="muted">${esc(l.email || '—')}</td>
+    <td class="muted">${esc(LEAD_SRC[l.source] || l.source || '—')}</td>
+    <td class="muted">${fmtDate(l.createdAt)}</td>
+    <td style="text-align:center"><b>${l.calls || 0}</b></td>
+    <td>${leadStBadge(l.status)}${l.user ? `<div class="muted" style="font-size:11px;margin-top:3px">${esc(l.user.email)}</div>` : ''}</td></tr>`).join('');
+  $('#main').innerHTML = `<div class="topbar reveal"><div><div class="eyebrow">Админ-панель</div><h1 class="page-h" style="margin-top:8px">Лиды</h1></div>
+      <span class="tag">Всего: <b>${d.total}</b></span></div>
+    <div class="card reveal d1">
+      <div class="row" style="gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div class="search-wrap grow" style="flex:1;min-width:220px"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="lq" value="${esc(q.q)}" placeholder="Поиск по имени, телефону, email, компании…"></div>
+        <select class="field" id="lstatus" style="max-width:210px">
+          <option value="all" ${q.status === 'all' ? 'selected' : ''}>Все статусы</option>
+          ${Object.entries(LEAD_ST).map(([k, v]) => `<option value="${k}" ${q.status === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></div>
+      <div class="table-wrap" style="box-shadow:none"><table><thead><tr>
+        <th>Лид</th><th>Телефон</th><th>Email</th><th>Источник</th><th>Создан</th><th>Звонков</th><th>Статус</th>
+      </tr></thead><tbody>${rows || `<tr><td colspan="7" class="muted" style="text-align:center;padding:30px">Лидов пока нет — они появятся после заявок «Перезвоните мне» на лендинге и входящих звонков</td></tr>`}</tbody></table></div>
+      ${pager(d.page, d.total, d.perPage, p => { state.leadsQ.page = p; renderAdmLeads(); })}</div>`;
+  let td;
+  $('#lq').oninput = e => { clearTimeout(td); td = setTimeout(() => { q.q = e.target.value.trim(); q.page = 1; renderAdmLeads(); }, 350); };
+  $('#lstatus').onchange = e => { q.status = e.target.value; q.page = 1; renderAdmLeads(); };
+  $$('tr[data-lid]').forEach(r => r.onclick = () => openLead(r.dataset.lid));
+}
+// Карточка лида: данные + журнал звонков Софии с транскрипциями и записями
+async function openLead(lid) {
+  const d = await api('/api/admin/leads/' + lid + '/refresh', { method: 'POST' }).catch(() => null) || await api('/api/admin/leads/' + lid);
+  const l = d.lead;
+  const user = d.user || null;
+  $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'leads'));
+  const info = (k, v, mono) => v ? `<div style="margin-bottom:8px"><span class="muted" style="font-size:12px">${k}:</span> <b class="${mono ? 'mono' : ''}">${esc(v)}</b></div>` : '';
+  const dur = s => s ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '';
+  const calls = [...(l.aiCallLog || [])].reverse().map((e, i) => {
+    const kind = e.dir === 'in' ? '📥 Входящий' : '📤 Исходящий (заявка)';
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <b>${kind}</b>
+        <span class="muted" style="font-size:12px">${fmtDate(e.createdAt)}${e.durationSec ? ' · ' + dur(e.durationSec) : ''} · ${e.status === 'done' ? 'завершён' : esc(e.status || '')}</span></div>
+      ${e.summary ? `<div class="ai-note" style="margin-top:10px"><div class="ai-h">Итог разговора</div><p style="margin:6px 0 0;font-size:13px;line-height:1.55">${esc(e.summary)}</p></div>` : ''}
+      ${e.recordingUrl ? `<audio controls preload="none" src="${esc(e.recordingUrl)}" style="width:100%;margin-top:10px"></audio>` : ''}
+      ${e.transcript ? `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;color:#b3a4ff">Транскрипция</summary><pre style="white-space:pre-wrap;font:12.5px/1.6 Inter,sans-serif;color:#c3cbe4;background:rgba(255,255,255,.04);border-radius:10px;padding:12px;margin-top:8px;max-height:400px;overflow:auto">${esc(e.transcript)}</pre></details>` : ''}
+    </div>`;
+  }).join('') || '<p class="muted">Звонков пока не было</p>';
+  $('#main').innerHTML = `
+    <button class="btn ghost sm reveal" id="back-leads" style="margin-bottom:12px">← Лиды</button>
+    <div class="topbar reveal"><div><div class="eyebrow">Лид · ${esc(LEAD_SRC[l.source] || l.source || '')}</div>
+      <h1 class="page-h" style="margin-top:8px">${esc(l.name || l.phone || l.email || 'Лид')}</h1></div>
+      <div class="row" style="gap:8px">${leadStBadge(l.status)}<button class="btn ghost danger sm" id="lead-del">Удалить</button></div></div>
+    <div class="dash-grid reveal d1" style="grid-template-columns:320px 1fr;align-items:start">
+      <div class="card">
+        <h3 style="margin:0 0 12px">Контакты</h3>
+        ${info('Телефон', l.phone, 1)}${info('Email', l.email, 1)}${info('Имя', l.name)}${info('Компания', l.company)}
+        ${info('Язык', (l.lang || 'ru').toUpperCase())}${info('Интерес / боль', l.interest)}${info('Перезвонить', l.callbackWhen)}${info('Причина отказа', l.refusalReason)}
+        ${info('Создан', fmtDate(l.createdAt))}${l.convertedAt ? info('Стал клиентом', fmtDate(l.convertedAt)) : ''}
+        ${user ? `<div class="ai-note tone-good" style="margin-top:10px"><div class="ai-h">Клиент портала ✓</div>
+          <p style="margin:6px 0 0;font-size:13px">${esc(user.name || '')} · ${esc(user.email)}</p>
+          <button class="btn sm" style="margin-top:8px" id="lead-open-client">Открыть карточку клиента</button></div>` : ''}
+      </div>
+      <div><h3 style="margin:0 0 12px">Звонки Софии (${(l.aiCallLog || []).length})</h3>${calls}</div>
+    </div>`;
+  $('#back-leads').onclick = () => setView('leads');
+  const oc = $('#lead-open-client'); if (oc && user) oc.onclick = () => openClient(user.id);
+  $('#lead-del').onclick = async () => {
+    if (!confirm('Удалить лид и всю историю звонков?')) return;
+    await api('/api/admin/leads/' + lid, { method: 'DELETE' });
+    setView('leads');
+  };
 }
 
 // ---------- Клиенты: список ----------

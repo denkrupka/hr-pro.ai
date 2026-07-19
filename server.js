@@ -14,6 +14,7 @@ const air = require('./src/ai-recruit');
 const learn = require('./src/learning');
 const integ = require('./src/integrations');
 const notif = require('./src/notifications');
+const salesAgent = require('./src/sales-agent');
 const aiDecodeRoutes = require('./src/ai-decode-routes');
 const refai = require('./src/references-ai');
 const aiCallPrompts = require('./src/ai-call-prompts');
@@ -506,6 +507,7 @@ app.post('/api/register', (req, res) => {
     company: company || '', balanceTotal: bonus, balancePending: 0, balanceLots: [], settings: defaultSettings(auto),
     role: 'user', blocked: false, adminNote: '', onboarded: false, emailVerified: false, lastLoginAt: nowISO(), createdAt: nowISO() };
   data.users.push(user);
+  try { convertLeadsForUser(user); } catch (_) {} // лид с этим email/телефоном → клиент
   if (bonus > 0) { logBalance(user.id, bonus, 'signup_bonus', { comment: 'Бонус при регистрации' }); addBalanceLot(user, bonus, 'signup_bonus'); }
   // стартовые вакансии
   ['HR', 'ДЕМО'].forEach((n, i) => {
@@ -1628,6 +1630,119 @@ app.post('/api/take/:code/submit', (req, res) => {
   } catch (e) { console.error('[funnel]', e.message); }
   save();
   res.json({ ok: true });
+});
+
+// ---------- ОТДЕЛ ПРОДАЖ: лиды («Перезвоним за 20 секунд») + вебхук Софии ----------
+function leadByPhone(phone) {
+  const key = salesAgent.phoneKey(phone);
+  if (!key || key.length < 7) return null;
+  return db().leads.find(l => salesAgent.phoneKey(l.phone) === key) || null;
+}
+function clientByPhone(phone) {
+  const key = salesAgent.phoneKey(phone);
+  if (!key || key.length < 7) return null;
+  const l = leadByPhone(phone);
+  if (l && l.userId) { const u = db().users.find(x => x.id === l.userId); if (u) return u; }
+  return db().users.find(u => u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) === key) || null;
+}
+// Авто-конверсия лид → клиент (email из звонка Софии или телефон профиля).
+function convertLeadsForUser(u) {
+  const em = String(u.email || '').toLowerCase();
+  let changed = false;
+  db().leads.forEach(l => {
+    if (l.userId) return;
+    if ((l.email && l.email.toLowerCase() === em) || (u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) && salesAgent.phoneKey(l.phone) === salesAgent.phoneKey(u.settings.phone))) {
+      l.userId = u.id; l.status = 'converted'; l.convertedAt = nowISO(); changed = true;
+    }
+  });
+  if (changed) save();
+}
+app.post('/api/leads/callback', async (req, res) => {
+  const b = req.body || {};
+  if (b.website) return res.json({ ok: true }); // honeypot
+  const name = String(b.name || '').trim().slice(0, 80);
+  const phone = String(b.phone || '').trim().slice(0, 30);
+  const lang = ['ru', 'pl', 'en'].includes(b.lang) ? b.lang : 'ru';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length < 9 || digits.length > 15) return res.status(400).json({ error: 'Укажите корректный номер телефона' });
+  const gs = portalSettings();
+  let lead = leadByPhone(phone);
+  const now = nowISO();
+  if (!lead) { lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] }; db().leads.push(lead); }
+  else { if (name) lead.name = name; lead.lang = lang; }
+  lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
+  if (lead.requests.length >= 3) { save(); return res.status(429).json({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.' }); }
+  lead.requests.push(now);
+  const vcfg = integ.cfgOf(null, 'vapi');
+  const salesPhoneId = gs.vapiSalesPhoneId || vcfg.salesPhoneNumberId || '';
+  let callId = '';
+  if (vcfg.apiKey && salesPhoneId) {
+    try {
+      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey });
+      const secret = gs.vapiInboundSecret || '';
+      if (secret) assistant.server = { url: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', secret };
+      const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: phone.startsWith('+') ? phone : '+' + digits }, assistant }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.id) callId = d.id;
+      else console.error('[sales] call fail', r.status, JSON.stringify(d).slice(0, 200));
+    } catch (e) { console.error('[sales] call err', e.message); }
+  }
+  lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+  lead.aiCallLog.push({ callId, kind: 'callback', dir: 'out', createdAt: now, status: callId ? 'calling' : 'failed', lang });
+  if (lead.aiCallLog.length > 50) lead.aiCallLog = lead.aiCallLog.slice(-50);
+  save();
+  res.json({ ok: true, calling: !!callId });
+});
+app.post('/api/vapi/sales-inbound', async (req, res) => {
+  const gs = portalSettings();
+  const secret = gs.vapiInboundSecret || '';
+  const provided = req.headers['x-vapi-secret'] || req.query.key || '';
+  if (!secret || provided !== secret) return res.status(403).json({ error: 'forbidden' });
+  const msg = (req.body && req.body.message) || {};
+  const call = msg.call || (req.body && req.body.call) || {};
+  const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || req.query.caller || '';
+  if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
+    try {
+      if (caller) {
+        let lead = leadByPhone(caller);
+        if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: nowISO(), aiCallLog: [] }; db().leads.push(lead); }
+        const art = msg.artifact || {}; const rec = art.recording || {}; const a = msg.analysis || {};
+        const callId = call.id || msg.callId || '';
+        lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+        let entry = callId ? lead.aiCallLog.find(e => e.callId === callId) : null;
+        if (!entry) { entry = { callId, kind: 'inbound', dir: 'in', createdAt: nowISO() }; lead.aiCallLog.push(entry); }
+        entry.status = 'done'; entry.endedAt = nowISO();
+        entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
+        entry.recordingUrl = msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
+        entry.summary = a.summary || msg.summary || entry.summary || '';
+        entry.answers = a.structuredData || entry.answers || null;
+        salesAgent.applyCallResult(lead, { summary: entry.summary, sd: entry.answers, transcript: entry.transcript });
+        if (lead.email && !lead.userId) {
+          const u = db().users.find(x => x.email.toLowerCase() === lead.email.toLowerCase());
+          if (u) { lead.userId = u.id; lead.status = 'converted'; lead.convertedAt = nowISO(); }
+        }
+        save();
+      }
+    } catch (e) { console.error('[sales] report err', e.message); }
+    return res.json({ ok: true });
+  }
+  if (!caller) return res.status(400).json({ error: 'no caller number' });
+  try {
+    const u = clientByPhone(caller);
+    const elevenKey = integ.cfgOf(null, 'elevenlabs').apiKey;
+    if (u) {
+      const lang = ['ru', 'pl', 'en'].includes(u.settings && u.settings.uiLang) ? u.settings.uiLang : 'ru';
+      const bits = [];
+      if (u.company) bits.push(`Компания: ${u.company}.`);
+      bits.push(`Баланс тестов: ${Math.max(0, (u.balanceTotal || 0) - (u.balancePending || 0))} доступно.`);
+      bits.push(`Зарегистрирован: ${String(u.createdAt || '').slice(0, 10)}.`);
+      return res.json({ assistant: salesAgent.buildAssistant({ mode: 'client', lang, name: u.name || '', company: u.company || '', leadBlock: bits.join('\n'), plans: gs.plans, currency: gs.currency, inbound: true, elevenKey }) });
+    }
+    let lead = leadByPhone(caller);
+    if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: nowISO(), aiCallLog: [] }; db().leads.push(lead); save(); }
+    res.json({ assistant: salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: true, elevenKey }) });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ---------- PUBLIC REPORT (share) ----------

@@ -20,6 +20,7 @@ import * as callSched from './call-scheduler-edge.js';
 import { vapiConfigured, startCall as vapiStartCall, getCall as vapiGetCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 import { buildInboundAssistant, parseEndReport as inboundParseEndReport } from './inbound-call.js';
+import * as salesAgent from '../src/sales-agent.js';
 import { pushNotif, defaultNotifPrefs, notifCatalog, NOTIF_TYPES } from './notifications-edge.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
@@ -334,6 +335,142 @@ async function api(req, env, url, exec) {
     catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
   }
 
+  // ── ОТДЕЛ ПРОДАЖ: лиды с лендинга («Перезвоним за 20 секунд») + входящие на номер продаж ──
+  const leadByPhone = async (phone) => {
+    const key = salesAgent.phoneKey(phone);
+    if (!key || key.length < 7) return null;
+    const rows = await S.select('leads', `phone_key=eq.${key}&select=data`);
+    return rows[0] ? rows[0].data : null;
+  };
+  const saveLead = (lead) => S.upsert('leads', { id: lead.id, phone_key: salesAgent.phoneKey(lead.phone), data: lead });
+  // Авто-конверсия лид → клиент: при регистрации пользователя ищем лид с тем же email (Соня записала в звонке).
+  const convertLeadsForUser = async (u) => {
+    try {
+      const rows = await S.select('leads', 'select=data');
+      const em = String(u.email || '').toLowerCase();
+      let changed = false;
+      for (const r of (rows || [])) {
+        const l = r.data;
+        if (!l || l.userId) continue;
+        if ((l.email && l.email.toLowerCase() === em) || (u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) && salesAgent.phoneKey(l.phone) === salesAgent.phoneKey(u.settings.phone))) {
+          l.userId = u.id; l.status = 'converted'; l.convertedAt = new Date().toISOString();
+          await saveLead(l); changed = true;
+        }
+      }
+      return changed;
+    } catch (_) { return false; }
+  };
+  // Клиент портала по номеру: телефон из настроек профиля или сконвертированный лид.
+  const clientByPhone = async (phone) => {
+    const key = salesAgent.phoneKey(phone);
+    if (!key || key.length < 7) return null;
+    const lead = await leadByPhone(phone);
+    if (lead && lead.userId) { const u = await S.one('users', lead.userId); if (u) return u; }
+    const rows = await S.select('users', 'select=data');
+    return (rows || []).map(r => r.data).find(u => u && u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) === key) || null;
+  };
+
+  // Заявка «Перезвоните мне» с лендинга (публичный). Сразу запускаем исходящий ИИ-звонок Софии.
+  if (p === '/api/leads/callback' && m === 'POST') {
+    const name = String((body && body.name) || '').trim().slice(0, 80);
+    const phone = String((body && body.phone) || '').trim().slice(0, 30);
+    const lang = ['ru', 'pl', 'en'].includes(body && body.lang) ? body.lang : 'ru';
+    if (body && body.website) return j({ ok: true }); // honeypot: боты заполняют скрытое поле
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 9 || digits.length > 15) return j({ error: 'Укажите корректный номер телефона' }, 400);
+    const pt = await settings();
+    const salesPhoneId = env.VAPI_SALES_PHONE_ID || pt.vapiSalesPhoneId || '';
+    let lead = await leadByPhone(phone);
+    const now = new Date().toISOString();
+    if (!lead) lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] };
+    else { if (name) lead.name = name; lead.lang = lang; }
+    // Антиспам: не чаще 3 заявок в час с одного номера.
+    lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
+    if (lead.requests.length >= 3) return j({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.' }, 429);
+    lead.requests.push(now);
+    let callId = '';
+    if (env.VAPI_API_KEY && salesPhoneId) {
+      try {
+        const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY });
+        let secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
+        if (secret) assistant.server = { url: url.origin + '/api/vapi/sales-inbound', secret };
+        const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: phone.startsWith('+') ? phone : '+' + digits }, assistant }) });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok && d.id) { callId = d.id; }
+        else console.log('sales call fail', r.status, JSON.stringify(d).slice(0, 200));
+      } catch (e) { console.log('sales call err', e && e.message); }
+    }
+    lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+    lead.aiCallLog.push({ callId, kind: 'callback', dir: 'out', createdAt: now, status: callId ? 'calling' : 'failed', lang });
+    if (lead.aiCallLog.length > 50) lead.aiCallLog = lead.aiCallLog.slice(-50);
+    await saveLead(lead);
+    return j({ ok: true, calling: !!callId });
+  }
+
+  // Vapi webhook отдела продаж: assistant-request (входящие на номер продаж) + end-of-call-report (все звонки Софии).
+  if (p === '/api/vapi/sales-inbound' && m === 'POST') {
+    let secret = env.VAPI_INBOUND_SECRET || '';
+    if (!secret) { try { secret = (await settings()).vapiInboundSecret || ''; } catch (_) {} }
+    const provided = req.headers.get('x-vapi-secret') || url.searchParams.get('key') || '';
+    if (!secret || provided !== secret) return j({ error: 'forbidden' }, 403);
+    const msg = body.message || {};
+    const call = msg.call || body.call || {};
+    const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || url.searchParams.get('caller') || '';
+    // Отчёт по завершении: транскрипт, запись, итог → в журнал лида.
+    if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
+      try {
+        if (caller) {
+          let lead = await leadByPhone(caller);
+          if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: new Date().toISOString(), aiCallLog: [] }; }
+          const art = msg.artifact || {};
+          const rec = art.recording || {};
+          const a = msg.analysis || {};
+          const callId = call.id || msg.callId || '';
+          lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+          let entry = callId ? lead.aiCallLog.find(e => e.callId === callId) : null;
+          if (!entry) { entry = { callId, kind: 'inbound', dir: 'in', createdAt: new Date().toISOString() }; lead.aiCallLog.push(entry); }
+          entry.status = 'done';
+          entry.endedAt = new Date().toISOString();
+          entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
+          entry.recordingUrl = msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
+          entry.summary = a.summary || msg.summary || entry.summary || '';
+          entry.answers = a.structuredData || entry.answers || null;
+          entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : entry.durationSec || null;
+          salesAgent.applyCallResult(lead, { summary: entry.summary, sd: entry.answers, transcript: entry.transcript });
+          // Email прозвучал → попробуем сразу привязать к клиенту (если уже зарегистрирован).
+          if (lead.email && !lead.userId) {
+            try { const ur = await S.select('users', `email=eq.${encodeURIComponent(lead.email)}&select=data`); if (ur[0] && ur[0].data) { lead.userId = ur[0].data.id; lead.status = 'converted'; lead.convertedAt = new Date().toISOString(); } } catch (_) {}
+          }
+          await saveLead(lead);
+        }
+      } catch (e) { console.log('sales report err', e && e.message); }
+      return j({ ok: true });
+    }
+    // Входящий на номер продаж: клиент → поддержка по имени; лид/незнакомый → продажа по скрипту.
+    if (!caller) return j({ error: 'no caller number' }, 400);
+    try {
+      const pt = await settings();
+      const u = await clientByPhone(caller);
+      if (u) {
+        const lang = ['ru', 'pl', 'en'].includes(u.settings && u.settings.uiLang) ? u.settings.uiLang : 'ru';
+        const bits = [];
+        if (u.company) bits.push(`Компания: ${u.company}.`);
+        bits.push(`Баланс тестов: ${Math.max(0, (u.balanceTotal || 0) - (u.balancePending || 0))} доступно.`);
+        bits.push(`Зарегистрирован: ${String(u.createdAt || '').slice(0, 10)}.`);
+        const assistant = salesAgent.buildAssistant({ mode: 'client', lang, name: u.name || '', company: u.company || '', leadBlock: bits.join('\n'), plans: pt.plans, currency: pt.currency, inbound: true, elevenKey: env.ELEVENLABS_API_KEY });
+        return j({ assistant });
+      }
+      let lead = await leadByPhone(caller);
+      if (!lead) {
+        lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: new Date().toISOString(), aiCallLog: [] };
+        await saveLead(lead);
+      }
+      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: true, elevenKey: env.ELEVENLABS_API_KEY });
+      return j({ assistant });
+    } catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
+  }
+
   // Публичная ИИ-проверка чек-листа гайда (без авторизации)
   if (p === '/api/guide-check' && m === 'POST') {
     try { return j(await guideCheck(env, body)); }
@@ -430,6 +567,7 @@ async function api(req, env, url, exec) {
         onboarded: false, emailVerified: true, createdAt: new Date().toISOString(), lastLoginAt: new Date().toISOString() };
       if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
       await S.upsert('users', { id: u.id, data: u });
+      try { await convertLeadsForUser(u); } catch (_) {}
       isNew = true;
     }
     // новых пользователей ведём на онбординг, существующих — по next/на портал
@@ -543,6 +681,7 @@ async function api(req, env, url, exec) {
     u.emailVerified = false;
     if (bonus > 0) addBalanceLot(u, bonus, 'signup_bonus');
     await S.upsert('users', { id: u.id, data: u });
+    try { await convertLeadsForUser(u); } catch (_) {}
     // Письмо подтверждения email. Сессию НЕ выдаём: вход — только после подтверждения по ссылке.
     await sendVerifyEmailEdge(env, url, u, uiLang);
     return j({ needVerify: true, email: u.email }, 200);

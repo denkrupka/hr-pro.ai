@@ -51,6 +51,62 @@ module.exports = function adminApi(app, ctx) {
       counters: userCounters(u.id) };
   }
 
+  // ---------- Лиды отдела продаж ----------
+  const salesAgentAdm = require('./sales-agent');
+  app.get('/api/admin/leads', requireAdmin, (req, res) => {
+    const rows = db().leads || [];
+    const qq = String(req.query.q || '').toLowerCase().trim();
+    const st = String(req.query.status || 'all');
+    let list = rows;
+    if (qq) list = list.filter(l => (l.name || '').toLowerCase().includes(qq) || (l.phone || '').includes(qq) || (l.email || '').toLowerCase().includes(qq) || (l.company || '').toLowerCase().includes(qq));
+    if (st !== 'all') list = list.filter(l => (l.status || 'new') === st);
+    list = [...list].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    const items = list.map(l => ({ id: l.id, name: l.name || '', phone: l.phone || '', email: l.email || '', company: l.company || '',
+      lang: l.lang || 'ru', source: l.source || '', status: l.status || 'new', createdAt: l.createdAt || null,
+      calls: (l.aiCallLog || []).length, lastCallAt: (l.aiCallLog || []).length ? (l.aiCallLog[l.aiCallLog.length - 1].createdAt || null) : null,
+      interest: l.interest || '', callbackWhen: l.callbackWhen || '', userId: l.userId || null,
+      user: l.userId ? (u => u ? userBrief(u) : null)(findUser(l.userId)) : null }));
+    res.json(pageOf(items, req.query.page, req.query.perPage || 50));
+  });
+  app.get('/api/admin/leads/:id', requireAdmin, (req, res) => {
+    const l = (db().leads || []).find(x => x.id === req.params.id);
+    if (!l) return res.status(404).json({ error: 'Не найдено' });
+    const u = l.userId ? findUser(l.userId) : null;
+    res.json({ lead: l, user: u ? { ...userBrief(u), createdAt: u.createdAt } : null });
+  });
+  app.delete('/api/admin/leads/:id', requireAdmin, (req, res) => {
+    const data = db();
+    data.leads = (data.leads || []).filter(x => x.id !== req.params.id);
+    logAdmin(req, 'lead_delete', 'lead', req.params.id);
+    save(); res.json({ ok: true });
+  });
+  app.post('/api/admin/leads/:id/refresh', requireAdmin, async (req, res) => {
+    const l = (db().leads || []).find(x => x.id === req.params.id);
+    if (!l) return res.status(404).json({ error: 'Не найдено' });
+    const vcfg = integ.cfgOf(null, 'vapi');
+    if (vcfg.apiKey) {
+      for (const e of (l.aiCallLog || [])) {
+        if (!e.callId || (e.status === 'done' && e.transcript)) continue;
+        try {
+          const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(e.callId), { headers: { Authorization: 'Bearer ' + vcfg.apiKey } });
+          const d = await r.json().catch(() => ({}));
+          if (!r.ok) continue;
+          const art = d.artifact || {}; const rec = art.recording || {};
+          if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          e.transcript = d.transcript || art.transcript || e.transcript || '';
+          e.recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
+          const a = d.analysis || {};
+          e.summary = a.summary || e.summary || '';
+          e.answers = a.structuredData || e.answers || null;
+          if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+          if (e.status === 'done') salesAgentAdm.applyCallResult(l, { summary: e.summary, sd: e.answers, transcript: e.transcript });
+        } catch (_) {}
+      }
+      save();
+    }
+    res.json({ lead: l });
+  });
+
   // ---------- Дашборд ----------
   app.get('/api/admin/stats', requireAdmin, (req, res) => {
     const data = db();

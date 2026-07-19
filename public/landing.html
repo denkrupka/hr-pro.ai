@@ -1536,4 +1536,125 @@ function popNet(){
     requestAnimationFrame(loop);})();
 }
 </script>
+
+<!-- ===== Плавающий виджет «Перезвоним за 20 секунд» (дизайн: Landing redesign) ===== -->
+<style>
+@keyframes cbRing{0%{transform:scale(1);opacity:.65}100%{transform:scale(2.15);opacity:0}}
+@keyframes cbPop{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes cbDrain{from{stroke-dashoffset:0}to{stroke-dashoffset:188.5}}
+@keyframes cbWiggle{0%,90%,100%{transform:rotate(0)}92%{transform:rotate(-13deg)}95%{transform:rotate(13deg)}98%{transform:rotate(-7deg)}}
+@keyframes cbDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+#cb-widget{position:fixed;right:26px;bottom:26px;z-index:99999;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+@media(max-width:560px){#cb-widget{right:14px;bottom:14px}}
+#cb-fab{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#7b5cff,#4f78e6);color:#fff;border:none;border-radius:999px;padding:11px 20px 11px 12px;box-shadow:0 14px 36px rgba(123,108,255,.45);cursor:pointer;font-family:Inter,sans-serif;transition:transform .16s cubic-bezier(.22,.68,.24,1),filter .28s}
+#cb-fab:hover{transform:translateY(-2px);filter:brightness(1.06)}
+#cb-panel{width:min(344px,calc(100vw - 28px));border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#141833,#0c0e1d);border:1px solid rgba(139,108,255,.32);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(123,108,255,.18);animation:cbPop .3s cubic-bezier(.2,.7,.2,1)}
+.cb-in{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;color:#eef1fb;font-size:14px;font-family:Inter,sans-serif;margin-bottom:10px;outline:none;transition:border-color .18s,box-shadow .18s}
+.cb-in:focus{border-color:rgba(139,108,255,.6);box-shadow:0 0 0 3px rgba(123,108,255,.15)}
+.cb-in.mono{font-family:'JetBrains Mono',monospace}
+</style>
+<div id="cb-widget">
+  <div id="cb-panel" style="display:none">
+    <div style="position:relative;padding:22px 22px 18px;background:radial-gradient(120% 130% at 100% 0%,rgba(123,108,255,.4),transparent 62%);border-bottom:1px solid rgba(255,255,255,.07)">
+      <button id="cb-close" aria-label="close" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#c3cbe4;cursor:pointer;font-size:14px;line-height:1;display:grid;place-items:center">✕</button>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="position:relative;width:46px;height:46px;flex:none;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#7b5cff,#4f78e6);box-shadow:0 8px 20px rgba(123,108,255,.4)">
+          <span style="position:absolute;inset:0;border-radius:14px;border:2px solid rgba(255,255,255,.5);animation:cbRing 1.8s ease-out infinite"></span>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" style="animation:cbWiggle 3s ease-in-out infinite;transform-origin:center"><path d="M6.5 3.5 9 3.9l1 3.2-1.7 1.4a11 11 0 0 0 4.8 4.8l1.4-1.7 3.2 1 .4 2.5a2 2 0 0 1-2 2.3A14.5 14.5 0 0 1 4.2 5.5a2 2 0 0 1 2.3-2Z" fill="#fff"/></svg>
+        </span>
+        <div>
+          <div id="cb-eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#b7a8ff"></div>
+          <div id="cb-title" style="font-family:Manrope,sans-serif;font-weight:800;font-size:18px;color:#fff;margin-top:3px;line-height:1.15"></div>
+        </div>
+      </div>
+    </div>
+    <div id="cb-form" style="padding:20px 22px 22px">
+      <p id="cb-lead" style="font-size:13.5px;line-height:1.5;color:#9aa3bf;margin:0 0 16px"></p>
+      <input class="cb-in" id="cb-name" autocomplete="name">
+      <input class="cb-in mono" id="cb-phone" inputmode="tel" autocomplete="tel" style="margin-bottom:14px">
+      <input type="text" id="cb-website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+      <div id="cb-err" style="display:none;color:#ff8a8a;font-size:12.5px;margin:-6px 0 10px"></div>
+      <button id="cb-submit" style="width:100%;border:none;cursor:pointer;background:linear-gradient(135deg,#7b5cff,#4f78e6);color:#fff;font-weight:700;font-size:15px;padding:13px;border-radius:13px;box-shadow:0 10px 24px rgba(123,108,255,.34);font-family:Inter,sans-serif"></button>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:12px;font-size:11.5px;color:#6b7492"><span style="width:6px;height:6px;border-radius:50%;background:#43e0a0;box-shadow:0 0 8px #43e0a0;animation:cbDot 1.6s infinite;flex:none"></span><span id="cb-note"></span></div>
+    </div>
+    <div id="cb-done" style="display:none;padding:24px 22px 26px;text-align:center">
+      <div style="position:relative;width:96px;height:96px;margin:2px auto 4px">
+        <svg viewBox="0 0 72 72" style="width:96px;height:96px;transform:rotate(-90deg)">
+          <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="cb-drain" cx="36" cy="36" r="30" fill="none" stroke="#43e0a0" stroke-width="5" stroke-linecap="round" stroke-dasharray="188.5"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div id="cb-left" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:30px;color:#fff;line-height:1">20</div>
+          <div id="cb-sec" style="font-size:10px;color:#8b93ad;letter-spacing:.08em;text-transform:uppercase"></div>
+        </div>
+      </div>
+      <div id="cb-done-title" style="font-family:Manrope,sans-serif;font-weight:800;font-size:19px;color:#eef1fb;margin-top:8px"></div>
+      <p id="cb-done-lead" style="font-size:13.5px;line-height:1.5;color:#9aa3bf;margin:8px auto 0;max-width:26ch"></p>
+    </div>
+  </div>
+  <button id="cb-fab">
+    <span style="position:relative;width:46px;height:46px;flex:none;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.16)">
+      <span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.55);animation:cbRing 1.8s ease-out infinite"></span>
+      <span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.4);animation:cbRing 1.8s ease-out .9s infinite"></span>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" style="animation:cbWiggle 3s ease-in-out infinite;transform-origin:center"><path d="M6.5 3.5 9 3.9l1 3.2-1.7 1.4a11 11 0 0 0 4.8 4.8l1.4-1.7 3.2 1 .4 2.5a2 2 0 0 1-2 2.3A14.5 14.5 0 0 1 4.2 5.5a2 2 0 0 1 2.3-2Z" fill="#fff"/></svg>
+    </span>
+    <span style="text-align:left;line-height:1.2">
+      <span id="cb-fab-t" style="display:block;font-weight:800;font-size:14px"></span>
+      <span id="cb-fab-s" style="display:block;font-size:11.5px;opacity:.9;font-weight:500"></span>
+    </span>
+  </button>
+</div>
+<script>
+(function(){
+  var CB={
+    ru:{fabTitle:'Есть вопросы?',fabSub:'Перезвоним за 20 секунд',eyebrow:'Обратный звонок',title:'Перезвоним за 20 секунд',lead:'Оставьте номер — эксперт HR PRO AI перезвонит и ответит на все вопросы о тестах и внедрении.',namePh:'Как вас зовут',phonePh:'+48 000 000 000',submit:'Жду звонка',note:'Обычно отвечаем в течение 20 секунд в рабочее время.',doneTitle:'Заявка принята!',doneLead:'Уже набираем ваш номер. Держите телефон под рукой.',sec:'сек',err:'Укажите корректный номер телефона'},
+    pl:{fabTitle:'Masz pytania?',fabSub:'Oddzwonimy w 20 sekund',eyebrow:'Zamów rozmowę',title:'Oddzwonimy w 20 sekund',lead:'Zostaw numer — ekspert HR PRO AI oddzwoni i odpowie na pytania o testach i wdrożeniu.',namePh:'Jak masz na imię',phonePh:'+48 000 000 000',submit:'Czekam na telefon',note:'Zwykle odpowiadamy w 20 sekund w godzinach pracy.',doneTitle:'Zgłoszenie przyjęte!',doneLead:'Już wybieramy Twój numer. Trzymaj telefon pod ręką.',sec:'s',err:'Podaj poprawny numer telefonu'},
+    en:{fabTitle:'Have questions?',fabSub:'We call back in 20 sec',eyebrow:'Request a call',title:'We call you in 20 seconds',lead:'Leave your number — an HR PRO AI expert will call and answer any questions about the tests and rollout.',namePh:'Your name',phonePh:'+48 000 000 000',submit:'Call me back',note:'We usually respond within 20 seconds during business hours.',doneTitle:'Request received!',doneLead:'We are dialing your number now. Keep your phone handy.',sec:'sec',err:'Enter a valid phone number'}
+  };
+  var $=function(id){return document.getElementById(id);};
+  var lang=function(){return (typeof LANG!=='undefined'&&CB[LANG])?LANG:'ru';};
+  var timer=null;
+  function cbApply(){
+    var L=CB[lang()];
+    $('cb-fab-t').textContent=L.fabTitle; $('cb-fab-s').textContent=L.fabSub;
+    $('cb-eyebrow').textContent=L.eyebrow; $('cb-title').textContent=L.title; $('cb-lead').textContent=L.lead;
+    $('cb-name').placeholder=L.namePh; $('cb-phone').placeholder=L.phonePh;
+    $('cb-submit').textContent=L.submit; $('cb-note').textContent=L.note;
+    $('cb-done-title').textContent=L.doneTitle; $('cb-done-lead').textContent=L.doneLead; $('cb-sec').textContent=L.sec;
+  }
+  function open(){ cbApply(); $('cb-panel').style.display='block'; setTimeout(function(){ $('cb-phone').value ? $('cb-name').focus() : ($('cb-name').value ? $('cb-phone') : $('cb-name')).focus(); },80); }
+  function close(){ $('cb-panel').style.display='none'; }
+  $('cb-fab').onclick=function(){ $('cb-panel').style.display==='none' ? open() : close(); };
+  $('cb-close').onclick=close;
+  function startCountdown(){
+    $('cb-form').style.display='none'; $('cb-done').style.display='block';
+    var d=$('cb-drain'); d.style.animation='none'; void d.getBoundingClientRect(); d.style.animation='cbDrain 20s linear forwards';
+    var left=20; $('cb-left').textContent=left;
+    clearInterval(timer);
+    timer=setInterval(function(){ left--; if(left<=0){ left=0; clearInterval(timer);} $('cb-left').textContent=left; },1000);
+  }
+  $('cb-submit').onclick=function(){
+    var L=CB[lang()];
+    var phone=$('cb-phone').value.trim(), name=$('cb-name').value.trim();
+    var digits=phone.replace(/\D/g,'');
+    var err=$('cb-err');
+    if(digits.length<9||digits.length>15){ err.textContent=L.err; err.style.display='block'; $('cb-phone').focus(); return; }
+    err.style.display='none';
+    var btn=$('cb-submit'); btn.disabled=true; var orig=btn.textContent; btn.textContent='…';
+    fetch('/api/leads/callback',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name,phone:phone,lang:lang(),website:$('cb-website').value})})
+      .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(x){
+        btn.disabled=false; btn.textContent=orig;
+        if(!x.ok){ err.textContent=(x.d&&x.d.error)||L.err; err.style.display='block'; return; }
+        startCountdown();
+      })
+      .catch(function(){ btn.disabled=false; btn.textContent=orig; err.textContent=L.err; err.style.display='block'; });
+  };
+  // смена языка на лендинге → обновить тексты виджета
+  var ls=document.getElementById('lang-switch');
+  if(ls) ls.addEventListener('click',function(){ setTimeout(cbApply,0); });
+  cbApply();
+})();
+</script>
 </body></html>

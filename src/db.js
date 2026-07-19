@@ -24,6 +24,7 @@ const DEFAULT = {
   balanceLog: [],   // { id, userId, delta, kind, comment, adminId, purchaseId, testId, balanceAfter, createdAt }
   adminLog: [],     // { id, adminId, action, targetType, targetId, details, createdAt }
   callQueue: [],    // очередь ИИ-звонков планировщика { id, userId, participantId, kind, refIndex, status, attempts, nextAt, entryId, callId, opts, cfg, createdAt, lastReason }
+  leads: [],        // лиды отдела продаж { id, name, phone, email, company, lang, source, status, interest, callbackWhen, userId, aiCallLog[], requests[], createdAt }
 };
 
 let cache = null;
