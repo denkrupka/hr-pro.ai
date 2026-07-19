@@ -13,7 +13,7 @@ import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import { generateAd as genAdAI } from './ai-ad-edge.js';
 import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
 import * as aidec from './ai-decode-edge.js';
-import { generateVideoLink, videoIntegrationStatus } from './video-integrations-edge.js';
+import { generateVideoLink, videoIntegrationStatus, authorizeUrl as vidAuthorizeUrl, exchangeCode as vidExchangeCode, makeVState as vidMakeState, readVState as vidReadState } from './video-integrations-edge.js';
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
@@ -1794,25 +1794,28 @@ async function api(req, env, url, exec) {
     }
   }
 
-  // ── Видеоинтеграции (Zoom / Google Meet / Teams) ──
+  // ── Видеоинтеграции (Zoom / Google Meet / Teams) — OAuth «Подключить аккаунт» ──
+  const VIDEO_PLATS = ['zoom', 'google', 'teams'];
+  const ENV_PREF = { zoom: 'ZOOM', google: 'GOOGLE', teams: 'MS' };
+  // Ключи OAuth-приложения владельца портала: Cloudflare env или настройки портала (Supabase id=portal → videoOAuth).
+  const videoApp = async (platform) => {
+    const pref = ENV_PREF[platform]; const pt = await settings();
+    const vo = ((pt && pt.videoOAuth) || {})[platform] || {};
+    const clientId = env[pref + '_OAUTH_CLIENT_ID'] || vo.clientId || '';
+    const clientSecret = env[pref + '_OAUTH_CLIENT_SECRET'] || vo.clientSecret || '';
+    return (clientId && clientSecret) ? { clientId, clientSecret } : null;
+  };
+  const vidRedirect = (platform) => url.origin + '/api/oauth/' + platform + '/callback';
+  const oauthPopup = (platform, ok, msg) => new Response(
+    '<!doctype html><meta charset="utf-8"><body style="font:15px system-ui;padding:24px;color:#111">' + (ok ? 'Подключено ✓' : 'Не удалось подключить') +
+    '<script>try{if(window.opener){window.opener.postMessage(' + JSON.stringify({ type: 'video-oauth', platform, ok: !!ok, error: msg || '' }) + ',location.origin);window.close();}else{location.href="/app";}}catch(e){location.href="/app";}</script></body>',
+    { status: 200, headers: { 'content-type': 'text/html; charset=utf-8' } });
+
   if (p === '/api/video-integrations' && m === 'GET') {
     if (!me) return needAuth();
-    return j({ status: videoIntegrationStatus(me.settings) });
-  }
-  if (p === '/api/video-integrations' && m === 'POST') {
-    if (!me) return needAuth();
-    const plat = String(body.platform || '');
-    if (!['zoom', 'google', 'teams'].includes(plat)) return j({ error: 'Неизвестная платформа' }, 400);
-    if (!me.settings) me.settings = {};
-    me.settings.videoIntegrations = me.settings.videoIntegrations || {};
-    const cfg = me.settings.videoIntegrations[plat] || {};
-    const s = (k, max) => { if (typeof body[k] === 'string') cfg[k] = body[k].trim().slice(0, max || 400); };
-    if (plat === 'zoom') { s('accountId', 120); s('clientId', 120); s('clientSecret', 200); }
-    else if (plat === 'google') { s('serviceAccountJson', 8000); s('calendarEmail', 200); }
-    else if (plat === 'teams') { s('tenantId', 120); s('clientId', 120); s('clientSecret', 200); s('userId', 200); }
-    me.settings.videoIntegrations[plat] = cfg;
-    await saveUser(me);
-    return j({ ok: true, status: videoIntegrationStatus(me.settings) });
+    const status = videoIntegrationStatus(me.settings);
+    status.configured = { zoom: !!(await videoApp('zoom')), google: !!(await videoApp('google')), teams: !!(await videoApp('teams')) };
+    return j({ status });
   }
   let mVint = p.match(/^\/api\/video-integrations\/([a-z]+)$/);
   if (mVint && m === 'DELETE') {
@@ -1820,6 +1823,38 @@ async function api(req, env, url, exec) {
     if (me.settings && me.settings.videoIntegrations) delete me.settings.videoIntegrations[mVint[1]];
     await saveUser(me);
     return j({ ok: true, status: videoIntegrationStatus(me.settings) });
+  }
+  // Старт OAuth: редирект на страницу входа сервиса (клиент авторизуется своим аккаунтом).
+  let mOAuthStart = p.match(/^\/api\/oauth\/([a-z]+)\/start$/);
+  if (mOAuthStart && m === 'GET') {
+    if (!me) return needAuth();
+    const platform = mOAuthStart[1];
+    if (!VIDEO_PLATS.includes(platform)) return j({ error: 'Неизвестная платформа' }, 400);
+    const app_ = await videoApp(platform);
+    if (!app_) return oauthPopup(platform, false, 'OAuth-приложение не настроено на портале');
+    const state = await vidMakeState(env.SECRET, me.id, platform);
+    return new Response(null, { status: 302, headers: { Location: vidAuthorizeUrl(platform, app_, vidRedirect(platform), state) } });
+  }
+  // Callback: восстанавливаем клиента из подписанного state, меняем код на токены, сохраняем.
+  let mOAuthCb = p.match(/^\/api\/oauth\/([a-z]+)\/callback$/);
+  if (mOAuthCb && m === 'GET') {
+    const platform = mOAuthCb[1];
+    if (!VIDEO_PLATS.includes(platform)) return j({ error: 'Неизвестная платформа' }, 400);
+    try {
+      if (url.searchParams.get('error')) throw new Error(url.searchParams.get('error_description') || url.searchParams.get('error'));
+      const st = await vidReadState(env.SECRET, url.searchParams.get('state'));
+      if (!st || st.platform !== platform) throw new Error('Недействительный state');
+      const rows = await S.select('users', `id=eq.${st.userId}&select=data`);
+      const u = rows[0] && rows[0].data;
+      if (!u) throw new Error('Пользователь не найден');
+      const app_ = await videoApp(platform);
+      if (!app_) throw new Error('OAuth-приложение не настроено');
+      const { oauth, account } = await vidExchangeCode(platform, app_, vidRedirect(platform), url.searchParams.get('code') || '');
+      u.settings = u.settings || {}; u.settings.videoIntegrations = u.settings.videoIntegrations || {};
+      u.settings.videoIntegrations[platform] = { oauth, account, connectedAt: new Date().toISOString() };
+      await saveUser(u);
+      return oauthPopup(platform, true);
+    } catch (e) { return oauthPopup(platform, false, e.message || 'Не удалось подключить'); }
   }
   // Генерация ссылки на видеовстречу через подключённую платформу
   if (p === '/api/video/link' && m === 'POST') {
@@ -1829,7 +1864,9 @@ async function api(req, env, url, exec) {
     const durationMin = Math.max(15, Math.min(240, parseInt(body.durationMin, 10) || 40));
     const endTime = new Date(new Date(startTime).getTime() + durationMin * 60000).toISOString();
     try {
-      const link = await generateVideoLink(me.settings, plat, { topic: body.topic || 'Собеседование', startTime, endTime, durationMin });
+      const app_ = await videoApp(plat);
+      const link = await generateVideoLink(me.settings, plat, { topic: body.topic || 'Собеседование', startTime, endTime, durationMin }, app_);
+      await saveUser(me); // возможно обновился access-токен
       return j({ ok: true, link });
     } catch (e) { return j({ error: e.message || 'Не удалось создать ссылку' }, 502); }
   }

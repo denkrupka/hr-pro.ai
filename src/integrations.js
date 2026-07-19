@@ -374,4 +374,17 @@ async function zadarmaBalance(settings) {
   return { ok: true, balance: d.balance, currency: d.currency };
 }
 
-module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, isNoAnswer, looksLikeVoicemail, vapiPing, zadarmaBalance, zadarmaRequest };
+// Ключи OAuth-приложения видеосервиса (уровень портала, не клиента): файл videoOAuth.<platform>
+// или env ZOOM_/GOOGLE_/MS_OAUTH_CLIENT_ID|SECRET. Возвращает { clientId, clientSecret } или null.
+const VID_ENV = {
+  zoom: { clientId: 'ZOOM_OAUTH_CLIENT_ID', clientSecret: 'ZOOM_OAUTH_CLIENT_SECRET' },
+  google: { clientId: 'GOOGLE_OAUTH_CLIENT_ID', clientSecret: 'GOOGLE_OAUTH_CLIENT_SECRET' },
+  teams: { clientId: 'MS_OAUTH_CLIENT_ID', clientSecret: 'MS_OAUTH_CLIENT_SECRET' },
+};
+function videoOAuthApp(platform) {
+  const out = Object.assign({}, (GLOBAL.videoOAuth || {})[platform] || {});
+  Object.entries(VID_ENV[platform] || {}).forEach(([k, env]) => { if (process.env[env]) out[k] = process.env[env]; });
+  return (out.clientId && out.clientSecret) ? { clientId: out.clientId, clientSecret: out.clientSecret } : null;
+}
+
+module.exports = { PROVIDERS, cfgOf, isConfigured, sendEmail, wrapEmailHtml, sendSms, listVoices, startCall, getCall, isNoAnswer, looksLikeVoicemail, vapiPing, zadarmaBalance, zadarmaRequest, videoOAuthApp };

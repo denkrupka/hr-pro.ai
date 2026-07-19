@@ -2604,24 +2604,55 @@ app.delete('/api/calendar/:id', requireAuth, (req, res) => {
   u.calendar = (u.calendar || []).filter(x => x.id !== req.params.id); save(); res.json({ ok: true });
 });
 
-// ---------- Видеоинтеграции (Zoom / Google Meet / Teams) ----------
+// ---------- Видеоинтеграции (Zoom / Google Meet / Teams) — OAuth «Подключить аккаунт» ----------
 const videoIntg = require('./src/video-integrations');
-app.get('/api/video-integrations', requireAuth, (req, res) => res.json({ status: videoIntg.videoIntegrationStatus(req.user.settings) }));
-app.post('/api/video-integrations', requireAuth, (req, res) => {
-  const plat = String((req.body && req.body.platform) || '');
-  if (!['zoom', 'google', 'teams'].includes(plat)) return res.status(400).json({ error: 'Неизвестная платформа' });
-  const s = req.user.settings; s.videoIntegrations = s.videoIntegrations || {};
-  const cfg = s.videoIntegrations[plat] || {};
-  const set = (k, max) => { if (typeof req.body[k] === 'string') cfg[k] = String(req.body[k]).trim().slice(0, max || 400); };
-  if (plat === 'zoom') { set('accountId', 120); set('clientId', 120); set('clientSecret', 200); }
-  else if (plat === 'google') { set('serviceAccountJson', 8000); set('calendarEmail', 200); }
-  else if (plat === 'teams') { set('tenantId', 120); set('clientId', 120); set('clientSecret', 200); set('userId', 200); }
-  s.videoIntegrations[plat] = cfg; save();
-  res.json({ ok: true, status: videoIntg.videoIntegrationStatus(s) });
+const VIDEO_PLATS = ['zoom', 'google', 'teams'];
+const videoRedirect = (platform) => `${String(BASE_URL || '').replace(/\/+$/, '')}/api/oauth/${platform}/callback`;
+// HTML-заглушка для popup: сообщает родителю результат и закрывается.
+function oauthPopupHtml(platform, ok, msg) {
+  const payload = JSON.stringify({ type: 'video-oauth', platform, ok: !!ok, error: msg || '' });
+  return `<!doctype html><meta charset="utf-8"><body style="font:15px system-ui;padding:24px;color:#111">${ok ? 'Подключено ✓' : 'Ошибка: ' + esc(msg || '')}<script>
+    try{ if(window.opener){ window.opener.postMessage(${payload}, location.origin); window.close(); } else { location.href='/app'; } }catch(e){ location.href='/app'; }
+  </script></body>`;
+}
+app.get('/api/video-integrations', requireAuth, (req, res) => {
+  const status = videoIntg.videoIntegrationStatus(req.user.settings);
+  status.configured = { zoom: !!integ.videoOAuthApp('zoom'), google: !!integ.videoOAuthApp('google'), teams: !!integ.videoOAuthApp('teams') };
+  res.json({ status });
 });
 app.delete('/api/video-integrations/:platform', requireAuth, (req, res) => {
   const s = req.user.settings; if (s.videoIntegrations) delete s.videoIntegrations[req.params.platform]; save();
   res.json({ ok: true, status: videoIntg.videoIntegrationStatus(s) });
+});
+// Старт OAuth: редирект на страницу входа сервиса (клиент авторизуется своим аккаунтом).
+app.get('/api/oauth/:platform/start', requireAuth, async (req, res) => {
+  const platform = req.params.platform;
+  if (!VIDEO_PLATS.includes(platform)) return res.status(400).send('Неизвестная платформа');
+  const app_ = integ.videoOAuthApp(platform);
+  if (!app_) return res.status(503).send(oauthPopupHtml(platform, false, 'OAuth-приложение не настроено на портале'));
+  const state = videoIntg.makeVState(SECRET, req.user.id, platform);
+  res.redirect(videoIntg.authorizeUrl(platform, app_, videoRedirect(platform), state));
+});
+// Callback: восстанавливаем клиента из подписанного state, меняем код на токены, сохраняем.
+app.get('/api/oauth/:platform/callback', async (req, res) => {
+  const platform = req.params.platform;
+  if (!VIDEO_PLATS.includes(platform)) return res.status(400).send('Неизвестная платформа');
+  try {
+    if (req.query.error) throw new Error(String(req.query.error_description || req.query.error));
+    const st = videoIntg.readVState(SECRET, String(req.query.state || ''));
+    if (!st || st.platform !== platform) throw new Error('Недействительный state');
+    const u = db().users.find(x => x.id === st.userId);
+    if (!u) throw new Error('Пользователь не найден');
+    const app_ = integ.videoOAuthApp(platform);
+    if (!app_) throw new Error('OAuth-приложение не настроено');
+    const { oauth, account } = await videoIntg.exchangeCode(platform, app_, videoRedirect(platform), String(req.query.code || ''));
+    u.settings = u.settings || {}; u.settings.videoIntegrations = u.settings.videoIntegrations || {};
+    u.settings.videoIntegrations[platform] = { oauth, account, connectedAt: new Date().toISOString() };
+    save();
+    res.set('Content-Type', 'text/html; charset=utf-8').send(oauthPopupHtml(platform, true));
+  } catch (e) {
+    res.set('Content-Type', 'text/html; charset=utf-8').send(oauthPopupHtml(platform, false, e.message || 'Не удалось подключить'));
+  }
 });
 app.post('/api/video/link', requireAuth, async (req, res) => {
   const plat = String((req.body && req.body.platform) || '');
@@ -2629,7 +2660,9 @@ app.post('/api/video/link', requireAuth, async (req, res) => {
   const durationMin = Math.max(15, Math.min(240, parseInt(req.body && req.body.durationMin, 10) || 40));
   const endTime = new Date(new Date(startTime).getTime() + durationMin * 60000).toISOString();
   try {
-    const link = await videoIntg.generateVideoLink(req.user.settings, plat, { topic: (req.body && req.body.topic) || 'Собеседование', startTime, endTime, durationMin });
+    const app_ = integ.videoOAuthApp(plat);
+    const link = await videoIntg.generateVideoLink(req.user.settings, plat, { topic: (req.body && req.body.topic) || 'Собеседование', startTime, endTime, durationMin }, app_);
+    save(); // возможно обновился access-токен
     res.json({ ok: true, link });
   } catch (e) { res.status(502).json({ error: e.message || 'Не удалось создать ссылку' }); }
 });

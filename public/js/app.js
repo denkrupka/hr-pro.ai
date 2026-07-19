@@ -3379,30 +3379,18 @@ function wireShare(test) { const tgl = $('#share-toggle'); if (!tgl) return; tgl
 // ================= SECONDARY VIEWS =================
 // ================= ИНТЕГРАЦИИ: джоб-порталы (публикация объявлений и отклики) =================
 const VIDEO_INTG = [
-  { id: 'zoom', name: 'Zoom', method: 'API-ключи', desc: 'Server-to-Server OAuth. Портал сам создаёт встречу и вставляет ссылку.',
-    fields: [{ k: 'accountId', label: 'Account ID' }, { k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', secret: true }],
-    hint: 'Zoom App Marketplace → Build App → «Server-to-Server OAuth» → скопируйте Account ID, Client ID, Client Secret. Включите scope meeting:write.' },
-  { id: 'google', name: 'Google Meet', method: 'Сервис-аккаунт', desc: 'Сервис-аккаунт Google + доступ к календарю. Meet-ссылка через Calendar API.',
-    fields: [{ k: 'calendarEmail', label: 'Email календаря (владельца встреч)' }, { k: 'serviceAccountJson', label: 'JSON-ключ сервис-аккаунта', textarea: true, secret: true }],
-    hint: 'Google Cloud → создайте сервис-аккаунт с JSON-ключом, включите Calendar API. Дайте сервис-аккаунту доступ к календарю (share) или домен-делегирование.' },
-  { id: 'teams', name: 'Microsoft Teams', method: 'Azure / Graph', desc: 'Azure-приложение (client credentials) + Graph onlineMeetings.',
-    fields: [{ k: 'tenantId', label: 'Tenant ID' }, { k: 'clientId', label: 'Client ID' }, { k: 'clientSecret', label: 'Client Secret', secret: true }, { k: 'userId', label: 'ID/email организатора' }],
-    hint: 'Azure Portal → App registration → client secret + разрешение приложения OnlineMeetings.ReadWrite.All (admin consent).' },
+  { id: 'zoom', name: 'Zoom', method: 'OAuth', desc: 'Подключите свой Zoom — портал сам создаст встречу и вставит ссылку при планировании собеседования.' },
+  { id: 'google', name: 'Google Meet', method: 'OAuth', desc: 'Подключите Google-аккаунт — Meet-ссылка создаётся автоматически через ваш календарь.' },
+  { id: 'teams', name: 'Microsoft Teams', method: 'OAuth', desc: 'Подключите рабочий аккаунт Microsoft — встреча Teams создаётся автоматически.' },
 ];
-function openVideoConnect(cfg, connected, onDone) {
-  openModal('<div class="report-head"><h2 style="margin:0;font-size:20px">' + esc(cfg.name) + '</h2></div>' +
-    '<p class="muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.5">' + esc(cfg.hint) + '</p>' +
-    cfg.fields.map(fd => '<div style="margin-bottom:10px"><label class="lbl">' + esc(fd.label) + '</label>' +
-      (fd.textarea ? '<textarea class="field" id="vi-' + fd.k + '" style="min-height:96px;font-family:monospace;font-size:12px" ' + (fd.secret && connected ? 'placeholder="•••••• (сохранено, оставьте пусто)"' : '') + '></textarea>'
-        : '<input class="field" id="vi-' + fd.k + '" ' + (fd.secret ? 'type="password" autocomplete="new-password"' : 'autocomplete="off"') + ' ' + (fd.secret && connected ? 'placeholder="•••••• (сохранено)"' : '') + '>') + '</div>').join('') +
-    '<div class="row" style="gap:8px;margin-top:14px"><button class="btn" id="vi-save">Подключить</button>' +
-      '<button class="btn ghost" onclick="closeModal()">Отмена</button></div>', true);
-  $('#vi-save').onclick = async () => {
-    const body = { platform: cfg.id };
-    cfg.fields.forEach(fd => { const el = $('#vi-' + fd.k); if (el && el.value.trim()) body[fd.k] = el.value.trim(); });
-    try { await api('/api/video-integrations', { method: 'POST', body: JSON.stringify(body) }); toast('Подключено ✓'); closeModal(); if (onDone) onDone(); }
-    catch (e) { toast(e.message); }
-  };
+// OAuth «Подключить аккаунт»: открываем окно входа сервиса, ждём результат через postMessage.
+function openVideoOAuth(platform, onDone) {
+  const w = window.open('/api/oauth/' + platform + '/start', 'vidoauth', 'width=560,height=720');
+  let done = false;
+  const finish = (ok, err) => { if (done) return; done = true; window.removeEventListener('message', handler); clearInterval(iv); if (ok) toast('Подключено ✓'); else if (err) toast(err); if (onDone) onDone(); };
+  const handler = (ev) => { if (ev.origin !== location.origin) return; const d = ev.data || {}; if (d.type !== 'video-oauth' || d.platform !== platform) return; finish(d.ok, d.error); };
+  window.addEventListener('message', handler);
+  const iv = setInterval(() => { if (w && w.closed) finish(false, ''); }, 800);
 }
 async function renderJobPortals() {
   const { portals, feedUrl } = await api('/api/job-portals');
@@ -3433,20 +3421,22 @@ async function renderJobPortals() {
     <div class="intg-grid reveal d2" style="margin-top:14px">${cards}</div>
     <h2 class="page-h reveal d2" style="margin-top:30px;font-size:22px">Видеосвязь</h2>
     <p class="muted reveal d2" style="max-width:720px;line-height:1.55;margin-bottom:12px">Подключите аккаунт видеосервиса — при планировании собеседования портал сам создаст встречу и вставит ссылку.</p>
-    <div class="intg-grid reveal d2">${VIDEO_INTG.map(v => `<div class="card intg-card">
+    <div class="intg-grid reveal d2">${VIDEO_INTG.map(v => {
+      const acc = (vstatus.accounts && vstatus.accounts[v.id]) || '';
+      const configured = !vstatus.configured || vstatus.configured[v.id] !== false; // владелец завёл OAuth-приложение
+      return `<div class="card intg-card">
       <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
         <b style="font-size:15.5px">${esc(v.name)}</b>
         <span class="cstep-st ${vstatus[v.id] ? 'ok' : ''}">${vstatus[v.id] ? 'Подключено' : 'Не подключено'}</span></div>
       <div style="margin:6px 0 4px"><span class="jp-m jp-api">${esc(v.method)}</span></div>
-      <p class="muted" style="font-size:12.5px;margin:4px 0 8px;min-height:52px">${esc(v.desc)}</p>
+      <p class="muted" style="font-size:12.5px;margin:4px 0 8px;min-height:52px">${vstatus[v.id] && acc ? 'Аккаунт: <b>' + esc(acc) + '</b>' : esc(v.desc)}</p>
       <div class="row" style="gap:8px;flex-wrap:wrap">
-        <button class="btn ${vstatus[v.id] ? 'soft' : ''} sm" data-vi-connect="${v.id}">${vstatus[v.id] ? '✎ Изменить' : 'Подключить'}</button>
+        ${configured
+          ? `<button class="btn ${vstatus[v.id] ? 'soft' : ''} sm" data-vi-connect="${v.id}">${vstatus[v.id] ? '↻ Переподключить' : 'Подключить'}</button>`
+          : `<span class="muted" style="font-size:12px">Скоро — сервис ещё не настроен администратором</span>`}
         ${vstatus[v.id] ? `<button class="btn ghost danger sm" data-vi-off="${v.id}">Отключить</button>` : ''}</div>
-    </div>`).join('')}</div>`;
-  $$('[data-vi-connect]').forEach(b => b.onclick = () => {
-    const cfg = VIDEO_INTG.find(x => x.id === b.dataset.viConnect);
-    openVideoConnect(cfg, !!vstatus[cfg.id], renderJobPortals);
-  });
+    </div>`; }).join('')}</div>`;
+  $$('[data-vi-connect]').forEach(b => b.onclick = () => openVideoOAuth(b.dataset.viConnect, renderJobPortals));
   $$('[data-vi-off]').forEach(b => b.onclick = async () => {
     if (!confirm('Отключить ' + (VIDEO_INTG.find(x => x.id === b.dataset.viOff) || {}).name + '?')) return;
     await api('/api/video-integrations/' + b.dataset.viOff, { method: 'DELETE' }); renderJobPortals();
