@@ -4558,8 +4558,7 @@ function openInterviewSetup(onDone) {
   };
 }
 function openCalModal(ev, dateIso, prefill) {
-  // Первое собеседование на портале → сначала настраиваем процесс.
-  if (!ev && !hasInterviewSetup()) return openInterviewSetup(() => openCalModalInner(null, dateIso, prefill));
+  // Сразу открываем форму собеседования (мастер настройки процесса больше не показываем).
   openCalModalInner(ev, dateIso, prefill);
 }
 function openCalModalInner(ev, dateIso, prefill) {
