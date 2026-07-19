@@ -4546,7 +4546,7 @@ function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date:
 function interviewSetup() { return (state.user && state.user.settings && state.user.settings.interviewSetup) || null; }
 function hasInterviewSetup() { const s = interviewSetup(); return !!(s && (s.office || s.phone || s.videoService)); }
 function savedInterviewers() { return (state.user && state.user.settings && state.user.settings.interviewers) || []; }
-const VIDEO_PLATFORMS = ['Jitsi Meet (ссылка сразу)', 'Google Meet', 'Microsoft Teams', 'Zoom'];
+const VIDEO_PLATFORMS = ['Jitsi Meet', 'Google Meet', 'Microsoft Teams', 'Zoom'];
 // Мгновенная генерация рабочей ссылки без аккаунта/OAuth — только Jitsi это позволяет.
 function jitsiLink(candidate) {
   const slug = String(candidate || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 18) || 'Interview';
@@ -4629,7 +4629,7 @@ function openCalModalInner(ev, dateIso, prefill) {
     // Ссылка на встречу / адрес / телефон — зависит от формата
     '<label class="db-lb" id="cf-meet-lb"></label>' +
     '<div class="row" style="gap:8px"><input class="field" id="cf-meet" style="flex:1" value="' + esc(f.meetingLink || '') + '"><button type="button" class="btn ghost" id="cf-meet-create" style="display:none;white-space:nowrap">' + ct('meet_create') + '</button></div>' +
-    '<label class="db-lb">' + ct('f_note') + ' <span style="color:#5f6885;font-weight:400">(' + ct('f_note') + ')</span></label><input class="field" id="cf-note" value="' + esc(f.note) + '">' +
+    '<label class="db-lb">' + ct('f_note') + '</label><input class="field" id="cf-note" value="' + esc(f.note) + '">' +
     sync +
     '<div class="db-modal-foot">' +
       (isEdit ? '<button class="btn ghost danger xs ic-btn" id="cf-del" title="' + ct('del') + '">' + ICON_TRASH + '</button>' : '') +
@@ -4704,8 +4704,7 @@ function openCalModalInner(ev, dateIso, prefill) {
   };
   wireNiceSelect('cf-format', (v) => { if (v !== calFmtKey(f.format)) meetIn.value = ''; applyFormat(true); });
   wireNiceSelect('cf-platform', () => {});
-  // «Создать ссылку»: для Jitsi — мгновенно генерируем и вставляем рабочую ссылку (без окна/звонка);
-  // для Meet/Teams/Zoom автогенерация невозможна без OAuth — открываем страницу создания встречи.
+  // «Создать ссылку»: Jitsi — мгновенно; Meet/Teams/Zoom — через подключённый по OAuth аккаунт.
   meetBtn.onclick = async () => {
     const plat = nselValue('cf-platform') || setup.videoService || '';
     if (/jitsi/i.test(plat)) { meetIn.value = jitsiLink(candIn.value); toast(ct('link_created')); return; }
@@ -4718,13 +4717,14 @@ function openCalModalInner(ev, dateIso, prefill) {
         const r = await api('/api/video/link', { method: 'POST', body: JSON.stringify({ platform: pid, topic: 'Собеседование' + (candIn.value ? ': ' + candIn.value : ''), startTime, durationMin: 40 }) });
         meetIn.value = r.link; toast(ct('link_created'));
       } catch (e) {
-        toast((e && e.message) || 'Не удалось создать ссылку'); // не подключено или ошибка → открываем страницу создания
-        window.open(videoNewUrl(plat), 'hrpro_meet', 'width=1000,height=760');
+        // Не подключено / ошибка сервиса — показываем причину и подсказываем, где подключить (без открытия внешней страницы)
+        const msg = (e && e.message) || 'Не удалось создать ссылку';
+        toast(/не подключ|не настро/i.test(msg) ? (plat + ': подключите аккаунт в «Интеграции → Видеоконференции»') : msg);
       }
       meetBtn.disabled = false; meetBtn.textContent = orig;
       return;
     }
-    window.open(videoNewUrl(plat), 'hrpro_meet', 'width=1000,height=760'); toast(ct('link_hint')); meetIn.focus();
+    toast(ct('link_hint')); meetIn.focus();
   };
   { const es = $('#cf-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   applyFormat(!isEdit);
