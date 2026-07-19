@@ -1710,7 +1710,23 @@ async function api(req, env, url, exec) {
       e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
       e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.videoPlatform = s('videoPlatform'); e.note = s('note');
       e.participantId = (b && b.participantId) || e.participantId || null;
+      e.interviewId = (b && b.interviewId) || e.interviewId || null;
       return e;
+    };
+    // Двусторонняя связь: событие-собеседование с кандидатом → создаём/обновляем этап «Собеседование» в карточке.
+    const syncInterviewStage = async (e) => {
+      if (e.stage !== 'intv' || !e.participantId) return;
+      try {
+        const part = await S.one('participants', e.participantId);
+        if (!part || part.userId !== me.id) return;
+        part.workflow = part.workflow || {}; part.workflow.interviews = part.workflow.interviews || [];
+        let iv = e.interviewId ? part.workflow.interviews.find(x => x.id === e.interviewId) : null;
+        if (!iv) { iv = { id: uid(8), createdAt: new Date().toISOString(), date: '', participants: '', impressions: '', scores: '', questions: '', notes: '' }; part.workflow.interviews.push(iv); }
+        iv.date = e.date ? (e.date + (e.time ? 'T' + e.time : '')) : iv.date;
+        if (e.interviewer && !iv.participants) iv.participants = e.interviewer;
+        iv.eventId = e.id; e.interviewId = iv.id; part.stage = 'Собеседование';
+        await S.upsert('participants', { id: part.id, data: part });
+      } catch (_) {}
     };
     if (p === '/api/calendar' && m === 'GET') { if (!me) return needAuth(); return j({ events: me.calendar || [] }); }
     if (p === '/api/calendar' && m === 'POST') {
@@ -1718,6 +1734,7 @@ async function api(req, env, url, exec) {
       me.calendar = me.calendar || [];
       const e = calEvent(body || {});
       if (!e.candidate || !e.date) return j({ error: 'Укажите кандидата и дату' }, 400);
+      await syncInterviewStage(e);
       me.calendar.push(e); await S.upsert('users', { id: me.id, data: me }); return j({ event: e });
     }
     let mCalPut = p.match(/^\/api\/calendar\/([\w-]+)$/);
@@ -1725,7 +1742,7 @@ async function api(req, env, url, exec) {
       if (!me) return needAuth();
       const e = (me.calendar || []).find(x => x.id === mCalPut[1]);
       if (!e) return j({ error: 'Не найдено' }, 404);
-      calEvent(body || {}, e); await S.upsert('users', { id: me.id, data: me }); return j({ event: e });
+      calEvent(body || {}, e); await syncInterviewStage(e); await S.upsert('users', { id: me.id, data: me }); return j({ event: e });
     }
     if (mCalPut && m === 'DELETE') {
       if (!me) return needAuth();

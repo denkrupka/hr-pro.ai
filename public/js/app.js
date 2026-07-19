@@ -2665,7 +2665,7 @@ function renderCandidatePage() {
       <span class="avatar" style="width:52px;height:52px;border-radius:15px;font-size:19px;background:${avColor(nm)}">${esc(initials(nm, p.email))}</span>
       <div style="flex:1;min-width:0"><h1 style="margin:0;font-size:25px">${esc(nm)}</h1>
         <div class="muted" style="font-size:13.5px">${esc(p.email || p.tel || '')}${p.vacancyName ? ' · ' + (p.vacancyId ? `<a href="#" class="rep-vac-link" onclick="openVacancyPage('${esc(p.vacancyId)}');return false"><b>${esc(p.vacancyName)}</b></a>` : esc(p.vacancyName)) : ''}</div></div>
-      ${stageBadge}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button>${cvBtn}</div>
+      ${stageBadge}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button><button class="btn ghost sm ic-btn no-print" id="cand-schedule" title="Назначить собеседование">${_svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>')}<span>Собеседование</span></button>${cvBtn}</div>
     ${wf ? `<div class="card cand-pipe-card reveal d1" style="margin-top:14px">${candidatePipeline(wf)}</div>` : ''}
     <div class="cand-grid reveal d2" style="margin-top:14px">
       <div class="card"><div class="cfg-h">${rt('cand_info')}</div>
@@ -2688,6 +2688,11 @@ function renderCandidatePage() {
     </div>`;
   $('#cand-back').onclick = () => candReturn();
   const acb = $('#cand-aicalls'); if (acb) acb.onclick = () => openAiCallsModal(p.id);
+  const scb = $('#cand-schedule'); if (scb) scb.onclick = () => {
+    const dt = new Date(); const iso = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+    setView('calendar');
+    setTimeout(() => openCalModal(null, iso, { participantId: p.id, candidate: nm, role: p.vacancyName || '', stage: 'intv' }), 160);
+  };
   $('#save-part').onclick = saveParticipant; $('#del-part').onclick = deleteParticipant;
   wirePhoneAgeMasks('#f-tel', '#f-age');
   wireCandidateSteps(); wireSendMore();
@@ -4518,7 +4523,7 @@ function calFmtKey(f) { const v = String(f || '').toLowerCase();
   if (/phone|телеф|telefon/.test(v)) return 'phone';
   return 'video'; }
 function calFmtLabel(k) { return { video: ct('fmt_video'), office: ct('fmt_office'), phone: ct('fmt_phone') }[k] || ct('fmt_video'); }
-function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date: date || '', time: '10:00', format: 'video', interviewer: '', interviewerEmail: '', meetingLink: '', videoPlatform: '', note: '', participantId: null }; }
+function calBlank(date) { return { candidate: '', role: '', stage: 'intv', date: date || '', time: '10:00', format: 'video', interviewer: '', interviewerEmail: '', meetingLink: '', videoPlatform: '', note: '', participantId: null, interviewId: null }; }
 
 // ── Настройка процесса собеседований (адрес/телефон/видеосервис) — один раз, хранится в settings ──
 function interviewSetup() { return (state.user && state.user.settings && state.user.settings.interviewSetup) || null; }
@@ -4555,13 +4560,13 @@ function openInterviewSetup(onDone) {
     await saveSettingsPatch({ interviewSetup: setup }); closeDecodeModal(); if (onDone) onDone();
   };
 }
-function openCalModal(ev, dateIso) {
+function openCalModal(ev, dateIso, prefill) {
   // Первое собеседование на портале → сначала настраиваем процесс.
-  if (!ev && !hasInterviewSetup()) return openInterviewSetup(() => openCalModalInner(null, dateIso));
-  openCalModalInner(ev, dateIso);
+  if (!ev && !hasInterviewSetup()) return openInterviewSetup(() => openCalModalInner(null, dateIso, prefill));
+  openCalModalInner(ev, dateIso, prefill);
 }
-function openCalModalInner(ev, dateIso) {
-  const isEdit = !!ev; const f = ev ? Object.assign({}, ev) : calBlank(dateIso);
+function openCalModalInner(ev, dateIso, prefill) {
+  const isEdit = !!ev; const f = ev ? Object.assign({}, ev) : Object.assign(calBlank(dateIso), prefill || {});
   f.format = calFmtKey(f.format);
   const setup = interviewSetup() || {};
   const myName = (state.user && (state.user.name || state.user.company)) || ct('int_me');
@@ -4695,7 +4700,7 @@ function openCalModalInner(ev, dateIso) {
   { const es = $('#cf-edit-stages'); if (es) es.onclick = () => openStageEditor(); }
   applyFormat(!isEdit);
 
-  const collect = () => ({ candidate: candIn.value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: nselValue('cf-format'), interviewer: nselValue('cf-interviewer') === '__add' ? '' : nselValue('cf-interviewer'), interviewerEmail: interviewerEmail, meetingLink: meetIn.value.trim(), videoPlatform: nselValue('cf-platform') || '', note: $('#cf-note').value.trim(), participantId: linkedId });
+  const collect = () => ({ candidate: candIn.value.trim(), role: $('#cf-role').value.trim(), stage: stage, date: $('#cf-date').value, time: $('#cf-time').value || '10:00', format: nselValue('cf-format'), interviewer: nselValue('cf-interviewer') === '__add' ? '' : nselValue('cf-interviewer'), interviewerEmail: interviewerEmail, meetingLink: meetIn.value.trim(), videoPlatform: nselValue('cf-platform') || '', note: $('#cf-note').value.trim(), participantId: linkedId, interviewId: f.interviewId || null });
   if (isEdit) {
     const upd = () => { const ev2 = Object.assign({}, f, collect()); if ($('#cal-sync-g')) $('#cal-sync-g').href = googleCalLink(ev2); if ($('#cal-sync-o')) $('#cal-sync-o').href = outlookLink(ev2); };
     upd(); ['cf-candidate', 'cf-role', 'cf-date', 'cf-time', 'cf-format', 'cf-meet', 'cf-note'].forEach(id => { const el = $('#' + id); if (el) el.addEventListener('input', upd); });

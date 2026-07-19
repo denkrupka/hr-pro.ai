@@ -2497,7 +2497,20 @@ function calEvent(b, base) {
   e.time = /^\d{1,2}:\d{2}$/.test(b && b.time) ? b.time : (e.time || '10:00');
   e.format = s('format') || 'video'; e.interviewer = s('interviewer'); e.interviewerEmail = s('interviewerEmail'); e.meetingLink = s('meetingLink'); e.videoPlatform = s('videoPlatform'); e.note = s('note');
   e.participantId = (b && b.participantId) || e.participantId || null;
+  e.interviewId = (b && b.interviewId) || e.interviewId || null;
   return e;
+}
+// Двусторонняя связь: событие-собеседование с кандидатом → создаём/обновляем этап «Собеседование» в карточке.
+function syncInterviewStage(u, e) {
+  if (e.stage !== 'intv' || !e.participantId) return;
+  const part = db().participants.find(x => x.id === e.participantId && x.userId === u.id);
+  if (!part) return;
+  part.workflow = part.workflow || {}; part.workflow.interviews = part.workflow.interviews || [];
+  let iv = e.interviewId ? part.workflow.interviews.find(x => x.id === e.interviewId) : null;
+  if (!iv) { iv = { id: uid(8), createdAt: nowISO(), date: '', participants: '', impressions: '', scores: '', questions: '', notes: '' }; part.workflow.interviews.push(iv); }
+  iv.date = e.date ? (e.date + (e.time ? 'T' + e.time : '')) : iv.date;
+  if (e.interviewer && !iv.participants) iv.participants = e.interviewer;
+  iv.eventId = e.id; e.interviewId = iv.id; part.stage = 'Собеседование';
 }
 // Приглашение кандидата на собеседование (email + SMS) по формату встречи.
 const CAL_FMT_LABEL = { video: { ru: 'видеовстреча', pl: 'wideorozmowa', en: 'video call' }, office: { ru: 'встреча в офисе', pl: 'spotkanie w biurze', en: 'in-office meeting' }, phone: { ru: 'телефонный звонок', pl: 'rozmowa telefoniczna', en: 'phone call' } };
@@ -2552,13 +2565,14 @@ app.post('/api/calendar', requireAuth, (req, res) => {
   u.calendar = u.calendar || [];
   const e = calEvent(req.body || {});
   if (!e.candidate || !e.date) return res.status(400).json({ error: 'Укажите кандидата и дату' });
+  syncInterviewStage(u, e);
   u.calendar.push(e); save(); res.json({ event: e });
 });
 app.put('/api/calendar/:id', requireAuth, (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
   const e = (u.calendar || []).find(x => x.id === req.params.id);
   if (!e) return res.status(404).json({ error: 'Не найдено' });
-  calEvent(req.body || {}, e); save(); res.json({ event: e });
+  calEvent(req.body || {}, e); syncInterviewStage(u, e); save(); res.json({ event: e });
 });
 app.delete('/api/calendar/:id', requireAuth, (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
