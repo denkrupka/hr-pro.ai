@@ -137,6 +137,22 @@ function fmtCallSummary(s) {
   t = t.replace(/\s*<b>([А-ЯA-Z][^<]{2,40}:)<\/b>/g, '<br><b>$1</b>').replace(/^(<br>)+/, '');
   return t;
 }
+// Общий рендер журнала звонков Софии (карточка лида и карточка клиента).
+const CALL_KIND = { manual: '📞 Звонок менеджера', redial: '🔁 Авто-перезвон', inbound: '📥 Входящий', callback: '📤 Исходящий (заявка)' };
+function callLogHtml(log) {
+  const dur = s => s ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '';
+  return [...(log || [])].reverse().map(e => {
+    const kind = CALL_KIND[e.kind] || (e.dir === 'in' ? '📥 Входящий' : '📤 Исходящий');
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <b>${kind}</b>
+        <span class="muted" style="font-size:12px">${fmtDate(e.createdAt)}${e.durationSec ? ' · ' + dur(e.durationSec) : ''} · ${e.status === 'done' ? 'завершён' : esc(e.status || '')}</span></div>
+      ${e.summary ? `<div class="ai-note" style="margin-top:10px"><div class="ai-h">Итог разговора</div><p style="margin:6px 0 0;font-size:13px;line-height:1.6">${fmtCallSummary(e.summary)}</p></div>` : ''}
+      ${e.recordingUrl ? `<audio controls preload="none" src="${esc(e.recordingUrl)}" style="width:100%;margin-top:10px"></audio>` : ''}
+      ${e.transcript ? `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;color:#b3a4ff">Транскрипция</summary><pre style="white-space:pre-wrap;font:12.5px/1.6 Inter,sans-serif;color:#c3cbe4;background:rgba(255,255,255,.04);border-radius:10px;padding:12px;margin-top:8px;max-height:400px;overflow:auto">${esc(e.transcript)}</pre></details>` : ''}
+    </div>`;
+  }).join('') || '<p class="muted">Звонков пока не было</p>';
+}
 async function renderAdmLeads() {
   const q = state.leadsQ;
   const d = await api(`/api/admin/leads?q=${encodeURIComponent(q.q)}&status=${q.status}&page=${q.page}`);
@@ -195,18 +211,7 @@ async function openLead(lid) {
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'leads'));
   const EMPTYISH = /^[—\-–\s.]*$|^(прочерк|нет|пусто|none|null|n\/a|brak|nie|no)$/i;
   const info = (k, v, mono) => (v && !EMPTYISH.test(String(v).trim())) ? `<div style="margin-bottom:8px"><span class="muted" style="font-size:12px">${k}:</span> <b class="${mono ? 'mono' : ''}">${esc(v)}</b></div>` : '';
-  const dur = s => s ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '';
-  const calls = [...(l.aiCallLog || [])].reverse().map((e, i) => {
-    const kind = e.dir === 'in' ? '📥 Входящий' : '📤 Исходящий (заявка)';
-    return `<div class="card" style="margin-bottom:12px">
-      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <b>${kind}</b>
-        <span class="muted" style="font-size:12px">${fmtDate(e.createdAt)}${e.durationSec ? ' · ' + dur(e.durationSec) : ''} · ${e.status === 'done' ? 'завершён' : esc(e.status || '')}</span></div>
-      ${e.summary ? `<div class="ai-note" style="margin-top:10px"><div class="ai-h">Итог разговора</div><p style="margin:6px 0 0;font-size:13px;line-height:1.6">${fmtCallSummary(e.summary)}</p></div>` : ''}
-      ${e.recordingUrl ? `<audio controls preload="none" src="${esc(e.recordingUrl)}" style="width:100%;margin-top:10px"></audio>` : ''}
-      ${e.transcript ? `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;color:#b3a4ff">Транскрипция</summary><pre style="white-space:pre-wrap;font:12.5px/1.6 Inter,sans-serif;color:#c3cbe4;background:rgba(255,255,255,.04);border-radius:10px;padding:12px;margin-top:8px;max-height:400px;overflow:auto">${esc(e.transcript)}</pre></details>` : ''}
-    </div>`;
-  }).join('') || '<p class="muted">Звонков пока не было</p>';
+  const calls = callLogHtml(l.aiCallLog);
   $('#main').innerHTML = `
     <button class="btn ghost sm reveal" id="back-leads" style="margin-bottom:12px">← Лиды</button>
     <div class="topbar reveal"><div><div class="eyebrow">Лид · ${esc(LEAD_SRC[l.source] || l.source || '')}</div>
@@ -402,8 +407,14 @@ async function openClient(uid, tab) {
       <div class="adm-stat"><b>${c.testsSent} / ${c.testsDone}</b><span>Тестов отправлено / пройдено</span></div>
       <div class="adm-stat"><b>${money(c.revenue, state.currency)}</b><span>Покупок на сумму (${c.purchases})</span></div>
     </div>
+    ${d.salesLead && (d.salesLead.calls || []).length ? `<div class="reveal d2" style="margin-top:16px">
+      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h3 style="margin:0">📞 Звонки Софии (${d.salesLead.calls.length})</h3>
+        <button class="btn ghost sm" id="c-calls-open">Открыть лид →</button></div>
+      ${callLogHtml(d.salesLead.calls)}</div>` : ''}
     <div class="settabs reveal d2">${tabs.map(([k, l]) => `<button class="seg-tab ${clientTab === k ? 'on' : ''}" data-ctab="${k}">${l}</button>`).join('')}</div>
     <div class="reveal d2" id="client-body"><p class="muted">Загрузка…</p></div>`;
+  { const b = $('#c-calls-open'); if (b && d.salesLead) b.onclick = () => openLead(d.salesLead.id); }
   $('#back-clients').onclick = () => setView('clients');
   $$('[data-ctab]').forEach(b => b.onclick = () => openClient(uid, b.dataset.ctab));
   // --- модалки шапки ---
@@ -414,6 +425,7 @@ async function openClient(uid, tab) {
         <div><label class="lbl">Фамилия</label><input class="field" id="e-surname" value="${esc(u.surname)}"></div>
         <div><label class="lbl">Компания</label><input class="field" id="e-company" value="${esc(u.company)}"></div>
         <div><label class="lbl">Email</label><input class="field" id="e-email" value="${esc(u.email)}"></div>
+        <div><label class="lbl">Телефон</label><input class="field" id="e-phone" type="tel" value="${esc(u.phone || '')}" placeholder="+48 …"></div>
         <div class="full"><label class="lbl">Роль</label><select class="field" id="e-role">
           <option value="user" ${u.role !== 'admin' ? 'selected' : ''}>Пользователь</option>
           <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Администратор</option></select>
@@ -425,12 +437,12 @@ async function openClient(uid, tab) {
       try {
         await api('/api/admin/users/' + uid, { method: 'PUT', body: JSON.stringify({
           name: $('#e-name').value, surname: $('#e-surname').value, company: $('#e-company').value,
-          email: $('#e-email').value, role: $('#e-role').value }) });
+          email: $('#e-email').value, phone: $('#e-phone').value, role: $('#e-role').value }) });
         toast('Сохранено ✓'); closeModal(); openClient(uid, clientTab);
       } catch (e) { toast(e.message); }
     };
   };
-  { const b = $('#c-aicall'); if (b) b.onclick = () => openAiCallForm({ type: 'client', id: u.id, name: u.name || u.email, phone: (u.settings && u.settings.phone) || '' }); }
+  { const b = $('#c-aicall'); if (b) b.onclick = () => openAiCallForm({ type: 'client', id: u.id, name: u.name || u.email, phone: u.phone || '' }); }
   $('#c-balance').onclick = () => {
     openModal(`<h2 style="margin:0 0 6px">Изменение баланса</h2>
       <p class="muted" style="margin:0 0 14px">Текущий баланс: <b>${u.balanceAvailable}</b> доступно / <b>${u.balancePending}</b> в брони</p>

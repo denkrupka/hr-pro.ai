@@ -50,6 +50,7 @@ export async function handleAdmin(p, m, ctx) {
     revenue: purchases.filter(x => x.userId === uId && x.status !== 'refunded').reduce((s, x) => s + (x.amount || 0), 0),
   });
   const userItem = (u, ctr) => ({ id: u.id, email: u.email, name: u.name || '', surname: (u.settings && u.settings.surname) || '',
+    phone: (u.settings && u.settings.phone) || '',
     company: u.company || '', role: u.role === 'admin' ? 'admin' : 'user', blocked: !!u.blocked,
     createdAt: u.createdAt || null, lastLoginAt: u.lastLoginAt || null,
     balanceTotal: u.balanceTotal || 0, balancePending: u.balancePending || 0,
@@ -319,7 +320,12 @@ export async function handleAdmin(p, m, ctx) {
       const dmap = {}; days.forEach(d => { dmap[d.date] = d; });
       tests.forEach(t => { const s = dmap[dayKey(t.sentAt)]; if (s) s.sent++; const f = dmap[dayKey(t.finishedAt)]; if (t.status === 'done' && f) f.done++; });
       const integFlags = {}; Object.keys(PROVIDERS).forEach(k => { integFlags[k] = !!((u.settings.integrations || {})[k] && Object.keys(u.settings.integrations[k]).length); });
-      return j({ user: Object.assign(userItem(u, counters(u.id, tests, vacs, parts, purchases)), { adminNote: u.adminNote || '' }), days,
+      // Связанный лид (по userId/телефону) — история звонков Софии на карточке клиента
+      const pk9 = s => String(s || '').replace(/\D/g, '').replace(/^00/, '').slice(-9);
+      const uph = pk9(u.settings.phone);
+      let salesLead = null;
+      try { const leads = (await S.select('leads', 'select=data')).map(r => r.data); const l = leads.find(x => x && (x.userId === u.id || (uph && pk9(x.phone) === uph))); if (l) salesLead = { id: l.id, calls: l.aiCallLog || [] }; } catch (_) {}
+      return j({ user: Object.assign(userItem(u, counters(u.id, tests, vacs, parts, purchases)), { adminNote: u.adminNote || '' }), days, salesLead,
         settings: { uiLang: u.settings.uiLang, timezone: u.settings.timezone, linkDays: u.settings.linkDays, integrations: integFlags,
           jobPortals: Object.keys(u.settings.jobPortals || {}).filter(k => u.settings.jobPortals[k] && Object.keys(u.settings.jobPortals[k]).length) } });
     }
@@ -334,6 +340,7 @@ export async function handleAdmin(p, m, ctx) {
       }
       if (body.name !== undefined) { u.name = String(body.name).slice(0, 120); }
       if (body.surname !== undefined) { u.settings = u.settings || {}; u.settings.surname = String(body.surname).slice(0, 120); }
+      if (body.phone !== undefined) { u.settings = u.settings || {}; u.settings.phone = String(body.phone).trim().slice(0, 30); }
       if (body.company !== undefined) { u.company = String(body.company).slice(0, 160); }
       if (body.adminNote !== undefined) u.adminNote = String(body.adminNote).slice(0, 4000);
       if (body.role !== undefined && ['admin', 'user'].includes(body.role) && body.role !== (u.role || 'user')) {

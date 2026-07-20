@@ -44,6 +44,7 @@ module.exports = function adminApi(app, ctx) {
   }
   function userItem(u) {
     return { id: u.id, email: u.email, name: u.name || '', surname: (u.settings && u.settings.surname) || '',
+      phone: (u.settings && u.settings.phone) || '',
       company: u.company || '', role: u.role === 'admin' ? 'admin' : 'user', blocked: !!u.blocked,
       createdAt: u.createdAt || null, lastLoginAt: u.lastLoginAt || null,
       balanceTotal: u.balanceTotal || 0, balancePending: u.balancePending || 0,
@@ -307,7 +308,12 @@ module.exports = function adminApi(app, ctx) {
     });
     const integFlags = {};
     Object.keys(integ.PROVIDERS).forEach(k => { integFlags[k] = !!((u.settings.integrations || {})[k] && Object.keys(u.settings.integrations[k]).length); });
+    // Связанный лид (по userId или телефону) — для истории звонков Софии на карточке клиента
+    const pk9 = s => String(s || '').replace(/\D/g, '').replace(/^00/, '').slice(-9);
+    const uph = pk9(u.settings.phone);
+    const lead = (data.leads || []).find(l => l.userId === u.id || (uph && pk9(l.phone) === uph)) || null;
     res.json({ user: Object.assign(userItem(u), { adminNote: u.adminNote || '' }), days,
+      salesLead: lead ? { id: lead.id, calls: lead.aiCallLog || [] } : null,
       settings: { uiLang: u.settings.uiLang, timezone: u.settings.timezone, linkDays: u.settings.linkDays,
         integrations: integFlags,
         jobPortals: Object.keys((u.settings.jobPortals || {})).filter(k => u.settings.jobPortals[k] && Object.keys(u.settings.jobPortals[k]).length) } });
@@ -327,6 +333,7 @@ module.exports = function adminApi(app, ctx) {
     }
     if (b.name !== undefined) { diff.name = [u.name, String(b.name).slice(0, 120)]; u.name = String(b.name).slice(0, 120); }
     if (b.surname !== undefined) { ensureSettings(u); u.settings.surname = String(b.surname).slice(0, 120); }
+    if (b.phone !== undefined) { ensureSettings(u); u.settings.phone = String(b.phone).trim().slice(0, 30); }
     if (b.company !== undefined) { diff.company = [u.company, String(b.company).slice(0, 160)]; u.company = String(b.company).slice(0, 160); }
     if (b.adminNote !== undefined) u.adminNote = String(b.adminNote).slice(0, 4000);
     if (b.role !== undefined && ['admin', 'user'].includes(b.role) && b.role !== (u.role || 'user')) {
