@@ -76,6 +76,20 @@ export async function handleAdmin(p, m, ctx) {
       interest: l.interest || '', callbackWhen: l.callbackWhen || '', userId: l.userId || null, user: l.userId ? (usersById[l.userId] || null) : null }));
     return j(pageOf(items, q.get('page'), q.get('perPage') || 50));
   }
+  if (p === '/api/admin/leads' && m === 'POST') {
+    // Ручное создание лида (полная форма в админке)
+    const b = body || {};
+    const phone = String(b.phone || '').trim().slice(0, 30);
+    if (!phone && !String(b.email || '').trim()) return j({ error: 'Укажите телефон или email' }, 400);
+    const lead = { id: uid(12), name: String(b.name || '').trim().slice(0, 80), phone,
+      email: String(b.email || '').trim().toLowerCase().slice(0, 120), company: String(b.company || '').trim().slice(0, 120),
+      lang: ['ru', 'pl', 'en'].includes(b.lang) ? b.lang : 'ru', source: 'manual', status: 'new',
+      interest: String(b.interest || '').trim().slice(0, 500), createdAt: new Date().toISOString(), aiCallLog: [] };
+    const pk = phone ? phone.replace(/\D/g, '').replace(/^00/, '').slice(-9) : null;
+    await S.upsert('leads', { id: lead.id, phone_key: pk && pk.length >= 7 ? pk : null, data: lead });
+    await logAdmin('lead_create', 'lead', lead.id);
+    return j({ lead });
+  }
   let mLead = p.match(/^\/api\/admin\/leads\/([\w-]+)$/);
   if (mLead && m === 'GET') {
     const rows = await S.select('leads', `id=eq.${mLead[1]}&select=data`);
@@ -98,7 +112,7 @@ export async function handleAdmin(p, m, ctx) {
     if (!l) return j({ error: 'Не найдено' }, 404);
     if (env.VAPI_API_KEY) {
       for (const e of (l.aiCallLog || [])) {
-        if (!e.callId || (e.status === 'done' && e.transcript)) continue;
+        if (!e.callId) continue; // всегда обновляем: подписанные ссылки записей (R2) истекают
         try {
           const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(e.callId), { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY } });
           const d = await r.json().catch(() => ({}));
@@ -149,6 +163,38 @@ export async function handleAdmin(p, m, ctx) {
   }
 
   // ── Клиенты ──
+  if (p === '/api/admin/users' && m === 'POST') {
+    // Ручное создание клиента (полная форма в админке)
+    const b = body || {};
+    const email = String(b.email || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return j({ error: 'Укажите корректный email' }, 400);
+    const exists = await S.select('users', `email=eq.${encodeURIComponent(email)}&select=data`);
+    if (exists.length) return j({ error: 'Пользователь с таким email уже существует' }, 409);
+    const password = String(b.password || '');
+    if (password.length < 6) return j({ error: 'Пароль — минимум 6 символов' }, 400);
+    const bonus = Math.max(0, Math.min(1000, parseInt(b.balance, 10) || 0));
+    const u = { id: uid(12), email, password: await hashPassword(password), name: String(b.name || '').trim().slice(0, 80) || email.split('@')[0],
+      company: String(b.company || '').trim().slice(0, 120), balanceTotal: bonus, balancePending: 0, balanceLots: [],
+      settings: { uiLang: ['ru', 'pl', 'en'].includes(b.uiLang) ? b.uiLang : 'ru', surname: String(b.surname || '').trim().slice(0, 80), phone: String(b.phone || '').trim().slice(0, 30) },
+      role: 'user', blocked: false, adminNote: String(b.note || '').slice(0, 500), onboarded: true, emailVerified: true,
+      createdAt: new Date().toISOString(), lastLoginAt: null };
+    if (bonus > 0) u.balanceLots.push({ id: uid(10), qty: bonus, remaining: bonus, source: 'admin_add', createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 365 * 864e5).toISOString() });
+    await S.upsert('users', { id: u.id, data: u });
+    await logAdmin('user_create', 'user', u.id, { email });
+    // если есть лид с этим email/телефоном — конвертируем
+    try {
+      const lrows = await S.select('leads', 'select=data,id,phone_key');
+      for (const r of lrows) {
+        const l = r.data; if (!l || l.userId) continue;
+        const pk9 = (s) => String(s || '').replace(/\D/g, '').replace(/^00/, '').slice(-9);
+        if ((l.email && l.email.toLowerCase() === email) || (u.settings.phone && pk9(u.settings.phone) && pk9(l.phone) === pk9(u.settings.phone))) {
+          l.userId = u.id; l.status = 'converted'; l.convertedAt = new Date().toISOString();
+          await S.upsert('leads', { id: r.id, phone_key: r.phone_key, data: l });
+        }
+      }
+    } catch (_) {}
+    return j({ user: userItem(u, { vacancies: 0, participants: 0, testsSent: 0, testsDone: 0, purchases: 0, revenue: 0 }) });
+  }
   if (p === '/api/admin/users' && m === 'GET') {
     const [users, tests, vacs, parts, purchases] = await Promise.all([allUsers(),
       S.select('tests', 'select=data').then(r => r.map(x => x.data)),

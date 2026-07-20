@@ -4304,7 +4304,7 @@ const CI18N = {
     need: 'Укажите кандидата и дату', saved: 'Сохранено', deleted: 'Удалено', del_confirm: 'Удалить это собеседование?', more: 'ещё',
     cand_search: 'Начните вводить имя или выберите из списка', cand_manual: 'Ввести вручную: ', cand_none: 'Кандидаты не найдены',
     int_me: 'Я', int_add: '+ Другой сотрудник', int_add_name: 'Имя сотрудника', int_add_email: 'Email (для приглашения)', int_add_phone: 'Телефон', int_add_save: 'Добавить',
-    meet_video: 'Ссылка на видеовстречу', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Адрес встречи', meet_office_ph: 'Город, улица, офис', meet_phone: 'Номер, с которого будет звонок', meet_phone_ph: '+48…', meet_create: 'Создать ссылку', meet_platform: 'Платформа видеосвязи',
+    meet_video: 'Ссылка на видеовстречу', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Адрес встречи', meet_office_ph: 'Город, улица, офис', meet_phone: 'Номер, с которого будет звонок', meet_phone_ph: '+48…', meet_create: 'Создать ссылку', meet_join: 'Подключиться', meet_platform: 'Платформа видеосвязи',
     setup_title: 'Давайте настроим процесс собеседований', setup_sub: 'Заполните один раз — данные подставятся во все собеседования. Позже можно изменить в настройках.', setup_office: 'Адрес офиса (для очных встреч)', setup_office_ph: 'Город, улица, дом, офис', setup_phone: 'Телефон организатора (для звонков)', setup_video: 'Сервис видеосвязи', setup_save: 'Сохранить и продолжить', setup_later: 'Позже',
     save_invite: 'Запланировать и пригласить',
     inv_title: 'Отправить приглашение кандидату?', inv_body_video: 'Мы отправим кандидату на email и SMS ссылку на видеовстречу.', inv_body_office: 'Мы отправим кандидату на email и SMS адрес офиса и телефон организатора.', inv_body_phone: 'Мы отправим кандидату на email и SMS дату звонка и номер, с которого позвоним.', inv_yes: 'Отправить приглашение', inv_sent: 'Приглашение отправлено', inv_nolink: 'Выберите кандидата из базы или введите email/телефон вручную', inv_needmeet: 'Заполните данные встречи (ссылка / адрес / телефон)',
@@ -4324,7 +4324,7 @@ const CI18N = {
     need: 'Podaj kandydata i datę', saved: 'Zapisano', deleted: 'Usunięto', del_confirm: 'Usunąć tę rozmowę?', more: 'więcej',
     cand_search: 'Zacznij wpisywać imię lub wybierz z listy', cand_manual: 'Wpisz ręcznie: ', cand_none: 'Nie znaleziono kandydatów',
     int_me: 'Ja', int_add: '+ Inny pracownik', int_add_name: 'Imię pracownika', int_add_email: 'Email (do zaproszenia)', int_add_phone: 'Telefon', int_add_save: 'Dodaj',
-    meet_video: 'Link do wideorozmowy', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Adres spotkania', meet_office_ph: 'Miasto, ulica, biuro', meet_phone: 'Numer, z którego zadzwonimy', meet_phone_ph: '+48…', meet_create: 'Utwórz link', meet_platform: 'Platforma wideo',
+    meet_video: 'Link do wideorozmowy', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Adres spotkania', meet_office_ph: 'Miasto, ulica, biuro', meet_phone: 'Numer, z którego zadzwonimy', meet_phone_ph: '+48…', meet_create: 'Utwórz link', meet_join: 'Dołącz', meet_platform: 'Platforma wideo',
     setup_title: 'Skonfigurujmy proces rozmów', setup_sub: 'Wypełnij raz — dane podstawią się do wszystkich rozmów. Później można zmienić w ustawieniach.', setup_office: 'Adres biura (spotkania na żywo)', setup_office_ph: 'Miasto, ulica, biuro', setup_phone: 'Telefon organizatora (rozmowy tel.)', setup_video: 'Usługa wideo', setup_save: 'Zapisz i kontynuuj', setup_later: 'Później',
     save_invite: 'Zaplanuj i zaproś',
     inv_title: 'Wysłać zaproszenie do kandydata?', inv_body_video: 'Wyślemy kandydatowi na email i SMS link do wideorozmowy.', inv_body_office: 'Wyślemy kandydatowi na email i SMS adres biura i telefon organizatora.', inv_body_phone: 'Wyślemy kandydatowi na email i SMS datę rozmowy i numer, z którego zadzwonimy.', inv_yes: 'Wyślij zaproszenie', inv_sent: 'Zaproszenie wysłane', inv_nolink: 'Wybierz kandydata z bazy albo wpisz email/telefon ręcznie', inv_needmeet: 'Uzupełnij dane spotkania (link / adres / telefon)',
@@ -4344,7 +4344,7 @@ const CI18N = {
     need: 'Enter candidate and date', saved: 'Saved', deleted: 'Deleted', del_confirm: 'Delete this interview?', more: 'more',
     cand_search: 'Start typing a name or pick from the list', cand_manual: 'Enter manually: ', cand_none: 'No candidates found',
     int_me: 'Me', int_add: '+ Another teammate', int_add_name: 'Teammate name', int_add_email: 'Email (for the invite)', int_add_phone: 'Phone', int_add_save: 'Add',
-    meet_video: 'Video meeting link', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Meeting address', meet_office_ph: 'City, street, office', meet_phone: 'Number we will call from', meet_phone_ph: '+48…', meet_create: 'Create link', meet_platform: 'Video platform',
+    meet_video: 'Video meeting link', meet_video_ph: 'https://meet.google.com/…', meet_office: 'Meeting address', meet_office_ph: 'City, street, office', meet_phone: 'Number we will call from', meet_phone_ph: '+48…', meet_create: 'Create link', meet_join: 'Join', meet_platform: 'Video platform',
     setup_title: 'Let’s set up your interview process', setup_sub: 'Fill this once — it will prefill every interview. You can change it later in settings.', setup_office: 'Office address (in-person)', setup_office_ph: 'City, street, office', setup_phone: 'Organizer phone (phone calls)', setup_video: 'Video service', setup_save: 'Save and continue', setup_later: 'Later',
     save_invite: 'Schedule & invite',
     inv_title: 'Send the invite to the candidate?', inv_body_video: 'We’ll email and SMS the candidate the video meeting link.', inv_body_office: 'We’ll email and SMS the candidate the office address and organizer phone.', inv_body_phone: 'We’ll email and SMS the candidate the call time and the number we’ll call from.', inv_yes: 'Send invite', inv_sent: 'Invite sent', inv_nolink: 'Pick a candidate from the base, or enter an email/phone manually', inv_needmeet: 'Fill in the meeting details (link / address / phone)',
@@ -4700,10 +4700,16 @@ function openCalModalInner(ev, dateIso, prefill) {
   };
   wireNiceSelect('cf-format', (v) => { if (v !== calFmtKey(f.format)) meetIn.value = ''; applyFormat(true); });
   wireNiceSelect('cf-platform', () => {});
+  // Ссылка уже есть → кнопка превращается в «Подключиться» (открывает встречу)
+  const meetIsLink = () => /^https?:\/\//i.test(meetIn.value.trim());
+  const updateMeetBtn = () => { if (meetBtn.style.display !== 'none') meetBtn.textContent = meetIsLink() ? ct('meet_join') : ct('meet_create'); };
+  meetIn.addEventListener('input', updateMeetBtn);
+  setTimeout(updateMeetBtn, 0);
   // «Создать ссылку»: Jitsi — мгновенно; Meet/Teams/Zoom — через подключённый по OAuth аккаунт.
   meetBtn.onclick = async () => {
+    if (meetIsLink()) { window.open(meetIn.value.trim(), '_blank'); return; }
     const plat = nselValue('cf-platform') || setup.videoService || '';
-    if (/jitsi/i.test(plat)) { meetIn.value = jitsiLink(candIn.value); toast(ct('link_created')); return; }
+    if (/jitsi/i.test(plat)) { meetIn.value = jitsiLink(candIn.value); updateMeetBtn(); toast(ct('link_created')); return; }
     const pid = /zoom/i.test(plat) ? 'zoom' : /teams/i.test(plat) ? 'teams' : /(google|meet)/i.test(plat) ? 'google' : '';
     if (pid) {
       const d = $('#cf-date').value, tm = $('#cf-time').value || '10:00';
@@ -4711,13 +4717,13 @@ function openCalModalInner(ev, dateIso, prefill) {
       const orig = meetBtn.textContent; meetBtn.disabled = true; meetBtn.textContent = '…';
       try {
         const r = await api('/api/video/link', { method: 'POST', body: JSON.stringify({ platform: pid, topic: 'Собеседование' + (candIn.value ? ': ' + candIn.value : ''), startTime, durationMin: 40 }) });
-        meetIn.value = r.link; toast(ct('link_created'));
+        meetIn.value = r.link; updateMeetBtn(); toast(ct('link_created'));
       } catch (e) {
         // Не подключено / ошибка сервиса — показываем причину и подсказываем, где подключить (без открытия внешней страницы)
         const msg = (e && e.message) || 'Не удалось создать ссылку';
         toast(/не подключ|не настро/i.test(msg) ? (plat + ': подключите аккаунт в «Интеграции → Видеоконференции»') : msg);
       }
-      meetBtn.disabled = false; meetBtn.textContent = orig;
+      meetBtn.disabled = false; meetBtn.textContent = orig; updateMeetBtn();
       return;
     }
     toast(ct('link_hint')); meetIn.focus();

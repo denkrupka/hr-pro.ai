@@ -391,8 +391,9 @@ async function api(req, env, url, exec) {
     let callId = '';
     if (env.VAPI_API_KEY && salesPhoneId) {
       try {
-        const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY });
         let secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
+        const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
+          toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret });
         if (secret) assistant.server = { url: url.origin + '/api/vapi/sales-inbound', secret };
         const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
           body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
@@ -417,6 +418,52 @@ async function api(req, env, url, exec) {
     const msg = body.message || {};
     const call = msg.call || body.call || {};
     const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || url.searchParams.get('caller') || '';
+    // Вызов функции из звонка: send_registration_email — реально шлём письмо со ссылкой на регистрацию.
+    if (msg.type === 'tool-calls') {
+      const results = [];
+      const list = msg.toolCallList || msg.toolCalls || [];
+      for (const tc of list) {
+        const fn = (tc.function && tc.function.name) || tc.name || '';
+        let args = (tc.function && tc.function.arguments) || tc.arguments || {};
+        if (typeof args === 'string') { try { args = JSON.parse(args); } catch (_) { args = {}; } }
+        const tcId = tc.id || tc.toolCallId || '';
+        if (fn === 'send_registration_sms') {
+          // SMS на номер собеседника (caller/лид) — диктовать ничего не нужно
+          let sent = false;
+          try {
+            const lead0 = caller ? await leadByPhone(caller) : null;
+            const to = salesAgent.toE164(caller || (lead0 && lead0.phone) || '');
+            const lg = ['ru', 'pl', 'en'].includes(lead0 && lead0.lang) ? lead0.lang : 'ru';
+            if (env.SMSAPI_TOKEN && to.replace(/\D/g, '').length >= 9) {
+              const pr = new URLSearchParams({ to: to.replace(/[^\d+]/g, ''), message: salesAgent.REG_SMS[lg], format: 'json', encoding: 'utf-8', from: env.SMSAPI_FROM || 'HR-PRO.AI' });
+              const rr = await fetch(((env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '')) + '/sms.do', { method: 'POST', headers: { Authorization: 'Bearer ' + env.SMSAPI_TOKEN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: pr.toString() });
+              const rd = await rr.json().catch(() => ({}));
+              sent = rr.ok && !rd.error;
+            }
+          } catch (_) {}
+          results.push({ toolCallId: tcId, result: sent ? 'SMS со ссылкой на регистрацию отправлено на номер собеседника.' : 'ОШИБКА отправки SMS. Извинись и предложи отправить письмо на email.' });
+          continue;
+        }
+        if (fn !== 'send_registration_email') { results.push({ toolCallId: tcId, result: 'Неизвестная функция' }); continue; }
+        const em = String(args.email || '').trim().toLowerCase();
+        if (!salesAgent.isValidEmail(em)) { results.push({ toolCallId: tcId, result: 'ОШИБКА: адрес «' + em + '» некорректен (нет @ или домена). Переспроси email по буквам и вызови функцию снова.' }); continue; }
+        let sent = false;
+        try {
+          if (env.RESEND_API_KEY) {
+            let lead = caller ? await leadByPhone(caller) : null;
+            const lg = ['ru', 'pl', 'en'].includes(lead && lead.lang) ? lead.lang : 'ru';
+            const T = salesAgent.REG_EMAIL[lg];
+            const html = wrapEmailEdge({ lang: lg, baseUrl: (env.BASE_URL || url.origin), subject: T.subject, eyebrow: 'HR-PRO.AI', headline: T.headline, bodyHtml: T.body, ctaUrl: salesAgent.REG_URL, ctaLabel: T.cta });
+            const rr = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [em], subject: T.subject, html }) });
+            sent = rr.ok;
+            if (lead) { lead.email = em; if (args.name && !lead.name) lead.name = String(args.name).slice(0, 80); await saveLead(lead); }
+          }
+        } catch (_) {}
+        results.push({ toolCallId: tcId, result: sent ? ('Письмо со ссылкой на регистрацию отправлено на ' + em + '. Скажи собеседнику проверить почту (возможно, папку Спам).') : 'ОШИБКА отправки письма. Извинись и скажи, что вышлем ссылку чуть позже вручную.' });
+      }
+      return j({ results });
+    }
     // Отчёт по завершении: транскрипт, запись, итог → в журнал лида.
     if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
       try {
@@ -466,7 +513,8 @@ async function api(req, env, url, exec) {
         lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: new Date().toISOString(), aiCallLog: [] };
         await saveLead(lead);
       }
-      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: true, elevenKey: env.ELEVENLABS_API_KEY });
+      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: true, elevenKey: env.ELEVENLABS_API_KEY,
+        toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret });
       return j({ assistant });
     } catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
   }

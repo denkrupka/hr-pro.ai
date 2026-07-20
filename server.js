@@ -1678,8 +1678,9 @@ app.post('/api/leads/callback', async (req, res) => {
   let callId = '';
   if (vcfg.apiKey && salesPhoneId) {
     try {
-      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey });
       const secret = gs.vapiInboundSecret || '';
+      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
+        toolServerUrl: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', toolSecret: secret });
       if (secret) assistant.server = { url: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', secret };
       const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
@@ -1702,6 +1703,42 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
   const msg = (req.body && req.body.message) || {};
   const call = msg.call || (req.body && req.body.call) || {};
   const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || req.query.caller || '';
+  // Вызов функции из звонка: send_registration_email — реально шлём письмо со ссылкой на регистрацию.
+  if (msg.type === 'tool-calls') {
+    const results = [];
+    const list = msg.toolCallList || msg.toolCalls || [];
+    for (const tc of list) {
+      const fn = (tc.function && tc.function.name) || tc.name || '';
+      let args = (tc.function && tc.function.arguments) || tc.arguments || {};
+      if (typeof args === 'string') { try { args = JSON.parse(args); } catch (_) { args = {}; } }
+      const tcId = tc.id || tc.toolCallId || '';
+      if (fn === 'send_registration_sms') {
+        let sent = false;
+        try {
+          const lead0 = caller ? leadByPhone(caller) : null;
+          const to = salesAgent.toE164(caller || (lead0 && lead0.phone) || '');
+          const lg = ['ru', 'pl', 'en'].includes(lead0 && lead0.lang) ? lead0.lang : 'ru';
+          if (to.replace(/\D/g, '').length >= 9) { await integ.sendSms(null, { to, message: salesAgent.REG_SMS[lg] }); sent = true; }
+        } catch (e) { console.error('[sales] reg sms err', e.message); }
+        results.push({ toolCallId: tcId, result: sent ? 'SMS со ссылкой на регистрацию отправлено на номер собеседника.' : 'ОШИБКА отправки SMS. Извинись и предложи отправить письмо на email.' });
+        continue;
+      }
+      if (fn !== 'send_registration_email') { results.push({ toolCallId: tcId, result: 'Неизвестная функция' }); continue; }
+      const em = String(args.email || '').trim().toLowerCase();
+      if (!salesAgent.isValidEmail(em)) { results.push({ toolCallId: tcId, result: 'ОШИБКА: адрес «' + em + '» некорректен (нет @ или домена). Переспроси email по буквам и вызови функцию снова.' }); continue; }
+      let sent = false;
+      try {
+        const lead = caller ? leadByPhone(caller) : null;
+        const lg = ['ru', 'pl', 'en'].includes(lead && lead.lang) ? lead.lang : 'ru';
+        const T = salesAgent.REG_EMAIL[lg];
+        await integ.sendEmail(null, { to: em, lang: lg, baseUrl: BASE_URL, subject: T.subject, eyebrow: 'HR-PRO.AI', headline: T.headline, bodyHtml: T.body, ctaUrl: salesAgent.REG_URL, ctaLabel: T.cta });
+        sent = true;
+        if (lead) { lead.email = em; if (args.name && !lead.name) lead.name = String(args.name).slice(0, 80); save(); }
+      } catch (e) { console.error('[sales] reg email err', e.message); }
+      results.push({ toolCallId: tcId, result: sent ? ('Письмо со ссылкой на регистрацию отправлено на ' + em + '. Скажи собеседнику проверить почту (возможно, папку Спам).') : 'ОШИБКА отправки письма. Извинись и скажи, что вышлем ссылку чуть позже вручную.' });
+    }
+    return res.json({ results });
+  }
   if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
     try {
       if (caller) {

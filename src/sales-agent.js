@@ -161,9 +161,10 @@ function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, in
   } else {
     sys += `Ты — ${agent}, виртуальный менеджер отдела продаж компании HR-PRO.AI (портал, который предсказывает результат сотрудника до найма). `;
     sys += inbound
-      ? `Тебе ЗВОНИТ человек сам (входящий звонок)${name ? `, вероятно это ${name}` : ''} — скорее всего по вопросу подбора персонала или после посещения сайта hr-pro.ai. Поприветствуй, представься, уточни имя (если не знаешь) и по какому вопросу звонок — и дальше веди по скрипту продаж как тёплый лид.\n`
+      ? `Тебе ЗВОНИТ человек сам (входящий звонок)${name ? `. Ты УЗНАЛА его по номеру телефона: это ${name} — он уже наш лид, СРАЗУ обращайся к нему по имени (не спрашивай, как его зовут)` : ' — номера нет в базе: поприветствуй, представься, узнай имя'} — скорее всего вопрос по подбору персонала или после посещения сайта hr-pro.ai. Дальше веди по скрипту продаж как тёплый лид (продолжай с того места, где остановились в прошлый раз, если контекст ниже есть).\n`
       : `Ты ЗВОНИШЬ человеку, который только что оставил заявку «Перезвоните мне» на сайте hr-pro.ai${name ? `. Его зовут ${name} — обращайся по имени` : ''}. Он ЖДЁТ звонка прямо сейчас — начинай уверенно, со ссылки на заявку.\n`;
     sys += langLine(lang) + '\n';
+    sys += 'КРИТИЧЕСКИ ВАЖНО — РЕЧЬ ДЛЯ СИНТЕЗАТОРА: всё, что ты пишешь, ОЗВУЧИВАЕТСЯ голосом. НИКОГДА не используй цифры, нумерацию и символы — только слова: «первое… второе… третье…» (НЕ «1… 2… 3»), «десять-пятнадцать минут» (НЕ «10-15»), «девять тысяч злотых», «двадцать пять тестов», «пять тестов в подарок». Названия тестов произноси по-русски как слова: «Резалт», «Тулс», «Логис», «Сэйлс».\n';
     sys += VOICEMAIL_RULE;
     sys += knowledgeBlock(plansText(plans, currency));
     sys += SALES_SCRIPT + '\n';
@@ -171,9 +172,9 @@ function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, in
     sys += '\nПРАВИЛА:\n- Представляйся виртуальным менеджером HR-PRO.AI (честно; если спросят «вы робот?» — «да, я виртуальный менеджер, и именно такие ИИ-инструменты помогают нашим клиентам нанимать» — с лёгкой улыбкой).\n'
       + '- НЕ дави. Одно возражение отработала — вернулась к действию. Если человек твёрдо отказался дважды — вежливо попрощайся, предложи вернуться когда будет актуально.\n'
       + '- Если просят перезвонить позже — уточни когда, подтверди и попрощайся.\n'
-      + '- Email записывай ТОЧНО: попроси продиктовать по буквам, повтори вслух для подтверждения.\n'
-      + '- ЦИФРЫ ТОЛЬКО СЛОВАМИ (текст читает синтезатор речи!): никогда не пиши цифры и нумерацию в репликах — только прописью и в правильном падеже: «первое… второе…» (НЕ «1… 2…»), «двадцать пять тестов», «двести сорок девять евро», «двенадцать окладов». Никаких «1.», «2)» и списков с номерами в устной речи.\n'
-      + '- ЗАВЕРШЕНИЕ: попрощались с обеих сторон → сразу заверши звонок функцией завершения, не держи линию.';
+      + '- ССЫЛКА НА РЕГИСТРАЦИЮ — отправляй ЧЕРЕЗ ФУНКЦИИ, слова «отправлю» без вызова функции запрещены. ОСНОВНОЙ способ: SMS на номер собеседника — скажи «отправлю вам ссылку в SMS прямо на этот номер» и вызови send_registration_sms (диктовать ничего не нужно). Email — только если собеседник сам просит на почту: продиктовать по буквам, повторить ПО БУКВАМ, в адресе обязательно есть «собака» (@); после подтверждения вызови send_registration_email. Распознавание речи часто ошибается в буквах — если со второй попытки адрес не сходится, не мучай человека: отправь SMS. Говори «отправила», ТОЛЬКО когда функция вернула успех; при ошибке — скажи честно и предложи другой способ.\n'
+      + '- ЦИФРЫ ТОЛЬКО СЛОВАМИ — правило выше, соблюдай всегда.\n'
+      + '- ЗАВЕРШЕНИЕ (строго): когда разговор закончен или собеседник прощается — скажи последней репликой РОВНО прощальную фразу «Всего доброго!» (по-польски «Wszystkiego dobrego!», по-английски «Have a nice day!») и НЕМЕДЛЕННО вызови функцию завершения звонка. После прощания НЕ добавляй ни одной фразы и НЕ жди ответа — трубку кладёшь ты.';
   }
   return sys;
 }
@@ -187,6 +188,11 @@ function firstMessage({ mode, lang, name, inbound }) {
       : `Здравствуйте${nm}! Это ${agent}, виртуальный менеджер HR-PRO.AI. Рада вас слышать — чем могу помочь?`;
   }
   if (inbound) {
+    if (name) {
+      return lang === 'pl' ? `Dzień dobry, ${name}! Firma HR-PRO.AI, tu ${agent}. Miło, że Pan dzwoni — w czym mogę pomóc?`
+        : lang === 'en' ? `Hello, ${name}! HR-PRO.AI, this is ${agent}. Great to hear from you — how can I help?`
+        : `Здравствуйте, ${name}! Компания HR-PRO.AI, это ${agent}. Рада, что вы позвонили — чем могу помочь?`;
+    }
     return lang === 'pl' ? `Dzień dobry! Firma HR-PRO.AI, nazywam się ${agent}. W czym mogę pomóc?`
       : lang === 'en' ? `Hello! HR-PRO.AI, my name is ${agent}. How can I help you?`
       : `Здравствуйте! Компания HR-PRO.AI, меня зовут ${agent}. Чем могу помочь?`;
@@ -217,12 +223,54 @@ function buildAssistant(opts) {
     analysisPlan: {
       summaryPlan: { enabled: true, messages: [{ role: 'system', content: SALES_SUMMARY }, { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
       structuredDataPlan: { enabled: true, schema: SALES_SCHEMA, messages: [
-        { role: 'system', content: 'Извлеки данные строго по JSON-схеме из расшифровки звонка отдела продаж. Если пункта нет — оставь пустым.' },
+        // ВАЖНО: {{schema}} обязателен в кастомных messages — иначе Vapi-экстрактор не видит схему и выдумывает свои ключи.
+        { role: 'system', content: 'Извлеки данные из расшифровки звонка отдела продаж СТРОГО по этой JSON-схеме (используй ровно эти имена полей):\n\n{{schema}}\n\nЕсли пункта нет — оставь поле пустым.' },
         { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
     },
   };
+  // Инструменты реальной отправки ссылки на регистрацию (только в режиме продаж): SMS (надёжно, номер знаем) и email.
+  if (mode !== 'client' && opts.toolServerUrl) {
+    const srv = { url: opts.toolServerUrl, secret: opts.toolSecret || undefined };
+    assistant.model.tools = [
+      { type: 'function', async: false, server: srv,
+        function: {
+          name: 'send_registration_sms',
+          description: 'Реально отправляет SMS со ссылкой на регистрацию HR-PRO.AI на номер телефона собеседника (номер уже известен системе — параметры не нужны). ПРЕДПОЧТИТЕЛЬНЫЙ способ отправить ссылку: ничего не нужно диктовать.',
+          parameters: { type: 'object', properties: {} },
+        } },
+      { type: 'function', async: false, server: srv,
+        function: {
+          name: 'send_registration_email',
+          description: 'Реально отправляет собеседнику письмо со ссылкой на регистрацию HR-PRO.AI. Вызывай только после того, как собеседник продиктовал email и ты подтвердила его по буквам. Если вернулась ошибка — переспроси адрес и вызови снова.',
+          parameters: { type: 'object', properties: {
+            email: { type: 'string', description: 'Подтверждённый email собеседника (обязательно с символом @)' },
+            name: { type: 'string', description: 'Имя собеседника, если известно' },
+          }, required: ['email'] },
+        } },
+    ];
+  }
   return assistant;
 }
+
+// Тексты письма со ссылкой на регистрацию (шлётся из вебхука по функции send_registration_email).
+const REG_EMAIL = {
+  ru: { subject: 'Ваша ссылка на регистрацию в HR-PRO.AI', headline: 'Добро пожаловать в HR-PRO.AI!',
+    body: 'Как и договорились в разговоре с Софией — вот ссылка на регистрацию. При создании аккаунта вам сразу начислим <b>5 тестов в подарок</b> (по одному каждого типа): первую проверку кандидата можно сделать бесплатно.',
+    cta: 'Зарегистрироваться' },
+  pl: { subject: 'Twój link do rejestracji w HR-PRO.AI', headline: 'Witamy w HR-PRO.AI!',
+    body: 'Zgodnie z rozmową z Zofią — oto link do rejestracji. Przy założeniu konta od razu otrzymasz <b>5 testów w prezencie</b> (po jednym każdego typu): pierwszą weryfikację kandydata zrobisz za darmo.',
+    cta: 'Zarejestruj się' },
+  en: { subject: 'Your HR-PRO.AI registration link', headline: 'Welcome to HR-PRO.AI!',
+    body: 'As agreed on the call with Sofia — here is your registration link. On sign-up you instantly get <b>5 tests for free</b> (one of each type): check your first candidate at no cost.',
+    cta: 'Sign up' },
+};
+const REG_URL = 'https://hr-pro.ai/login?mode=register';
+const REG_SMS = {
+  ru: 'HR-PRO.AI: ваша ссылка на регистрацию (5 тестов в подарок): ' + REG_URL,
+  pl: 'HR-PRO.AI: Twój link do rejestracji (5 testów w prezencie): ' + REG_URL,
+  en: 'HR-PRO.AI: your registration link (5 free tests): ' + REG_URL,
+};
+function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim()); }
 
 // Контекст лида для повторных касаний (что уже знаем).
 function leadContext(lead) {
@@ -242,11 +290,13 @@ function leadContext(lead) {
 
 // Итог звонка → обновление полей лида (по structuredData/summary).
 function applyCallResult(lead, { summary, sd, transcript }) {
-  const pick = (v) => (v && String(v).trim() && !/^[—\-\s]*$/.test(String(v))) ? String(v).trim() : '';
+  // «прочерк»/«нет»/«brak»/«n/a» и т.п. — это «пусто», а не значение
+  const EMPTYISH = /^[—\-–\s.]*$|^(прочерк|нет|не\s.*|пусто|none|null|n\/a|brak|nie|no)$/i;
+  const pick = (v) => { const s = String(v == null ? '' : v).trim(); return (s && !EMPTYISH.test(s)) ? s : ''; };
   const fromSummary = (rx) => ((String(summary || '').match(rx) || [])[1] || '');
-  const email = pick(sd && sd.email) || pick(fromSummary(/EMAIL:\s*([^\s\n]+@[^\s\n]+)/i));
-  if (email) lead.email = email.toLowerCase();
-  const nm = pick(sd && sd.person_name); if (nm && !lead.name) lead.name = nm;
+  const email = pick(sd && (sd.email || sd.client_email)) || pick(fromSummary(/EMAIL:\s*([^\s\n]+@[^\s\n]+)/i));
+  if (email && isValidEmail(email)) lead.email = email.toLowerCase();
+  const nm = pick(sd && (sd.person_name || sd.client_name)); if (nm && !lead.name) lead.name = nm;
   const comp = pick(sd && sd.company); if (comp) lead.company = comp;
   const interest = pick(sd && sd.interest); if (interest) lead.interest = interest;
   const cb = pick(sd && sd.callback_when) || pick(fromSummary(/ПЕРЕЗВОН:\s*([^\n]+)/i));
@@ -262,4 +312,4 @@ function applyCallResult(lead, { summary, sd, transcript }) {
   return lead;
 }
 
-module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, applyCallResult, SALES_SCHEMA, SALES_SUMMARY };
+module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, applyCallResult, isValidEmail, REG_EMAIL, REG_SMS, REG_URL, SALES_SCHEMA, SALES_SUMMARY };

@@ -68,6 +68,19 @@ module.exports = function adminApi(app, ctx) {
       user: l.userId ? (u => u ? userBrief(u) : null)(findUser(l.userId)) : null }));
     res.json(pageOf(items, req.query.page, req.query.perPage || 50));
   });
+  app.post('/api/admin/leads', requireAdmin, (req, res) => {
+    // Ручное создание лида (полная форма в админке)
+    const b = req.body || {};
+    const phone = String(b.phone || '').trim().slice(0, 30);
+    if (!phone && !String(b.email || '').trim()) return res.status(400).json({ error: 'Укажите телефон или email' });
+    const lead = { id: uid(12), name: String(b.name || '').trim().slice(0, 80), phone,
+      email: String(b.email || '').trim().toLowerCase().slice(0, 120), company: String(b.company || '').trim().slice(0, 120),
+      lang: ['ru', 'pl', 'en'].includes(b.lang) ? b.lang : 'ru', source: 'manual', status: 'new',
+      interest: String(b.interest || '').trim().slice(0, 500), createdAt: nowISO(), aiCallLog: [] };
+    db().leads.push(lead);
+    logAdmin(req, 'lead_create', 'lead', lead.id);
+    save(); res.json({ lead });
+  });
   app.get('/api/admin/leads/:id', requireAdmin, (req, res) => {
     const l = (db().leads || []).find(x => x.id === req.params.id);
     if (!l) return res.status(404).json({ error: 'Не найдено' });
@@ -86,7 +99,7 @@ module.exports = function adminApi(app, ctx) {
     const vcfg = integ.cfgOf(null, 'vapi');
     if (vcfg.apiKey) {
       for (const e of (l.aiCallLog || [])) {
-        if (!e.callId || (e.status === 'done' && e.transcript)) continue;
+        if (!e.callId) continue; // всегда обновляем: подписанные ссылки записей (R2) истекают
         try {
           const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(e.callId), { headers: { Authorization: 'Bearer ' + vcfg.apiKey } });
           const d = await r.json().catch(() => ({}));
@@ -105,6 +118,34 @@ module.exports = function adminApi(app, ctx) {
       save();
     }
     res.json({ lead: l });
+  });
+
+  // ---------- Создание клиента вручную ----------
+  app.post('/api/admin/users', requireAdmin, (req, res) => {
+    const b = req.body || {};
+    const email = String(b.email || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return res.status(400).json({ error: 'Укажите корректный email' });
+    const data = db();
+    if (data.users.find(u => u.email.toLowerCase() === email)) return res.status(409).json({ error: 'Пользователь с таким email уже существует' });
+    const password = String(b.password || '');
+    if (password.length < 6) return res.status(400).json({ error: 'Пароль — минимум 6 символов' });
+    const bonus = Math.max(0, Math.min(1000, parseInt(b.balance, 10) || 0));
+    const u = { id: uid(12), email, password: hashPassword(password), name: String(b.name || '').trim().slice(0, 80) || email.split('@')[0],
+      company: String(b.company || '').trim().slice(0, 120), balanceTotal: bonus, balancePending: 0, balanceLots: [],
+      settings: { uiLang: ['ru', 'pl', 'en'].includes(b.uiLang) ? b.uiLang : 'ru', surname: String(b.surname || '').trim().slice(0, 80), phone: String(b.phone || '').trim().slice(0, 30) },
+      role: 'user', blocked: false, adminNote: String(b.note || '').slice(0, 500), onboarded: true, emailVerified: true, createdAt: nowISO(), lastLoginAt: null };
+    if (bonus > 0) { addBalanceLot(u, bonus, 'admin_add'); logBalance(u.id, bonus, 'admin_add', { comment: 'Стартовый баланс (создание клиента админом)' }); }
+    data.users.push(u);
+    // лид с этим email/телефоном → клиент
+    data.leads.forEach(l => {
+      if (l.userId) return;
+      const pk9 = s => String(s || '').replace(/\D/g, '').replace(/^00/, '').slice(-9);
+      if ((l.email && l.email.toLowerCase() === email) || (u.settings.phone && pk9(u.settings.phone) && pk9(l.phone) === pk9(u.settings.phone))) {
+        l.userId = u.id; l.status = 'converted'; l.convertedAt = nowISO();
+      }
+    });
+    logAdmin(req, 'user_create', 'user', u.id, { email });
+    save(); res.json({ user: userItem(u) });
   });
 
   // ---------- Дашборд ----------

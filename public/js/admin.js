@@ -128,7 +128,15 @@ const LEAD_ST = {
   callback: ['Перезвонить', 'm-demo'], registered: ['Регистрируется', 'st-on'], refused: ['Отказ', 'st-off'], converted: ['Клиент ✓', 'st-on'],
 };
 const leadStBadge = s => { const [t, c] = LEAD_ST[s] || [s || 'new', '']; return `<span class="blk ${c}">${t}</span>`; };
-const LEAD_SRC = { callback: 'Кнопка «Перезвоним»', inbound: 'Входящий звонок', landing_popup: 'Лид-магнит (email)' };
+const LEAD_SRC = { callback: 'Кнопка «Перезвоним»', inbound: 'Входящий звонок', landing_popup: 'Лид-магнит (email)', manual: 'Добавлен вручную' };
+// Итог разговора: чистим служебный хвост, **markdown** → жирный, переносы строк
+function fmtCallSummary(s) {
+  let t = String(s || '').replace(/\s*(СТАТУС|STATUS|EMAIL|ПЕРЕЗВОН):\s*[^\n]*/gi, '').trim();
+  t = esc(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+  // Блоки вида «<b>ЗАГОЛОВОК:</b>» — с новой строки для читаемости
+  t = t.replace(/\s*<b>([А-ЯA-Z][^<]{2,40}:)<\/b>/g, '<br><b>$1</b>').replace(/^(<br>)+/, '');
+  return t;
+}
 async function renderAdmLeads() {
   const q = state.leadsQ;
   const d = await api(`/api/admin/leads?q=${encodeURIComponent(q.q)}&status=${q.status}&page=${q.page}`);
@@ -142,7 +150,7 @@ async function renderAdmLeads() {
     <td style="text-align:center"><b>${l.calls || 0}</b></td>
     <td>${leadStBadge(l.status)}${l.user ? `<div class="muted" style="font-size:11px;margin-top:3px">${esc(l.user.email)}</div>` : ''}</td></tr>`).join('');
   $('#main').innerHTML = `<div class="topbar reveal"><div><div class="eyebrow">Админ-панель</div><h1 class="page-h" style="margin-top:8px">Лиды</h1></div>
-      <span class="tag">Всего: <b>${d.total}</b></span></div>
+      <div class="row" style="gap:10px;align-items:center"><button class="btn" id="lead-add">+ Добавить лида</button><span class="tag">Всего: <b>${d.total}</b></span></div></div>
     <div class="card reveal d1">
       <div class="row" style="gap:10px;margin-bottom:14px;flex-wrap:wrap">
         <div class="search-wrap grow" style="flex:1;min-width:220px"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="lq" value="${esc(q.q)}" placeholder="Поиск по имени, телефону, email, компании…"></div>
@@ -157,6 +165,26 @@ async function renderAdmLeads() {
   $('#lq').oninput = e => { clearTimeout(td); td = setTimeout(() => { q.q = e.target.value.trim(); q.page = 1; renderAdmLeads(); }, 350); };
   $('#lstatus').onchange = e => { q.status = e.target.value; q.page = 1; renderAdmLeads(); };
   $$('tr[data-lid]').forEach(r => r.onclick = () => openLead(r.dataset.lid));
+  $('#lead-add').onclick = openLeadForm;
+}
+// Форма ручного добавления лида
+function openLeadForm() {
+  const f = (id, label, ph, type) => `<div style="margin-bottom:10px"><label class="lbl">${label}</label><input class="field" id="${id}" placeholder="${ph || ''}" ${type ? `type="${type}"` : ''} autocomplete="off"></div>`;
+  openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">Новый лид</h2></div>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('nl-name', 'Имя', 'Имя собеседника')}</div><div style="flex:1">${f('nl-company', 'Компания', '')}</div></div>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('nl-phone', 'Телефон *', '+48 …', 'tel')}</div><div style="flex:1">${f('nl-email', 'Email', 'email@example.com', 'email')}</div></div>
+    <div class="row" style="gap:12px">
+      <div style="flex:1"><label class="lbl">Язык</label><select class="field" id="nl-lang"><option value="ru">Русский</option><option value="pl">Polski</option><option value="en">English</option></select></div>
+      <div style="flex:2">${f('nl-interest', 'Интерес / заметка', 'Что ищет, какая боль')}</div></div>
+    <div class="row" style="gap:8px;margin-top:14px"><button class="btn" id="nl-save">Создать лид</button>
+      <button class="btn ghost" onclick="closeModal()">Отмена</button></div>`, true);
+  $('#nl-save').onclick = async () => {
+    const body = { name: $('#nl-name').value.trim(), company: $('#nl-company').value.trim(), phone: $('#nl-phone').value.trim(),
+      email: $('#nl-email').value.trim(), lang: $('#nl-lang').value, interest: $('#nl-interest').value.trim() };
+    if (!body.phone && !body.email) return alert('Укажите телефон или email');
+    try { const r = await api('/api/admin/leads', { method: 'POST', body: JSON.stringify(body) }); closeModal(); openLead(r.lead.id); }
+    catch (e) { alert(e.message); }
+  };
 }
 // Карточка лида: данные + журнал звонков Софии с транскрипциями и записями
 async function openLead(lid) {
@@ -165,7 +193,8 @@ async function openLead(lid) {
   const l = d.lead;
   const user = d.user || null;
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'leads'));
-  const info = (k, v, mono) => v ? `<div style="margin-bottom:8px"><span class="muted" style="font-size:12px">${k}:</span> <b class="${mono ? 'mono' : ''}">${esc(v)}</b></div>` : '';
+  const EMPTYISH = /^[—\-–\s.]*$|^(прочерк|нет|пусто|none|null|n\/a|brak|nie|no)$/i;
+  const info = (k, v, mono) => (v && !EMPTYISH.test(String(v).trim())) ? `<div style="margin-bottom:8px"><span class="muted" style="font-size:12px">${k}:</span> <b class="${mono ? 'mono' : ''}">${esc(v)}</b></div>` : '';
   const dur = s => s ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '';
   const calls = [...(l.aiCallLog || [])].reverse().map((e, i) => {
     const kind = e.dir === 'in' ? '📥 Входящий' : '📤 Исходящий (заявка)';
@@ -173,7 +202,7 @@ async function openLead(lid) {
       <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
         <b>${kind}</b>
         <span class="muted" style="font-size:12px">${fmtDate(e.createdAt)}${e.durationSec ? ' · ' + dur(e.durationSec) : ''} · ${e.status === 'done' ? 'завершён' : esc(e.status || '')}</span></div>
-      ${e.summary ? `<div class="ai-note" style="margin-top:10px"><div class="ai-h">Итог разговора</div><p style="margin:6px 0 0;font-size:13px;line-height:1.55">${esc(e.summary)}</p></div>` : ''}
+      ${e.summary ? `<div class="ai-note" style="margin-top:10px"><div class="ai-h">Итог разговора</div><p style="margin:6px 0 0;font-size:13px;line-height:1.6">${fmtCallSummary(e.summary)}</p></div>` : ''}
       ${e.recordingUrl ? `<audio controls preload="none" src="${esc(e.recordingUrl)}" style="width:100%;margin-top:10px"></audio>` : ''}
       ${e.transcript ? `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;color:#b3a4ff">Транскрипция</summary><pre style="white-space:pre-wrap;font:12.5px/1.6 Inter,sans-serif;color:#c3cbe4;background:rgba(255,255,255,.04);border-radius:10px;padding:12px;margin-top:8px;max-height:400px;overflow:auto">${esc(e.transcript)}</pre></details>` : ''}
     </div>`;
@@ -217,7 +246,7 @@ async function renderAdmClients() {
     <td>${u.counters.purchases} / ${money(u.counters.revenue, state.currency)}</td>
     <td><span class="blk ${u.blocked ? 'st-off' : 'st-on'}">${u.blocked ? 'Заблокирован' : 'Активен'}</span>${u.role === 'admin' ? ' <span class="blk m-stripe">admin</span>' : ''}</td></tr>`).join('');
   $('#main').innerHTML = `<div class="topbar reveal"><div><div class="eyebrow">Админ-панель</div><h1 class="page-h" style="margin-top:8px">Клиенты</h1></div>
-      <span class="tag">Всего: <b>${d.total}</b></span></div>
+      <div class="row" style="gap:10px;align-items:center"><button class="btn" id="client-add">+ Добавить клиента</button><span class="tag">Всего: <b>${d.total}</b></span></div></div>
     <div class="card reveal d1">
       <div class="row" style="gap:10px;margin-bottom:14px;flex-wrap:wrap">
         <div class="search-wrap grow" style="flex:1;min-width:220px"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="cq" value="${esc(q.q)}" placeholder="Поиск по email, имени, компании…"></div>
@@ -244,6 +273,31 @@ async function renderAdmClients() {
   $('#cexport').onclick = () => exportCsv('clients', ['Email', 'Имя', 'Компания', 'Регистрация', 'Последний вход', 'Баланс доступно', 'Баланс всего', 'Тестов пройдено', 'Покупок', 'Выручка', 'Статус'],
     d.items.map(u => [u.email, (u.name + ' ' + u.surname).trim(), u.company, u.createdAt, u.lastLoginAt || '', u.balanceAvailable, u.balanceTotal, u.counters.testsDone, u.counters.purchases, u.counters.revenue, u.blocked ? 'blocked' : 'active']));
   $$('tr[data-uid]').forEach(r => r.onclick = () => openClient(r.dataset.uid));
+  $('#client-add').onclick = openClientForm;
+}
+// Форма ручного создания клиента
+function openClientForm() {
+  const f = (id, label, ph, type) => `<div style="margin-bottom:10px"><label class="lbl">${label}</label><input class="field" id="${id}" placeholder="${ph || ''}" ${type ? `type="${type}"` : ''} autocomplete="off"></div>`;
+  openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">Новый клиент</h2></div>
+    <p class="muted" style="margin:0 0 12px;font-size:12.5px">Аккаунт создаётся сразу подтверждённым — клиент сможет войти с этим паролем. Если есть лид с тем же email/телефоном, он автоматически станет клиентом.</p>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('nc-email', 'Email *', 'email@company.com', 'email')}</div><div style="flex:1">${f('nc-pass', 'Пароль *', 'минимум 6 символов')}</div></div>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('nc-name', 'Имя', '')}</div><div style="flex:1">${f('nc-surname', 'Фамилия', '')}</div></div>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('nc-company', 'Компания', '')}</div><div style="flex:1">${f('nc-phone', 'Телефон', '+48 …', 'tel')}</div></div>
+    <div class="row" style="gap:12px">
+      <div style="flex:1"><label class="lbl">Язык интерфейса</label><select class="field" id="nc-lang"><option value="ru">Русский</option><option value="pl">Polski</option><option value="en">English</option></select></div>
+      <div style="flex:1">${f('nc-balance', 'Стартовый баланс тестов', '0')}</div></div>
+    ${f('nc-note', 'Заметка администратора', 'видна только админам')}
+    <div class="row" style="gap:8px;margin-top:14px"><button class="btn" id="nc-save">Создать клиента</button>
+      <button class="btn ghost" onclick="closeModal()">Отмена</button></div>`, true);
+  $('#nc-save').onclick = async () => {
+    const body = { email: $('#nc-email').value.trim(), password: $('#nc-pass').value, name: $('#nc-name').value.trim(),
+      surname: $('#nc-surname').value.trim(), company: $('#nc-company').value.trim(), phone: $('#nc-phone').value.trim(),
+      uiLang: $('#nc-lang').value, balance: $('#nc-balance').value.trim(), note: $('#nc-note').value.trim() };
+    if (!body.email) return alert('Укажите email');
+    if ((body.password || '').length < 6) return alert('Пароль — минимум 6 символов');
+    try { const r = await api('/api/admin/users', { method: 'POST', body: JSON.stringify(body) }); closeModal(); openClient(r.user.id); }
+    catch (e) { alert(e.message); }
+  };
 }
 
 // ---------- Клиенты: карточка ----------
