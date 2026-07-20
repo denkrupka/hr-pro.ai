@@ -1,7 +1,8 @@
 // Админ-API портала для edge (/api/admin/*). Работает поверх Supabase REST (все клиенты).
 // requireAdmin выполняется вызывающей стороной (worker-main проверяет me.role==='admin').
 import { wrapEmailEdge } from './notify-edge.js';
-import { applyCallResult as salesApplyCallResult } from '../src/sales-agent.js';
+import * as salesAgent from '../src/sales-agent.js';
+const salesApplyCallResult = salesAgent.applyCallResult;
 const dayKey = iso => String(iso || '').slice(0, 10);
 const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return d; };
 const within = (iso, days) => iso && new Date(iso) >= daysAgo(days);
@@ -119,6 +120,77 @@ export async function handleAdmin(p, m, ctx) {
     await S.del('leads', `id=eq.${mLead[1]}`);
     await logAdmin('lead_delete', 'lead', mLead[1]);
     return j({ ok: true });
+  }
+  // Ручной ИИ-перезвон Софии: лиду или клиенту, с целью звонка и доп. контекстом от менеджера.
+  const startManualSalesCall = async ({ phone, lang, name, lead, clientUser, goal, extra }) => {
+    const salesPhoneId = env.VAPI_SALES_PHONE_ID || gs.vapiSalesPhoneId || '';
+    if (!env.VAPI_API_KEY || !salesPhoneId) throw new Error('Vapi не настроен (номер отдела продаж)');
+    const secret = env.VAPI_INBOUND_SECRET || gs.vapiInboundSecret || '';
+    const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+    const g = salesAgent.CALL_GOALS[goal] || salesAgent.CALL_GOALS.close;
+    let block = '';
+    if (clientUser) {
+      block = [`Компания: ${clientUser.company || '—'}.`, `Баланс тестов: ${Math.max(0, (clientUser.balanceTotal || 0) - (clientUser.balancePending || 0))} доступно.`, `Зарегистрирован: ${String(clientUser.createdAt || '').slice(0, 10)}.`].join('\n');
+    } else if (lead) {
+      block = salesAgent.leadContext(lead);
+    }
+    const hist = lead ? salesAgent.historyBlock(lead) : '';
+    const extraBlock = extra ? `\nДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ ОТ МЕНЕДЖЕРА (активно используй в разговоре, это твой козырь): ${String(extra).slice(0, 600)}` : '';
+    const leadBlock = [block, hist, '\n' + g.prompt + extraBlock].filter(Boolean).join('\n\n');
+    const assistant = salesAgent.buildAssistant({ mode: clientUser ? 'client' : 'lead', lang, name: name || '', company: clientUser ? (clientUser.company || '') : '', leadBlock,
+      plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
+      toolServerUrl: base + '/api/vapi/sales-inbound', toolSecret: secret });
+    if (clientUser) { // клиенту звоним первым — приветствие исходящего, не «рада, что позвонили»
+      assistant.firstMessage = lang === 'pl' ? `Dzień dobry${name ? ', ' + name : ''}! Tu Zofia z HR-PRO.AI. Dzwonię do Pana w sprawie naszego portalu — ma Pan chwilę?`
+        : lang === 'en' ? `Hello${name ? ', ' + name : ''}! This is Sofia from HR-PRO.AI. I'm calling about our portal — do you have a minute?`
+        : `Здравствуйте${name ? ', ' + name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`;
+    }
+    if (secret) assistant.server = { url: base + '/api/vapi/sales-inbound', secret };
+    const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.id) throw new Error('Vapi: ' + ((d && (Array.isArray(d.message) ? d.message.join('; ') : d.message)) || r.status));
+    return d.id;
+  };
+  let mLeadCall = p.match(/^\/api\/admin\/leads\/([\w-]+)\/call$/);
+  if (mLeadCall && m === 'POST') {
+    const rows = await S.select('leads', `id=eq.${mLeadCall[1]}&select=data,phone_key`);
+    const l = rows[0] && rows[0].data;
+    if (!l) return j({ error: 'Не найдено' }, 404);
+    if (!l.phone) return j({ error: 'У лида не указан телефон' }, 400);
+    try {
+      const callId = await startManualSalesCall({ phone: l.phone, lang: l.lang || 'ru', name: l.name || '', lead: l, goal: body && body.goal, extra: body && body.extra });
+      l.aiCallLog = Array.isArray(l.aiCallLog) ? l.aiCallLog : [];
+      l.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (body && body.goal) || 'close', createdAt: new Date().toISOString(), status: 'calling', lang: l.lang || 'ru' });
+      await S.upsert('leads', { id: l.id, phone_key: rows[0].phone_key, data: l });
+      await logAdmin('lead_call', 'lead', l.id, { goal: body && body.goal });
+      return j({ ok: true, callId });
+    } catch (e) { return j({ error: e.message }, 502); }
+  }
+  let mUserCall = p.match(/^\/api\/admin\/users\/([\w-]+)\/call$/);
+  if (mUserCall && m === 'POST') {
+    const cu = await S.one('users', mUserCall[1]);
+    if (!cu) return j({ error: 'Не найдено' }, 404);
+    const phone = (cu.settings && cu.settings.phone) || '';
+    if (!phone) return j({ error: 'У клиента не указан телефон (Профиль → Телефон)' }, 400);
+    // журнал пишем в связанный лид (создаём converted-лид, если его ещё нет)
+    let lead = null;
+    try {
+      const key = salesAgent.phoneKey(phone);
+      const lr = key ? await S.select('leads', `phone_key=eq.${key}&select=data,phone_key`) : [];
+      lead = lr[0] && lr[0].data;
+    } catch (_) {}
+    if (!lead) lead = { id: uid(12), name: cu.name || '', phone, email: cu.email || '', company: cu.company || '', lang: (cu.settings && cu.settings.uiLang) || 'ru', source: 'manual', status: 'converted', userId: cu.id, createdAt: new Date().toISOString(), aiCallLog: [] };
+    try {
+      const lang = ['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru';
+      const callId = await startManualSalesCall({ phone, lang, name: cu.name || '', lead, clientUser: cu, goal: body && body.goal, extra: body && body.extra });
+      lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+      lead.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (body && body.goal) || 'upsell', createdAt: new Date().toISOString(), status: 'calling', lang });
+      const pk = salesAgent.phoneKey(phone);
+      await S.upsert('leads', { id: lead.id, phone_key: pk && pk.length >= 7 ? pk : null, data: lead });
+      await logAdmin('client_call', 'user', cu.id, { goal: body && body.goal });
+      return j({ ok: true, callId, leadId: lead.id });
+    } catch (e) { return j({ error: e.message }, 502); }
   }
   let mLeadR = p.match(/^\/api\/admin\/leads\/([\w-]+)\/refresh$/);
   if (mLeadR && m === 'POST') {

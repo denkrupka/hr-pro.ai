@@ -106,6 +106,64 @@ module.exports = function adminApi(app, ctx) {
     logAdmin(req, 'lead_delete', 'lead', req.params.id);
     save(); res.json({ ok: true });
   });
+  // Ручной ИИ-перезвон Софии (лид или клиент) с целью и доп. контекстом.
+  async function startManualSalesCall({ phone, lang, name, lead, clientUser, goal, extra }) {
+    const gs = portalSettings();
+    const vcfg = integ.cfgOf(null, 'vapi');
+    const salesPhoneId = gs.vapiSalesPhoneId || vcfg.salesPhoneNumberId || '';
+    if (!vcfg.apiKey || !salesPhoneId) throw new Error('Vapi не настроен (номер отдела продаж)');
+    const secret = gs.vapiInboundSecret || '';
+    const base = getBaseUrl().replace(/\/+$/, '');
+    const g = salesAgentAdm.CALL_GOALS[goal] || salesAgentAdm.CALL_GOALS.close;
+    let block = '';
+    if (clientUser) block = [`Компания: ${clientUser.company || '—'}.`, `Баланс тестов: ${Math.max(0, (clientUser.balanceTotal || 0) - (clientUser.balancePending || 0))} доступно.`, `Зарегистрирован: ${String(clientUser.createdAt || '').slice(0, 10)}.`].join('\n');
+    else if (lead) block = salesAgentAdm.leadContext(lead);
+    const hist = lead ? salesAgentAdm.historyBlock(lead) : '';
+    const extraBlock = extra ? `\nДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ ОТ МЕНЕДЖЕРА (активно используй в разговоре, это твой козырь): ${String(extra).slice(0, 600)}` : '';
+    const leadBlock = [block, hist, '\n' + g.prompt + extraBlock].filter(Boolean).join('\n\n');
+    const assistant = salesAgentAdm.buildAssistant({ mode: clientUser ? 'client' : 'lead', lang, name: name || '', company: clientUser ? (clientUser.company || '') : '', leadBlock,
+      plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
+      toolServerUrl: base + '/api/vapi/sales-inbound', toolSecret: secret });
+    if (clientUser) {
+      assistant.firstMessage = lang === 'pl' ? `Dzień dobry${name ? ', ' + name : ''}! Tu Zofia z HR-PRO.AI. Dzwonię w sprawie naszego portalu — ma Pan chwilę?`
+        : lang === 'en' ? `Hello${name ? ', ' + name : ''}! This is Sofia from HR-PRO.AI. I'm calling about our portal — do you have a minute?`
+        : `Здравствуйте${name ? ', ' + name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`;
+    }
+    if (secret) assistant.server = { url: base + '/api/vapi/sales-inbound', secret };
+    const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgentAdm.toE164(phone) }, assistant }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.id) throw new Error('Vapi: ' + ((d && (Array.isArray(d.message) ? d.message.join('; ') : d.message)) || r.status));
+    return d.id;
+  }
+  app.post('/api/admin/leads/:id/call', requireAdmin, async (req, res) => {
+    const l = (db().leads || []).find(x => x.id === req.params.id);
+    if (!l) return res.status(404).json({ error: 'Не найдено' });
+    if (!l.phone) return res.status(400).json({ error: 'У лида не указан телефон' });
+    try {
+      const callId = await startManualSalesCall({ phone: l.phone, lang: l.lang || 'ru', name: l.name || '', lead: l, goal: req.body && req.body.goal, extra: req.body && req.body.extra });
+      l.aiCallLog = Array.isArray(l.aiCallLog) ? l.aiCallLog : [];
+      l.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (req.body && req.body.goal) || 'close', createdAt: nowISO(), status: 'calling', lang: l.lang || 'ru' });
+      logAdmin(req, 'lead_call', 'lead', l.id, { goal: req.body && req.body.goal });
+      save(); res.json({ ok: true, callId });
+    } catch (e) { res.status(502).json({ error: e.message }); }
+  });
+  app.post('/api/admin/users/:id/call', requireAdmin, async (req, res) => {
+    const cu = findUser(req.params.id);
+    if (!cu) return res.status(404).json({ error: 'Не найдено' });
+    const phone = (cu.settings && cu.settings.phone) || '';
+    if (!phone) return res.status(400).json({ error: 'У клиента не указан телефон (Профиль → Телефон)' });
+    let lead = (db().leads || []).find(x => salesAgentAdm.phoneKey(x.phone) === salesAgentAdm.phoneKey(phone));
+    if (!lead) { lead = { id: uid(12), name: cu.name || '', phone, email: cu.email || '', company: cu.company || '', lang: (cu.settings && cu.settings.uiLang) || 'ru', source: 'manual', status: 'converted', userId: cu.id, createdAt: nowISO(), aiCallLog: [] }; db().leads.push(lead); }
+    try {
+      const lang = ['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru';
+      const callId = await startManualSalesCall({ phone, lang, name: cu.name || '', lead, clientUser: cu, goal: req.body && req.body.goal, extra: req.body && req.body.extra });
+      lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+      lead.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (req.body && req.body.goal) || 'upsell', createdAt: nowISO(), status: 'calling', lang });
+      logAdmin(req, 'client_call', 'user', cu.id, { goal: req.body && req.body.goal });
+      save(); res.json({ ok: true, callId, leadId: lead.id });
+    } catch (e) { res.status(502).json({ error: e.message }); }
+  });
   app.post('/api/admin/leads/:id/refresh', requireAdmin, async (req, res) => {
     const l = (db().leads || []).find(x => x.id === req.params.id);
     if (!l) return res.status(404).json({ error: 'Не найдено' });

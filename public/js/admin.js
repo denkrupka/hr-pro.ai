@@ -211,7 +211,7 @@ async function openLead(lid) {
     <button class="btn ghost sm reveal" id="back-leads" style="margin-bottom:12px">← Лиды</button>
     <div class="topbar reveal"><div><div class="eyebrow">Лид · ${esc(LEAD_SRC[l.source] || l.source || '')}</div>
       <h1 class="page-h" style="margin-top:8px">${esc(l.name || l.phone || l.email || 'Лид')}</h1></div>
-      <div class="row" style="gap:8px">${leadStBadge(l.status)}<button class="btn ghost sm" id="lead-edit">✎ Редактировать</button><button class="btn ghost danger sm" id="lead-del">Удалить</button></div></div>
+      <div class="row" style="gap:8px">${leadStBadge(l.status)}<button class="btn sm" id="lead-aicall">📞 Перезвонить (ИИ)</button><button class="btn ghost sm" id="lead-edit">✎ Редактировать</button><button class="btn ghost danger sm" id="lead-del">Удалить</button></div></div>
     <div class="dash-grid reveal d1" style="grid-template-columns:320px 1fr;align-items:start">
       <div class="card">
         <h3 style="margin:0 0 12px">Контакты</h3>
@@ -227,6 +227,7 @@ async function openLead(lid) {
   $('#back-leads').onclick = () => setView('leads');
   const oc = $('#lead-open-client'); if (oc && user) oc.onclick = () => openClient(user.id);
   $('#lead-edit').onclick = () => openLeadEditForm(l);
+  $('#lead-aicall').onclick = () => openAiCallForm({ type: 'lead', id: l.id, lead: l });
   $('#lead-del').onclick = async () => {
     if (!confirm('Удалить лид и всю историю звонков?')) return;
     await api('/api/admin/leads/' + lid, { method: 'DELETE' });
@@ -252,6 +253,48 @@ function openLeadEditForm(l) {
       interest: $('#el-interest').value.trim(), callbackWhen: $('#el-callback').value.trim() };
     try { await api('/api/admin/leads/' + l.id, { method: 'PUT', body: JSON.stringify(body) }); closeModal(); openLead(l.id); }
     catch (e) { alert(e.message); }
+  };
+}
+
+
+// ===== Ручной ИИ-звонок Софии (лид или клиент): цель + доп. контекст =====
+const AI_CALL_GOALS = [
+  ['close', 'Закрыть сделку (дожать)'],
+  ['feedback', 'Получить обратную связь (почему не купил, что улучшить)'],
+  ['resume', 'Продолжить прерванный разговор'],
+  ['callback', 'Договорённый перезвон'],
+  ['reactivate', 'Напомнить о себе (реактивация)'],
+  ['welcome', 'Помочь после регистрации'],
+  ['upsell', 'Предложить пакет побольше'],
+];
+function openAiCallForm(opts) {
+  // «на чём остановились» — итог последнего разговора
+  let lastSum = '';
+  if (opts.lead) {
+    const withSum = [...(opts.lead.aiCallLog || [])].reverse().find(e => e.summary);
+    if (withSum) lastSum = String(withSum.summary).replace(/\s*(СТАТУС|EMAIL|ПЕРЕЗВОН):\s*[^\n]*/gi, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().slice(0, 260);
+  }
+  if (opts.type === 'client' && !opts.phone) { alert('У клиента не указан телефон (карточка → Изменить → Телефон)'); return; }
+  const defGoal = opts.type === 'client' ? 'upsell' : 'close';
+  openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">📞 Звонок Софии</h2></div>
+    ${lastSum ? `<div class="ai-note" style="margin-bottom:12px"><div class="ai-h">На чём остановились</div><p style="margin:6px 0 0;font-size:12.5px;line-height:1.5">${esc(lastSum)}${lastSum.length >= 260 ? '…' : ''}</p></div>` : ''}
+    <p class="muted" style="margin:0 0 12px;font-size:12.5px">София получит всю историю прошлых разговоров и продолжит с места остановки.</p>
+    <div style="margin-bottom:10px"><label class="lbl">Цель звонка</label>
+      <select class="field" id="aic-goal">${AI_CALL_GOALS.map(g => `<option value="${g[0]}" ${g[0] === defGoal ? 'selected' : ''}>${g[1]}</option>`).join('')}</select></div>
+    <div style="margin-bottom:10px"><label class="lbl">Дополнительная информация для Софии (необязательно)</label>
+      <textarea class="field" id="aic-extra" style="min-height:76px" placeholder="Например: если купит пакет сегодня — добавим ещё 10 тестов в подарок. София активно использует это в разговоре."></textarea></div>
+    <div class="row" style="gap:8px;margin-top:14px"><button class="btn" id="aic-go">Позвонить сейчас</button>
+      <button class="btn ghost" onclick="closeModal()">Отмена</button></div>`, true);
+  $('#aic-go').onclick = async () => {
+    const btn = $('#aic-go'); btn.disabled = true; btn.textContent = 'Звоним…';
+    const body = { goal: $('#aic-goal').value, extra: $('#aic-extra').value.trim() };
+    const urlp = opts.type === 'client' ? ('/api/admin/users/' + opts.id + '/call') : ('/api/admin/leads/' + opts.id + '/call');
+    try {
+      const r = await api(urlp, { method: 'POST', body: JSON.stringify(body) });
+      closeModal();
+      alert('София набирает номер…');
+      if (opts.type === 'lead') openLead(opts.id); else if (r.leadId) openLead(r.leadId);
+    } catch (e) { btn.disabled = false; btn.textContent = 'Позвонить сейчас'; alert(e.message); }
   };
 }
 
@@ -343,6 +386,7 @@ async function openClient(uid, tab) {
     <div class="row reveal d1" style="gap:8px;margin-top:12px;flex-wrap:wrap">
       <button class="btn soft sm" id="c-edit">Изменить</button>
       <button class="btn soft sm" id="c-balance">± Баланс</button>
+      <button class="btn soft sm" id="c-aicall">📞 Позвонить (ИИ)</button>
       ${u.role !== 'admin' && !u.blocked ? '<button class="btn ghost sm" id="c-imp">Войти как клиент</button>' : ''}
       <button class="btn ghost sm" id="c-pwd">Сбросить пароль</button>
       ${isSelf || u.role === 'admin' ? '' : (u.blocked
@@ -386,6 +430,7 @@ async function openClient(uid, tab) {
       } catch (e) { toast(e.message); }
     };
   };
+  { const b = $('#c-aicall'); if (b) b.onclick = () => openAiCallForm({ type: 'client', id: u.id, name: u.name || u.email, phone: (u.settings && u.settings.phone) || '' }); }
   $('#c-balance').onclick = () => {
     openModal(`<h2 style="margin:0 0 6px">Изменение баланса</h2>
       <p class="muted" style="margin:0 0 14px">Текущий баланс: <b>${u.balanceAvailable}</b> доступно / <b>${u.balancePending}</b> в брони</p>
