@@ -1,3 +1,4 @@
+function reqSecretG(s){ if(!s) throw new Error('SECRET env is required'); return s; }
 // Google OAuth (server-side, Authorization Code flow) для edge-воркера.
 // Секреты — из Cloudflare env: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET.
 // Чистые функции; создание/поиск пользователя и куки — в worker-main.js (там есть доступ к БД).
@@ -15,7 +16,7 @@ function b64u(bytes) {
 export async function makeState(secret, next) {
   const rnd = b64u(crypto.getRandomValues(new Uint8Array(16)));
   const payload = rnd + '|' + (next || '/app');
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'dev'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(reqSecretG(secret)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
   return payload + '|' + b64u(mac);
 }
@@ -24,7 +25,7 @@ export async function readState(secret, state) {
   const i = state.lastIndexOf('|');
   if (i < 0) return null;
   const payload = state.slice(0, i), sig = state.slice(i + 1);
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'dev'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(reqSecretG(secret)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
   if (b64u(mac) !== sig) return null;
   const parts = payload.split('|');

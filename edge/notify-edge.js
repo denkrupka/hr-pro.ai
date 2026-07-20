@@ -1,3 +1,5 @@
+// SECRET обязателен (fail-closed): без него подпись токенов подделываема.
+function reqSecret(s){ if(!s) throw new Error('SECRET env is required'); return s; }
 // Отправка приглашений кандидату на edge: Resend (email) + SMSAPI (SMS).
 // Ключи — из секретов Cloudflare (env), а не из настроек клиента: это ключи портала.
 const DEFAULT_EMAIL = {
@@ -27,7 +29,7 @@ const ELOGO_IMG = (base, size) => `<img src="${base}/email/logo-white.png" width
 // Лого шапки — гексагон с нейро-узлами (по макету); футер использует простой ELOGO_IMG.
 const ELOGO_MARK = (base, size) => `<img src="${base}/email/logo-net.png" width="${size}" height="${size}" alt="HR PRO AI" style="display:inline-block;vertical-align:middle;border:0">`;
 export async function unsubToken(secret, email) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(reqSecret(secret)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('unsub:' + String(email || '').toLowerCase()));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 24);
 }
@@ -35,13 +37,13 @@ export async function unsubToken(secret, email) {
 // (expTs — unix-секунды истечения), поэтому не переиспользуется и протухает. Проверка —
 // пересчитать подпись + сверить exp>now (см. verifyResetToken).
 export async function resetToken(secret, email, expTs) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(reqSecret(secret)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('reset:' + String(email || '').toLowerCase() + ':' + String(expTs)));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
 }
 // Токен подтверждения email при регистрации: HMAC(secret, `verify:email:expTs`).
 export async function emailVerifyToken(secret, email, expTs) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret || 'hraipro-dev-secret-change-me'), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(reqSecret(secret)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('verify:' + String(email || '').toLowerCase() + ':' + String(expTs)));
   return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 40);
 }

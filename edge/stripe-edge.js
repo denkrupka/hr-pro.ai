@@ -50,12 +50,17 @@ function makeStripe(secretKey) {
         const parts = Object.fromEntries(String(sigHeader || '').split(',').map(p => p.split('=')));
         const t = parts.t, v1 = parts.v1;
         if (!t || !v1) throw new Error('Нет подписи');
+        // Защита от replay: отвергаем события старше 5 минут (как официальный SDK).
+        if (Math.abs(Math.floor(Date.now() / 1000) - Number(t)) > 300) throw new Error('Подпись устарела (timestamp вне окна)');
         const raw = typeof payload === 'string' ? payload : new TextDecoder().decode(payload);
         const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret),
           { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
         const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${t}.${raw}`));
         const hex = [...new Uint8Array(mac)].map(b => b.toString(16).padStart(2, '0')).join('');
-        if (hex !== v1) throw new Error('Подпись не совпадает');
+        // Константное по времени сравнение hex-подписи.
+        let diff = hex.length ^ String(v1).length;
+        for (let i = 0; i < hex.length; i++) diff |= hex.charCodeAt(i) ^ String(v1).charCodeAt(i);
+        if (diff !== 0) throw new Error('Подпись не совпадает');
         return JSON.parse(raw);
       },
       // синхронная версия недоступна на edge — прокидываем ошибку, чтобы поймать при разработке

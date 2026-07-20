@@ -608,6 +608,9 @@ export async function handleAdmin(p, m, ctx) {
   if (p === '/api/admin/settings' && m === 'GET') {
     const out = JSON.parse(JSON.stringify(gs));
     delete out.stripe; delete out.integrations; delete out.defaultEmailTemplates; delete out.defaultSmsTemplates; delete out.defaultMailTemplates;
+    // Не отдаём секреты вебхуков/токены/oauth-ключи на клиент (даже админу).
+    ['vapiInboundSecret', 'telegramWebhookSecret', 'telegramBotToken', 'cronSecret', 'videoOAuth'].forEach(k => delete out[k]);
+    Object.keys(out).forEach(k => { if (/secret|token|password|apikey|clientsecret/i.test(k)) delete out[k]; });
     return j({ settings: out, env: { baseUrl: env.PORTAL_BASE_URL || url.origin, secretIsDefault: false } });
   }
   if (p === '/api/admin/settings' && m === 'PUT') {

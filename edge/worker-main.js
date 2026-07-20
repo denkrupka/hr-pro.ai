@@ -31,6 +31,20 @@ import { PORTALS as JOB_PORTALS, connectionsOf as jpConns, isConnected as jpIsCo
 const JSON_H = { 'content-type': 'application/json; charset=utf-8' };
 const j = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { ...JSON_H, ...extra } });
 
+// Best-effort IP rate-limit (per-isolate in-memory) для публичных эндпоинтов: N обращений за windowMs.
+const _rlMap = new Map();
+function ipAllow(key, limit, windowMs) {
+  const nowMs = Date.now();
+  const arr = (_rlMap.get(key) || []).filter(t => nowMs - t < windowMs);
+  if (arr.length >= limit) { _rlMap.set(key, arr); return false; }
+  arr.push(nowMs); _rlMap.set(key, arr);
+  if (_rlMap.size > 5000) { for (const k of _rlMap.keys()) { if (_rlMap.size <= 4000) break; _rlMap.delete(k); } }
+  return true;
+}
+const clientIp = (req) => (req.headers.get('cf-connecting-ip') || (req.headers.get('x-forwarded-for') || '').split(',')[0] || '').trim();
+// Константное по времени сравнение секретов (защита от timing-side-channel).
+function safeEqual(a, b) { a = String(a || ''); b = String(b || ''); if (!a || !b) return false; let r = a.length ^ b.length; const n = Math.max(a.length, b.length); for (let i = 0; i < n; i++) r |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return r === 0; }
+
 // ── Supabase REST helper (service key, обходит RLS) ─────────────────────────────
 function supa(env) {
   const base = env.SUPABASE_URL.replace(/\/$/, '');
@@ -266,7 +280,8 @@ async function api(req, env, url, exec) {
     try {
       const pt = await settings();
       const sec = pt.telegramWebhookSecret || '';
-      if (sec && req.headers.get('x-telegram-bot-api-secret-token') !== sec) return j({ ok: true });
+      // Fail-closed: без настроенного секрета вебхук не обрабатываем (иначе кто угодно привяжет чужой чат).
+      if (!sec || !safeEqual(req.headers.get('x-telegram-bot-api-secret-token'), sec)) return j({ ok: true });
       const msg = body.message || body.edited_message || {};
       const text = String(msg.text || '');
       const chatId = msg.chat && msg.chat.id;
@@ -391,18 +406,26 @@ async function api(req, env, url, exec) {
     if (body && body.website) return j({ ok: true }); // honeypot: боты заполняют скрытое поле
     const digits = phone.replace(/\D/g, '');
     if (digits.length < 9 || digits.length > 15) return j({ error: 'Укажите корректный номер телефона', code: 'bad_phone' }, 400);
+    // Антифрод: IP-лимит (защита от «звонков на чужие номера» с ротацией номера).
+    if (!ipAllow('leadcb:' + clientIp(req), 5, 3600000)) return j({ error: 'Слишком много заявок. Попробуйте позже.', code: 'rate_limit' }, 429);
     const pt = await settings();
     const salesPhoneId = env.VAPI_SALES_PHONE_ID || pt.vapiSalesPhoneId || '';
     let lead = await leadByPhone(phone);
     const now = new Date().toISOString();
     if (!lead) lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] };
-    else { if (name) lead.name = name; lead.lang = lang; if (lead.status === 'do_not_call') lead.status = 'new'; }
+    else { if (name) lead.name = name; lead.lang = lang; } // НЕ сбрасываем do_not_call автоматически (жертва просила не звонить)
     // Антиспам: не чаще 3 заявок в час с одного номера.
     lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
     if (lead.requests.length >= 3) return j({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.', code: 'rate_limit' }, 429);
     lead.requests.push(now);
+    // Уважаем отказ: если ранее просил не звонить — заявку принимаем, но авто-звонок не ставим (перезвонит менеджер).
+    const optedOut = lead.status === 'do_not_call';
+    // Глобальный потолок исходящих продаж-звонков в час (антифрод/защита от истощения баланса телефонии).
+    const hourKey = Math.floor(Date.now() / 3600000);
+    const guard = (pt.salesCallGuard && pt.salesCallGuard.hour === hourKey) ? pt.salesCallGuard : { hour: hourKey, count: 0 };
+    const CALL_CAP = Number(env.SALES_CALL_HOURLY_CAP || pt.salesCallHourlyCap || 40);
     let callId = '';
-    if (env.VAPI_API_KEY && salesPhoneId) {
+    if (env.VAPI_API_KEY && salesPhoneId && !optedOut && guard.count < CALL_CAP) {
       try {
         let secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
         const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
@@ -411,7 +434,7 @@ async function api(req, env, url, exec) {
         const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
           body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
         const d = await r.json().catch(() => ({}));
-        if (r.ok && d.id) { callId = d.id; }
+        if (r.ok && d.id) { callId = d.id; guard.count += 1; pt.salesCallGuard = guard; try { await S.upsert('settings', { id: 'portal', data: pt }); } catch (_) {} }
         else { lead.lastCallError = (d && d.message ? String(Array.isArray(d.message) ? d.message.join('; ') : d.message) : 'HTTP ' + r.status).slice(0, 300); }
       } catch (e) { console.log('sales call err', e && e.message); }
     }
@@ -427,10 +450,11 @@ async function api(req, env, url, exec) {
     let secret = env.VAPI_INBOUND_SECRET || '';
     if (!secret) { try { secret = (await settings()).vapiInboundSecret || ''; } catch (_) {} }
     const provided = req.headers.get('x-vapi-secret') || url.searchParams.get('key') || '';
-    if (!secret || provided !== secret) return j({ error: 'forbidden' }, 403);
+    if (!secret || !safeEqual(provided, secret)) return j({ error: 'forbidden' }, 403);
     const msg = body.message || {};
     const call = msg.call || body.call || {};
-    const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || url.searchParams.get('caller') || '';
+    // Номер собеседника берём ТОЛЬКО из тела реального звонка Vapi (не из query — иначе поддельный вебхук слал бы SMS на любой номер).
+    const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || '';
     // Вызов функции из звонка: send_registration_email — реально шлём письмо со ссылкой на регистрацию.
     if (msg.type === 'tool-calls') {
       const results = [];
@@ -573,14 +597,16 @@ async function api(req, env, url, exec) {
     } catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
   }
 
-  // Публичная ИИ-проверка чек-листа гайда (без авторизации)
+  // Публичная ИИ-проверка чек-листа гайда (без авторизации) — IP-лимит от cost-abuse.
   if (p === '/api/guide-check' && m === 'POST') {
+    if (!ipAllow('guidecheck:' + clientIp(req), 20, 3600000)) return j({ error: 'rate_limit' }, 429);
     try { return j(await guideCheck(env, body)); }
     catch (e) { return j({ error: 'server' }, 500); }
   }
 
-  // Лид-магнит с лендинга: письмо со ссылкой на гайд (без авторизации)
+  // Лид-магнит с лендинга: письмо со ссылкой на гайд (без авторизации) — IP-лимит от email-бомбинга.
   if (p === '/api/lead' && m === 'POST') {
+    if (!ipAllow('lead:' + clientIp(req), 5, 3600000)) return j({ error: 'rate_limit' }, 429);
     const email = String(body.email || '').trim().toLowerCase();
     const lang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : 'ru';
     if (!/.+@.+\..+/.test(email)) return j({ error: 'bad_email' }, 400);
@@ -1299,9 +1325,11 @@ async function api(req, env, url, exec) {
     for (const x of list) parts.push(await participantView(x));
     return j({ participants: parts });
   }
+  // Проверка владения вакансией: чужой vacancyId нельзя привязать к своему кандидату/анкете (IDOR).
+  const ownVacId = async (vid) => { if (!vid) return null; const v = await S.one('vacancies', vid); return (v && v.userId === me.id) ? vid : null; };
   if (p === '/api/participants' && m === 'POST') {
     if (!me) return needAuth();
-    const x = { id: uid(12), userId: me.id, vacancyId: body.vacancyId || null,
+    const x = { id: uid(12), userId: me.id, vacancyId: await ownVacId(body.vacancyId),
       name: String(body.name || ''), surname: String(body.surname || ''), email: String(body.email || ''),
       sex: '', age: null, tel: String(body.tel || ''), city: String(body.city || ''), stage: 'Без этапа',
       comment: String(body.comment || ''), color: '#FFFFFF', starred: false, createdAt: new Date().toISOString() };
@@ -1328,7 +1356,7 @@ async function api(req, env, url, exec) {
       if (res.error) { failed.push({ name: f.name, error: res.error }); continue; }
       const d = res.data || {};
       let cvUrl = null; try { cvUrl = await storeMedia(f.dataUrl, f.name, 15); } catch (e) {}
-      const x = { id: uid(12), userId: me.id, vacancyId: body.vacancyId || null,
+      const x = { id: uid(12), userId: me.id, vacancyId: await ownVacId(body.vacancyId),
         name: String(d.name || '').slice(0, 60), surname: String(d.surname || '').slice(0, 60),
         email: String(d.email || '').slice(0, 120), sex: '', age: d.age ? (Number(d.age) || null) : null,
         tel: String(d.phone || '').slice(0, 40), city: String(d.city || '').slice(0, 60), stage: 'Без этапа',
@@ -1344,7 +1372,8 @@ async function api(req, env, url, exec) {
     const cur = await S.one('participants', mP[1]);
     if (!cur || cur.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     if (m === 'GET') return j({ participant: await participantView(cur) });
-    if (m === 'PUT') { ['name', 'surname', 'email', 'sex', 'age', 'tel', 'city', 'stage', 'comment', 'color', 'vacancyId', 'starred'].forEach(f => { if (body[f] !== undefined) cur[f] = body[f]; });
+    if (m === 'PUT') { ['name', 'surname', 'email', 'sex', 'age', 'tel', 'city', 'stage', 'comment', 'color', 'starred'].forEach(f => { if (body[f] !== undefined) cur[f] = body[f]; });
+      if (body.vacancyId !== undefined) cur.vacancyId = await ownVacId(body.vacancyId); // только своя вакансия
       await S.upsert('participants', { id: cur.id, data: cur }); return j({ participant: await participantView(cur) }); }
     if (m === 'DELETE') { await S.del('tests', `participant_id=eq.${cur.id}`); await S.del('participants', `id=eq.${cur.id}`); return j({ ok: true }); }
   }
@@ -1358,9 +1387,9 @@ async function api(req, env, url, exec) {
     const applied = parts ? parts.filter(x => x.anketaId === a.id).length : (await S.select('participants', `data->>anketaId=eq.${a.id}&select=id`)).length;
     return { ...a, vacancyName: vac ? vac.name : '', url: `${BASE}/a/${a.slug}`, applied };
   };
-  const applyAnketaFields = (a, b) => {
+  const applyAnketaFields = async (a, b) => {
     if (b.title != null) a.title = String(b.title);
-    if (b.vacancyId !== undefined) a.vacancyId = b.vacancyId || null;
+    if (b.vacancyId !== undefined) a.vacancyId = await ownVacId(b.vacancyId);
     if (Array.isArray(b.tests)) a.tests = b.tests.filter(t => ['result', 'tools', 'logic', 'sales'].includes(t));
     ['btnText', 'pageTitle', 'msgApply', 'msgDone', 'description'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
     ['noCaptcha', 'sendEmail'].forEach(f => { if (b[f] != null) a[f] = !!b[f]; });
@@ -1391,14 +1420,14 @@ async function api(req, env, url, exec) {
     if (!me) return needAuth();
     if (body.vacancyId) {
       const ex = (await S.select('anketas', `user_id=eq.${me.id}&data->>vacancyId=eq.${body.vacancyId}&select=data`)).map(r => r.data)[0];
-      if (ex) { applyAnketaFields(ex, body); await S.upsert('anketas', { id: ex.id, data: ex }); return j({ anketa: await anketaView(ex) }); }
+      if (ex) { await applyAnketaFields(ex, body); await S.upsert('anketas', { id: ex.id, data: ex }); return j({ anketa: await anketaView(ex) }); }
     }
     const slug = await prefixedSlug(me, body.slug || body.title || 'anketa');
     const a = { id: uid(12), userId: me.id, slug, title: body.title || 'Новая анкета', vacancyId: null, tests: [],
       btnText: 'Откликнуться', pageTitle: '', msgApply: 'Спасибо! Ваш отклик получен.',
       msgDone: 'Отлично! Вы ответили на все вопросы. HR-менеджер свяжется с вами после рассмотрения результатов.',
       noCaptcha: false, sendEmail: true, description: '', createdAt: new Date().toISOString() };
-    applyAnketaFields(a, body);
+    await applyAnketaFields(a, body);
     await S.upsert('anketas', { id: a.id, data: a });
     return j({ anketa: await anketaView(a) });
   }
@@ -1409,7 +1438,7 @@ async function api(req, env, url, exec) {
     if (m === 'GET') return j({ anketa: await anketaView(a) });
     if (m === 'PUT') {
       if (body.slug != null && slugify(body.slug) && (await prefixedSlug(me, body.slug, a.id)) !== a.slug) a.slug = await prefixedSlug(me, body.slug, a.id);
-      applyAnketaFields(a, body); await S.upsert('anketas', { id: a.id, data: a });
+      await applyAnketaFields(a, body); await S.upsert('anketas', { id: a.id, data: a });
       return j({ anketa: await anketaView(a) });
     }
     if (m === 'DELETE') { await S.del('anketas', `id=eq.${a.id}`); return j({ ok: true }); }
@@ -2871,6 +2900,7 @@ export default {
     // Supabase на bytes=0- отдаёт 206 без валидного Content-Range → нативный <video> в Chrome виснет на 0:00.
     // Здесь форвардим Range и переписываем заголовки так, чтобы media-pipeline корректно стримил.
     const mMedia = url.pathname.match(/^\/media\/([\w.\-\/]+\.mp4)$/);
+    if (mMedia && (mMedia[1].includes('..') || mMedia[1].startsWith('/'))) return new Response('Bad request', { status: 400 });
     if (mMedia) {
       const supaBase = (env.SUPABASE_URL || '').replace(/\/+$/, '');
       // без подпапки — это видео-урок (bucket media/edu); с подпапкой (learning/…) — как есть

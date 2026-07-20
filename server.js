@@ -136,7 +136,27 @@ function saveMedia(dataUrl, name) {
   fs.writeFileSync(path.join(MEDIA_DIR, file), buf);
   return '/uploads/media/' + file;
 }
+app.set('trust proxy', 1); // за реверс-прокси (Cloudflare/nginx) — корректный req.ip и secure-cookie
 app.use(cookieParser(SECRET));
+// Общие опции session-cookie: Secure в проде (HTTPS), HttpOnly, подпись, SameSite=Lax.
+const IS_PROD = process.env.NODE_ENV === 'production';
+const COOKIE_OPTS = { signed: true, httpOnly: true, secure: IS_PROD, sameSite: 'lax' };
+// Константное по времени сравнение строк (секреты вебхуков).
+function timingSafeStrEq(a, b) {
+  a = String(a || ''); b = String(b || '');
+  try { const A = Buffer.from(a), B = Buffer.from(b); if (A.length !== B.length) return false; return require('crypto').timingSafeEqual(A, B); }
+  catch (_) { return a === b; }
+}
+// Best-effort IP rate-limit для публичных эндпоинтов.
+const _rl = new Map();
+function ipAllow(key, limit, windowMs) {
+  const nowMs = Date.now();
+  const arr = (_rl.get(key) || []).filter(t => nowMs - t < windowMs);
+  if (arr.length >= limit) { _rl.set(key, arr); return false; }
+  arr.push(nowMs); _rl.set(key, arr);
+  if (_rl.size > 5000) { for (const k of _rl.keys()) { if (_rl.size <= 4000) break; _rl.delete(k); } }
+  return true;
+}
 
 // ---------- Режим обслуживания (глобальная настройка; админы работают как обычно) ----------
 app.use((req, res, next) => {
@@ -531,7 +551,7 @@ app.get('/api/verify-email', (req, res) => {
   if (!user) return res.redirect('/login?err=verify_failed');
   if (user.blocked === true) return res.redirect('/login?err=blocked');
   user.emailVerified = true; user.lastLoginAt = nowISO(); save();
-  res.cookie('uid', user.id, { signed: true, httpOnly: true, sameSite: 'lax', maxAge: 30 * 864e5 });
+  res.cookie('uid', user.id, { ...COOKIE_OPTS, maxAge: 30 * 864e5 });
   res.redirect(user.onboarded ? '/app' : '/onboarding.html');
 });
 
@@ -555,7 +575,7 @@ app.post('/api/login', (req, res) => {
     return res.status(403).json({ error: 'Подтвердите email — мы отправили ссылку на вашу почту.', needVerify: true, email: user.email });
   }
   user.lastLoginAt = nowISO(); save();
-  res.cookie('uid', user.id, { signed: true, httpOnly: true, sameSite: 'lax', maxAge: 30 * 864e5 });
+  res.cookie('uid', user.id, { ...COOKIE_OPTS, maxAge: 30 * 864e5 });
   res.json({ user: publicUser(user) });
 });
 
@@ -1665,18 +1685,23 @@ app.post('/api/leads/callback', async (req, res) => {
   const lang = ['ru', 'pl', 'en'].includes(b.lang) ? b.lang : 'ru';
   const digits = phone.replace(/\D/g, '');
   if (digits.length < 9 || digits.length > 15) return res.status(400).json({ error: 'Укажите корректный номер телефона', code: 'bad_phone' });
+  if (!ipAllow('leadcb:' + req.ip, 5, 3600000)) return res.status(429).json({ error: 'Слишком много заявок. Попробуйте позже.', code: 'rate_limit' });
   const gs = portalSettings();
   let lead = leadByPhone(phone);
   const now = nowISO();
   if (!lead) { lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] }; db().leads.push(lead); }
-  else { if (name) lead.name = name; lead.lang = lang; if (lead.status === 'do_not_call') lead.status = 'new'; }
+  else { if (name) lead.name = name; lead.lang = lang; } // НЕ сбрасываем do_not_call автоматически
   lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
   if (lead.requests.length >= 3) { save(); return res.status(429).json({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.', code: 'rate_limit' }); }
   lead.requests.push(now);
   const vcfg = integ.cfgOf(null, 'vapi');
   const salesPhoneId = gs.vapiSalesPhoneId || vcfg.salesPhoneNumberId || '';
+  const optedOut = lead.status === 'do_not_call';
+  const hourKey = Math.floor(Date.now() / 3600000);
+  const guard = (gs.salesCallGuard && gs.salesCallGuard.hour === hourKey) ? gs.salesCallGuard : { hour: hourKey, count: 0 };
+  const CALL_CAP = Number(process.env.SALES_CALL_HOURLY_CAP || gs.salesCallHourlyCap || 40);
   let callId = '';
-  if (vcfg.apiKey && salesPhoneId) {
+  if (vcfg.apiKey && salesPhoneId && !optedOut && guard.count < CALL_CAP) {
     try {
       const secret = gs.vapiInboundSecret || '';
       const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
@@ -1685,7 +1710,7 @@ app.post('/api/leads/callback', async (req, res) => {
       const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
       const d = await r.json().catch(() => ({}));
-      if (r.ok && d.id) callId = d.id;
+      if (r.ok && d.id) { callId = d.id; guard.count += 1; gs.salesCallGuard = guard; }
       else { lead.lastCallError = (d && d.message ? String(Array.isArray(d.message) ? d.message.join('; ') : d.message) : 'HTTP ' + r.status).slice(0, 300); console.error('[sales] call fail', r.status, JSON.stringify(d).slice(0, 200)); }
     } catch (e) { console.error('[sales] call err', e.message); }
   }
@@ -1699,10 +1724,11 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
   const gs = portalSettings();
   const secret = gs.vapiInboundSecret || '';
   const provided = req.headers['x-vapi-secret'] || req.query.key || '';
-  if (!secret || provided !== secret) return res.status(403).json({ error: 'forbidden' });
+  if (!secret || !timingSafeStrEq(provided, secret)) return res.status(403).json({ error: 'forbidden' });
   const msg = (req.body && req.body.message) || {};
   const call = msg.call || (req.body && req.body.call) || {};
-  const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || req.query.caller || '';
+  // Номер только из тела реального звонка Vapi (не из query — иначе поддельный вебхук слал бы SMS на любой номер).
+  const caller = (call.customer && call.customer.number) || (msg.customer && msg.customer.number) || '';
   // Вызов функции из звонка: send_registration_email — реально шлём письмо со ссылкой на регистрацию.
   if (msg.type === 'tool-calls') {
     const results = [];
@@ -2978,6 +3004,7 @@ function kanbanColTitle(key, lang) {
 const PUB = path.join(__dirname, 'public');
 // Прокси видео из Supabase Storage (same-origin, форвард Range) — как на edge.
 app.get(/^\/media\/(.+\.mp4)$/, async (req, res) => {
+  if (req.params[0].includes('..') || req.params[0].startsWith('/')) return res.status(400).end(); // без traversal
   const rel = req.params[0].indexOf('/') >= 0 ? req.params[0] : ('edu/' + req.params[0]);
   const base = (process.env.SUPABASE_URL || 'https://tnemvzaxtgumtvijpfli.supabase.co').replace(/\/+$/, '');
   const src = `${base}/storage/v1/object/public/media/${rel}`;

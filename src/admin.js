@@ -418,7 +418,7 @@ module.exports = function adminApi(app, ctx) {
     if (!u) return res.status(404).json({ error: 'Клиент не найден' });
     if (u.role === 'admin') return res.status(400).json({ error: 'Нельзя войти как другой администратор' });
     if (u.blocked === true) return res.status(400).json({ error: 'Клиент заблокирован' });
-    res.cookie('impersonate_uid', u.id, { signed: true, httpOnly: true, sameSite: 'lax', maxAge: 2 * 3600e3 });
+    res.cookie('impersonate_uid', u.id, { signed: true, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 2 * 3600e3 });
     logAdmin(req, 'impersonate_start', 'user', u.id, {});
     save(); res.json({ ok: true });
   });
@@ -632,6 +632,8 @@ module.exports = function adminApi(app, ctx) {
     const out = JSON.parse(JSON.stringify(gs));
     delete out.stripe; delete out.integrations; // секреты — только через экран интеграций
     delete out.defaultEmailTemplates; delete out.defaultSmsTemplates; delete out.defaultMailTemplates;
+    ['vapiInboundSecret', 'telegramWebhookSecret', 'telegramBotToken', 'cronSecret', 'videoOAuth'].forEach(k => delete out[k]);
+    Object.keys(out).forEach(k => { if (/secret|token|password|apikey|clientsecret/i.test(k)) delete out[k]; });
     res.json({ settings: out, env: { baseUrl: ctx.ENV_BASE_URL, port: ctx.PORT,
       secretIsDefault: SECRET === 'hraipro-dev-secret-change-me' } });
   });
