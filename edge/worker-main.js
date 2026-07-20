@@ -501,10 +501,29 @@ async function api(req, env, url, exec) {
       }
       return j({ results });
     }
-    // Отчёт по завершении: транскрипт, запись, итог → в журнал лида.
+    // Отчёт по завершении: транскрипт, запись, итог → в журнал лида ИЛИ клиента (по metadata звонка).
     if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
       try {
-        if (caller) {
+        const callMeta = (call && call.metadata) || {};
+        if (callMeta.userId) {
+          // Звонок КЛИЕНТА (из карточки клиента) → журнал на аккаунте, НЕ в лиды.
+          const cu = await S.one('users', callMeta.userId);
+          if (cu) {
+            const art = msg.artifact || {}; const rec = art.recording || {}; const a = msg.analysis || {};
+            const callId = call.id || msg.callId || '';
+            cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
+            let entry = callId ? cu.salesCalls.find(e => e.callId === callId) : null;
+            if (!entry) { entry = { callId, kind: callMeta.kind || 'manual', dir: 'out', createdAt: new Date().toISOString() }; cu.salesCalls.push(entry); }
+            entry.status = 'done'; entry.endedAt = new Date().toISOString();
+            entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
+            entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
+            entry.summary = a.summary || msg.summary || entry.summary || '';
+            entry.answers = a.structuredData || entry.answers || null;
+            entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : entry.durationSec || null;
+            if (cu.salesCalls.length > 50) cu.salesCalls = cu.salesCalls.slice(-50);
+            await saveUser(cu);
+          }
+        } else if (caller) {
           let lead = await leadByPhone(caller);
           if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: new Date().toISOString(), aiCallLog: [] }; }
           const art = msg.artifact || {};

@@ -1767,7 +1767,25 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
   }
   if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
     try {
-      if (caller) {
+      const callMeta = (call && call.metadata) || {};
+      if (callMeta.userId) {
+        // Звонок КЛИЕНТА → журнал на аккаунте, не в лиды
+        const cu = db().users.find(x => x.id === callMeta.userId);
+        if (cu) {
+          const art = msg.artifact || {}; const rec = art.recording || {}; const a = msg.analysis || {};
+          const callId = call.id || msg.callId || '';
+          cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
+          let entry = callId ? cu.salesCalls.find(e => e.callId === callId) : null;
+          if (!entry) { entry = { callId, kind: callMeta.kind || 'manual', dir: 'out', createdAt: nowISO() }; cu.salesCalls.push(entry); }
+          entry.status = 'done'; entry.endedAt = nowISO();
+          entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
+          entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
+          entry.summary = a.summary || msg.summary || entry.summary || '';
+          entry.answers = a.structuredData || entry.answers || null;
+          if (cu.salesCalls.length > 50) cu.salesCalls = cu.salesCalls.slice(-50);
+          save();
+        }
+      } else if (caller) {
         let lead = leadByPhone(caller);
         if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: nowISO(), aiCallLog: [] }; db().leads.push(lead); }
         const art = msg.artifact || {}; const rec = art.recording || {}; const a = msg.analysis || {};

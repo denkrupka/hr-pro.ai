@@ -122,8 +122,8 @@ export async function handleAdmin(p, m, ctx) {
     await logAdmin('lead_delete', 'lead', mLead[1]);
     return j({ ok: true });
   }
-  // Ручной ИИ-перезвон Софии: лиду или клиенту, с целью звонка и доп. контекстом от менеджера.
-  const startManualSalesCall = async ({ phone, lang, name, lead, clientUser, goal, extra }) => {
+  // Ручной ИИ-звонок Софии: лиду или клиенту, с целью и доп. контекстом. metadata маршрутизирует отчёт (клиент → user.salesCalls, лид → lead.aiCallLog).
+  const startManualSalesCall = async ({ phone, lang, name, lead, clientUser, goal, extra, metadata }) => {
     const salesPhoneId = env.VAPI_SALES_PHONE_ID || gs.vapiSalesPhoneId || '';
     if (!env.VAPI_API_KEY || !salesPhoneId) throw new Error('Vapi не настроен (номер отдела продаж)');
     const secret = env.VAPI_INBOUND_SECRET || gs.vapiInboundSecret || '';
@@ -135,7 +135,8 @@ export async function handleAdmin(p, m, ctx) {
     } else if (lead) {
       block = salesAgent.leadContext(lead);
     }
-    const hist = lead ? salesAgent.historyBlock(lead) : '';
+    const histSrc = clientUser ? { aiCallLog: clientUser.salesCalls || [] } : lead;
+    const hist = histSrc ? salesAgent.historyBlock(histSrc) : '';
     const extraBlock = extra ? `\nДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ ОТ МЕНЕДЖЕРА (активно используй в разговоре, это твой козырь): ${String(extra).slice(0, 600)}` : '';
     const leadBlock = [block, hist, '\n' + g.prompt + extraBlock].filter(Boolean).join('\n\n');
     const assistant = salesAgent.buildAssistant({ mode: clientUser ? 'client' : 'lead', lang, name: name || '', company: clientUser ? (clientUser.company || '') : '', leadBlock,
@@ -147,8 +148,9 @@ export async function handleAdmin(p, m, ctx) {
         : `Здравствуйте${name ? ', ' + name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`;
     }
     if (secret) assistant.server = { url: base + '/api/vapi/sales-inbound', secret };
-    const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
+    const callBody = { phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant };
+    if (metadata) callBody.metadata = metadata;
+    const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(callBody) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || !d.id) throw new Error('Vapi: ' + ((d && (Array.isArray(d.message) ? d.message.join('; ') : d.message)) || r.status));
     return d.id;
@@ -173,25 +175,39 @@ export async function handleAdmin(p, m, ctx) {
     const cu = await S.one('users', mUserCall[1]);
     if (!cu) return j({ error: 'Не найдено' }, 404);
     const phone = (cu.settings && cu.settings.phone) || '';
-    if (!phone) return j({ error: 'У клиента не указан телефон (Профиль → Телефон)' }, 400);
-    // журнал пишем в связанный лид (создаём converted-лид, если его ещё нет)
-    let lead = null;
-    try {
-      const key = salesAgent.phoneKey(phone);
-      const lr = key ? await S.select('leads', `phone_key=eq.${key}&select=data,phone_key`) : [];
-      lead = lr[0] && lr[0].data;
-    } catch (_) {}
-    if (!lead) lead = { id: uid(12), name: cu.name || '', phone, email: cu.email || '', company: cu.company || '', lang: (cu.settings && cu.settings.uiLang) || 'ru', source: 'manual', status: 'converted', userId: cu.id, createdAt: new Date().toISOString(), aiCallLog: [] };
+    if (!phone) return j({ error: 'У клиента не указан телефон (карточка → Изменить → Телефон)' }, 400);
     try {
       const lang = ['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru';
-      const callId = await startManualSalesCall({ phone, lang, name: cu.name || '', lead, clientUser: cu, goal: body && body.goal, extra: body && body.extra });
-      lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
-      lead.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (body && body.goal) || 'upsell', createdAt: new Date().toISOString(), status: 'calling', lang });
-      const pk = salesAgent.phoneKey(phone);
-      await S.upsert('leads', { id: lead.id, phone_key: pk && pk.length >= 7 ? pk : null, data: lead });
+      // Журнал — на аккаунте клиента (не в лидах). Отчёт вернётся по metadata.userId.
+      const callId = await startManualSalesCall({ phone, lang, name: cu.name || '', clientUser: cu, goal: body && body.goal, extra: body && body.extra, metadata: { kind: 'client', userId: cu.id } });
+      cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
+      cu.salesCalls.push({ callId, kind: 'manual', dir: 'out', goal: (body && body.goal) || 'upsell', createdAt: new Date().toISOString(), status: 'calling', lang });
+      await saveUser(cu);
       await logAdmin('client_call', 'user', cu.id, { goal: body && body.goal });
-      return j({ ok: true, callId, leadId: lead.id });
+      return j({ ok: true, callId });
     } catch (e) { return j({ error: e.message }, 502); }
+  }
+  let mUserCallsR = p.match(/^\/api\/admin\/users\/([\w-]+)\/calls\/refresh$/);
+  if (mUserCallsR && m === 'POST') {
+    const cu = await S.one('users', mUserCallsR[1]);
+    if (!cu) return j({ error: 'Не найдено' }, 404);
+    if (env.VAPI_API_KEY && Array.isArray(cu.salesCalls)) {
+      for (const e of cu.salesCalls) {
+        if (!e.callId) continue;
+        try {
+          const r = await fetch('https://api.vapi.ai/call/' + encodeURIComponent(e.callId), { headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY } });
+          const d = await r.json().catch(() => ({})); if (!r.ok) continue;
+          const art = d.artifact || {}; const rec = art.recording || {}; const a = d.analysis || {};
+          if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          e.transcript = d.transcript || art.transcript || e.transcript || '';
+          e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
+          e.summary = a.summary || e.summary || ''; e.answers = a.structuredData || e.answers || null;
+          if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+        } catch (_) {}
+      }
+      await saveUser(cu);
+    }
+    return j({ calls: cu.salesCalls || [] });
   }
   let mLeadR = p.match(/^\/api\/admin\/leads\/([\w-]+)\/refresh$/);
   if (mLeadR && m === 'POST') {
@@ -320,12 +336,7 @@ export async function handleAdmin(p, m, ctx) {
       const dmap = {}; days.forEach(d => { dmap[d.date] = d; });
       tests.forEach(t => { const s = dmap[dayKey(t.sentAt)]; if (s) s.sent++; const f = dmap[dayKey(t.finishedAt)]; if (t.status === 'done' && f) f.done++; });
       const integFlags = {}; Object.keys(PROVIDERS).forEach(k => { integFlags[k] = !!((u.settings.integrations || {})[k] && Object.keys(u.settings.integrations[k]).length); });
-      // Связанный лид (по userId/телефону) — история звонков Софии на карточке клиента
-      const pk9 = s => String(s || '').replace(/\D/g, '').replace(/^00/, '').slice(-9);
-      const uph = pk9(u.settings.phone);
-      let salesLead = null;
-      try { const leads = (await S.select('leads', 'select=data')).map(r => r.data); const l = leads.find(x => x && (x.userId === u.id || (uph && pk9(x.phone) === uph))); if (l) salesLead = { id: l.id, calls: l.aiCallLog || [] }; } catch (_) {}
-      return j({ user: Object.assign(userItem(u, counters(u.id, tests, vacs, parts, purchases)), { adminNote: u.adminNote || '' }), days, salesLead,
+      return j({ user: Object.assign(userItem(u, counters(u.id, tests, vacs, parts, purchases)), { adminNote: u.adminNote || '' }), days, salesCalls: u.salesCalls || [],
         settings: { uiLang: u.settings.uiLang, timezone: u.settings.timezone, linkDays: u.settings.linkDays, integrations: integFlags,
           jobPortals: Object.keys(u.settings.jobPortals || {}).filter(k => u.settings.jobPortals[k] && Object.keys(u.settings.jobPortals[k]).length) } });
     }

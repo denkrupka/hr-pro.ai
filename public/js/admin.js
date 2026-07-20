@@ -239,6 +239,26 @@ async function openLead(lid) {
     setView('leads');
   };
 }
+// Страница «Звонки ИИ» клиента (как карточка лида: транскрипции, записи, кнопка звонка)
+async function openClientCalls(uid) {
+  let d;
+  try { await api('/api/admin/users/' + uid + '/calls/refresh', { method: 'POST' }).catch(() => null); d = await api('/api/admin/users/' + uid); }
+  catch (e) { return toast(e.message); }
+  const u = d.user; const calls = d.salesCalls || [];
+  $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'clients'));
+  $('#main').innerHTML = `
+    <button class="btn ghost sm reveal" id="back-client" style="margin-bottom:12px">← Карточка клиента</button>
+    <div class="topbar reveal"><div><div class="eyebrow">Клиент · звонки ИИ</div>
+      <h1 class="page-h" style="margin-top:8px">${esc((u.name + ' ' + u.surname).trim() || u.email)}</h1>
+      <div class="muted" style="font-size:13px">${esc(u.email)}${u.phone ? ' · ' + esc(u.phone) : ''}</div></div>
+      <button class="btn" id="cc-call">📞 Позвонить (ИИ)</button></div>
+    <div class="reveal d1" style="margin-top:14px"><h3 style="margin:0 0 12px">История звонков (${calls.length})</h3>${callLogHtml(calls)}</div>`;
+  $('#back-client').onclick = () => openClient(uid);
+  $('#cc-call').onclick = () => {
+    if (!u.phone) return alert('У клиента не указан телефон — добавьте через «Изменить» в карточке.');
+    openAiCallForm({ type: 'client', id: u.id, name: u.name || u.email, phone: u.phone, onDone: () => openClientCalls(uid) });
+  };
+}
 // Редактирование данных лида
 function openLeadEditForm(l) {
   const f = (id, label, val, type) => `<div style="margin-bottom:10px"><label class="lbl">${label}</label><input class="field" id="${id}" value="${esc(val || '')}" ${type ? `type="${type}"` : ''} autocomplete="off"></div>`;
@@ -295,10 +315,11 @@ function openAiCallForm(opts) {
     const body = { goal: $('#aic-goal').value, extra: $('#aic-extra').value.trim() };
     const urlp = opts.type === 'client' ? ('/api/admin/users/' + opts.id + '/call') : ('/api/admin/leads/' + opts.id + '/call');
     try {
-      const r = await api(urlp, { method: 'POST', body: JSON.stringify(body) });
+      await api(urlp, { method: 'POST', body: JSON.stringify(body) });
       closeModal();
       alert('София набирает номер…');
-      if (opts.type === 'lead') openLead(opts.id); else if (r.leadId) openLead(r.leadId);
+      if (opts.onDone) opts.onDone();
+      else if (opts.type === 'lead') openLead(opts.id);
     } catch (e) { btn.disabled = false; btn.textContent = 'Позвонить сейчас'; alert(e.message); }
   };
 }
@@ -391,7 +412,7 @@ async function openClient(uid, tab) {
     <div class="row reveal d1" style="gap:8px;margin-top:12px;flex-wrap:wrap">
       <button class="btn soft sm" id="c-edit">Изменить</button>
       <button class="btn soft sm" id="c-balance">± Баланс</button>
-      <button class="btn soft sm" id="c-aicall">📞 Позвонить (ИИ)</button>
+      <button class="btn soft sm" id="c-aicall">📞 Звонки ИИ${(d.salesCalls || []).length ? ' (' + d.salesCalls.length + ')' : ''}</button>
       ${u.role !== 'admin' && !u.blocked ? '<button class="btn ghost sm" id="c-imp">Войти как клиент</button>' : ''}
       <button class="btn ghost sm" id="c-pwd">Сбросить пароль</button>
       ${isSelf || u.role === 'admin' ? '' : (u.blocked
@@ -407,14 +428,8 @@ async function openClient(uid, tab) {
       <div class="adm-stat"><b>${c.testsSent} / ${c.testsDone}</b><span>Тестов отправлено / пройдено</span></div>
       <div class="adm-stat"><b>${money(c.revenue, state.currency)}</b><span>Покупок на сумму (${c.purchases})</span></div>
     </div>
-    ${d.salesLead && (d.salesLead.calls || []).length ? `<div class="reveal d2" style="margin-top:16px">
-      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px">
-        <h3 style="margin:0">📞 Звонки Софии (${d.salesLead.calls.length})</h3>
-        <button class="btn ghost sm" id="c-calls-open">Открыть лид →</button></div>
-      ${callLogHtml(d.salesLead.calls)}</div>` : ''}
     <div class="settabs reveal d2">${tabs.map(([k, l]) => `<button class="seg-tab ${clientTab === k ? 'on' : ''}" data-ctab="${k}">${l}</button>`).join('')}</div>
     <div class="reveal d2" id="client-body"><p class="muted">Загрузка…</p></div>`;
-  { const b = $('#c-calls-open'); if (b && d.salesLead) b.onclick = () => openLead(d.salesLead.id); }
   $('#back-clients').onclick = () => setView('clients');
   $$('[data-ctab]').forEach(b => b.onclick = () => openClient(uid, b.dataset.ctab));
   // --- модалки шапки ---
@@ -442,7 +457,7 @@ async function openClient(uid, tab) {
       } catch (e) { toast(e.message); }
     };
   };
-  { const b = $('#c-aicall'); if (b) b.onclick = () => openAiCallForm({ type: 'client', id: u.id, name: u.name || u.email, phone: u.phone || '' }); }
+  { const b = $('#c-aicall'); if (b) b.onclick = () => openClientCalls(u.id); }
   $('#c-balance').onclick = () => {
     openModal(`<h2 style="margin:0 0 6px">Изменение баланса</h2>
       <p class="muted" style="margin:0 0 14px">Текущий баланс: <b>${u.balanceAvailable}</b> доступно / <b>${u.balancePending}</b> в брони</p>
