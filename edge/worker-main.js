@@ -376,15 +376,23 @@ async function api(req, env, url, exec) {
     try {
       const rows = await S.select('leads', 'select=data');
       const em = String(u.email || '').toLowerCase();
-      let changed = false;
+      const uph = (u.settings && u.settings.phone) ? salesAgent.phoneKey(u.settings.phone) : '';
+      let changed = false, userChanged = false;
       for (const r of (rows || [])) {
         const l = r.data;
         if (!l || l.userId) continue;
-        if ((l.email && l.email.toLowerCase() === em) || (u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) && salesAgent.phoneKey(l.phone) === salesAgent.phoneKey(u.settings.phone))) {
+        if ((l.email && l.email.toLowerCase() === em) || (uph && salesAgent.phoneKey(l.phone) === uph)) {
+          // переносим историю звонков лида в аккаунт (дедуп по callId) — вкладка «Звонки ИИ» покажет всё
+          u.salesCalls = Array.isArray(u.salesCalls) ? u.salesCalls : [];
+          const seen = new Set(u.salesCalls.map(e => e.callId).filter(Boolean));
+          (l.aiCallLog || []).forEach(e => { if (!e.callId || !seen.has(e.callId)) u.salesCalls.push(e); });
+          if (!u.settings) u.settings = {};
+          if (!u.settings.phone && l.phone) u.settings.phone = l.phone;
           l.userId = u.id; l.status = 'converted'; l.convertedAt = new Date().toISOString();
-          await saveLead(l); changed = true;
+          await saveLead(l); changed = true; userChanged = true;
         }
       }
+      if (userChanged) { try { await saveUser(u); } catch (_) {} }
       return changed;
     } catch (_) { return false; }
   };
@@ -505,15 +513,16 @@ async function api(req, env, url, exec) {
     if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
       try {
         const callMeta = (call && call.metadata) || {};
-        if (callMeta.userId) {
-          // Звонок КЛИЕНТА (из карточки клиента) → журнал на аккаунте, НЕ в лиды.
-          const cu = await S.one('users', callMeta.userId);
-          if (cu) {
+        // Клиент: либо ручной звонок с metadata.userId, либо входящий с номера зарегистрированного клиента.
+        const cu = callMeta.userId ? await S.one('users', callMeta.userId) : (caller ? await clientByPhone(caller) : null);
+        if (cu) {
+          {
+            // Журнал звонка КЛИЕНТА → на аккаунте, НЕ в лиды.
             const art = msg.artifact || {}; const rec = art.recording || {}; const a = msg.analysis || {};
             const callId = call.id || msg.callId || '';
             cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
             let entry = callId ? cu.salesCalls.find(e => e.callId === callId) : null;
-            if (!entry) { entry = { callId, kind: callMeta.kind || 'manual', dir: 'out', createdAt: new Date().toISOString() }; cu.salesCalls.push(entry); }
+            if (!entry) { entry = { callId, kind: callMeta.kind || (callMeta.userId ? 'manual' : 'inbound'), dir: callMeta.userId ? 'out' : 'in', createdAt: new Date().toISOString() }; cu.salesCalls.push(entry); }
             entry.status = 'done'; entry.endedAt = new Date().toISOString();
             entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
             entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;

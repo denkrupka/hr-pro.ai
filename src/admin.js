@@ -55,7 +55,8 @@ module.exports = function adminApi(app, ctx) {
   // ---------- Лиды отдела продаж ----------
   const salesAgentAdm = require('./sales-agent');
   app.get('/api/admin/leads', requireAdmin, (req, res) => {
-    const rows = db().leads || [];
+    // Сконвертированные лиды (уже клиенты) в списке лидов НЕ показываем — они только в «Клиентах».
+    const rows = (db().leads || []).filter(l => !l.userId);
     const qq = String(req.query.q || '').toLowerCase().trim();
     const st = String(req.query.status || 'all');
     let list = rows;

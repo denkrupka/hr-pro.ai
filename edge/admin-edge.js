@@ -58,7 +58,8 @@ export async function handleAdmin(p, m, ctx) {
 
   // ── Лиды (заявки на перезвон с лендинга + входящие в отдел продаж) ──
   if (p === '/api/admin/leads' && m === 'GET') {
-    const rows = (await S.select('leads', 'select=data')).map(r => r.data).filter(Boolean);
+    // Сконвертированные лиды (уже клиенты) в списке лидов НЕ показываем — они только в «Клиентах».
+    const rows = (await S.select('leads', 'select=data')).map(r => r.data).filter(l => l && !l.userId);
     const qq = String(q.get('q') || '').toLowerCase().trim();
     const st = String(q.get('status') || 'all');
     let list = rows;

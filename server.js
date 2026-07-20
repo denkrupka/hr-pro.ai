@@ -1668,10 +1668,17 @@ function clientByPhone(phone) {
 // Авто-конверсия лид → клиент (email из звонка Софии или телефон профиля).
 function convertLeadsForUser(u) {
   const em = String(u.email || '').toLowerCase();
+  const uph = (u.settings && u.settings.phone) ? salesAgent.phoneKey(u.settings.phone) : '';
   let changed = false;
   db().leads.forEach(l => {
     if (l.userId) return;
-    if ((l.email && l.email.toLowerCase() === em) || (u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) && salesAgent.phoneKey(l.phone) === salesAgent.phoneKey(u.settings.phone))) {
+    if ((l.email && l.email.toLowerCase() === em) || (uph && salesAgent.phoneKey(l.phone) === uph)) {
+      // переносим историю звонков лида в аккаунт клиента (дедуп по callId), чтобы вкладка «Звонки ИИ» показывала всё
+      u.salesCalls = Array.isArray(u.salesCalls) ? u.salesCalls : [];
+      const seen = new Set(u.salesCalls.map(e => e.callId).filter(Boolean));
+      (l.aiCallLog || []).forEach(e => { if (!e.callId || !seen.has(e.callId)) u.salesCalls.push(e); });
+      if (!u.settings) u.settings = {};
+      if (!u.settings.phone && l.phone) u.settings.phone = l.phone; // подтянем телефон из лида
       l.userId = u.id; l.status = 'converted'; l.convertedAt = nowISO(); changed = true;
     }
   });
@@ -1768,15 +1775,15 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
   if (msg.type === 'end-of-call-report' || (msg.type === 'status-update' && msg.status === 'ended')) {
     try {
       const callMeta = (call && call.metadata) || {};
-      if (callMeta.userId) {
-        // Звонок КЛИЕНТА → журнал на аккаунте, не в лиды
-        const cu = db().users.find(x => x.id === callMeta.userId);
-        if (cu) {
+      // Клиент: ручной звонок (metadata.userId) ИЛИ входящий с номера зарегистрированного клиента
+      const cu = callMeta.userId ? db().users.find(x => x.id === callMeta.userId) : (caller ? clientByPhone(caller) : null);
+      if (cu) {
+        {
           const art = msg.artifact || {}; const rec = art.recording || {}; const a = msg.analysis || {};
           const callId = call.id || msg.callId || '';
           cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
           let entry = callId ? cu.salesCalls.find(e => e.callId === callId) : null;
-          if (!entry) { entry = { callId, kind: callMeta.kind || 'manual', dir: 'out', createdAt: nowISO() }; cu.salesCalls.push(entry); }
+          if (!entry) { entry = { callId, kind: callMeta.kind || (callMeta.userId ? 'manual' : 'inbound'), dir: callMeta.userId ? 'out' : 'in', createdAt: nowISO() }; cu.salesCalls.push(entry); }
           entry.status = 'done'; entry.endedAt = nowISO();
           entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
           entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
