@@ -15,6 +15,17 @@ function phoneKey(s) {
   return d.slice(-9);
 }
 
+// В E.164 для звонка: 9 цифр без кода → польский +48; 00XX → +XX; иначе + и цифры.
+function toE164(s) {
+  const raw = String(s || '').trim();
+  let d = raw.replace(/\D/g, '');
+  if (d.startsWith('00')) d = d.slice(2);
+  if (d.length === 9) return '+48' + d;              // локальный польский без кода
+  if (d.length === 11 && d.startsWith('48')) return '+' + d;
+  if (raw.startsWith('+')) return '+' + d;
+  return '+' + d;
+}
+
 // ── БАЗА ЗНАНИЙ О ПРОДУКТЕ (полная — агент отвечает на любой вопрос о портале) ──
 function knowledgeBlock(plansText) {
   return `
@@ -250,4 +261,4 @@ function applyCallResult(lead, { summary, sd, transcript }) {
   return lead;
 }
 
-module.exports = { agentName, phoneKey, buildAssistant, leadContext, applyCallResult, SALES_SCHEMA, SALES_SUMMARY };
+module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, applyCallResult, SALES_SCHEMA, SALES_SUMMARY };

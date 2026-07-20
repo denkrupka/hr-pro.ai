@@ -395,10 +395,10 @@ async function api(req, env, url, exec) {
         let secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
         if (secret) assistant.server = { url: url.origin + '/api/vapi/sales-inbound', secret };
         const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: phone.startsWith('+') ? phone : '+' + digits }, assistant }) });
+          body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant }) });
         const d = await r.json().catch(() => ({}));
         if (r.ok && d.id) { callId = d.id; }
-        else console.log('sales call fail', r.status, JSON.stringify(d).slice(0, 200));
+        else { lead.lastCallError = (d && d.message ? String(Array.isArray(d.message) ? d.message.join('; ') : d.message) : 'HTTP ' + r.status).slice(0, 300); }
       } catch (e) { console.log('sales call err', e && e.message); }
     }
     lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
