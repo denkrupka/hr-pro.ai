@@ -3233,7 +3233,16 @@ function decodeBtn(testId, m, status) {
   if (status === 'error') return `<button class="db-btn error" onclick="startDecode('${testId}','${m.kind}',true)" title="Повторить генерацию">${DBICO.retry} ${L} — ошибка</button>`;
   return `<button class="db-btn" onclick="onDecodeClick('${testId}','${m.kind}')">${ic} ${L}</button>`;
 }
-function openDecodePage(testId, kind) { window.open('/decode/' + testId + '/' + kind + '?lang=' + LANG, '_blank'); }
+// Открыть готовую расшифровку в модалке (полный текст, можно прочесть целиком). Ссылка «в новой вкладке» тоже есть.
+function openDecodePage(testId, kind) {
+  const url = '/decode/' + testId + '/' + kind + '?lang=' + LANG;
+  const all = [{ kind: 'full', label: 'Полная расшифровка' }, { kind: 'manual', label: 'Инструкция по эксплуатации' }, { kind: 'presentation', label: 'Сценарий предоставления оценки' }, { kind: 'productivity', label: 'Анализ продуктивности' }];
+  const label = (all.find(x => x.kind === kind) || {}).label || 'AI-расшифровка';
+  mkDecodeModal(`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:-2px 40px 12px 0">
+      <h3 class="db-h" style="margin:0">${esc(label)}</h3>
+      <a class="btn ghost sm" href="${url}" target="_blank" rel="noopener" style="white-space:nowrap">В новой вкладке ↗</a></div>
+    <iframe src="${url}" style="width:100%;height:76vh;border:0;border-radius:12px;background:#0b0d18;display:block" title="${esc(label)}"></iframe>`, 'wide');
+}
 function decodeContextComplete(ctx) {
   ctx = ctx || {};
   return !!ctx.roleType && !!(ctx.vacancy || '').trim() && !!(ctx.duties || '').trim();
@@ -3248,15 +3257,15 @@ function onDecodeClick(testId, kind) {
   startDecode(testId, kind);
 }
 async function startDecode(testId, kind, regenerate) {
-  // Сразу показываем «генерируется…» — запрос синхронный и может идти 1–2 минуты.
+  // Сразу показываем «генерируется…»; опрос запускаем НЕЗАВИСИМО от синхронного запроса
+  // (генерация 1–2 мин, длинный POST может оборваться — poll подхватит готовность и подсветит кнопку зелёным).
   try { decodeState.states = decodeState.states || {}; decodeState.states[kind] = { status: 'pending' }; renderDecodeBtns(testId, decodeState); } catch (e) {}
-  toast('Генерация запущена — займёт 1–2 минуты, дождитесь готовности.');
+  toast('Генерация запущена — 1–2 минуты. Кнопка станет зелёной по готовности.');
+  startDecodePoll(testId);
   try {
-    const r = await api('/api/decode/' + testId + '/' + kind, { method: 'POST', body: JSON.stringify({ regenerate: !!regenerate, lang: LANG }) });
-    await initDecodeBar(testId, decodeState.type);
-    if (r.status === 'done') { openDecodePage(testId, kind); return; }
-    startDecodePoll(testId);
-  } catch (e) { toast((e && e.message) || 'Ошибка запуска'); try { await initDecodeBar(testId, decodeState.type); } catch (e2) {} }
+    await api('/api/decode/' + testId + '/' + kind, { method: 'POST', body: JSON.stringify({ regenerate: !!regenerate, lang: LANG }) });
+    await initDecodeBar(testId, decodeState.type); // мгновенно обновит статус, если запрос успел вернуться
+  } catch (e) { /* долгий запрос оборвался — poll уже работает и подсветит кнопку по готовности */ }
 }
 function startDecodePoll(testId) {
   if (decodePoll) clearInterval(decodePoll);

@@ -1829,6 +1829,8 @@ async function api(req, env, url, exec) {
       if (cur && cur.status === 'pending' && !stalePending) return j({ status: 'pending' });
       if (cur && cur.status === 'done' && !(body && body.regenerate)) return j({ status: 'done' });
       const lang = langOf();
+      // Сразу помечаем pending+startedAt, чтобы опрос показывал «генерируется…» и подсветил кнопку зелёным по готовности.
+      try { const pre = await S.one('tests', test.id) || test; pre.decodes = pre.decodes || {}; pre.decodes[kind] = { status: 'pending', startedAt: new Date().toISOString(), lang }; await S.upsert('tests', { id: pre.id, data: pre }); } catch (_) {}
       // Синхронная генерация: Cloudflare обрывает фоновые waitUntil-задачи, поэтому держим
       // I/O-запрос открытым до готовности расшифровки и возвращаем финальный статус.
       await runDecodeBackground(env, S, test.id, kind, lang);
