@@ -321,7 +321,7 @@ async function getCall(settings, callId) {
   const a = (d && d.analysis) || {};
   const art = (d && d.artifact) || {};
   const rec = art.recording || {};
-  const recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || null;
+  const recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || null;
   const startedAt = d.startedAt || null, endedAt = d.endedAt || null;
   const durationSec = (startedAt && endedAt) ? Math.max(0, Math.round((new Date(endedAt) - new Date(startedAt)) / 1000)) : (d.durationSeconds || null);
   const endedReason = d && d.endedReason;

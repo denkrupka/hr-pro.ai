@@ -92,7 +92,20 @@ async function currentUser(env, req) {
   const uid = await readSigned(env, c.uid);
   if (!uid) return null;
   const rows = await supa(env).select('users', `id=eq.${uid}&select=data`);
-  return rows[0] ? rows[0].data : null;
+  const u = rows[0] ? rows[0].data : null;
+  // Имперсонация: админ с cookie impersonate_uid видит кабинет клиента (кроме админ-маршрутов — там остаётся админом).
+  if (u && u.role === 'admin' && c.impersonate_uid) {
+    const path = (() => { try { return new URL(req.url).pathname; } catch (_) { return ''; } })();
+    if (!path.startsWith('/api/admin/')) {
+      const impId = await readSigned(env, c.impersonate_uid);
+      if (impId) {
+        const ir = await supa(env).select('users', `id=eq.${impId}&select=data`);
+        const client = ir[0] ? ir[0].data : null;
+        if (client && client.role !== 'admin') return client;
+      }
+    }
+  }
+  return u;
 }
 function publicUser(u) {
   const s = u.settings || {};
@@ -377,16 +390,16 @@ async function api(req, env, url, exec) {
     const lang = ['ru', 'pl', 'en'].includes(body && body.lang) ? body.lang : 'ru';
     if (body && body.website) return j({ ok: true }); // honeypot: боты заполняют скрытое поле
     const digits = phone.replace(/\D/g, '');
-    if (digits.length < 9 || digits.length > 15) return j({ error: 'Укажите корректный номер телефона' }, 400);
+    if (digits.length < 9 || digits.length > 15) return j({ error: 'Укажите корректный номер телефона', code: 'bad_phone' }, 400);
     const pt = await settings();
     const salesPhoneId = env.VAPI_SALES_PHONE_ID || pt.vapiSalesPhoneId || '';
     let lead = await leadByPhone(phone);
     const now = new Date().toISOString();
     if (!lead) lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] };
-    else { if (name) lead.name = name; lead.lang = lang; }
+    else { if (name) lead.name = name; lead.lang = lang; if (lead.status === 'do_not_call') lead.status = 'new'; }
     // Антиспам: не чаще 3 заявок в час с одного номера.
     lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
-    if (lead.requests.length >= 3) return j({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.' }, 429);
+    if (lead.requests.length >= 3) return j({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.', code: 'rate_limit' }, 429);
     lead.requests.push(now);
     let callId = '';
     if (env.VAPI_API_KEY && salesPhoneId) {
@@ -480,7 +493,7 @@ async function api(req, env, url, exec) {
           entry.status = 'done';
           entry.endedAt = new Date().toISOString();
           entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
-          entry.recordingUrl = msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
+          entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
           entry.summary = a.summary || msg.summary || entry.summary || '';
           entry.answers = a.structuredData || entry.answers || null;
           entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : entry.durationSec || null;
@@ -488,6 +501,47 @@ async function api(req, env, url, exec) {
           // Email прозвучал → попробуем сразу привязать к клиенту (если уже зарегистрирован).
           if (lead.email && !lead.userId) {
             try { const ur = await S.select('users', `email=eq.${encodeURIComponent(lead.email)}&select=data`); if (ur[0] && ur[0].data) { lead.userId = ur[0].data.id; lead.status = 'converted'; lead.convertedAt = new Date().toISOString(); } } catch (_) {}
+          }
+          const endedReason = msg.endedReason || (msg.call && msg.call.endedReason) || call.endedReason || '';
+          // Просил живого менеджера → уведомляем админов портала (email + Telegram)
+          if (salesAgent.wantsManager(entry.answers, entry.transcript) && !entry._mgrNotified) {
+            entry._mgrNotified = true;
+            try {
+              const admins = (await S.select('users', 'select=data')).map(r => r.data).filter(u => u && u.role === 'admin' && !u.blocked);
+              const reason = (entry.answers && entry.answers.manager_reason) || '';
+              const bodyHtml = `<b>Лид:</b> ${(lead.name || '—')}<br><b>Телефон:</b> ${lead.phone}<br>${lead.email ? '<b>Email:</b> ' + lead.email + '<br>' : ''}${lead.company ? '<b>Компания:</b> ' + lead.company + '<br>' : ''}${reason ? '<b>Вопрос:</b> ' + String(reason).replace(/</g, '&lt;') + '<br>' : ''}${entry.summary ? '<br><b>Итог разговора:</b><br>' + String(entry.summary).slice(0, 800).replace(/</g, '&lt;').replace(/\n/g, '<br>') : ''}`;
+              const nn = await nenv();
+              for (const adm of admins) {
+                if (env.RESEND_API_KEY && adm.email) {
+                  const html = wrapEmailEdge({ lang: 'ru', baseUrl: (env.BASE_URL || url.origin), subject: 'Лид просит менеджера — отдел продаж', eyebrow: 'Отдел продаж', headline: 'Лид просит живого менеджера', bodyHtml });
+                  try { await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [adm.email], subject: 'Лид просит менеджера: ' + (lead.name || lead.phone), html }) }); } catch (_) {}
+                }
+                if (nn.TELEGRAM_BOT_TOKEN && adm.settings && adm.settings.telegram && adm.settings.telegram.chatId) {
+                  try { await fetch('https://api.telegram.org/bot' + nn.TELEGRAM_BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: adm.settings.telegram.chatId, text: '📞 <b>Лид просит менеджера</b>\n' + (lead.name || '') + '\n📞 ' + lead.phone + (reason ? '\nВопрос: ' + reason : ''), parse_mode: 'HTML' }) }); } catch (_) {}
+                }
+              }
+            } catch (_) {}
+          }
+          // Технический обрыв разговора → автоматически перезваниваем (1 раз на звонок; и для входящих тоже)
+          if (!entry._redialed && !['refused', 'do_not_call', 'registered', 'converted'].includes(lead.status)
+            && salesAgent.wasInterrupted({ endedReason, transcript: entry.transcript, durationSec: entry.durationSec, sd: entry.answers })) {
+            entry._redialed = true;
+            try {
+              const pt2 = await settings();
+              const salesPhoneId2 = env.VAPI_SALES_PHONE_ID || pt2.vapiSalesPhoneId || '';
+              if (env.VAPI_API_KEY && salesPhoneId2) {
+                const lg = ['ru', 'pl', 'en'].includes(lead.lang) ? lead.lang : 'ru';
+                let secret2 = env.VAPI_INBOUND_SECRET || pt2.vapiInboundSecret || '';
+                const assistant2 = salesAgent.buildAssistant({ mode: 'lead', lang: lg, name: lead.name || '', plans: pt2.plans, currency: pt2.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
+                  toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret2,
+                  leadBlock: salesAgent.leadContext(lead) + '\n\nВАЖНО: ваш предыдущий разговор ТОЛЬКО ЧТО ПРЕРВАЛСЯ по технической причине (связь оборвалась). Ты перезваниваешь. Начни с короткого извинения за обрыв связи и ПРОДОЛЖИ разговор с того места, где остановились (см. итог выше) — не начинай сначала.' });
+                if (secret2) assistant2.server = { url: url.origin + '/api/vapi/sales-inbound', secret: secret2 };
+                const rr = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ phoneNumberId: salesPhoneId2, customer: { number: salesAgent.toE164(lead.phone) }, assistant: assistant2 }) });
+                const rd = await rr.json().catch(() => ({}));
+                if (rr.ok && rd.id) lead.aiCallLog.push({ callId: rd.id, kind: 'redial', dir: 'out', createdAt: new Date().toISOString(), status: 'calling', lang: lg });
+              }
+            } catch (_) {}
           }
           await saveLead(lead);
         }
@@ -686,14 +740,27 @@ async function api(req, env, url, exec) {
     return j({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
   }
 
-  if (p === '/api/logout' && m === 'POST')
-    return j({ ok: true }, 200, { 'set-cookie': 'uid=; Path=/; Max-Age=0' });
+  if (p === '/api/logout' && m === 'POST') {
+    const hh = new Headers({ 'content-type': 'application/json' });
+    hh.append('set-cookie', 'uid=; Path=/; Max-Age=0');
+    hh.append('set-cookie', 'impersonate_uid=; Path=/; Max-Age=0');
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: hh });
+  }
 
   if (p === '/api/me') {
     const u = await currentUser(env, req);
     if (!u) return j({ error: 'Не авторизован' }, 401);
     if (expireBalance(u) > 0) await S.upsert('users', { id: u.id, data: u });
-    return j({ user: publicUser(u) });
+    // Имперсонация: сообщаем фронту, кто «настоящий» админ (для баннера выхода)
+    let impBy;
+    try {
+      const cc = parseCookies(req.headers.get('cookie'));
+      if (cc.impersonate_uid) {
+        const realId = await readSigned(env, cc.uid);
+        if (realId && realId !== u.id) { const admin = await S.one('users', realId); if (admin && admin.role === 'admin') impBy = admin.email; }
+      }
+    } catch (_) {}
+    return j({ user: publicUser(u), impersonatedBy: impBy });
   }
 
   if (p === '/api/onboarding' && m === 'POST') {
@@ -1920,6 +1987,14 @@ async function api(req, env, url, exec) {
       } catch (_) {}
     };
     if (p === '/api/calendar' && m === 'GET') { if (!me) return needAuth(); return j({ events: me.calendar || [] }); }
+    // Персональная ссылка ICS-фида для подписки во внешних календарях
+    if (p === '/api/calendar/feed' && m === 'GET') {
+      if (!me) return needAuth();
+      if (!me.settings) me.settings = {};
+      if (!me.settings.calFeedToken) { me.settings.calFeedToken = shortCode(16).toLowerCase(); await saveUser(me); }
+      const feed = (env.BASE_URL || url.origin).replace(/\/+$/, '') + '/cal/' + me.settings.calFeedToken + '/interviews.ics';
+      return j({ url: feed, webcal: feed.replace(/^https?:/, 'webcal:') });
+    }
     if (p === '/api/calendar' && m === 'POST') {
       if (!me) return needAuth();
       me.calendar = me.calendar || [];
@@ -2765,6 +2840,31 @@ export default {
       const items = jobs.map(x => `  <job>\n    <title><![CDATA[${x.v.name}]]></title>\n    <date><![CDATA[${x.v.createdAt || new Date().toISOString()}]]></date>\n    <referencenumber><![CDATA[${x.v.id}]]></referencenumber>\n    <url><![CDATA[${x.url}]]></url>\n    <company><![CDATA[${user.company || ''}]]></company>\n    <city><![CDATA[]]></city>\n    <country><![CDATA[PL]]></country>\n    <description><![CDATA[${x.desc}]]></description>\n  </job>`).join('\n');
       const xml = `<?xml version="1.0" encoding="utf-8"?>\n<source>\n  <publisher><![CDATA[${user.company || 'HR PRO AI'}]]></publisher>\n  <publisherurl><![CDATA[${base}]]></publisherurl>\n  <lastBuildDate><![CDATA[${new Date().toISOString()}]]></lastBuildDate>\n${items}\n</source>`;
       return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
+    }
+
+    // Подписка на календарь собеседований (ICS) — Google/Outlook/Apple подтягивают события сами.
+    const mCalFeed = url.pathname.match(/^\/cal\/([\w-]+)\/interviews\.ics$/);
+    if (mCalFeed) {
+      const S2 = supa(env);
+      const rows = await S2.select('users', `data->settings->>calFeedToken=eq.${mCalFeed[1]}&select=data`).catch(() => []);
+      const user = rows[0] && rows[0].data;
+      if (!user) return new Response('Not found', { status: 404 });
+      const escI = s => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+      const evs = (user.calendar || []).filter(e => e.date);
+      const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HR PRO AI//Interviews//RU', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+        'X-WR-CALNAME:HR PRO AI — собеседования', 'REFRESH-INTERVAL;VALUE=DURATION:PT30M', 'X-PUBLISHED-TTL:PT30M'];
+      const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+      for (const e of evs) {
+        const dt = e.date.replace(/-/g, '') + 'T' + String(e.time || '10:00').replace(':', '').padStart(4, '0') + '00';
+        const endD = (() => { const [hh, mm] = String(e.time || '10:00').split(':').map(Number); const t = new Date(2000, 0, 1, hh, mm + 60); return e.date.replace(/-/g, '') + 'T' + String(t.getHours()).padStart(2, '0') + String(t.getMinutes()).padStart(2, '0') + '00'; })();
+        lines.push('BEGIN:VEVENT', 'UID:' + e.id + '@hr-pro.ai', 'DTSTAMP:' + stamp,
+          'DTSTART:' + dt, 'DTEND:' + endD,
+          'SUMMARY:' + escI('Собеседование: ' + (e.candidate || '') + (e.role ? ' — ' + e.role : '')),
+          'DESCRIPTION:' + escI([e.interviewer ? 'Интервьюер: ' + e.interviewer : '', e.meetingLink || '', e.note || ''].filter(Boolean).join('\n')),
+          'LOCATION:' + escI(e.meetingLink || ''), 'END:VEVENT');
+      }
+      lines.push('END:VCALENDAR');
+      return new Response(lines.join('\r\n'), { headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Cache-Control': 'no-cache' } });
     }
 
     // Прокси видео-уроков из Supabase Storage (bucket media/edu) — same-origin + корректные Range/кэш.

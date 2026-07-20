@@ -125,7 +125,7 @@ async function renderAdmDashboard() {
 // ---------- Лиды отдела продаж ----------
 const LEAD_ST = {
   new: ['Новый', 'st-on'], no_answer: ['Не дозвонились', 'st-off'], talked: ['Поговорили', 'm-stripe'],
-  callback: ['Перезвонить', 'm-demo'], registered: ['Регистрируется', 'st-on'], refused: ['Отказ', 'st-off'], converted: ['Клиент ✓', 'st-on'],
+  callback: ['Перезвонить', 'm-demo'], registered: ['Регистрируется', 'st-on'], refused: ['Отказ', 'st-off'], do_not_call: ['Не звонить', 'st-off'], converted: ['Клиент ✓', 'st-on'],
 };
 const leadStBadge = s => { const [t, c] = LEAD_ST[s] || [s || 'new', '']; return `<span class="blk ${c}">${t}</span>`; };
 const LEAD_SRC = { callback: 'Кнопка «Перезвоним»', inbound: 'Входящий звонок', landing_popup: 'Лид-магнит (email)', manual: 'Добавлен вручную' };
@@ -211,7 +211,7 @@ async function openLead(lid) {
     <button class="btn ghost sm reveal" id="back-leads" style="margin-bottom:12px">← Лиды</button>
     <div class="topbar reveal"><div><div class="eyebrow">Лид · ${esc(LEAD_SRC[l.source] || l.source || '')}</div>
       <h1 class="page-h" style="margin-top:8px">${esc(l.name || l.phone || l.email || 'Лид')}</h1></div>
-      <div class="row" style="gap:8px">${leadStBadge(l.status)}<button class="btn ghost danger sm" id="lead-del">Удалить</button></div></div>
+      <div class="row" style="gap:8px">${leadStBadge(l.status)}<button class="btn ghost sm" id="lead-edit">✎ Редактировать</button><button class="btn ghost danger sm" id="lead-del">Удалить</button></div></div>
     <div class="dash-grid reveal d1" style="grid-template-columns:320px 1fr;align-items:start">
       <div class="card">
         <h3 style="margin:0 0 12px">Контакты</h3>
@@ -226,10 +226,32 @@ async function openLead(lid) {
     </div>`;
   $('#back-leads').onclick = () => setView('leads');
   const oc = $('#lead-open-client'); if (oc && user) oc.onclick = () => openClient(user.id);
+  $('#lead-edit').onclick = () => openLeadEditForm(l);
   $('#lead-del').onclick = async () => {
     if (!confirm('Удалить лид и всю историю звонков?')) return;
     await api('/api/admin/leads/' + lid, { method: 'DELETE' });
     setView('leads');
+  };
+}
+// Редактирование данных лида
+function openLeadEditForm(l) {
+  const f = (id, label, val, type) => `<div style="margin-bottom:10px"><label class="lbl">${label}</label><input class="field" id="${id}" value="${esc(val || '')}" ${type ? `type="${type}"` : ''} autocomplete="off"></div>`;
+  openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">Редактировать лид</h2></div>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('el-name', 'Имя', l.name)}</div><div style="flex:1">${f('el-company', 'Компания', l.company)}</div></div>
+    <div class="row" style="gap:12px"><div style="flex:1">${f('el-phone', 'Телефон', l.phone, 'tel')}</div><div style="flex:1">${f('el-email', 'Email', l.email, 'email')}</div></div>
+    <div class="row" style="gap:12px">
+      <div style="flex:1"><label class="lbl">Язык</label><select class="field" id="el-lang">${['ru', 'pl', 'en'].map(x => `<option value="${x}" ${l.lang === x ? 'selected' : ''}>${x.toUpperCase()}</option>`).join('')}</select></div>
+      <div style="flex:1"><label class="lbl">Статус</label><select class="field" id="el-status">${Object.entries(LEAD_ST).map(([k, v]) => `<option value="${k}" ${(l.status || 'new') === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></div></div>
+    ${f('el-interest', 'Интерес / заметка', l.interest)}
+    ${f('el-callback', 'Перезвонить (когда)', l.callbackWhen)}
+    <div class="row" style="gap:8px;margin-top:14px"><button class="btn" id="el-save">Сохранить</button>
+      <button class="btn ghost" onclick="closeModal()">Отмена</button></div>`, true);
+  $('#el-save').onclick = async () => {
+    const body = { name: $('#el-name').value.trim(), company: $('#el-company').value.trim(), phone: $('#el-phone').value.trim(),
+      email: $('#el-email').value.trim(), lang: $('#el-lang').value, status: $('#el-status').value,
+      interest: $('#el-interest').value.trim(), callbackWhen: $('#el-callback').value.trim() };
+    try { await api('/api/admin/leads/' + l.id, { method: 'PUT', body: JSON.stringify(body) }); closeModal(); openLead(l.id); }
+    catch (e) { alert(e.message); }
   };
 }
 

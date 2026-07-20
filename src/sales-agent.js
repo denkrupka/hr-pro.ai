@@ -122,6 +122,9 @@ const SALES_SCHEMA = { type: 'object', properties: {
   callback_when: { type: 'string', description: 'Когда договорились перезвонить (словами собеседника). Пусто, если не договаривались.' },
   refusal_reason: { type: 'string', description: 'Причина отказа, если отказался.' },
   support_question: { type: 'string', description: 'Если это был вопрос по порталу — какой и решён ли.' },
+  do_not_call: { type: 'boolean', description: 'true ТОЛЬКО если собеседник прямо просил больше не звонить, был против звонков или назвал это спамом. НЕ ставь true, если просто сейчас неудобно.' },
+  manager_requested: { type: 'boolean', description: 'true, если собеседник просил соединить с живым человеком/менеджером или чтобы менеджер ему перезвонил.' },
+  manager_reason: { type: 'string', description: 'Зачем нужен живой менеджер / какой вопрос остался нерешённым.' },
 } };
 
 const VOICEMAIL_RULE = 'АВТООТВЕТЧИК: если в начале слышишь типичную запись голосовой почты (просьба оставить сообщение, сигнал) — НИЧЕГО не наговаривай и СРАЗУ заверши звонок функцией завершения.\n';
@@ -171,7 +174,12 @@ function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, in
     if (leadBlock) sys += '\nЧТО МЫ УЖЕ ЗНАЕМ ОБ ЭТОМ ЧЕЛОВЕКЕ (используй, не переспрашивай известное):\n' + leadBlock + '\n';
     sys += '\nПРАВИЛА:\n- Представляйся виртуальным менеджером HR-PRO.AI (честно; если спросят «вы робот?» — «да, я виртуальный менеджер, и именно такие ИИ-инструменты помогают нашим клиентам нанимать» — с лёгкой улыбкой).\n'
       + '- НЕ дави. Одно возражение отработала — вернулась к действию. Если человек твёрдо отказался дважды — вежливо попрощайся, предложи вернуться когда будет актуально.\n'
-      + '- Если просят перезвонить позже — уточни когда, подтверди и попрощайся.\n'
+      + '- РЕАКЦИЯ НА «НЕТ»/ОТКАЗ (очень важно): если собеседник отвечает «нет», колеблется или отказывается — НЕ вешай трубку сразу и НЕ считай это автоматически отказом. Сначала ОДИН раз, мягко, уточни причину ОТКРЫТЫМ вопросом («Подскажите, а почему?») — не перечисляй варианты. Затем по ситуации:\n'
+      + '  (1) НЕУДОБНО СЕЙЧАС (занят, за рулём, не вовремя) — не дави. ОБЯЗАТЕЛЬНО скажи, что ТЫ САМА перезвонишь, и уточни КОНКРЕТНО когда удобно (день и примерное время). Если говорит «я сам перезвоню» — мягко объясни, что удобнее, если перезвонишь ты, и всё равно добейся конкретного времени. Это НЕ отказ.\n'
+      + '  (2) НЕ ИНТЕРЕСНО (не актуально, не нанимает, не хочет) — поблагодари за время, скажи, что не будешь больше беспокоить, и вежливо заверши звонок.\n'
+      + '  (3) ПРОСИТ БОЛЬШЕ НЕ ЗВОНИТЬ, раздражён, называет спамом — искренне извинись, пообещай удалить номер из обзвона и больше не звонить, вежливо заверши звонок.\n'
+      + '  (4) ПРОСИТ ЖИВОГО ЧЕЛОВЕКА/МЕНЕДЖЕРА — сначала попробуй закрыть вопрос сама (ты знаешь о продукте всё). Если настаивает — выясни и запомни, ЗАЧЕМ нужен менеджер (какой вопрос), скажи, что менеджер перезвонит в ближайшее время. Уведомлять никого не нужно — это произойдёт автоматически.\n'
+      + '  Ни в одном случае не уговаривай повторно и не настаивай.\n'
       + '- ССЫЛКА НА РЕГИСТРАЦИЮ — отправляй ЧЕРЕЗ ФУНКЦИИ, слова «отправлю» без вызова функции запрещены. ОСНОВНОЙ способ: SMS на номер собеседника — скажи «отправлю вам ссылку в SMS прямо на этот номер» и вызови send_registration_sms (диктовать ничего не нужно). Email — только если собеседник сам просит на почту: продиктовать по буквам, повторить ПО БУКВАМ, в адресе обязательно есть «собака» (@); после подтверждения вызови send_registration_email. Распознавание речи часто ошибается в буквах — если со второй попытки адрес не сходится, не мучай человека: отправь SMS. Говори «отправила», ТОЛЬКО когда функция вернула успех; при ошибке — скажи честно и предложи другой способ.\n'
       + '- ЦИФРЫ ТОЛЬКО СЛОВАМИ — правило выше, соблюдай всегда.\n'
       + '- ЗАВЕРШЕНИЕ (строго): когда разговор закончен или собеседник прощается — скажи последней репликой РОВНО прощальную фразу «Всего доброго!» (по-польски «Wszystkiego dobrego!», по-английски «Have a nice day!») и НЕМЕДЛЕННО вызови функцию завершения звонка. После прощания НЕ добавляй ни одной фразы и НЕ жди ответа — трубку кладёшь ты.';
@@ -303,7 +311,8 @@ function applyCallResult(lead, { summary, sd, transcript }) {
   if (cb) lead.callbackWhen = cb;
   const out = (pick(sd && sd.outcome) || pick(fromSummary(/СТАТУС:\s*(\w+)/i))).toLowerCase();
   const answered = String(transcript || '').trim().length >= 20;
-  if (out === 'refused') lead.status = 'refused';
+  if (sd && sd.do_not_call === true) lead.status = 'do_not_call';
+  else if (out === 'refused') lead.status = 'refused';
   else if (out === 'registered') lead.status = 'registered';
   else if (out === 'callback' || cb) lead.status = 'callback';
   else if (out === 'voicemail' || !answered) lead.status = lead.status === 'new' ? 'no_answer' : (lead.status || 'no_answer');
@@ -312,4 +321,30 @@ function applyCallResult(lead, { summary, sd, transcript }) {
   return lead;
 }
 
-module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, applyCallResult, isValidEmail, REG_EMAIL, REG_SMS, REG_URL, SALES_SCHEMA, SALES_SUMMARY };
+// Просил живого менеджера? (structuredData или текст)
+const MANAGER_RX = /менеджер\S*.{0,25}(перезвон|свяж)|соедини\S*.{0,20}(человек|менеджер)|(хочу|можно|дайте|позовите|свяжите).{0,25}(живым\s+)?(человеком|менеджером)|human|prawdziw\S+\s+(człowiek|konsultant)/i;
+function wantsManager(sd, transcript) {
+  if (sd && sd.manager_requested === true) return true;
+  return MANAGER_RX.test(String(transcript || ''));
+}
+
+// Технический обрыв звонка → надо автоматически перезвонить.
+// Vapi-сбои + случай «клиент якобы положил трубку» посреди живого разговора без прощания (SIP-обрыв выглядит как customer-ended-call).
+const BYE_RX = /(до свидания|до связи|всего доброго|всего хорошего|пока|goodbye|bye|have a nice|do widzenia|wszystkiego dobrego|miłego dnia|dziękuję за|na razie)/i;
+function wasInterrupted({ endedReason, transcript, durationSec, sd }) {
+  const er = String(endedReason || '');
+  if (/pipeline-error|vapifault|provider-closed|worker-shutdown|unknown-error|call\.in-progress\.error|database-error|assistant-not-found/i.test(er)) return true;
+  if (er === 'customer-ended-call') {
+    const t = String(transcript || '').trim();
+    if (t.length < 100) return false;                       // толком не поговорили — это недозвон/сброс, не обрыв
+    const tail = t.slice(-220);
+    const outc = String((sd && sd.outcome) || '').toLowerCase();
+    if (BYE_RX.test(tail)) return false;                    // попрощались — нормальное завершение
+    if (['refused', 'registered', 'callback'].includes(outc)) return false; // итог достигнут
+    if (sd && (sd.do_not_call === true)) return false;
+    return true;                                            // разговор оборвался на середине
+  }
+  return false;
+}
+
+module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, applyCallResult, wantsManager, wasInterrupted, isValidEmail, REG_EMAIL, REG_SMS, REG_URL, SALES_SCHEMA, SALES_SUMMARY };

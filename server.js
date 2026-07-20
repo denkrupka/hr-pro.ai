@@ -1664,14 +1664,14 @@ app.post('/api/leads/callback', async (req, res) => {
   const phone = String(b.phone || '').trim().slice(0, 30);
   const lang = ['ru', 'pl', 'en'].includes(b.lang) ? b.lang : 'ru';
   const digits = phone.replace(/\D/g, '');
-  if (digits.length < 9 || digits.length > 15) return res.status(400).json({ error: 'Укажите корректный номер телефона' });
+  if (digits.length < 9 || digits.length > 15) return res.status(400).json({ error: 'Укажите корректный номер телефона', code: 'bad_phone' });
   const gs = portalSettings();
   let lead = leadByPhone(phone);
   const now = nowISO();
   if (!lead) { lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] }; db().leads.push(lead); }
-  else { if (name) lead.name = name; lead.lang = lang; }
+  else { if (name) lead.name = name; lead.lang = lang; if (lead.status === 'do_not_call') lead.status = 'new'; }
   lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
-  if (lead.requests.length >= 3) { save(); return res.status(429).json({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.' }); }
+  if (lead.requests.length >= 3) { save(); return res.status(429).json({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.', code: 'rate_limit' }); }
   lead.requests.push(now);
   const vcfg = integ.cfgOf(null, 'vapi');
   const salesPhoneId = gs.vapiSalesPhoneId || vcfg.salesPhoneNumberId || '';
@@ -1751,13 +1751,44 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
         if (!entry) { entry = { callId, kind: 'inbound', dir: 'in', createdAt: nowISO() }; lead.aiCallLog.push(entry); }
         entry.status = 'done'; entry.endedAt = nowISO();
         entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
-        entry.recordingUrl = msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
+        entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
         entry.summary = a.summary || msg.summary || entry.summary || '';
         entry.answers = a.structuredData || entry.answers || null;
         salesAgent.applyCallResult(lead, { summary: entry.summary, sd: entry.answers, transcript: entry.transcript });
         if (lead.email && !lead.userId) {
           const u = db().users.find(x => x.email.toLowerCase() === lead.email.toLowerCase());
           if (u) { lead.userId = u.id; lead.status = 'converted'; lead.convertedAt = nowISO(); }
+        }
+        const endedReason = msg.endedReason || (msg.call && msg.call.endedReason) || call.endedReason || '';
+        // Просил живого менеджера → письмо админам портала
+        if (salesAgent.wantsManager(entry.answers, entry.transcript) && !entry._mgrNotified) {
+          entry._mgrNotified = true;
+          const reason = (entry.answers && entry.answers.manager_reason) || '';
+          const bodyHtml = `<b>Лид:</b> ${(lead.name || '—')}<br><b>Телефон:</b> ${lead.phone}<br>${reason ? '<b>Вопрос:</b> ' + String(reason).replace(/</g, '&lt;') + '<br>' : ''}${entry.summary ? '<br><b>Итог разговора:</b><br>' + String(entry.summary).slice(0, 800).replace(/</g, '&lt;').replace(/\n/g, '<br>') : ''}`;
+          db().users.filter(x => x.role === 'admin' && !x.blocked && x.email).forEach(adm => {
+            integ.sendEmail(null, { to: adm.email, lang: 'ru', baseUrl: BASE_URL, subject: 'Лид просит менеджера: ' + (lead.name || lead.phone), eyebrow: 'Отдел продаж', headline: 'Лид просит живого менеджера', bodyHtml }).catch(() => {});
+          });
+        }
+        // Технический обрыв → авто-перезвон (1 раз на звонок)
+        if (!entry._redialed && !['refused', 'do_not_call', 'registered', 'converted'].includes(lead.status)
+          && salesAgent.wasInterrupted({ endedReason, transcript: entry.transcript, durationSec: entry.durationSec, sd: entry.answers })) {
+          entry._redialed = true;
+          try {
+            const vcfg2 = integ.cfgOf(null, 'vapi');
+            const salesPhoneId2 = gs.vapiSalesPhoneId || vcfg2.salesPhoneNumberId || '';
+            if (vcfg2.apiKey && salesPhoneId2) {
+              const lg = ['ru', 'pl', 'en'].includes(lead.lang) ? lead.lang : 'ru';
+              const secret2 = gs.vapiInboundSecret || '';
+              const assistant2 = salesAgent.buildAssistant({ mode: 'lead', lang: lg, name: lead.name || '', plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
+                toolServerUrl: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', toolSecret: secret2,
+                leadBlock: salesAgent.leadContext(lead) + '\n\nВАЖНО: ваш предыдущий разговор ТОЛЬКО ЧТО ПРЕРВАЛСЯ по технической причине. Ты перезваниваешь: извинись за обрыв связи и продолжи с того места, где остановились.' });
+              if (secret2) assistant2.server = { url: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', secret: secret2 };
+              const rr = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg2.apiKey, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phoneNumberId: salesPhoneId2, customer: { number: salesAgent.toE164(lead.phone) }, assistant: assistant2 }) });
+              const rd = await rr.json().catch(() => ({}));
+              if (rr.ok && rd.id) lead.aiCallLog.push({ callId: rd.id, kind: 'redial', dir: 'out', createdAt: nowISO(), status: 'calling', lang: lg });
+            }
+          } catch (e) { console.error('[sales] redial err', e.message); }
         }
         save();
       }
@@ -2744,6 +2775,35 @@ app.post('/api/calendar/:id/invite', requireAuth, async (req, res) => {
 app.get('/api/calendar', requireAuth, (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);
   res.json({ events: (u && u.calendar) || [] });
+});
+// Персональная ссылка ICS-фида для подписки во внешних календарях (Google/Outlook/Apple)
+app.get('/api/calendar/feed', requireAuth, (req, res) => {
+  const u = req.user;
+  u.settings = u.settings || {};
+  if (!u.settings.calFeedToken) { u.settings.calFeedToken = shortCode(16).toLowerCase(); save(); }
+  const feed = `${BASE_URL.replace(/\/+$/, '')}/cal/${u.settings.calFeedToken}/interviews.ics`;
+  res.json({ url: feed, webcal: feed.replace(/^https?:/, 'webcal:') });
+});
+// Публичный ICS-фид собеседований (по персональному токену)
+app.get('/cal/:token/interviews.ics', (req, res) => {
+  const user = db().users.find(u => u.settings && u.settings.calFeedToken === req.params.token);
+  if (!user) return res.status(404).send('Not found');
+  const escI = s => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  const evs = (user.calendar || []).filter(e => e.date);
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HR PRO AI//Interviews//RU', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'X-WR-CALNAME:HR PRO AI — собеседования', 'REFRESH-INTERVAL;VALUE=DURATION:PT30M', 'X-PUBLISHED-TTL:PT30M'];
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  for (const e of evs) {
+    const dt = e.date.replace(/-/g, '') + 'T' + String(e.time || '10:00').replace(':', '').padStart(4, '0') + '00';
+    const endD = (() => { const [hh, mm] = String(e.time || '10:00').split(':').map(Number); const t = new Date(2000, 0, 1, hh, mm + 60); return e.date.replace(/-/g, '') + 'T' + String(t.getHours()).padStart(2, '0') + String(t.getMinutes()).padStart(2, '0') + '00'; })();
+    lines.push('BEGIN:VEVENT', 'UID:' + e.id + '@hr-pro.ai', 'DTSTAMP:' + stamp,
+      'DTSTART:' + dt, 'DTEND:' + endD,
+      'SUMMARY:' + escI('Собеседование: ' + (e.candidate || '') + (e.role ? ' — ' + e.role : '')),
+      'DESCRIPTION:' + escI([e.interviewer ? 'Интервьюер: ' + e.interviewer : '', e.meetingLink || '', e.note || ''].filter(Boolean).join('\n')),
+      'LOCATION:' + escI(e.meetingLink || ''), 'END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  res.set('Content-Type', 'text/calendar; charset=utf-8').send(lines.join('\r\n'));
 });
 app.post('/api/calendar', requireAuth, (req, res) => {
   const u = db().users.find(x => x.id === req.user.id);

@@ -99,6 +99,22 @@ export async function handleAdmin(p, m, ctx) {
     if (l.userId) { const u = await S.one('users', l.userId); if (u) user = { id: u.id, email: u.email, name: u.name || '', company: u.company || '', createdAt: u.createdAt }; }
     return j({ lead: l, user });
   }
+  if (mLead && m === 'PUT') {
+    // Редактирование данных лида
+    const rows = await S.select('leads', `id=eq.${mLead[1]}&select=data`);
+    const l = rows[0] && rows[0].data;
+    if (!l) return j({ error: 'Не найдено' }, 404);
+    const b = body || {};
+    const set = (k, max) => { if (typeof b[k] === 'string') l[k] = b[k].trim().slice(0, max || 200); };
+    set('name', 80); set('phone', 30); set('company', 120); set('interest', 500); set('callbackWhen', 200);
+    if (typeof b.email === 'string') l.email = b.email.trim().toLowerCase().slice(0, 120);
+    if (['ru', 'pl', 'en'].includes(b.lang)) l.lang = b.lang;
+    if (typeof b.status === 'string' && ['new', 'no_answer', 'talked', 'callback', 'registered', 'refused', 'do_not_call', 'converted'].includes(b.status)) l.status = b.status;
+    const pk = l.phone ? String(l.phone).replace(/\D/g, '').replace(/^00/, '').slice(-9) : null;
+    await S.upsert('leads', { id: l.id, phone_key: pk && pk.length >= 7 ? pk : null, data: l });
+    await logAdmin('lead_update', 'lead', l.id);
+    return j({ lead: l });
+  }
   if (mLead && m === 'DELETE') {
     await S.del('leads', `id=eq.${mLead[1]}`);
     await logAdmin('lead_delete', 'lead', mLead[1]);
@@ -120,7 +136,7 @@ export async function handleAdmin(p, m, ctx) {
           const art = d.artifact || {}; const rec = art.recording || {};
           if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
           e.transcript = d.transcript || art.transcript || e.transcript || '';
-          e.recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
+          e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
           const a = d.analysis || {};
           e.summary = a.summary || e.summary || '';
           e.answers = a.structuredData || e.answers || null;

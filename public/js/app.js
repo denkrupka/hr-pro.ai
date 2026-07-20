@@ -4448,6 +4448,7 @@ function drawCalendar() {
     '<div class="cal-wrap reveal">' +
       '<div class="cal-head">' +
         '<div><div class="eyebrow">' + ct('eyebrow') + '</div><h1 style="margin:10px 0 0">' + ct('title') + '</h1></div>' +
+        '<button class="btn ghost ic-btn" id="cal-subscribe" title="' + (LANG === 'pl' ? 'Synchronizuj z kalendarzem' : LANG === 'en' ? 'Sync with your calendar' : 'Синхронизация с вашим календарём') + '">' + _svg('<path d="M21 12a9 9 0 1 1-2.6-6.3M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
         '<button class="btn" id="cal-new">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + ' ' + ct('neww') + '</button>' +
       '</div>' +
       '<div class="cal-toolbar">' +
@@ -4473,6 +4474,7 @@ function drawCalendar() {
       (S.view === 'month' ? '<div class="cal-up-sec"><div class="eyebrow">' + ct('upcoming') + '</div><div class="cal-up-grid">' + upHtml + '</div></div>' : '') +
     '</div>';
   $('#cal-new').onclick = () => openCalModal(null, calIso(S.y, S.m, Math.min(now.getDate(), dim)));
+  { const cs = $('#cal-subscribe'); if (cs) cs.onclick = openCalSubscribe; }
   { const p = $('#cal-prev'); if (p) p.onclick = () => { S.m--; if (S.m < 0) { S.m = 11; S.y--; } drawCalendar(); }; }
   { const n = $('#cal-next'); if (n) n.onclick = () => { S.m++; if (S.m > 11) { S.m = 0; S.y++; } drawCalendar(); }; }
   $('#cal-today').onclick = () => { S.y = now.getFullYear(); S.m = now.getMonth(); drawCalendar(); };
@@ -4749,6 +4751,33 @@ function openCalModalInner(ev, dateIso, prefill) {
     renderCalendar();
     confirmInterviewInvite(saved.id, d.format);
   };
+}
+// Подписка на календарь собеседований во внешнем календаре (ICS-фид: Google / Outlook / Apple).
+async function openCalSubscribe() {
+  const T = {
+    ru: { title: 'Синхронизация с вашим календарём', lead: 'Подпишитесь на календарь собеседований — все встречи (и изменения) будут автоматически появляться в вашем Google, Outlook или Apple календаре.', copy: 'Копировать ссылку', copied: 'Ссылка скопирована', hint: 'Google и Outlook обновляют подписанные календари раз в несколько часов. Apple/iPhone — по настройке «Обновление» в календаре.', manual: 'Или добавьте ссылку вручную: в календаре выберите «Добавить по URL» и вставьте её.' },
+    pl: { title: 'Synchronizacja z Twoim kalendarzem', lead: 'Subskrybuj kalendarz rozmów — wszystkie spotkania (i zmiany) będą automatycznie pojawiać się w Twoim kalendarzu Google, Outlook lub Apple.', copy: 'Kopiuj link', copied: 'Link skopiowany', hint: 'Google i Outlook odświeżają subskrybowane kalendarze co kilka godzin.', manual: 'Możesz też dodać link ręcznie: w kalendarzu wybierz „Dodaj przez URL”.' },
+    en: { title: 'Sync with your calendar', lead: 'Subscribe to the interview calendar — all meetings (and changes) will automatically appear in your Google, Outlook or Apple calendar.', copy: 'Copy link', copied: 'Link copied', hint: 'Google and Outlook refresh subscribed calendars every few hours.', manual: 'Or add the link manually: choose "Add by URL" in your calendar.' },
+  }[LANG] || {};
+  let feed;
+  try { feed = await api('/api/calendar/feed'); } catch (e) { toast(e.message); return; }
+  const enc = encodeURIComponent(feed.webcal);
+  const gUrl = 'https://calendar.google.com/calendar/render?cid=' + enc;
+  const oUrl = 'https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(feed.url) + '&name=' + encodeURIComponent('HR PRO AI');
+  const btn = (href, label, svg) => '<a class="btn soft" style="flex:1;justify-content:center;text-align:center" target="_blank" rel="noopener" href="' + href + '">' + svg + ' ' + label + '</a>';
+  mkDecodeModal('<div class="cal-modal">' +
+    '<h2 class="db-h" style="margin:0 0 8px">' + T.title + '</h2>' +
+    '<p class="db-note" style="margin:0 0 14px;line-height:1.55">' + T.lead + '</p>' +
+    '<div class="row" style="gap:8px;flex-wrap:wrap">' +
+      btn(gUrl, 'Google', _svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/>')) +
+      btn(oUrl, 'Outlook', _svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>')) +
+      btn(feed.webcal, 'Apple / iPhone', _svg('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>')) +
+    '</div>' +
+    '<div class="row" style="gap:6px;margin-top:14px"><input class="field sm" style="flex:1" readonly value="' + esc(feed.url) + '" id="calfeed-url">' +
+      '<button class="btn ghost sm" id="calfeed-copy">' + T.copy + '</button></div>' +
+    '<p class="db-note" style="margin:12px 0 0;font-size:11.5px;color:#6b7492">' + T.manual + '<br>' + T.hint + '</p>' +
+    '<div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">' + ct('cancel') + '</button></div></div>');
+  $('#calfeed-copy').onclick = () => { navigator.clipboard.writeText(feed.url).then(() => toast(T.copied)); };
 }
 // Подтверждение и отправка приглашения кандидату (email + SMS) по формату встречи.
 function confirmInterviewInvite(eventId, format) {

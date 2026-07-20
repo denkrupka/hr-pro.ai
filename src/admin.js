@@ -87,6 +87,19 @@ module.exports = function adminApi(app, ctx) {
     const u = l.userId ? findUser(l.userId) : null;
     res.json({ lead: l, user: u ? { ...userBrief(u), createdAt: u.createdAt } : null });
   });
+  app.put('/api/admin/leads/:id', requireAdmin, (req, res) => {
+    // Редактирование данных лида
+    const l = (db().leads || []).find(x => x.id === req.params.id);
+    if (!l) return res.status(404).json({ error: 'Не найдено' });
+    const b = req.body || {};
+    const set = (k, max) => { if (typeof b[k] === 'string') l[k] = b[k].trim().slice(0, max || 200); };
+    set('name', 80); set('phone', 30); set('company', 120); set('interest', 500); set('callbackWhen', 200);
+    if (typeof b.email === 'string') l.email = b.email.trim().toLowerCase().slice(0, 120);
+    if (['ru', 'pl', 'en'].includes(b.lang)) l.lang = b.lang;
+    if (typeof b.status === 'string' && ['new', 'no_answer', 'talked', 'callback', 'registered', 'refused', 'do_not_call', 'converted'].includes(b.status)) l.status = b.status;
+    logAdmin(req, 'lead_update', 'lead', l.id);
+    save(); res.json({ lead: l });
+  });
   app.delete('/api/admin/leads/:id', requireAdmin, (req, res) => {
     const data = db();
     data.leads = (data.leads || []).filter(x => x.id !== req.params.id);
@@ -107,7 +120,7 @@ module.exports = function adminApi(app, ctx) {
           const art = d.artifact || {}; const rec = art.recording || {};
           if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
           e.transcript = d.transcript || art.transcript || e.transcript || '';
-          e.recordingUrl = d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
+          e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
           const a = d.analysis || {};
           e.summary = a.summary || e.summary || '';
           e.answers = a.structuredData || e.answers || null;
