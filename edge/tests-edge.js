@@ -92,7 +92,9 @@ export function computeResult(test, participant) {
         given: given != null ? Number(given) : null, answer: q.answer, correct: ok };
     });
     const percent = Math.round(100 * correct / total);
-    const iq = Math.round(75 + correct * (80 / total));
+    // IQ по методике источника (Otis): верные + база (75 муж / 70 жен). Масштабируем на 80-вопросный эталон.
+    const male = /^(м|m|муж|male)/i.test(String((participant && participant.sex) || ''));
+    const iq = Math.round((male ? 75 : 70) + correct * (80 / total));
     const level = iq < 80 ? 'Очень низкий' : iq < 100 ? 'Низкий' : iq < 120 ? 'Средний' : iq < 140 ? 'Высокий' : 'Очень высокий';
     const bands = [
       { range: 'До 80 баллов', text: 'Очень низкий уровень интеллекта. Не подходит для руководящих должностей и должностей, требующих применения умственных способностей.' },

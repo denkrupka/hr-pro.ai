@@ -76,8 +76,16 @@ $('#to-app').onclick = () => { location.href = '/app'; };
 $('#brand-home').onclick = () => setView('dashboard');
 $$('.nav-item[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
 
+// ---- мобильная оболочка: выезжающее меню (drawer) ----
+function mnavClose() { const app = $('.app'); if (app) app.classList.remove('mnav-open'); const t = $('#mnav-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }
+function mnavToggle() { const app = $('.app'); if (!app) return; const open = app.classList.toggle('mnav-open'); const t = $('#mnav-toggle'); if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+{ const mt = $('#mnav-toggle'); if (mt) mt.onclick = mnavToggle;
+  const sc = $('#nav-scrim'); if (sc) sc.onclick = mnavClose;
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') mnavClose(); }); }
+
 function setView(v) {
   state.view = v;
+  try { mnavClose(); } catch (e) {}
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   ({ dashboard: renderAdmDashboard, leads: renderAdmLeads, clients: renderAdmClients, payments: renderAdmPayments, plans: renderAdmPlans,
     integrations: renderAdmIntegrations, content: renderAdmContent, blog: renderAdmBlog, log: renderAdmLog }[v] || renderAdmDashboard)();
@@ -138,15 +146,26 @@ function fmtCallSummary(s) {
   return t;
 }
 // Общий рендер журнала звонков Софии (карточка лида и карточка клиента).
-const CALL_KIND = { manual: '📞 Звонок менеджера', redial: '🔁 Авто-перезвон', inbound: '📥 Входящий', callback: '📤 Исходящий (заявка)' };
+const CALL_KIND = { manual: '📞 Звонок менеджера', redial: '🔁 Авто-перезвон (обрыв)', retry: '🔁 Авто-перезвон (недозвон)', inbound: '📥 Входящий', callback: '📤 Исходящий (заявка)' };
+// Причины недозвона → человекочитаемо.
+const NO_ANSWER_RU = { 'customer-did-not-answer': 'абонент не взял трубку', 'no-answer': 'абонент не взял трубку', 'did-not-answer': 'абонент не взял трубку', 'customer-busy': 'занято', 'busy': 'занято', 'voicemail': 'попал на автоответчик', 'no-microphone-permission': 'нет доступа к микрофону', 'failed-to-connect': 'не удалось соединиться', 'did-not-receive-customer-audio': 'нет звука от абонента' };
 function callLogHtml(log) {
   const dur = s => s ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '';
+  const FINAL = ['done', 'failed', 'stopped'];
   return [...(log || [])].reverse().map(e => {
     const kind = CALL_KIND[e.kind] || (e.dir === 'in' ? '📥 Входящий' : '📤 Исходящий');
+    const answered = !!(e.transcript && String(e.transcript).trim()) || !!e.summary;
+    const isFinal = FINAL.includes(e.status);
+    const notPlaced = e.status === 'failed' || !e.callId;
+    const noAnswer = isFinal && !answered && !notPlaced;
+    const statusLabel = !isFinal ? (e.status === 'calling' ? 'звоним…' : esc(e.status || ''))
+      : notPlaced ? 'не размещён' : noAnswer ? 'не дозвонились' : 'завершён';
     return `<div class="card" style="margin-bottom:12px">
       <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
         <b>${kind}</b>
-        <span class="muted" style="font-size:12px">${fmtDate(e.createdAt)}${e.durationSec ? ' · ' + dur(e.durationSec) : ''} · ${e.status === 'done' ? 'завершён' : esc(e.status || '')}</span></div>
+        <span class="muted" style="font-size:12px">${fmtDate(e.createdAt)}${e.durationSec ? ' · ' + dur(e.durationSec) : ''} · ${statusLabel}</span></div>
+      ${noAnswer ? `<div class="ai-note" style="margin-top:10px;border-color:rgba(232,176,106,.35);background:rgba(232,176,106,.08)"><p style="margin:0;font-size:13px;color:#e8b06a">☎️ Не дозвонились — ${NO_ANSWER_RU[e.endedReason] || 'абонент не ответил'}</p></div>` : ''}
+      ${notPlaced ? `<div class="ai-note" style="margin-top:10px;border-color:rgba(232,120,120,.35)"><p style="margin:0;font-size:13px;color:#e88">Звонок не удалось разместить${e.status === 'failed' ? '' : ''}.</p></div>` : ''}
       ${e.summary ? `<div class="ai-note" style="margin-top:10px"><div class="ai-h">Итог разговора</div><p style="margin:6px 0 0;font-size:13px;line-height:1.6">${fmtCallSummary(e.summary)}</p></div>` : ''}
       ${e.recordingUrl ? `<audio controls preload="none" src="${esc(e.recordingUrl)}" style="width:100%;margin-top:10px"></audio>` : ''}
       ${e.transcript ? `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;color:#b3a4ff">Транскрипция</summary><pre style="white-space:pre-wrap;font:12.5px/1.6 Inter,sans-serif;color:#c3cbe4;background:rgba(255,255,255,.04);border-radius:10px;padding:12px;margin-top:8px;max-height:400px;overflow:auto">${esc(e.transcript)}</pre></details>` : ''}

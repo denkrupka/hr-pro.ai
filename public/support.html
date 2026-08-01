@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-i18n="page_title">Support & Documentation — HR PRO AI</title>
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/favicon.png">
+<meta name="theme-color" content="#070813">
+<meta name="description" data-i18n="meta_desc" content="Help, support and integration documentation for HR PRO AI — how to add, use and remove the Zoom, Google Meet and Microsoft Teams integrations, and how to contact support.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#070813;color:#9aa3bf;font-family:Inter,system-ui,sans-serif;line-height:1.65;font-size:15px}
+.wrap{max-width:820px;margin:0 auto;padding:48px 24px 80px}
+.top{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+.top b{font-family:Manrope,sans-serif;font-weight:800;font-size:16px;color:#fff}
+.top small{font-size:12px;color:#8b93ad}
+h1{font-family:Manrope,sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;color:#fff;margin:0 0 6px}
+.upd{font-family:'JetBrains Mono',monospace;font-size:12px;color:#6b7492;margin-bottom:34px}
+h2{font-family:Manrope,sans-serif;font-weight:800;font-size:21px;color:#eef1fb;margin:38px 0 12px}
+h3{font-family:Manrope,sans-serif;font-weight:700;font-size:16px;color:#dbe0f2;margin:22px 0 8px}
+p{margin:0 0 12px}strong{color:#eef1fb;font-weight:600}
+ul,ol{padding-left:0;list-style:none;margin:12px 0}
+ol{counter-reset:step}
+li{position:relative;padding-left:26px;margin-bottom:9px;color:#c3cbe4}
+ul li::before{content:"";position:absolute;left:3px;top:9px;width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,#8b6cff,#6f97ff)}
+ol li{counter-increment:step}
+ol li::before{content:counter(step);position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:6px;background:rgba(139,108,255,.16);color:#b3a4ff;font:700 11px 'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center}
+a{color:#b3a4ff;text-decoration:none}a:hover{text-decoration:underline}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:18px 22px;margin:16px 0}
+.card b{color:#fff}
+.kv{display:flex;flex-wrap:wrap;gap:6px 26px;margin:8px 0}
+.kv div{min-width:200px}.kv span{color:#8b93ad;font-size:12.5px;display:block}
+.lang-dd{position:absolute;top:22px;right:24px;display:inline-block}
+.lang-dd-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(255,255,255,.16);color:#c3cbe4;font:700 12px Inter,sans-serif;padding:7px 10px;border-radius:8px;cursor:pointer}
+.lang-dd-car{font-size:10px;opacity:.7;transition:transform .2s}
+.lang-dd.open .lang-dd-car{transform:rotate(180deg)}
+.lang-dd-menu{position:absolute;top:calc(100% + 7px);right:0;min-width:158px;background:#12142e;border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:5px;display:none;flex-direction:column;gap:2px;z-index:60;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.lang-dd.open .lang-dd-menu{display:flex}
+.lang-dd-menu button{display:flex;align-items:center;gap:9px;background:transparent;border:0;color:#c3cbe4;font:600 13px Inter,sans-serif;padding:8px 10px;border-radius:7px;cursor:pointer;text-align:left;width:100%}
+.lang-dd-menu button:hover{background:rgba(255,255,255,.07);color:#fff}
+.lang-dd-menu .flg{font-size:16px;line-height:1}
+.foot{margin-top:48px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#6b7492}
+</style></head><body>
+<span class="lang-dd" id="lang-dd">
+  <button type="button" class="lang-dd-btn" id="lang-dd-btn"><span id="lang-dd-cur">EN</span><span class="lang-dd-car">▾</span></button>
+  <span class="lang-dd-menu" id="lang-switch">
+    <button data-lang="en"><span class="flg">🇬🇧</span> English</button>
+    <button data-lang="ru"><span class="flg">🇷🇺</span> Русский</button>
+    <button data-lang="pl"><span class="flg">🇵🇱</span> Polski</button>
+  </span>
+</span>
+<div class="wrap">
+  <div class="top">
+    <svg viewBox="0 0 64 64" fill="none" style="width:30px;height:30px"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" opacity=".92"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg>
+    <span><b>HR&nbsp;PRO&nbsp;AI</b><br><small data-i18n="tagline">Technology that senses people</small></span>
+  </div>
+  <h1 data-i18n="h1">Support &amp; Documentation</h1>
+  <div class="upd" data-i18n="updated">Last updated: 21 July 2026</div>
+
+  <p data-i18n="intro">HR PRO AI is a recruitment platform that assesses candidates (productivity, personality, intelligence, sales and knowledge tests) and helps recruiters run the whole hiring funnel. This page explains how to get support and how to add, use and remove our optional video-conferencing integrations (Zoom, Google Meet, Microsoft Teams).</p>
+
+  <h2 data-i18n="sup_h">Getting support</h2>
+  <div class="card">
+    <div class="kv">
+      <div><span data-i18n="sup_email_l">Support email</span><b><a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a></b></div>
+      <div><span data-i18n="sup_hours_l">Support hours</span><b data-i18n="sup_hours_v">Mon–Fri, 9:00–18:00 (CET)</b></div>
+      <div><span data-i18n="sup_sla_l">First-response SLA</span><b data-i18n="sup_sla_v">within 1 business day</b></div>
+    </div>
+    <p data-i18n="sup_p">Email us at <a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a> to open a support case — describe the issue and, if possible, attach a screenshot. You can also reach us for account, billing, data-deletion and integration questions at the same address.</p>
+  </div>
+  <p data-i18n="sup_kb">Knowledge base &amp; guides: this page, our in-app help, and the <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms of Use</a>.</p>
+
+  <h2 data-i18n="int_h">Video-conferencing integrations (Zoom, Google Meet, Microsoft Teams)</h2>
+  <p data-i18n="int_intro">These integrations are <strong>optional</strong>. They let you create a meeting link for an interview directly from HR PRO AI when scheduling a candidate. You connect your own account via <strong>OAuth 2.0</strong> — you authorize on the provider's own page and we never see your password.</p>
+
+  <h3 data-i18n="add_h">Adding the integration</h3>
+  <ol>
+    <li data-i18n="add_1">Sign in to HR PRO AI and open <strong>Integrations</strong> in the left menu.</li>
+    <li data-i18n="add_2">Find <strong>Zoom</strong> (or Google Meet / Microsoft Teams) and click <strong>Connect account</strong>.</li>
+    <li data-i18n="add_3">You are redirected to the provider's OAuth consent screen. Review the requested permissions and approve.</li>
+    <li data-i18n="add_4">You return to HR PRO AI and the platform shows the integration as <strong>Connected</strong>.</li>
+  </ol>
+
+  <h3 data-i18n="use_h">Using the integration</h3>
+  <ol>
+    <li data-i18n="use_1">Open the <strong>Calendar</strong> or a candidate card and schedule an interview.</li>
+    <li data-i18n="use_2">Choose the connected provider and click <strong>Create meeting</strong> — a meeting link is generated on your account.</li>
+    <li data-i18n="use_3">The link is added to the interview and to the invitation sent to the candidate.</li>
+  </ol>
+  <p data-i18n="use_note">We only use your access to <strong>create the meeting on your behalf</strong> and to read your account email for display. We do <strong>not</strong> access meeting content, recordings, chat or participant data, and we do not store them.</p>
+
+  <h3 data-i18n="rem_h">Removing the integration</h3>
+  <ol>
+    <li data-i18n="rem_1">In HR PRO AI, open <strong>Integrations</strong>, find the provider and click <strong>Disconnect</strong>.</li>
+    <li data-i18n="rem_2">Optionally revoke access from the provider side too: in your <a href="https://marketplace.zoom.us/user/installed" target="_blank" rel="noopener">Zoom installed apps</a>, <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google account permissions</a>, or Microsoft account apps.</li>
+  </ol>
+  <div class="card">
+    <p data-i18n="deauth_p"><b>What happens on de-authorization.</b> When you disconnect (in HR PRO AI or on the provider side), the stored OAuth access and refresh tokens become invalid immediately and are deleted from our servers. HR PRO AI can no longer create meetings on your behalf. Previously created meeting links continue to live on your provider account until you delete them there.</p>
+    <p data-i18n="del_p"><b>Deleting your data.</b> To request deletion of your account data or integration data, email <a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a>. We delete the requested data within 30 days. See the <a href="/privacy">Privacy Policy</a> for what we store and how it is protected.</p>
+  </div>
+
+  <h2 data-i18n="lu_h">Google &amp; Zoom data — limited use</h2>
+  <p data-i18n="lu_p">HR PRO AI's use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the <strong>Limited Use</strong> requirements. Google and Zoom user data is used solely to provide the user-facing integration features described above; it is never sold, transferred to data brokers or advertisers, or used to train AI/ML models. Full details are in our <a href="/privacy">Privacy Policy</a>.</p>
+
+  <div class="foot" data-i18n="foot">HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Use</a> · <a href="/">Home</a></div>
+</div>
+<script>
+const I18N={
+  en:{},
+  ru:{
+    page_title:'Поддержка и документация — HR PRO AI',
+    tagline:'Технология, которая чувствует людей',
+    h1:'Поддержка и документация',
+    updated:'Обновлено: 21 июля 2026',
+    meta_desc:'Помощь, поддержка и документация по интеграциям HR PRO AI — как подключить, использовать и отключить Zoom, Google Meet и Microsoft Teams, и как связаться с поддержкой.',
+    intro:'HR PRO AI — платформа для подбора персонала: оценивает кандидатов (тесты продуктивности, личности, интеллекта, продаж и знаний) и помогает вести всю воронку найма. Здесь описано, как получить поддержку и как подключить, использовать и отключить наши необязательные видеоинтеграции (Zoom, Google Meet, Microsoft Teams).',
+    sup_h:'Как получить поддержку',
+    sup_email_l:'Email поддержки', sup_hours_l:'Часы работы', sup_hours_v:'Пн–Пт, 9:00–18:00 (CET)', sup_sla_l:'Время первого ответа', sup_sla_v:'в течение 1 рабочего дня',
+    sup_p:'Напишите нам на <a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a>, чтобы открыть обращение — опишите проблему и, по возможности, приложите скриншот. По этому же адресу отвечаем на вопросы по аккаунту, оплате, удалению данных и интеграциям.',
+    sup_kb:'База знаний и руководства: эта страница, встроенная в портал помощь, а также <a href="/privacy">Политика конфиденциальности</a> и <a href="/terms">Условия использования</a>.',
+    int_h:'Видеоинтеграции (Zoom, Google Meet, Microsoft Teams)',
+    int_intro:'Эти интеграции <strong>необязательны</strong>. Они позволяют создавать ссылку на встречу для собеседования прямо из HR PRO AI при планировании кандидата. Вы подключаете свой аккаунт по <strong>OAuth 2.0</strong> — авторизуетесь на странице самого сервиса, ваш пароль мы не видим.',
+    add_h:'Как подключить',
+    add_1:'Войдите в HR PRO AI и откройте <strong>Интеграции</strong> в левом меню.',
+    add_2:'Найдите <strong>Zoom</strong> (или Google Meet / Microsoft Teams) и нажмите <strong>Подключить аккаунт</strong>.',
+    add_3:'Вас перенаправит на экран согласия OAuth сервиса. Проверьте запрашиваемые разрешения и подтвердите.',
+    add_4:'Вы вернётесь в HR PRO AI, и статус интеграции станет <strong>Подключено</strong>.',
+    use_h:'Как пользоваться',
+    use_1:'Откройте <strong>Календарь</strong> или карточку кандидата и запланируйте собеседование.',
+    use_2:'Выберите подключённый сервис и нажмите <strong>Создать встречу</strong> — ссылка создастся в вашем аккаунте.',
+    use_3:'Ссылка добавится к собеседованию и в приглашение, отправляемое кандидату.',
+    use_note:'Мы используем доступ только чтобы <strong>создать встречу от вашего имени</strong> и прочитать email аккаунта для отображения. Мы <strong>не</strong> получаем доступ к содержимому встреч, записям, чату или данным участников и не храним их.',
+    rem_h:'Как отключить',
+    rem_1:'В HR PRO AI откройте <strong>Интеграции</strong>, найдите сервис и нажмите <strong>Отключить</strong>.',
+    rem_2:'При желании отзовите доступ и на стороне сервиса: в <a href="https://marketplace.zoom.us/user/installed" target="_blank" rel="noopener">установленных приложениях Zoom</a>, <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">разрешениях Google-аккаунта</a> или в приложениях Microsoft.',
+    deauth_p:'<b>Что происходит при отключении.</b> Когда вы отключаете интеграцию (в HR PRO AI или на стороне сервиса), сохранённые OAuth-токены доступа и обновления немедленно становятся недействительными и удаляются с наших серверов. HR PRO AI больше не может создавать встречи от вашего имени. Ранее созданные ссылки на встречи продолжают существовать в вашем аккаунте сервиса, пока вы их там не удалите.',
+    del_p:'<b>Удаление данных.</b> Чтобы запросить удаление данных аккаунта или данных интеграции, напишите на <a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a>. Мы удаляем запрошенные данные в течение 30 дней. Что мы храним и как защищаем — см. <a href="/privacy">Политику конфиденциальности</a>.',
+    lu_h:'Данные Google и Zoom — ограниченное использование',
+    lu_p:'Использование данных, полученных через API Google, соответствует <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, включая требования <strong>Limited Use</strong>. Данные пользователей Google и Zoom используются исключительно для описанных выше функций интеграции; они никогда не продаются, не передаются брокерам данных или рекламодателям и не используются для обучения моделей ИИ/ML. Подробности — в <a href="/privacy">Политике конфиденциальности</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Политика конфиденциальности</a> · <a href="/terms">Условия использования</a> · <a href="/">На главную</a>',
+  },
+  pl:{
+    page_title:'Wsparcie i dokumentacja — HR PRO AI',
+    tagline:'Technologia, która czuje ludzi',
+    h1:'Wsparcie i dokumentacja',
+    updated:'Zaktualizowano: 21 lipca 2026',
+    meta_desc:'Pomoc, wsparcie i dokumentacja integracji HR PRO AI — jak dodać, używać i usunąć Zoom, Google Meet i Microsoft Teams oraz jak skontaktować się ze wsparciem.',
+    intro:'HR PRO AI to platforma rekrutacyjna: ocenia kandydatów (testy produktywności, osobowości, inteligencji, sprzedaży i wiedzy) i pomaga prowadzić cały lejek rekrutacji. Poniżej opisano, jak uzyskać wsparcie oraz jak dodać, używać i usunąć nasze opcjonalne integracje wideo (Zoom, Google Meet, Microsoft Teams).',
+    sup_h:'Jak uzyskać wsparcie',
+    sup_email_l:'Email wsparcia', sup_hours_l:'Godziny pracy', sup_hours_v:'Pon–Pt, 9:00–18:00 (CET)', sup_sla_l:'Czas pierwszej odpowiedzi', sup_sla_v:'w ciągu 1 dnia roboczego',
+    sup_p:'Napisz do nas na <a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a>, aby zgłosić sprawę — opisz problem i w miarę możliwości dołącz zrzut ekranu. Pod tym samym adresem odpowiadamy na pytania dotyczące konta, płatności, usunięcia danych i integracji.',
+    sup_kb:'Baza wiedzy i przewodniki: ta strona, pomoc w aplikacji oraz <a href="/privacy">Polityka prywatności</a> i <a href="/terms">Warunki korzystania</a>.',
+    int_h:'Integracje wideo (Zoom, Google Meet, Microsoft Teams)',
+    int_intro:'Te integracje są <strong>opcjonalne</strong>. Pozwalają utworzyć link do spotkania na rozmowę bezpośrednio z HR PRO AI podczas planowania kandydata. Łączysz własne konto przez <strong>OAuth 2.0</strong> — autoryzujesz się na stronie usługodawcy, a my nigdy nie widzimy Twojego hasła.',
+    add_h:'Jak dodać',
+    add_1:'Zaloguj się do HR PRO AI i otwórz <strong>Integracje</strong> w lewym menu.',
+    add_2:'Znajdź <strong>Zoom</strong> (lub Google Meet / Microsoft Teams) i kliknij <strong>Połącz konto</strong>.',
+    add_3:'Nastąpi przekierowanie na ekran zgody OAuth usługi. Sprawdź żądane uprawnienia i zatwierdź.',
+    add_4:'Wrócisz do HR PRO AI, a status integracji zmieni się na <strong>Połączono</strong>.',
+    use_h:'Jak używać',
+    use_1:'Otwórz <strong>Kalendarz</strong> lub kartę kandydata i zaplanuj rozmowę.',
+    use_2:'Wybierz połączoną usługę i kliknij <strong>Utwórz spotkanie</strong> — link powstanie na Twoim koncie.',
+    use_3:'Link zostanie dodany do rozmowy i do zaproszenia wysyłanego kandydatowi.',
+    use_note:'Używamy dostępu wyłącznie, aby <strong>utworzyć spotkanie w Twoim imieniu</strong> i odczytać email konta do wyświetlenia. <strong>Nie</strong> mamy dostępu do treści spotkań, nagrań, czatu ani danych uczestników i ich nie przechowujemy.',
+    rem_h:'Jak usunąć',
+    rem_1:'W HR PRO AI otwórz <strong>Integracje</strong>, znajdź usługę i kliknij <strong>Odłącz</strong>.',
+    rem_2:'Opcjonalnie cofnij dostęp też po stronie usługi: w <a href="https://marketplace.zoom.us/user/installed" target="_blank" rel="noopener">zainstalowanych aplikacjach Zoom</a>, <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">uprawnieniach konta Google</a> lub w aplikacjach Microsoft.',
+    deauth_p:'<b>Co dzieje się przy odłączeniu.</b> Gdy odłączysz integrację (w HR PRO AI lub po stronie usługi), zapisane tokeny OAuth dostępu i odświeżania natychmiast tracą ważność i są usuwane z naszych serwerów. HR PRO AI nie może już tworzyć spotkań w Twoim imieniu. Wcześniej utworzone linki istnieją na Twoim koncie usługi, dopóki ich tam nie usuniesz.',
+    del_p:'<b>Usuwanie danych.</b> Aby zażądać usunięcia danych konta lub danych integracji, napisz na <a href="mailto:info@hr-pro.ai">info@hr-pro.ai</a>. Żądane dane usuwamy w ciągu 30 dni. Co przechowujemy i jak chronimy — zobacz <a href="/privacy">Politykę prywatności</a>.',
+    lu_h:'Dane Google i Zoom — ograniczone użycie',
+    lu_p:'Wykorzystanie danych otrzymanych przez API Google jest zgodne z <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, w tym z wymaganiami <strong>Limited Use</strong>. Dane użytkowników Google i Zoom są używane wyłącznie do opisanych powyżej funkcji integracji; nigdy nie są sprzedawane, przekazywane brokerom danych ani reklamodawcom, ani używane do trenowania modeli AI/ML. Szczegóły — w <a href="/privacy">Polityce prywatności</a>.',
+    foot:'HR PRO AI sp. z o.o., ul. Prosta 51, 00-838 Warszawa. · <a href="/privacy">Polityka prywatności</a> · <a href="/terms">Warunki korzystania</a> · <a href="/">Strona główna</a>',
+  },
+};
+const DEF={}; document.querySelectorAll('[data-i18n]').forEach(el=>{DEF[el.getAttribute('data-i18n')]=el.tagName==='META'?el.getAttribute('content'):el.innerHTML;});
+function apply(lang){
+  const d=Object.assign({}, DEF, I18N[lang]||{});
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n'); if(d[k]==null) return; if(el.tagName==='META')el.setAttribute('content',d[k]); else el.innerHTML=d[k];});
+  document.getElementById('lang-dd-cur').textContent=lang.toUpperCase();
+  try{localStorage.setItem('hp_lang',lang);}catch(e){}
+}
+const dd=document.getElementById('lang-dd');
+document.getElementById('lang-dd-btn').onclick=e=>{e.stopPropagation();dd.classList.toggle('open');};
+document.addEventListener('click',()=>dd.classList.remove('open'));
+document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{apply(b.getAttribute('data-lang'));dd.classList.remove('open');});
+let init='en'; try{const s=localStorage.getItem('hp_lang'); if(['en','ru','pl'].includes(s))init=s;}catch(e){}
+apply(init);
+</script>
+</body></html>

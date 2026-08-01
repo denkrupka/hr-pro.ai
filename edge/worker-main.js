@@ -4,19 +4,21 @@
 import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
 import { notifyCandidate, wrapEmailEdge, unsubToken, resetToken, verifyResetToken, emailVerifyToken } from './notify-edge.js';
+import { MAIL_DEF_STATUS } from './mail-defaults-edge.js';
 import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
 import { guideCheck } from './guide-check.js';
 import { parseCV, cvSummary } from './cv-parse.js';
 import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
-import { generateAd as genAdAI } from './ai-ad-edge.js';
+import { generateAd as genAdAI, sanitizeAdHtml as sanitizeAdHtmlEdge } from './ai-ad-edge.js';
 import { finalAssessment as finalAssessAI } from './ai-final-edge.js';
 import * as aidec from './ai-decode-edge.js';
 import { generateVideoLink, videoIntegrationStatus, authorizeUrl as vidAuthorizeUrl, exchangeCode as vidExchangeCode, makeVState as vidMakeState, readVState as vidReadState } from './video-integrations-edge.js';
 import { normalizeCfg as normAiCall, resolveAiCall as resolveAiCallCfg, DEFAULTS as AICALL_DEFAULTS } from './call-settings-edge.js';
 import * as callLog from './ai-call-log-edge.js';
 import * as callSched from './call-scheduler-edge.js';
+import * as salesSched from './sales-scheduler-edge.js';
 import { vapiConfigured, startCall as vapiStartCall, getCall as vapiGetCall } from './integrations-edge.js';
 import * as aiCallPrompts from '../src/ai-call-prompts.js';
 import { buildInboundAssistant, parseEndReport as inboundParseEndReport } from './inbound-call.js';
@@ -24,6 +26,7 @@ import * as salesAgent from '../src/sales-agent.js';
 import { pushNotif, defaultNotifPrefs, notifCatalog, NOTIF_TYPES } from './notifications-edge.js';
 import { buildRefInterview } from '../src/references-ai.js';
 import * as goog from './google-oauth.js';
+import { buildJobPosting, employmentType as jobEmploymentType, localityOf as jobLocality } from './job-posting-ld.js';
 import { EDU_TOPICS, EDU_CONTENT } from './education-data.js';
 import * as learn from '../src/learning.js';
 import { PORTALS as JOB_PORTALS, connectionsOf as jpConns, isConnected as jpIsConnected } from './job-portals-data.js';
@@ -164,12 +167,15 @@ async function aiCallForEdge(env, S, owner, part, vac, kind) {
   } catch (e) { return false; }
 }
 // Объявление: ИИ по методологии (Claude через env), фолбэк — шаблон air.generateAd.
-async function buildAdEdge(env, { form, lang, company, target, vacancyName }) {
+async function buildAdEdge(env, { form, lang, company, target, vacancyName }, S) {
   try {
-    const ad = await genAdAI(env, { form, lang, company, target, vacancyName });
-    if (ad && ad.trim()) return { ad, ai: true };
-  } catch (e) { /* фолбэк ниже */ }
-  return { ad: air.generateAd(form || { position: vacancyName }, lang, { company, target }), ai: false };
+    const gen = await genAdAI(env, { form, lang, company, target, vacancyName });
+    if (gen && gen.variants && gen.variants.length) {
+      return { ai: true, comment: gen.comment || '', variants: gen.variants, adText: gen.variants[0].html };
+    }
+  } catch (e) { if (S && isBillingError(e && e.message)) { try { await alertAdminsBilling(env, S, String(e.message || e)); } catch (_) {} } /* фолбэк ниже */ }
+  const fb = sanitizeAdHtmlEdge(air.generateAd(form || { position: vacancyName }, lang, { company, target }));
+  return { ai: false, comment: '', variants: [{ title: '', html: fb }], adText: fb };
 }
 // Письмо подтверждения email (best-effort через Resend env). ru/pl/en.
 async function sendVerifyEmailEdge(env, url, u, lang) {
@@ -190,7 +196,7 @@ async function sendVerifyEmailEdge(env, url, u, lang) {
     const html = wrapEmailEdge({ lang: lg, baseUrl: base, subject: V.subj, eyebrow: V.eyebrow, headline: V.head, bodyHtml: V.body, ctaUrl: link, ctaLabel: V.cta });
     await fetch('https://api.resend.com/emails', { method: 'POST',
       headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [u.email], subject: V.subj, html }) });
+      body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [u.email], subject: V.subj, html }) });
   } catch (e) {}
 }
 
@@ -208,13 +214,94 @@ async function decodeVacCtx(env, S, test) {
   return { candidate, vacName: (dc.vacName || (vac && vac.name) || (rq && rq.form && rq.form.position) || '').trim(), roleType: dc.roleType || (vac && vac.roleType) || '', duties: (duties || '').trim() };
 }
 function decodeKindsForType(type) { return type === 'tools' ? ['full', 'manual', 'presentation'] : type === 'result' ? ['productivity'] : []; }
+function salesResultTextEdge(r) {
+  const lines = (r.order || []).map(k => { const pt = r.points[k]; return `${k}. ${pt.name}: ${pt.value}/100 (${pt.label})`; });
+  let out = 'РЕЗУЛЬТАТ ТЕСТА «СЕЙЛС» (12 показателей продаж, шкала 0–100):\n' + lines.join('\n');
+  if (r.types && r.types.length) out += '\n\nТип(ы) продажника: ' + r.types.map(tp => `${tp.title} — ${tp.text}`).join('\n• ');
+  return out;
+}
+// Полное досье кандидата для чата «Узнать о кандидате»: все тесты + заявка + вакансия + объявление + резюме.
+async function buildCandidateDossier(env, S, test, ctx, lang) {
+  const part = test.participantId ? await S.one('participants', test.participantId) : null;
+  const vac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+  const rq = vac && vac.requisitionId ? await S.one('requisitions', vac.requisitionId) : null;
+  const parts = [];
+  const demo = part ? [part.age ? 'возраст ' + part.age : '', part.city ? 'город ' + part.city : '', part.sex ? 'пол ' + part.sex : ''].filter(Boolean).join(', ') : '';
+  parts.push('КАНДИДАТ: ' + (ctx.candidate || '—') + (demo ? ` (${demo})` : ''));
+  parts.push(aidec.jobContextText(ctx));
+  if (vac && vac.adText) parts.push('ТЕКСТ ОБЪЯВЛЕНИЯ О ВАКАНСИИ:\n' + String(vac.adText).trim().slice(0, 4000));
+  if (rq && rq.form) {
+    const rf = Object.entries(rq.form).filter(([, v]) => (typeof v === 'string' && v.trim()) || (Array.isArray(v) && v.length))
+      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('\n');
+    if (rf) parts.push('ЗАЯВКА НА НАЙМ (требования должности):\n' + rf);
+  }
+  if (part && part.cv && part.cv.name) parts.push('РЕЗЮМЕ (CV): прикреплён файл «' + part.cv.name + '»' + (part.cvText ? ':\n' + String(part.cvText).slice(0, 4000) : ' (текст резюме недоступен для чтения ИИ — учитывай, что он есть у рекрутёра).'));
+  let allTests = [];
+  try { allTests = (await S.select('tests', `participant_id=eq.${test.participantId}&select=data`)).map(r => r.data).filter(t => t && t.status === 'done'); } catch (_) { allTests = [test]; }
+  const blocks = [];
+  for (const x of allTests) {
+    try {
+      const pr = (x.participantId === test.participantId) ? part : await S.one('participants', x.participantId);
+      const r = computeResult(x, pr);
+      if (x.type === 'tools') blocks.push(aidec.toolsResultText(r));
+      else if (x.type === 'sales') blocks.push(salesResultTextEdge(r));
+      else if (x.type === 'logic') blocks.push(`РЕЗУЛЬТАТ ТЕСТА «ЛОГИС» (интеллект): IQ ${r.iq} — ${r.level}. Верных ответов: ${r.correct}/${r.total}.`);
+      else if (x.type === 'result') { let h = null; try { h = resultHintFor(x, localizeResult(computeResult(x, pr), 'result', lang), lang); } catch (_) {} blocks.push('РЕЗУЛЬТАТ ТЕСТА «РЕЗАЛТ» (продуктивность, Виннер/Дуер/Вейтер):\n' + (h ? h.verdict + '\n' + (h.notes || []).map(n => '• ' + n).join('\n') : 'тест пройден')); }
+      else if (x.type === 'knowledge') { const sc = r.score != null ? r.score : (r.correct != null ? r.correct : null); blocks.push(`РЕЗУЛЬТАТ ТЕСТА «ПРОВЕРКА ЗНАНИЙ»: ${sc != null ? sc : '—'}${r.total ? '/' + r.total : ''}${r.percent != null ? ` (${r.percent}%)` : ''}.`); }
+    } catch (_) {}
+  }
+  parts.push('РЕЗУЛЬТАТЫ ВСЕХ ПРОЙДЕННЫХ ТЕСТОВ КАНДИДАТА:\n\n' + (blocks.join('\n\n─────────\n\n') || 'нет завершённых тестов'));
+  return 'ДОСЬЕ КАНДИДАТА (полный контекст, не меняется в течение беседы):\n\n' + parts.join('\n\n');
+}
 const DECODE_LABELS = {
   productivity: { title: 'HR PRO AI · Анализ продуктивности', eyebrow: 'Анализ теста на продуктивность', heroTitle: 'Анализ продуктивности кандидата', heroSub: 'Тип сотрудника (Виннер/Дуер/Вейтер), уровень продуктивности и мотивации, драйверы и соответствие должности — по методике и ответам теста «Резалт».' },
-  full: { title: 'HR PRO AI · Полная расшифровка', eyebrow: 'Полная расшифровка · отчёт', heroTitle: 'Расшифровка теста личностных качеств', heroSub: 'Разбор каждой из 10 точек, проверка компульсивности и синдромов, целостный психологический портрет и вердикт по должности.' },
-  manual: { title: 'HR PRO AI · Инструкция по эксплуатации', eyebrow: 'Инструкция по эксплуатации', heroTitle: 'Как работать с этим человеком', heroSub: 'Практическое руководство для руководителя: стиль управления, мотивация, контроль, обратная связь, конфликты и типичные ошибки — выведены из профиля теста.' },
-  presentation: { title: 'HR PRO AI · Сценарий предоставления оценки', eyebrow: 'Сценарий предоставления оценки', heroTitle: 'Как подать сотруднику результат теста', heroSub: 'Пошаговый сценарий встречи: как открыть разговор, разобрать сильные стороны и зоны развития, поговорить о синдромах и завершить.' },
+  full: { title: 'HR PRO AI · Полная расшифровка', eyebrow: 'Полная расшифровка · отчёт', heroTitle: 'Расшифровка теста личностных качеств', heroSub: 'Разбор каждой из 10 точек, проверка компульсивности и синдромов.' },
+  manual: { title: 'HR PRO AI · Инструкция по эксплуатации кандидата', eyebrow: 'Инструкция по эксплуатации кандидата', heroTitle: 'Как работать с этим человеком', heroSub: 'Практическое руководство для руководителя: стиль управления, мотивация, контроль, обратная связь, конфликты и типичные ошибки — выведены из профиля теста.' },
+  presentation: { title: 'HR PRO AI · Повышение эффективности кандидата', eyebrow: 'Повышение эффективности кандидата', heroTitle: 'Как подать сотруднику результат теста', heroSub: 'Пошаговый сценарий встречи: как открыть разговор, разобрать сильные стороны и зоны развития, поговорить о синдромах и завершить.' },
 };
+// Платные AI-функции: цены (в тестах) и последовательность покупки.
+const AI_FEATURE_PRICES = { full: 0.5, manual: 1, presentation: 0.5, chat: 1, productivity: 0.5 };
+const AI_FEATURE_SEQ = ['full', 'manual', 'presentation'];
+function featureOwnedT(test, f) { return !!(test.purchases && test.purchases[f]); }
 // Фоновая генерация расшифровки: пишет статус/контент в test.decodes[kind] (Supabase).
+// Ошибка биллинга Anthropic (кончились кредиты). Проверяется по тексту ошибки.
+function isBillingError(msg) { return /credit balance is too low|too low to access|Plans ?& ?Billing|insufficient (funds|credit|quota)|billing/i.test(String(msg || '')); }
+// Санитайз сигналов честности прохождения (детектор читинга).
+function sanitizeIntegrity(x) {
+  if (!x || typeof x !== 'object') return null;
+  const n = (v, max) => Math.max(0, Math.min(max, Math.round(+v || 0)));
+  const tabByQ = {};
+  if (x.tabByQ && typeof x.tabByQ === 'object') { for (const k of Object.keys(x.tabByQ).slice(0, 300)) tabByQ[String(k).slice(0, 40)] = n(x.tabByQ[k], 9999); }
+  const out = {
+    tabSwitches: n(x.tabSwitches, 99999), copyCount: n(x.copyCount, 99999), pasteCount: n(x.pasteCount, 99999),
+    focusLostMs: n(x.focusLostMs, 100 * 3600 * 1000), tabByQ,
+    copied: Array.isArray(x.copied) ? x.copied.slice(0, 25).map(s => String(s == null ? '' : s).slice(0, 200)).filter(Boolean) : [],
+  };
+  if (!out.tabSwitches && !out.copyCount && !out.pasteCount && !out.copied.length) return null;
+  return out;
+}
+// Алярм админам портала (Telegram + email) при billing-сбое. Троттлинг — не чаще раза в 30 минут.
+async function alertAdminsBilling(env, S, errText) {
+  try {
+    const pr = await S.select('settings', 'id=eq.portal&select=data');
+    const pt = (pr[0] && pr[0].data) || {};
+    if (pt.lastBillingAlarmAt && Date.now() - new Date(pt.lastBillingAlarmAt).getTime() < 30 * 60000) return; // уже слали недавно
+    const botToken = env.TELEGRAM_BOT_TOKEN || pt.telegramBotToken || '';
+    const admins = (await S.select('users', 'select=data')).map(r => r.data).filter(u => u && u.role === 'admin' && !u.blocked);
+    const tgText = '🚨 <b>HR PRO AI — сбой ИИ (биллинг)</b>\nНа аккаунте Anthropic закончились средства — расшифровки и ИИ-анализ не генерируются.\nПополните баланс: console.anthropic.com → Plans &amp; Billing.\n\n<code>' + String(errText || '').slice(0, 200).replace(/</g, '&lt;') + '</code>';
+    let sent = false;
+    for (const adm of admins) {
+      const chatId = adm.settings && adm.settings.telegram && adm.settings.telegram.chatId;
+      if (botToken && chatId) {
+        try { await fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: tgText, parse_mode: 'HTML' }) }); sent = true; } catch (_) {}
+      }
+      if (env.RESEND_API_KEY && adm.email) {
+        try { await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [adm.email], subject: '🚨 HR PRO AI: закончились кредиты Anthropic', html: '<p><b>ИИ-функции не работают</b> — на аккаунте Anthropic закончились средства.</p><p>Пополните баланс: <a href="https://console.anthropic.com/settings/billing">console.anthropic.com → Plans &amp; Billing</a>.</p>' }) }); sent = true; } catch (_) {}
+      }
+    }
+    if (sent) { pt.lastBillingAlarmAt = new Date().toISOString(); try { await S.upsert('settings', { id: 'portal', data: pt }); } catch (_) {} }
+  } catch (_) {}
+}
 async function runDecodeBackground(env, S, testId, kind, lang) {
   try {
     const test = await S.one('tests', testId); if (!test) return;
@@ -236,10 +323,34 @@ async function runDecodeBackground(env, S, testId, kind, lang) {
     fresh.decodes[kind] = { status: 'done', doneAt: new Date().toISOString(), lang, content: out.contentHtml, truncated: out.stopReason === 'max_tokens' };
     await S.upsert('tests', { id: fresh.id, data: fresh });
   } catch (e) {
-    try { const fresh = await S.one('tests', testId); if (fresh) { fresh.decodes = fresh.decodes || {}; fresh.decodes[kind] = { status: 'error', error: String(e.message || e).slice(0, 300), doneAt: new Date().toISOString(), lang }; await S.upsert('tests', { id: fresh.id, data: fresh }); } } catch (_) {}
+    const msg = String(e.message || e);
+    if (isBillingError(msg)) { try { await alertAdminsBilling(env, S, msg); } catch (_) {} }
+    try { const fresh = await S.one('tests', testId); if (fresh) { fresh.decodes = fresh.decodes || {}; fresh.decodes[kind] = { status: 'error', error: msg.slice(0, 300), doneAt: new Date().toISOString(), lang }; await S.upsert('tests', { id: fresh.id, data: fresh }); } } catch (_) {}
   }
 }
 // Рендер страницы готовой расшифровки (GET /decode/:id/:kind).
+// Собирает HTML страницы расшифровки (спектр + синдромы + page). opts: { publicView } — публичный просмотр по ссылке (без тулбара портала/шаринга).
+async function renderDecodeHtml(env, S, url, test, kind, langHint, opts = {}) {
+  const st = test.decodes && test.decodes[kind];
+  if (!st || st.status !== 'done' || !st.content) return null;
+  const lang = ['ru', 'pl', 'en'].includes(st.lang) ? st.lang : (['ru', 'pl', 'en'].includes(langHint) ? langHint : 'ru');
+  const ctx = await decodeVacCtx(env, S, test);
+  const L = DECODE_LABELS[kind] || DECODE_LABELS.productivity;
+  const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+  let spectrumHtml = '', syndromesHtml = '';
+  if (test.type === 'tools') {
+    const part = await S.one('participants', test.participantId);
+    const result = localizeResult(computeResult(test, part), 'tools', lang);
+    spectrumHtml = aidec.spectrum(result.points, result.order, lang);
+    syndromesHtml = kind === 'full' ? aidec.syndromesBlock(result, lang) : '';
+  }
+  return aidec.page({ lang, title: L.title, eyebrow: L.eyebrow, heroTitle: L.heroTitle, heroSub: L.heroSub,
+    candidate: ctx.candidate, vacancy: ctx.vacName, roleWordKey: kind === 'manual' ? 'employee' : 'candidate',
+    spectrumHtml, syndromesHtml, isLead: ctx.roleType === 'lead', bodyHtml: st.content,
+    publicView: !!opts.publicView,
+    backUrl: opts.publicView ? '' : `${base}/result/${test.id}`,
+    share: opts.publicView ? null : { testId: test.id, kind } });
+}
 async function decodePage(req, env, url, testId, kind) {
   const S = supa(env);
   const u = await currentUser(env, req);
@@ -247,17 +358,8 @@ async function decodePage(req, env, url, testId, kind) {
   const test = await S.one('tests', testId);
   if (!test || test.userId !== u.id) return new Response('Не найдено', { status: 404 });
   if (!decodeKindsForType(test.type).includes(kind)) return new Response('Не найдено', { status: 404 });
-  const st = test.decodes && test.decodes[kind];
-  if (!st || st.status !== 'done' || !st.content) return new Response('Расшифровка ещё не готова', { status: 409 });
-  const lang = ['ru', 'pl', 'en'].includes(st.lang) ? st.lang : (['ru', 'pl', 'en'].includes(url.searchParams.get('lang')) ? url.searchParams.get('lang') : 'ru');
-  const ctx = await decodeVacCtx(env, S, test);
-  const L = DECODE_LABELS[kind] || DECODE_LABELS.productivity;
-  const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
-  let spectrumHtml = '';
-  if (test.type === 'tools') { const part = await S.one('participants', test.participantId); const result = computeResult(test, part); spectrumHtml = aidec.spectrum(result.points, result.order); }
-  const html = aidec.page({ lang, title: L.title, eyebrow: L.eyebrow, heroTitle: L.heroTitle, heroSub: L.heroSub,
-    candidate: ctx.candidate, vacancy: ctx.vacName, roleWordKey: kind === 'manual' ? 'employee' : 'candidate',
-    spectrumHtml, bodyHtml: st.content, backUrl: `${base}/result/${test.id}` });
+  const html = await renderDecodeHtml(env, S, url, test, kind, url.searchParams.get('lang'));
+  if (!html) return new Response('Расшифровка ещё не готова', { status: 409 });
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }
 
@@ -272,6 +374,134 @@ async function api(req, env, url, exec) {
   async function settings() { const r = await S.select('settings', 'id=eq.portal&select=data'); const d = (r[0] && r[0].data) || {}; _portal = d; return d; }
   // env + токен Telegram-бота (лежит в настройках портала, т.к. Cloudflare env недоступен по API).
   async function nenv() { const pt = _portal || await settings(); return { ...env, TELEGRAM_BOT_TOKEN: env.TELEGRAM_BOT_TOKEN || pt.telegramBotToken || '', BASE_URL: env.BASE_URL || url.origin }; }
+
+  // ── АВТОВОРОНКА (edge) ──────────────────────────────────────────────────────
+  // Письмо кандидату по статусу решения (rejected/accepted) — для авто-решений воронки.
+  async function sendStatusMail(part, statusKey, owner, vac) {
+    try {
+      const resendKey = env.RESEND_API_KEY;
+      const unsubbed = Array.isArray(env.__unsub) && env.__unsub.includes(String(part.email || '').toLowerCase());
+      if (!statusKey || !part.email || !resendKey || unsubbed) return;
+      vac = vac || (part.vacancyId ? await S.one('vacancies', part.vacancyId) : null);
+      const mailLang = (vac && vac.lang) || 'ru';
+      const gsCol = await settings();
+      const pick = (mt) => mt && mt.status && mt.status[statusKey] && (mt.status[statusKey][mailLang] || mt.status[statusKey].ru);
+      const defStatus = MAIL_DEF_STATUS[statusKey] && (MAIL_DEF_STATUS[statusKey][mailLang] || MAIL_DEF_STATUS[statusKey].ru);
+      const tpl = pick(owner.settings && owner.settings.mailTemplates) || pick(gsCol.defaultMailTemplates) || defStatus;
+      if (!tpl || (!tpl.subject && !tpl.body)) return;
+      const name = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email;
+      const iv = ((part.workflow && part.workflow.interviews) || [])[0];
+      const vars = { name, candidate: name, client: owner.name || '', company: owner.company || '',
+        vac: vac ? vac.name : '', vacancy: vac ? vac.name : '', phone: part.tel || '',
+        date_interview: (iv && (iv.at || iv.date)) || '', id_part: part.id, link: '', button_link: '' };
+      const fill = str => String(str || '').replace(/\$(\w+)\$/g, (m2, k) => (vars[k] != null ? vars[k] : m2)).replace(/\{(\w+)\}/g, (m2, k) => (vars[k] != null ? vars[k] : m2));
+      const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+      const tok = await unsubToken(env.SECRET, part.email);
+      const unsubUrl = `${base}/unsubscribe?e=${btoa(String(part.email).toLowerCase())}&t=${tok}&lang=${mailLang}`;
+      const subject = fill(tpl.subject) || (owner.company || 'HR PRO AI');
+      const html = wrapEmailEdge({ lang: mailLang, baseUrl: base, unsubUrl, subject, bodyHtml: fill(tpl.body).replace(/\n/g, '<br>') });
+      await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [part.email], subject, html }) });
+    } catch (_) {}
+  }
+  // Создать и отправить кандидату очередной тест процесса (авто).
+  async function autoSendTestEdge(owner, part, vac, type, kt) {
+    try {
+      if (!owner || owner.blocked === true) return null;
+      if (((owner.balanceTotal || 0) - (owner.balancePending || 0)) < 1) return null;
+      const BASE = env.PORTAL_BASE_URL || url.origin;
+      const code = (() => { const a = 'abcdefghijkmnpqrstuvwxyz23456789'; const b = new Uint8Array(10); crypto.getRandomValues(b); return Array.from(b, x => a[x % a.length]).join(''); })();
+      const test = { id: uid(), participantId: part.id, userId: owner.id, type, status: 'sent', code,
+        lang: (vac && vac.lang) || 'ru', sentAt: new Date().toISOString(), startedAt: null, finishedAt: null,
+        durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
+      if (type === 'knowledge' && kt) test.knowledge = { ktId: kt.id, name: kt.name, questions: kt.questions, passScore: kt.passScore };
+      await S.upsert('tests', { id: test.id, data: test });
+      owner.balancePending = (owner.balancePending || 0) + 1;
+      await S.upsert('users', { id: owner.id, data: owner });
+      try { await notifyCandidate(env, owner, part, test, vac, `${BASE}/t/${code}`, testTitleOf(type)); } catch (_) {}
+      return test;
+    } catch (_) { return null; }
+  }
+  // Единый прогон воронки: авто-решение (отказ/найм с письмом+уведомлением) → реф-звонки → следующий тест.
+  async function runFunnelEdge(part, vac, owner) {
+    try {
+      if (!part || !vac || !owner || (!part.email && !part.tel)) return;
+      const proc = processOf(vac);
+      if (!proc || !proc.auto) return;
+      part.workflow = part.workflow || {};
+      const lang = (vac.lang) || 'ru';
+      const allTests = (await S.select('tests', `participant_id=eq.${part.id}&select=data`)).map(r => r.data);
+      const wf = buildWorkflow(part, lang, vac, allTests);
+      const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || part.tel || 'кандидат';
+      const cbody = (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + (vac.name ? 'Вакансия: ' + vac.name : '');
+      // 1) АВТО-ОТКАЗ по критериям отбора (провал критичного этапа)
+      if (wf.column === 'rejected' && !part.workflow.decision) {
+        part.workflow.decision = 'rejected'; part.workflow.column = 'rejected';
+        await S.upsert('participants', { id: part.id, data: part });
+        await sendStatusMail(part, 'rejected', owner, vac);
+        try { await pushNotif(await nenv(), S, owner, 'decision', { title: '❌ Автоотказ по критериям: ' + cand, body: cbody, pid: part.id }); } catch (_) {}
+        return;
+      }
+      // 2) ВСЕ ЭТАПЫ ПРОЙДЕНЫ → решение принимает РЕКРУТЁР (найм или доп. собеседование).
+      // Воронка НЕ нанимает сама и НЕ шлёт кандидату письмо — только уведомляет (один раз).
+      if (wf.column === 'hired' && !part.workflow.decision) {
+        if (!part.workflow._hireNotified) {
+          part.workflow._hireNotified = true;
+          await S.upsert('participants', { id: part.id, data: part });
+          try { await pushNotif(await nenv(), S, owner, 'decision', { title: '✅ Кандидат прошёл все этапы — примите решение: ' + cand, body: cbody + '\nРекомендован к найму. Примите решение или назначьте доп. собеседование.', pid: part.id }); } catch (_) {}
+        }
+        return;
+      }
+      if (wf.decision) return; // решение уже принято (вручную) — воронка стоит
+      // 3) РЕФЕРЕНС-ЗВОНКИ: этап активен, есть контакты руководителей, ИИ настроен, ещё не запускали
+      const refStage = (wf.stages || []).find(s => s.key === 'references');
+      const resultDone = allTests.some(t => t.type === 'result' && t.status === 'done');
+      if (refStage && !refStage.skipped && refStage.refs && refStage.refs.length) {
+        if (refStage.aiCall && !refStage.done && resultDone && !part.workflow._refsAiStarted && vapiConfigured(env)) {
+          let started = 0;
+          const allV = (await S.select('vacancies', `user_id=eq.${owner.id}&select=data`)).map(r => r.data);
+          const cfg = resolveAiCallCfg(allV, owner.id, vac);
+          part.workflow.references = part.workflow.references || {}; part.workflow.references.multi = part.workflow.references.multi || {};
+          for (const rf of refStage.refs) {
+            const c = rf && rf.contact; const ri = rf.i != null ? rf.i : refStage.refs.indexOf(rf);
+            if (rf.done || !(c && c.phone)) continue;
+            const iv = buildRefInterview({ candidateName: cand, vacancyName: vac.name, contact: c, lang, company: owner.company || '',
+              recruiter: [owner.name, owner.surname].filter(Boolean).join(' '), agentName: cfg.agentName || '' });
+            const supervisor = [c.name, c.surname].filter(Boolean).join(' ').trim();
+            const vars = { candidate: cand, supervisor, company: owner.company || '', language: lang, agent_name: cfg.agentName || aiCallPrompts.agentName(lang) };
+            try {
+              const r = await callLog.startCall(env, part, { kind: 'references', refIndex: ri, to: c.phone, lang, task: iv.systemPrompt,
+                firstMessage: iv.firstMessage, structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt, vars, maxDurationMin: cfg.maxDurationMin });
+              if (r && !r.skipped) { part.workflow.references.multi[ri] = Object.assign({}, part.workflow.references.multi[ri], { aiCall: { callId: r.callId, status: 'calling', startedAt: new Date().toISOString(), entryId: r.entry.id } }); started++; }
+            } catch (_) {}
+          }
+          if (started) { part.workflow._refsAiStarted = true; part.callsActive = true; await S.upsert('participants', { id: part.id, data: part }); return; }
+        }
+        // Референсы ещё не завершены (звонки идут / ждём результат) — не гоним следующие тесты после Резалта.
+        if (!refStage.done && resultDone) return;
+      }
+      // 4) СЛЕДУЮЩИЙ ТЕСТ процесса (предыдущий пройден)
+      const skipped = part.workflow.skipped || {};
+      const seq = [];
+      (proc.order || ['result', 'tools', 'logic', 'sales', 'knowledge']).forEach(key => {
+        if (key === 'result' || key === 'tools') { if (proc.stages[key] !== false) seq.push({ type: key }); }
+        else if (key === 'logic' || key === 'sales') { if (proc.optional && proc.optional[key]) seq.push({ type: key, opt: true }); }
+        else if (key === 'knowledge' && proc.stages.knowledge !== false) { (knowledgeTestsOf(vac) || []).filter(k => k.questions && k.questions.length).forEach(kt => seq.push({ type: 'knowledge', kt })); }
+      });
+      for (const step of seq) {
+        if (skipped[step.type] || (step.opt && skipped['opt:' + step.type])) continue;
+        if (step.type === 'knowledge') {
+          const t = allTests.find(x => x.type === 'knowledge' && ((x.knowledge && x.knowledge.ktId) === step.kt.id));
+          if (t) { if (t.status !== 'done') return; continue; }
+          await autoSendTestEdge(owner, part, vac, 'knowledge', step.kt); return;
+        }
+        const pending = allTests.some(t => t.type === step.type && t.status !== 'done');
+        if (pending) return;
+        if (allTests.some(t => t.type === step.type && t.status === 'done')) continue;
+        await autoSendTestEdge(owner, part, vac, step.type); return;
+      }
+    } catch (_) { /* воронка не критична для ответа */ }
+  }
 
   if (p === '/api/health') return j({ ok: true, edge: true, ts: Date.now() });
 
@@ -335,7 +565,7 @@ async function api(req, env, url, exec) {
               const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: T.subj, eyebrow: T.subj, headline: T.head, bodyHtml, ctaUrl: cardUrlE, ctaLabel: cardUrlE ? 'Открыть карточку кандидата' : '' });
               try {
                 await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [info.recruiterEmail], subject: T.subj, html }) });
+                  body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [info.recruiterEmail], subject: T.subj, html }) });
               } catch (e) {}
             }
             // Уведомление в портал + Telegram
@@ -371,6 +601,86 @@ async function api(req, env, url, exec) {
     return rows[0] ? rows[0].data : null;
   };
   const saveLead = (lead) => S.upsert('leads', { id: lead.id, phone_key: salesAgent.phoneKey(lead.phone), data: lead });
+  // Разместить исходящий звонок Софии лиду (перезвон/ретрай планировщика). Мутирует lead (журнал + расписание).
+  const placeSalesLeadCall = async (lead, opts = {}) => {
+    if (!env.VAPI_API_KEY) return { ok: false, reason: 'no vapi key' };
+    if (salesSched.isTerminal(lead)) return { ok: false, reason: 'terminal status' };
+    const pt = await settings();
+    const salesPhoneId = env.VAPI_SALES_PHONE_ID || pt.vapiSalesPhoneId || '';
+    if (!salesPhoneId) return { ok: false, reason: 'no sales phone' };
+    // Глобальный часовой потолок исходящих продаж-звонков (тот же, что для лендинга).
+    const hourKey = Math.floor(Date.now() / 3600000);
+    const guard = (pt.salesCallGuard && pt.salesCallGuard.hour === hourKey) ? pt.salesCallGuard : { hour: hourKey, count: 0 };
+    const CALL_CAP = Number(env.SALES_CALL_HOURLY_CAP || pt.salesCallHourlyCap || 40);
+    if (guard.count >= CALL_CAP) return { ok: false, reason: 'hourly cap' };   // оставляем pending — следующий тик попробует
+    const lg = lead.lang || 'ru';
+    const secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
+    let leadBlock = salesAgent.leadContext(lead);
+    const hist = salesAgent.historyBlock(lead); if (hist) leadBlock += '\n\n' + hist;
+    if (opts.resumePrompt) leadBlock += '\n\n' + opts.resumePrompt;
+    const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lg, name: lead.name || '', leadBlock, plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
+      toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret });
+    if (secret) assistant.server = { url: url.origin + '/api/vapi/sales-inbound', secret };
+    let callId = '';
+    try {
+      const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(lead.phone) }, assistant }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.id) { callId = d.id; guard.count += 1; pt.salesCallGuard = guard; try { await S.upsert('settings', { id: 'portal', data: pt }); } catch (_) {} }
+      else { lead.lastCallError = (d && d.message ? String(Array.isArray(d.message) ? d.message.join('; ') : d.message) : 'HTTP ' + r.status).slice(0, 300); }
+    } catch (e) { return { ok: false, reason: (e && e.message) || 'vapi error' }; }
+    if (!callId) return { ok: false, reason: lead.lastCallError || 'vapi failed' };
+    lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+    lead.aiCallLog.push({ callId, kind: opts.kind || 'callback', dir: 'out', createdAt: new Date().toISOString(), status: 'calling', lang: lg });
+    if (lead.aiCallLog.length > 50) lead.aiCallLog = lead.aiCallLog.slice(-50);
+    const sch = lead.callSchedule = lead.callSchedule || { status: 'calling', attempts: 0, callbacks: 0 };
+    sch.status = 'calling'; sch.callId = callId; sch.startedAt = new Date().toISOString(); sch.attempts = (sch.attempts || 0) + 1;
+    lead.callActive = true;
+    return { ok: true, callId };
+  };
+  // Разместить исходящий звонок Софии КЛИЕНТУ (перезвон/ретрай планировщика). Мутирует user (salesCalls + расписание).
+  const placeSalesClientCall = async (user, opts = {}) => {
+    if (!env.VAPI_API_KEY) return { ok: false, reason: 'no vapi key' };
+    if (user.blocked || user.salesDoNotCall) return { ok: false, reason: 'do not call' };
+    const phone = (user.settings && user.settings.phone) || '';
+    if (!phone) return { ok: false, reason: 'no phone' };
+    const pt = await settings();
+    const salesPhoneId = env.VAPI_SALES_PHONE_ID || pt.vapiSalesPhoneId || '';
+    if (!salesPhoneId) return { ok: false, reason: 'no sales phone' };
+    const hourKey = Math.floor(Date.now() / 3600000);
+    const guard = (pt.salesCallGuard && pt.salesCallGuard.hour === hourKey) ? pt.salesCallGuard : { hour: hourKey, count: 0 };
+    const CALL_CAP = Number(env.SALES_CALL_HOURLY_CAP || pt.salesCallHourlyCap || 40);
+    if (guard.count >= CALL_CAP) return { ok: false, reason: 'hourly cap' };
+    // Продолжаем на языке прошлых разговоров (salesLang), фолбэк — язык интерфейса, затем русский.
+    const lang = user.salesLang || (['ru', 'pl', 'en'].includes(user.settings && user.settings.uiLang) ? user.settings.uiLang : 'ru');
+    const secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
+    let block = [`Компания: ${user.company || '—'}.`, `Баланс тестов: ${Math.max(0, (user.balanceTotal || 0) - (user.balancePending || 0))} доступно.`, `Зарегистрирован: ${String(user.createdAt || '').slice(0, 10)}.`].join('\n');
+    const hist = salesAgent.historyBlock({ aiCallLog: user.salesCalls || [] }); if (hist) block += '\n\n' + hist;
+    if (opts.resumePrompt) block += '\n\n' + opts.resumePrompt;
+    const assistant = salesAgent.buildAssistant({ mode: 'client', lang, name: user.name || '', company: user.company || '', leadBlock: block,
+      plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY, toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret });
+    if (opts.firstMessage || ['ru', 'pl', 'en'].includes(lang)) {
+      assistant.firstMessage = opts.firstMessage || (lang === 'pl' ? `Dzień dobry${user.name ? ', ' + user.name : ''}! Tu Zofia z HR-PRO.AI. Dzwonię w sprawie naszego portalu — ma Pan chwilę?`
+        : lang === 'en' ? `Hello${user.name ? ', ' + user.name : ''}! This is Sofia from HR-PRO.AI. I'm calling about our portal — do you have a minute?`
+        : `Здравствуйте${user.name ? ', ' + user.name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`);
+    }
+    if (secret) assistant.server = { url: url.origin + '/api/vapi/sales-inbound', secret };
+    let callId = '';
+    try {
+      const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant, metadata: { kind: 'client', userId: user.id } }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.id) { callId = d.id; guard.count += 1; pt.salesCallGuard = guard; try { await S.upsert('settings', { id: 'portal', data: pt }); } catch (_) {} }
+    } catch (e) { return { ok: false, reason: (e && e.message) || 'vapi error' }; }
+    if (!callId) return { ok: false, reason: 'vapi failed' };
+    user.salesCalls = Array.isArray(user.salesCalls) ? user.salesCalls : [];
+    user.salesCalls.push({ callId, kind: opts.kind || 'callback', dir: 'out', goal: opts.goal || 'upsell', createdAt: new Date().toISOString(), status: 'calling', lang });
+    if (user.salesCalls.length > 50) user.salesCalls = user.salesCalls.slice(-50);
+    const sch = user.callSchedule = user.callSchedule || { status: 'calling', attempts: 0, callbacks: 0 };
+    sch.status = 'calling'; sch.callId = callId; sch.startedAt = new Date().toISOString(); sch.attempts = (sch.attempts || 0) + 1;
+    user.callActive = true;
+    return { ok: true, callId };
+  };
   // Авто-конверсия лид → клиент: при регистрации пользователя ищем лид с тем же email (Соня записала в звонке).
   const convertLeadsForUser = async (u) => {
     try {
@@ -388,6 +698,7 @@ async function api(req, env, url, exec) {
           (l.aiCallLog || []).forEach(e => { if (!e.callId || !seen.has(e.callId)) u.salesCalls.push(e); });
           if (!u.settings) u.settings = {};
           if (!u.settings.phone && l.phone) u.settings.phone = l.phone;
+          if (!u.salesLang && l.lang) u.salesLang = l.lang; // продолжаем с клиентом на языке разговоров лида
           l.userId = u.id; l.status = 'converted'; l.convertedAt = new Date().toISOString();
           await saveLead(l); changed = true; userChanged = true;
         }
@@ -421,7 +732,11 @@ async function api(req, env, url, exec) {
     let lead = await leadByPhone(phone);
     const now = new Date().toISOString();
     if (!lead) lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] };
-    else { if (name) lead.name = name; lead.lang = lang; } // НЕ сбрасываем do_not_call автоматически (жертва просила не звонить)
+    else { if (name) lead.name = name; if (!lead.lang) lead.lang = lang; } // НЕ сбрасываем do_not_call автоматически (жертва просила не звонить)
+    // Существующий лид с историей разговоров → продолжаем на языке ПРОШЛЫХ разговоров; новый/без истории → на языке лендинга.
+    const hadTalk = Array.isArray(lead.aiCallLog) && lead.aiCallLog.some(e => e.summary || e.transcript);
+    const callLang = hadTalk ? (lead.lang || lang) : lang;
+    if (!hadTalk) lead.lang = lang;
     // Антиспам: не чаще 3 заявок в час с одного номера.
     lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
     if (lead.requests.length >= 3) return j({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.', code: 'rate_limit' }, 429);
@@ -436,7 +751,7 @@ async function api(req, env, url, exec) {
     if (env.VAPI_API_KEY && salesPhoneId && !optedOut && guard.count < CALL_CAP) {
       try {
         let secret = env.VAPI_INBOUND_SECRET || pt.vapiInboundSecret || '';
-        const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
+        const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: callLang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
           toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret });
         if (secret) assistant.server = { url: url.origin + '/api/vapi/sales-inbound', secret };
         const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + env.VAPI_API_KEY, 'Content-Type': 'application/json' },
@@ -447,8 +762,10 @@ async function api(req, env, url, exec) {
       } catch (e) { console.log('sales call err', e && e.message); }
     }
     lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
-    lead.aiCallLog.push({ callId, kind: 'callback', dir: 'out', createdAt: now, status: callId ? 'calling' : 'failed', lang });
+    lead.aiCallLog.push({ callId, kind: 'callback', dir: 'out', createdAt: now, status: callId ? 'calling' : 'failed', lang: callLang });
     if (lead.aiCallLog.length > 50) lead.aiCallLog = lead.aiCallLog.slice(-50);
+    // Расписание планировщика: дозвон состоялся — ждём отчёт (перезвон/ретрай решится в sales-inbound).
+    if (callId) { lead.callSchedule = { status: 'calling', attempts: 1, callbacks: 0, callId, startedAt: now }; lead.callActive = true; }
     await saveLead(lead);
     return j({ ok: true, calling: !!callId });
   }
@@ -500,7 +817,7 @@ async function api(req, env, url, exec) {
             const T = salesAgent.REG_EMAIL[lg];
             const html = wrapEmailEdge({ lang: lg, baseUrl: (env.BASE_URL || url.origin), subject: T.subject, eyebrow: 'HR-PRO.AI', headline: T.headline, bodyHtml: T.body, ctaUrl: salesAgent.REG_URL, ctaLabel: T.cta });
             const rr = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [em], subject: T.subject, html }) });
+              body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [em], subject: T.subject, html }) });
             sent = rr.ok;
             if (lead) { lead.email = em; if (args.name && !lead.name) lead.name = String(args.name).slice(0, 80); await saveLead(lead); }
           }
@@ -526,10 +843,43 @@ async function api(req, env, url, exec) {
             entry.status = 'done'; entry.endedAt = new Date().toISOString();
             entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
             entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
-            entry.summary = a.summary || msg.summary || entry.summary || '';
-            entry.answers = a.structuredData || entry.answers || null;
             entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : entry.durationSec || null;
+            // Гард от галлюцинаций Vapi: при пустом/мгновенном звонке анализатор выдумывает сводку — не сохраняем её.
+            const realTalk = salesAgent.hadRealConversation({ transcript: entry.transcript, durationSec: entry.durationSec });
+            entry.summary = realTalk ? (a.summary || msg.summary || entry.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+            entry.answers = realTalk ? (a.structuredData || entry.answers || null) : null;
             if (cu.salesCalls.length > 50) cu.salesCalls = cu.salesCalls.slice(-50);
+            const endedReason = msg.endedReason || (msg.call && msg.call.endedReason) || call.endedReason || '';
+            entry.endedReason = endedReason;
+            // Клиент прямо просил не звонить — фиксируем и больше не перезваниваем.
+            if (entry.answers && entry.answers.do_not_call === true) cu.salesDoNotCall = true;
+            // Фактический язык разговора → запоминаем, чтобы следующий звонок продолжить на нём же.
+            { const sl = salesAgent.normSpokenLang(entry.answers && entry.answers.spoken_language); if (sl) cu.salesLang = sl; }
+            // Технический обрыв разговора → немедленный перезвон (1 раз на звонок).
+            if (!entry._redialed && !cu.salesDoNotCall && !cu.blocked
+              && salesAgent.wasInterrupted({ endedReason, transcript: entry.transcript, durationSec: entry.durationSec, sd: entry.answers })) {
+              entry._redialed = true;
+              try {
+                const lgc = cu.salesLang || (['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru');
+                const apology = lgc === 'pl' ? 'WAŻNE: poprzednia rozmowa właśnie się urwała technicznie. Dzwonisz ponownie — przeproś za zerwane połączenie i kontynuuj od miejsca, gdzie skończyliście.'
+                  : lgc === 'en' ? 'IMPORTANT: the previous call just dropped technically. You are calling back — apologize for the drop and continue from where you left off.'
+                  : 'ВАЖНО: предыдущий разговор ТОЛЬКО ЧТО прервался по технической причине. Ты перезваниваешь: извинись за обрыв связи и продолжи с того места, где остановились (см. итог выше).';
+                const fm = lgc === 'pl' ? `Dzień dobry${cu.name ? ', ' + cu.name : ''}! Przepraszam, połączenie się urwało. Możemy kontynuować?`
+                  : lgc === 'en' ? `Hello${cu.name ? ', ' + cu.name : ''}! Sorry, the call dropped. May we continue?`
+                  : `Здравствуйте${cu.name ? ', ' + cu.name : ''}! Извините, связь оборвалась. Можем продолжить?`;
+                await placeSalesClientCall(cu, { kind: 'redial', resumePrompt: apology, firstMessage: fm });
+              } catch (_) {}
+            }
+            // Планировщик перезвонов/недозвонов (как у Евы): перезвон по просьбе / ретрай при недозвоне.
+            try {
+              const lastCall = cu.salesCalls[cu.salesCalls.length - 1] || {};
+              const redialed = !!(lastCall.kind === 'redial' && lastCall.status === 'calling');
+              await salesSched.scheduleAfterReport(env, cu, {
+                now: new Date(), cfg: salesSched.salesCfg(await settings()),
+                transcript: entry.transcript, endedReason, lang: cu.salesLang || (cu.settings && cu.settings.uiLang) || 'ru', redialed,
+                terminal: !!cu.salesDoNotCall || !!cu.blocked,
+              });
+            } catch (_) {}
             await saveUser(cu);
           }
         } else if (caller) {
@@ -546,15 +896,18 @@ async function api(req, env, url, exec) {
           entry.endedAt = new Date().toISOString();
           entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
           entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
-          entry.summary = a.summary || msg.summary || entry.summary || '';
-          entry.answers = a.structuredData || entry.answers || null;
           entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : entry.durationSec || null;
+          // Гард от галлюцинаций Vapi: при пустом/мгновенном звонке анализатор выдумывает сводку — не сохраняем её и не применяем данные.
+          const realTalk = salesAgent.hadRealConversation({ transcript: entry.transcript, durationSec: entry.durationSec });
+          entry.summary = realTalk ? (a.summary || msg.summary || entry.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+          entry.answers = realTalk ? (a.structuredData || entry.answers || null) : null;
           salesAgent.applyCallResult(lead, { summary: entry.summary, sd: entry.answers, transcript: entry.transcript });
           // Email прозвучал → попробуем сразу привязать к клиенту (если уже зарегистрирован).
           if (lead.email && !lead.userId) {
             try { const ur = await S.select('users', `email=eq.${encodeURIComponent(lead.email)}&select=data`); if (ur[0] && ur[0].data) { lead.userId = ur[0].data.id; lead.status = 'converted'; lead.convertedAt = new Date().toISOString(); } } catch (_) {}
           }
           const endedReason = msg.endedReason || (msg.call && msg.call.endedReason) || call.endedReason || '';
+          entry.endedReason = endedReason;
           // Просил живого менеджера → уведомляем админов портала (email + Telegram)
           if (salesAgent.wantsManager(entry.answers, entry.transcript) && !entry._mgrNotified) {
             entry._mgrNotified = true;
@@ -566,7 +919,7 @@ async function api(req, env, url, exec) {
               for (const adm of admins) {
                 if (env.RESEND_API_KEY && adm.email) {
                   const html = wrapEmailEdge({ lang: 'ru', baseUrl: (env.BASE_URL || url.origin), subject: 'Лид просит менеджера — отдел продаж', eyebrow: 'Отдел продаж', headline: 'Лид просит живого менеджера', bodyHtml });
-                  try { await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [adm.email], subject: 'Лид просит менеджера: ' + (lead.name || lead.phone), html }) }); } catch (_) {}
+                  try { await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [adm.email], subject: 'Лид просит менеджера: ' + (lead.name || lead.phone), html }) }); } catch (_) {}
                 }
                 if (nn.TELEGRAM_BOT_TOKEN && adm.settings && adm.settings.telegram && adm.settings.telegram.chatId) {
                   try { await fetch('https://api.telegram.org/bot' + nn.TELEGRAM_BOT_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: adm.settings.telegram.chatId, text: '📞 <b>Лид просит менеджера</b>\n' + (lead.name || '') + '\n📞 ' + lead.phone + (reason ? '\nВопрос: ' + reason : ''), parse_mode: 'HTML' }) }); } catch (_) {}
@@ -582,7 +935,7 @@ async function api(req, env, url, exec) {
               const pt2 = await settings();
               const salesPhoneId2 = env.VAPI_SALES_PHONE_ID || pt2.vapiSalesPhoneId || '';
               if (env.VAPI_API_KEY && salesPhoneId2) {
-                const lg = ['ru', 'pl', 'en'].includes(lead.lang) ? lead.lang : 'ru';
+                const lg = lead.lang || 'ru';
                 let secret2 = env.VAPI_INBOUND_SECRET || pt2.vapiInboundSecret || '';
                 const assistant2 = salesAgent.buildAssistant({ mode: 'lead', lang: lg, name: lead.name || '', plans: pt2.plans, currency: pt2.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
                   toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret2,
@@ -595,6 +948,16 @@ async function api(req, env, url, exec) {
               }
             } catch (_) {}
           }
+          // Планировщик перезвонов/недозвонов (как у Евы): назначить перезвон по просьбе или ретрай при недозвоне.
+          try {
+            const lastLog = lead.aiCallLog[lead.aiCallLog.length - 1] || {};
+            const redialed = !!(lastLog.kind === 'redial' && lastLog.status === 'calling');
+            await salesSched.scheduleAfterReport(env, lead, {
+              now: new Date(), cfg: salesSched.salesCfg(await settings()),
+              transcript: entry.transcript, endedReason, lang: lead.lang, redialed,
+              terminal: ['do_not_call', 'refused', 'registered', 'converted'].includes(lead.status),
+            });
+          } catch (_) {}
           await saveLead(lead);
         }
       } catch (e) { console.log('sales report err', e && e.message); }
@@ -606,7 +969,7 @@ async function api(req, env, url, exec) {
       const pt = await settings();
       const u = await clientByPhone(caller);
       if (u) {
-        const lang = ['ru', 'pl', 'en'].includes(u.settings && u.settings.uiLang) ? u.settings.uiLang : 'ru';
+        const lang = u.salesLang || (['ru', 'pl', 'en'].includes(u.settings && u.settings.uiLang) ? u.settings.uiLang : 'ru');
         const bits = [];
         if (u.company) bits.push(`Компания: ${u.company}.`);
         bits.push(`Баланс тестов: ${Math.max(0, (u.balanceTotal || 0) - (u.balancePending || 0))} доступно.`);
@@ -615,11 +978,15 @@ async function api(req, env, url, exec) {
         return j({ assistant });
       }
       let lead = await leadByPhone(caller);
+      const unknown = !lead;
       if (!lead) {
-        lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: new Date().toISOString(), aiCallLog: [] };
+        // Незнакомый входящий: стартовый язык по стране номера (ПЛ→pl, СНГ→ru, иначе→en); София спросит и подстроится.
+        lead = { id: uid(12), name: '', phone: caller, lang: salesAgent.langByPhone(caller), source: 'inbound', status: 'new', createdAt: new Date().toISOString(), aiCallLog: [] };
         await saveLead(lead);
       }
-      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: true, elevenKey: env.ELEVENLABS_API_KEY,
+      // Незнакомого без имени — приветствуем на языке по номеру и спрашиваем язык; известного лида — на языке прошлых разговоров.
+      const askLanguage = unknown && !lead.name;
+      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', baseLang: salesAgent.langByPhone(caller), askLanguage, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: pt.plans, currency: pt.currency, inbound: true, elevenKey: env.ELEVENLABS_API_KEY,
         toolServerUrl: url.origin + '/api/vapi/sales-inbound', toolSecret: secret });
       return j({ assistant });
     } catch (e) { return j({ error: String(e && (e.message || e)) }, 500); }
@@ -671,7 +1038,7 @@ async function api(req, env, url, exec) {
               headline: LEAD.head, bodyHtml: LEAD.body, ctaUrl: guideUrl, ctaLabel: LEAD.cta });
         await fetch('https://api.resend.com/emails', { method: 'POST',
           headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: (W ? W.subj : LEAD.subj), html }) });
+          body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [email], subject: (W ? W.subj : LEAD.subj), html }) });
       } catch (e) {}
     }
     return j({ ok: true });
@@ -737,7 +1104,7 @@ async function api(req, env, url, exec) {
   if (p === '/sitemap.xml') { // авто-sitemap: статические страницы + опубликованные посты блога
     const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
     const gs = await settings();
-    const staticU = ['/', '/blog', '/login', '/privacy', '/terms'];
+    const staticU = ['/', '/blog', '/login', '/privacy', '/terms', '/support'];
     const posts = (gs.blogPosts || []).filter(x => x && x.published && x.slug);
     const rows = [
       ...staticU.map(u => `  <url><loc>${base}${u}</loc></url>`),
@@ -918,7 +1285,7 @@ async function api(req, env, url, exec) {
           headline: FORGOT.head, bodyHtml: FORGOT.body, ctaUrl: resetUrl, ctaLabel: FORGOT.cta, ctaNote: FORGOT.note });
         await fetch('https://api.resend.com/emails', { method: 'POST',
           headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [email], subject: FORGOT.subj, html }) });
+          body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [email], subject: FORGOT.subj, html }) });
       }
     } catch (e) {}
     return j({ ok: true });
@@ -989,6 +1356,32 @@ async function api(req, env, url, exec) {
     const rows = await S.select('purchases', `user_id=eq.${me.id}&select=data`);
     return j({ purchases: rows.map(r => r.data).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')) });
   }
+  // Полная история движений баланса: начисления и списания.
+  if (p === '/api/balance/history' && m === 'GET') {
+    if (!me) return needAuth();
+    const [lr, pr, tr] = await Promise.all([
+      S.select('balance_log', `data->>userId=eq.${me.id}&select=data`).then(r => r.map(x => x.data)).catch(() => []),
+      S.select('participants', `user_id=eq.${me.id}&select=data`).then(r => r.map(x => x.data)).catch(() => []),
+      S.select('tests', `user_id=eq.${me.id}&select=data`).then(r => r.map(x => x.data)).catch(() => []),
+    ]);
+    const out = lr.map(e => {
+      const item = { delta: e.delta, kind: e.kind, comment: e.comment || '', createdAt: e.createdAt, balanceAfter: e.balanceAfter };
+      if (e.testId) {
+        const test = tr.find(t => t.id === e.testId);
+        if (test) { item.testType = test.type; const part = pr.find(x => x.id === test.participantId); if (part) { item.candidate = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email; item.vacancy = part.vacancyName || ''; item.participantId = part.id; item.vacancyId = part.vacancyId || ''; } }
+      }
+      if (e.kind === 'ai_feature') item.feature = e.feature || (String(e.comment || '').match(/«([a-z]+)»/) || [])[1] || '';
+      return item;
+    });
+    // Стартовый бонус: если записи нет в логе — синтезируем из лота.
+    if (!lr.some(e => e.kind === 'signup_bonus')) {
+      const lots = (me.balanceLots) || [];
+      const sb = lots.find(l => l.source === 'signup_bonus') || lots.find(l => l.source === 'legacy');
+      if (sb && sb.qty > 0) out.push({ delta: sb.qty, kind: 'signup_bonus', comment: '', createdAt: sb.createdAt || me.createdAt });
+    }
+    out.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    return j({ log: out });
+  }
 
   if (p === '/api/dashboard' && m === 'GET') {
     if (!me) return needAuth();
@@ -1004,7 +1397,10 @@ async function api(req, env, url, exec) {
     const byStage = {}; parts.forEach(x => { const s = x.stage || 'Без этапа'; byStage[s] = (byStage[s] || 0) + 1; });
     const byType = { tools: 0, result: 0, logic: 0, sales: 0 }; tests.forEach(t => { if (byType[t.type] != null) byType[t.type]++; });
     const doneByType = { tools: 0, result: 0, logic: 0, sales: 0 }; done.forEach(t => { if (doneByType[t.type] != null) doneByType[t.type]++; });
-    const applied = parts.length, tested = new Set(done.map(t => t.participantId)).size;
+    const testedSet = new Set(done.map(t => t.participantId));
+    const applied = parts.length, tested = testedSet.size;
+    const _finalStages = new Set(['Принят', 'Отказ', 'Отказано']);
+    const awaitingDecision = parts.filter(pp => testedSet.has(pp.id) && !_finalStages.has(pp.stage)).length;
     const funnel = [
       { key: 'applied', label: 'Кандидаты', value: applied },
       { key: 'tested', label: 'Прошли тест', value: tested },
@@ -1025,7 +1421,7 @@ async function api(req, env, url, exec) {
         balance: (me.balanceTotal || 0) - (me.balancePending || 0), vacancies: vacs.length, anketas: anketas.length,
         applications: parts.filter(x => x.anketaId).length,
         conversion: applied ? Math.round(100 * (byStage['Принят'] || 0) / applied) : 0 },
-      byStage, byType, doneByType, funnel, days, vacCounts, recent,
+      byStage, byType, doneByType, funnel, days, vacCounts, recent, awaitingDecision,
     });
   }
 
@@ -1038,6 +1434,24 @@ async function api(req, env, url, exec) {
   const logBalance = async (u, delta, kind, extra) => S.upsert('balance_log', { id: uid(12),
     data: { id: uid(12), userId: u.id, delta, kind, comment: '', adminId: null, purchaseId: null, testId: null,
       balanceAfter: u.balanceTotal, createdAt: new Date().toISOString(), ...(extra || {}) } });
+  // Платный ИИ-звонок: 0.1 теста за состоявшийся разговор (списывается при финализации звонка). Списываем один раз на запись.
+  const billCandidateCalls = async (part) => {
+    if (!part || !part.workflow || !Array.isArray(part.workflow.aiCallLog)) return false;
+    let owner = null, changed = false;
+    for (const e of part.workflow.aiCallLog) {
+      if (callLog.isFinal(e) && callLog.entryAnswered(e) && !e.billed) {
+        if (!owner) owner = await S.one('users', part.userId);
+        if (!owner) break;
+        expireBalance(owner);
+        owner.balanceTotal = Math.max(0, (owner.balanceTotal || 0) - 0.1);
+        spendLots(owner, 0.1);
+        e.billed = true; changed = true;
+        try { await logBalance(owner, -0.1, 'ai_call', { comment: `ИИ-звонок (${e.kind})` }); } catch (_) {}
+      }
+    }
+    if (owner && changed) await saveUser(owner);
+    return changed;
+  };
   const orderTypes = (types, u, vac) => {
     const ord = vac ? (processOf(vac).order || ['result', 'tools', 'logic', 'sales'])
       : ((u.settings && Array.isArray(u.settings.testOrder)) ? u.settings.testOrder : ['result', 'tools', 'logic', 'sales']);
@@ -1165,10 +1579,52 @@ async function api(req, env, url, exec) {
     for (const part of parts) {
       if (!callSched.hasPending(part)) { if (part.callsActive) { part.callsActive = false; await S.upsert('participants', { id: part.id, data: part }); } continue; }
       processed++;
-      try { const touched = await callSched.tickParticipant(env, part); if (touched) { await S.upsert('participants', { id: part.id, data: part }); updated++; } }
+      try { const touched = await callSched.tickParticipant(env, part); if (touched) { await S.upsert('participants', { id: part.id, data: part }); updated++;
+          // после завершения реф-звонка — продвинуть автоворонку (следующий тест / решение)
+          try { const ovac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; const oown = await S.one('users', part.userId); if (ovac && oown) await runFunnelEdge(part, ovac, oown); } catch (_) {} } }
       catch (e) { /* пропускаем проблемного кандидата */ }
     }
-    return j({ ok: true, processed, updated });
+    // Планировщик перезвонов Софии: лиды с активным расписанием (перезвон по просьбе / ретрай недозвона).
+    let leadsPlaced = 0;
+    try {
+      const scfg = salesSched.salesCfg(await settings());
+      const now2 = new Date();
+      const lrows = await S.select('leads', 'data->>callActive=eq.true&select=data');
+      for (const row of lrows) {
+        const lead = row.data;
+        if (!lead || !lead.callSchedule) { if (lead) { lead.callActive = false; await saveLead(lead); } continue; }
+        const sch = lead.callSchedule;
+        if (['done', 'stopped'].includes(sch.status)) { lead.callActive = false; await saveLead(lead); continue; }
+        if (sch.status === 'calling') { if (salesSched.releaseIfStuck(lead, now2, 20)) await saveLead(lead); continue; }
+        const due = salesSched.dueForCall(lead, scfg, now2);
+        if (due.deferred) { await saveLead(lead); continue; }
+        if (!due.due) continue;
+        const resume = (sch.callbacks || 0) > 0 ? salesAgent.CALL_GOALS.callback.prompt : '';
+        await placeSalesLeadCall(lead, { kind: (sch.callbacks || 0) > 0 ? 'callback' : 'retry', resumePrompt: resume });
+        await saveLead(lead); leadsPlaced++;
+      }
+    } catch (e) { /* пропускаем ошибку планировщика лидов */ }
+    // Планировщик перезвонов Софии: клиенты с активным расписанием (перезвон/ретрай на аккаунте).
+    let clientsPlaced = 0;
+    try {
+      const scfg = salesSched.salesCfg(await settings());
+      const now3 = new Date();
+      const urows = await S.select('users', 'data->>callActive=eq.true&select=data');
+      for (const row of urows) {
+        const cu = row.data;
+        if (!cu || !cu.callSchedule) { if (cu) { cu.callActive = false; await saveUser(cu); } continue; }
+        const sch = cu.callSchedule;
+        if (['done', 'stopped'].includes(sch.status)) { cu.callActive = false; await saveUser(cu); continue; }
+        if (sch.status === 'calling') { if (salesSched.releaseIfStuck(cu, now3, 20)) await saveUser(cu); continue; }
+        const due = salesSched.dueForCall(cu, scfg, now3);
+        if (due.deferred) { await saveUser(cu); continue; }
+        if (!due.due) continue;
+        const resume = (sch.callbacks || 0) > 0 ? salesAgent.CALL_GOALS.callback.prompt : '';
+        await placeSalesClientCall(cu, { kind: (sch.callbacks || 0) > 0 ? 'callback' : 'retry', resumePrompt: resume });
+        await saveUser(cu); clientsPlaced++;
+      }
+    } catch (e) { /* пропускаем ошибку планировщика клиентов */ }
+    return j({ ok: true, processed, updated, leadsPlaced, clientsPlaced });
   }
   // Журнал ИИ-звонков кандидата (список + обновление с оркестрацией)
   let mAiCalls = p.match(/^\/api\/participants\/([\w-]+)\/ai-calls(\/refresh)?$/);
@@ -1179,7 +1635,7 @@ async function api(req, env, url, exec) {
     const vac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
     const clang = (vac && vac.lang) || 'ru';
     if (mAiCalls[2] === '/refresh' && m === 'POST') {
-      try { await callLog.refreshAll(env, part); await S.upsert('participants', { id: part.id, data: part }); }
+      try { await callLog.refreshAll(env, part); await billCandidateCalls(part); await S.upsert('participants', { id: part.id, data: part }); }
       catch (e) { return j({ error: e.message }, 502); }
       try {
         const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.tel || 'кандидат';
@@ -1240,7 +1696,7 @@ async function api(req, env, url, exec) {
       const entry = log.filter(e => e.kind === 'references' && String(e.refIndex) === refIndex).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))[0];
       if (!entry) return j({ status: 'none' });
       try {
-        if (!callLog.isFinal(entry)) { await callLog.refreshEntry(env, part, entry); await S.upsert('participants', { id: part.id, data: part }); }
+        if (!callLog.isFinal(entry)) { await callLog.refreshEntry(env, part, entry); await billCandidateCalls(part); await S.upsert('participants', { id: part.id, data: part }); }
         if (entry.status === 'done' && !entry._notified) {
           entry._notified = true;
           try { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, me, 'ref_done', { title: 'Получен референс: ' + cand, body: entry.summary ? String(entry.summary).slice(0, 200) : '', pid: part.id }); } catch (_) {}
@@ -1271,7 +1727,9 @@ async function api(req, env, url, exec) {
     if (!me) return needAuth();
     const v = await S.one('vacancies', mVConf[1]);
     if (!v || v.userId !== me.id) return j({ error: 'Не найдено' }, 404);
-    if (body.adText != null) v.adText = String(body.adText).slice(0, 40000);
+    if (body.adText != null) v.adText = sanitizeAdHtmlEdge(String(body.adText).slice(0, 40000));
+    if (Array.isArray(body.adVariants)) v.adVariants = body.adVariants.slice(0, 6).map(x => ({ title: String((x && x.title) || '').slice(0, 120), html: sanitizeAdHtmlEdge(String((x && x.html) || '').slice(0, 40000)) }));
+    if (body.adComment != null) v.adComment = String(body.adComment).slice(0, 8000);
     if (body.adMode && ['ai', 'manual'].includes(body.adMode)) v.adMode = body.adMode;
     if (typeof body.published === 'boolean') v.published = body.published;
     if (Array.isArray(body.workflow)) v.workflow = body.workflow.filter(k => recruit.STAGE_KEYS.includes(k));
@@ -1362,6 +1820,14 @@ async function api(req, env, url, exec) {
       sex: '', age: null, tel: String(body.tel || ''), city: String(body.city || ''), stage: 'Без этапа',
       comment: String(body.comment || ''), color: '#FFFFFF', starred: false, createdAt: new Date().toISOString() };
     await S.upsert('participants', { id: x.id, data: x });
+    // Автоворонка: кандидат добавлен вручную на вакансию с включённой автоворонкой → intro-звонок + первый тест
+    try {
+      const avac = x.vacancyId ? await S.one('vacancies', x.vacancyId) : null;
+      if (avac && processOf(avac).auto && (x.email || x.tel)) {
+        try { if (x.tel) { const called = await aiCallForEdge(env, S, me, x, avac, 'first'); if (called) await S.upsert('participants', { id: x.id, data: x }); } } catch (_) {}
+        await runFunnelEdge(x, avac, me);
+      }
+    } catch (_) {}
     return j({ participant: await participantView(x) });
   }
   // Импорт CV: файлы (PDF/фото, base64 dataUrl) → Claude vision → карточки кандидатов
@@ -1392,6 +1858,14 @@ async function api(req, env, url, exec) {
         createdAt: new Date().toISOString() };
       await S.upsert('participants', { id: x.id, data: x });
       created.push(await participantView(x));
+      // Автоворонка: импортированный кандидат на вакансию с автоворонкой → intro-звонок + первый тест
+      try {
+        const avac = x.vacancyId ? await S.one('vacancies', x.vacancyId) : null;
+        if (avac && processOf(avac).auto && (x.email || x.tel)) {
+          try { if (x.tel) { const called = await aiCallForEdge(env, S, me, x, avac, 'first'); if (called) await S.upsert('participants', { id: x.id, data: x }); } } catch (_) {}
+          await runFunnelEdge(x, avac, me);
+        }
+      } catch (_) {}
     }
     return j({ created, failed });
   }
@@ -1401,8 +1875,18 @@ async function api(req, env, url, exec) {
     if (!cur || cur.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     if (m === 'GET') return j({ participant: await participantView(cur) });
     if (m === 'PUT') { ['name', 'surname', 'email', 'sex', 'age', 'tel', 'city', 'stage', 'comment', 'color', 'starred'].forEach(f => { if (body[f] !== undefined) cur[f] = body[f]; });
-      if (body.vacancyId !== undefined) cur.vacancyId = await ownVacId(body.vacancyId); // только своя вакансия
-      await S.upsert('participants', { id: cur.id, data: cur }); return j({ participant: await participantView(cur) }); }
+      const vacChanged = body.vacancyId !== undefined;
+      if (vacChanged) cur.vacancyId = await ownVacId(body.vacancyId); // только своя вакансия
+      await S.upsert('participants', { id: cur.id, data: cur });
+      // Автоворонка: назначение на вакансию с автоворонкой → intro-звонок + продвижение
+      if (vacChanged && cur.vacancyId) { try {
+        const avac = await S.one('vacancies', cur.vacancyId);
+        if (avac && processOf(avac).auto && (cur.email || cur.tel)) {
+          try { if (cur.tel) { const called = await aiCallForEdge(env, S, me, cur, avac, 'first'); if (called) await S.upsert('participants', { id: cur.id, data: cur }); } } catch (_) {}
+          await runFunnelEdge(cur, avac, me);
+        }
+      } catch (_) {} }
+      return j({ participant: await participantView(cur) }); }
     if (m === 'DELETE') { await S.del('tests', `participant_id=eq.${cur.id}`); await S.del('participants', `id=eq.${cur.id}`); return j({ ok: true }); }
   }
 
@@ -1419,7 +1903,8 @@ async function api(req, env, url, exec) {
     if (b.title != null) a.title = String(b.title);
     if (b.vacancyId !== undefined) a.vacancyId = await ownVacId(b.vacancyId);
     if (Array.isArray(b.tests)) a.tests = b.tests.filter(t => ['result', 'tools', 'logic', 'sales'].includes(t));
-    ['btnText', 'pageTitle', 'msgApply', 'msgDone', 'description'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
+    ['btnText', 'pageTitle', 'msgApply', 'msgDone'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
+    if (b.description != null) a.description = sanitizeAdHtmlEdge(String(b.description).slice(0, 40000));
     ['noCaptcha', 'sendEmail'].forEach(f => { if (b[f] != null) a[f] = !!b[f]; });
   };
   const uniqueSlug = async (base, exceptId) => {
@@ -1502,16 +1987,27 @@ async function api(req, env, url, exec) {
     await S.upsert('participants', { id: part.id, data: part });
     const links = [];
     const alang = avac ? (avac.lang || 'ru') : 'ru';
-    const wantTypes = orderTypes((a.tests || []).filter(t => ['result', 'tools', 'logic', 'sales'].includes(t)), owner || me, avac);
-    for (const type of wantTypes) {
+    // Тесты определяет ПРОЦЕСС найма вакансии. После отклика уходит только ПЕРВЫЙ тест;
+    // остальные — автоворонкой (если включена), либо не уходят (если выключена).
+    let seqTypes = [];
+    if (avac) { const proc = processOf(avac);
+      (proc.order || ['result', 'tools', 'logic', 'sales']).forEach(key => {
+        if (key === 'result' || key === 'tools') { if (proc.stages[key] !== false) seqTypes.push(key); }
+        else if (key === 'logic' || key === 'sales') { if (proc.optional && proc.optional[key]) seqTypes.push(key); }
+      });
+    }
+    if (!seqTypes.length) seqTypes = orderTypes((a.tests || []).filter(t => ['result', 'tools', 'logic', 'sales'].includes(t)), owner || me, avac);
+    const firstType = seqTypes[0];
+    if (firstType) {
       const available = owner ? (owner.balanceTotal || 0) - (owner.balancePending || 0) : 0;
-      if (owner && available < 1) continue;
-      const code = shortCode(10);
-      const test = { id: uid(12), participantId: part.id, userId: a.userId, type, status: 'sent', code, lang: alang,
-        sentAt: new Date().toISOString(), startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
-      await S.upsert('tests', { id: test.id, data: test });
-      if (owner) owner.balancePending = (owner.balancePending || 0) + 1;
-      links.push({ type, title: testTitleOf(type), link: `${BASE}/t/${code}` });
+      if (!owner || available >= 1) {
+        const code = shortCode(10);
+        const test = { id: uid(12), participantId: part.id, userId: a.userId, type: firstType, status: 'sent', code, lang: alang,
+          sentAt: new Date().toISOString(), startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
+        await S.upsert('tests', { id: test.id, data: test });
+        if (owner) owner.balancePending = (owner.balancePending || 0) + 1;
+        links.push({ type: firstType, title: testTitleOf(firstType), link: `${BASE}/t/${code}` });
+      }
     }
     if (owner) await S.upsert('users', { id: owner.id, data: owner });
     try { if (owner) { const cand = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email || 'кандидат'; await pushNotif(await nenv(), S, owner, 'cand_new', { title: 'Новый кандидат: ' + cand, body: (part.tel ? '📞 ' + part.tel + '\n' : '') + (part.email ? '✉️ ' + part.email + '\n' : '') + 'Отклик через анкету «' + a.title + '»' + (avac && avac.name ? '\nВакансия: ' + avac.name : ''), pid: part.id }); } } catch (_) {}
@@ -1633,7 +2129,7 @@ async function api(req, env, url, exec) {
     const r = await S.one('requisitions', mReqAd[1]);
     if (!r || r.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     const adLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : r.lang;
-    return j(await buildAdEdge(env, { form: r.form, lang: adLang, company: me.company, target: body.target, vacancyName: (r.form && r.form.position) || '' }));
+    return j(await buildAdEdge(env, { form: r.form, lang: adLang, company: me.company, target: body.target, vacancyName: (r.form && r.form.position) || '' }, S));
   }
   // Генерация объявления на уровне вакансии (работает и без связанной заявки)
   let mVacAd = p.match(/^\/api\/vacancies\/([\w-]+)\/generate-ad$/);
@@ -1644,7 +2140,10 @@ async function api(req, env, url, exec) {
     const r = v.requisitionId ? await S.one('requisitions', v.requisitionId) : null;
     const form = (r && r.form) || { position: v.name };
     const adLang = ['ru', 'pl', 'en'].includes(body.lang) ? body.lang : (v.lang || 'ru');
-    return j(await buildAdEdge(env, { form, lang: adLang, company: me.company, target: body.target, vacancyName: v.name }));
+    const out = await buildAdEdge(env, { form, lang: adLang, company: me.company, target: body.target, vacancyName: v.name }, S);
+    v.adVariants = out.variants; v.adComment = out.comment; v.adText = out.adText; v.adMode = 'ai';
+    await S.upsert('vacancies', { id: v.id, data: v });
+    return j(out);
   }
   // Публичная заявка (руководитель по ссылке)
   let mReqPub = p.match(/^\/api\/req\/([\w-]+)$/);
@@ -1762,7 +2261,33 @@ async function api(req, env, url, exec) {
       part.workflow.finalAnalysis = Object.assign({}, result, { at: new Date().toISOString(), by: 'ai' });
       await S.upsert('participants', { id: part.id, data: part });
       return j({ finalAnalysis: part.workflow.finalAnalysis });
-    } catch (e) { return j({ error: 'ИИ-анализ: ' + (e.message || 'ошибка') }, 502); }
+    } catch (e) { if (isBillingError(e && e.message)) { try { await alertAdminsBilling(env, S, String(e.message || e)); } catch (_) {} } return j({ error: 'ИИ-анализ: ' + (e.message || 'ошибка') }, 502); }
+  }
+
+  // ── ФОНОВЫЙ ДРАЙВЕР расшифровок (для cron-воркера): без сессии, по общему секрету DRIVE_SECRET.
+  // Находит зависшие «pending» расшифровки (старше 90с) и догоняет ОДНУ за вызов синхронно.
+  if (p === '/api/internal/decode-drive' && m === 'POST') {
+    if (!env.DRIVE_SECRET || (body && body.secret) !== env.DRIVE_SECRET) return j({ error: 'forbidden' }, 403);
+    const kinds = ['full', 'manual', 'presentation', 'productivity'];
+    for (const k of kinds) {
+      let rows = [];
+      try { rows = await S.select('tests', `data->decodes->${k}->>status=eq.pending&select=id,data&limit=8`); } catch (_) { rows = []; }
+      for (const row of rows) {
+        const t = row.data || row; const s = t.decodes && t.decodes[k];
+        if (!s || s.status !== 'pending') continue;
+        const ageMs = s.startedAt ? Date.now() - new Date(s.startedAt).getTime() : Infinity;
+        if (ageMs <= 90000) continue; // ещё может генериться под запросом клиента
+        const attempts = (s.attempts || 0) + 1;
+        if (attempts > 5) { t.decodes[k] = { status: 'error', error: 'Не удалось сгенерировать (фон).', doneAt: new Date().toISOString(), lang: s.lang, attempts }; await S.upsert('tests', { id: t.id, data: t }); continue; }
+        t.decodes[k] = { status: 'pending', startedAt: new Date().toISOString(), lang: s.lang, attempts };
+        await S.upsert('tests', { id: t.id, data: t });
+        const gp = runDecodeBackground(env, S, t.id, k, s.lang);
+        if (exec && typeof exec.waitUntil === 'function') exec.waitUntil(gp);
+        try { await gp; } catch (_) {}
+        return j({ driven: true, testId: t.id, kind: k });
+      }
+    }
+    return j({ driven: false });
   }
 
   // ── AI-расшифровки тестов (decode) ──
@@ -1774,10 +2299,37 @@ async function api(req, env, url, exec) {
     if (mDecGet && m === 'GET') {
       if (!me) return needAuth();
       const test = await ownTest(mDecGet[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      // Само-восстановление зависшего «pending»: если генерация висит дольше 130с, значит её драйвер
+      // (POST или предыдущий опрос) оборвался — клиент ушёл со страницы или CF прервал запрос. Вместо
+      // пометки ошибкой ДОГОНЯЕМ генерацию прямо в этом запросе опроса: клиент ждёт ответа, поэтому CF
+      // держит воркер активным до конца. Свежий startedAt не даёт параллельным опросам дублировать запуск.
+      if (test.decodes) {
+        let staleChanged = false;
+        for (const k of Object.keys(test.decodes)) {
+          const s = test.decodes[k];
+          if (!s || s.status !== 'pending') continue;
+          const ageMs = s.startedAt ? Date.now() - new Date(s.startedAt).getTime() : Infinity;
+          if (ageMs <= 180000) continue; // генерация ещё может идти под другим запросом (до ~2.5 мин) — не дублируем
+          const attempts = (s.attempts || 0) + 1;
+          if (attempts > 4) {
+            test.decodes[k] = { status: 'error', error: 'Не удалось сгенерировать после нескольких попыток — попробуйте позже.', doneAt: new Date().toISOString(), lang: s.lang, attempts };
+            staleChanged = true;
+            continue;
+          }
+          test.decodes[k] = { status: 'pending', startedAt: new Date().toISOString(), lang: s.lang, attempts };
+          try { await S.upsert('tests', { id: test.id, data: test }); } catch (_) {}
+          const gp = runDecodeBackground(env, S, test.id, k, s.lang);
+          if (exec && typeof exec.waitUntil === 'function') exec.waitUntil(gp);
+          try { await gp; } catch (_) {}
+          const after2 = await S.one('tests', test.id);
+          if (after2 && after2.decodes) { test.decodes = after2.decodes; }
+        }
+        if (staleChanged) { try { await S.upsert('tests', { id: test.id, data: test }); } catch (_) {} }
+      }
       const ctx = await decodeVacCtx(env, S, test);
       const kinds = decodeKindsForType(test.type); const states = {};
       for (const k of kinds) states[k] = (test.decodes && test.decodes[k]) ? { status: test.decodes[k].status, error: test.decodes[k].error, truncated: test.decodes[k].truncated } : { status: 'none' };
-      return j({ type: test.type, kinds, states, hasChat: test.type === 'tools', chatCount: (test.aiChat || []).length, apiConfigured: aidec.hasApiKey(env), context: { candidate: ctx.candidate, vacancy: ctx.vacName, roleType: ctx.roleType, duties: ctx.duties } });
+      return j({ type: test.type, kinds, states, hasChat: test.type === 'tools', chatCount: (test.aiChat || []).length, apiConfigured: aidec.hasApiKey(env), purchases: test.purchases || {}, prices: AI_FEATURE_PRICES, seq: AI_FEATURE_SEQ, context: { candidate: ctx.candidate, vacancy: ctx.vacName, roleType: ctx.roleType, duties: ctx.duties } });
     }
     // Сохранить контекст вакансии
     let mDecCtx = p.match(/^\/api\/decode\/([\w-]+)\/context$/);
@@ -1792,6 +2344,31 @@ async function api(req, env, url, exec) {
       const c = test.decodeContext;
       return j({ ok: true, context: { vacancy: c.vacName || '', roleType: c.roleType || '', duties: c.duties || '' } });
     }
+    // Покупка платной AI-функции (списывает тесты с баланса)
+    let mDecBuy = p.match(/^\/api\/decode\/([\w-]+)\/purchase\/([a-z]+)$/);
+    if (mDecBuy && m === 'POST') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecBuy[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      const feature = mDecBuy[2];
+      const price = AI_FEATURE_PRICES[feature];
+      if (price == null) return j({ error: 'Неизвестная функция' }, 400);
+      const allowed = test.type === 'tools' ? ['full', 'manual', 'presentation', 'chat'] : test.type === 'result' ? ['productivity'] : [];
+      if (!allowed.includes(feature)) return j({ error: 'Функция недоступна для этого теста' }, 400);
+      test.purchases = test.purchases || {};
+      if (test.purchases[feature]) return j({ ok: true, alreadyOwned: true, purchases: test.purchases, balance: publicUser(me) });
+      const si = AI_FEATURE_SEQ.indexOf(feature);
+      if (si > 0) { const prev = AI_FEATURE_SEQ[si - 1]; if (!test.purchases[prev]) return j({ error: 'Сначала купите предыдущую функцию', needPrev: prev }, 409); }
+      expireBalance(me);
+      const avail = (me.balanceTotal || 0) - (me.balancePending || 0);
+      if (avail < price) return j({ error: `Недостаточно тестов на балансе (нужно ${price}, доступно ${avail})`, insufficient: true }, 400);
+      me.balanceTotal = Math.max(0, (me.balanceTotal || 0) - price);
+      spendLots(me, price);
+      await saveUser(me);
+      try { await logBalance(me, -price, 'ai_feature', { testId: test.id, feature, comment: `AI-функция «${feature}»` }); } catch (_) {}
+      test.purchases[feature] = true;
+      await S.upsert('tests', { id: test.id, data: test });
+      return j({ ok: true, purchases: test.purchases, balance: publicUser(me) });
+    }
     // Чат «Уточнить» (Тулс)
     let mDecChat = p.match(/^\/api\/decode\/([\w-]+)\/chat$/);
     if (mDecChat && m === 'GET') { if (!me) return needAuth(); const test = await ownTest(mDecChat[1]); if (!test) return j({ error: 'Не найдено' }, 404); return j({ history: test.aiChat || [], apiConfigured: aidec.hasApiKey(env) }); }
@@ -1800,19 +2377,59 @@ async function api(req, env, url, exec) {
       const test = await ownTest(mDecChat[1]); if (!test) return j({ error: 'Не найдено' }, 404);
       if (test.type !== 'tools') return j({ error: 'Чат доступен для теста «Тулс»' }, 400);
       if (!aidec.hasApiKey(env)) return j({ error: 'AI не настроен: ANTHROPIC_API_KEY' }, 503);
+      if (!featureOwnedT(test, 'chat')) return j({ error: 'Функция не куплена', needPurchase: true, feature: 'chat' }, 402);
       const message = String(body.message || '').trim(); if (!message) return j({ error: 'Пустой вопрос' }, 400);
       const lang = langOf(); const ctx = await decodeVacCtx(env, S, test);
       const part = await S.one('participants', test.participantId); const result = computeResult(test, part);
+      let dossier = ''; try { dossier = await buildCandidateDossier(env, S, test, ctx, lang); } catch (_) {}
       try {
         const history = (test.aiChat || []).map(mm => ({ role: mm.role, content: mm.content }));
-        const out = await aidec.runChat(env, { history, message, ctx, result, lang });
+        const out = await aidec.runChat(env, { history, message, ctx, result, lang, dossier });
         test.aiChat = test.aiChat || [];
         test.aiChat.push({ role: 'user', content: message, at: new Date().toISOString() });
         test.aiChat.push({ role: 'assistant', content: out.answer, at: new Date().toISOString() });
         if (test.aiChat.length > 60) test.aiChat = test.aiChat.slice(-60);
         await S.upsert('tests', { id: test.id, data: test });
         return j({ answer: out.answer });
-      } catch (e) { return j({ error: 'AI: ' + (e.message || 'ошибка') }, 502); }
+      } catch (e) { if (isBillingError(e && e.message)) { try { await alertAdminsBilling(env, S, String(e.message || e)); } catch (_) {} } return j({ error: 'AI: ' + (e.message || 'ошибка') }, 502); }
+    }
+    // Публичная ссылка на расшифровку: создать/получить/отозвать токен (действует 30 дней) — только владелец.
+    let mDecShare = p.match(/^\/api\/decode\/([\w-]+)\/([a-z]+)\/share$/);
+    if (mDecShare && m === 'POST') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecShare[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      const kind = mDecShare[2];
+      if (!decodeKindsForType(test.type).includes(kind)) return j({ error: 'Недопустимо' }, 400);
+      const st = test.decodes && test.decodes[kind];
+      if (!st || st.status !== 'done') return j({ error: 'Расшифровка не готова' }, 409);
+      test.decodeShares = test.decodeShares || {};
+      if (body && body.revoke) { delete test.decodeShares[kind]; await S.upsert('tests', { id: test.id, data: test }); return j({ ok: true, revoked: true }); }
+      let sh = test.decodeShares[kind];
+      if (!sh || !sh.token) { sh = { token: uid(10), createdAt: new Date().toISOString() }; test.decodeShares[kind] = sh; await S.upsert('tests', { id: test.id, data: test }); }
+      const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+      return j({ ok: true, url: `${base}/rd/${test.id}.${kind}.${sh.token}`, token: sh.token });
+    }
+    // Отправить ссылку на расшифровку по SMS — только владелец.
+    let mDecSms = p.match(/^\/api\/decode\/([\w-]+)\/([a-z]+)\/share\/sms$/);
+    if (mDecSms && m === 'POST') {
+      if (!me) return needAuth();
+      const test = await ownTest(mDecSms[1]); if (!test) return j({ error: 'Не найдено' }, 404);
+      const kind = mDecSms[2];
+      const to = String((body && body.to) || '').replace(/[^\d+]/g, '');
+      if (to.replace(/\D/g, '').length < 9) return j({ error: 'Некорректный номер' }, 400);
+      test.decodeShares = test.decodeShares || {};
+      let sh = test.decodeShares[kind];
+      if (!sh || !sh.token) { sh = { token: uid(10), createdAt: new Date().toISOString() }; test.decodeShares[kind] = sh; await S.upsert('tests', { id: test.id, data: test }); }
+      const base = (env.BASE_URL || url.origin).replace(/\/+$/, '');
+      const shareUrl = `${base}/rd/${test.id}.${kind}.${sh.token}`;
+      if (!env.SMSAPI_TOKEN) return j({ error: 'SMS не настроен' }, 503);
+      try {
+        const pr = new URLSearchParams({ to, message: 'HR PRO AI — расшифровка теста кандидата: ' + shareUrl, format: 'json', encoding: 'utf-8', from: env.SMSAPI_FROM || 'HR-PRO.AI' });
+        const rr = await fetch(((env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '')) + '/sms.do', { method: 'POST', headers: { Authorization: 'Bearer ' + env.SMSAPI_TOKEN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: pr.toString() });
+        const rd = await rr.json().catch(() => ({}));
+        if (rr.ok && !rd.error) return j({ ok: true });
+        return j({ error: (rd && (rd.message || rd.error)) || 'SMSAPI error' }, 502);
+      } catch (e) { return j({ error: String((e && e.message) || e) }, 502); }
     }
     // Запуск генерации расшифровки (kind: productivity|full|manual|presentation)
     let mDecRun = p.match(/^\/api\/decode\/([\w-]+)\/([a-z]+)$/);
@@ -1822,18 +2439,27 @@ async function api(req, env, url, exec) {
       const kind = mDecRun[2];
       if (!decodeKindsForType(test.type).includes(kind)) return j({ error: 'Недопустимый тип расшифровки' }, 400);
       if (!aidec.hasApiKey(env)) return j({ error: 'AI не настроен: ANTHROPIC_API_KEY' }, 503);
+      if (!featureOwnedT(test, kind)) return j({ error: 'Функция не куплена', needPurchase: true, feature: kind }, 402);
       const ctx = await decodeVacCtx(env, S, test);
       if (!ctx.roleType || !ctx.vacName || !ctx.duties) return j({ error: 'Заполните контекст вакансии (вакансия, тип должности, обязанности)' }, 422);
       const cur = test.decodes && test.decodes[kind];
-      const stalePending = cur && cur.status === 'pending' && (!cur.startedAt || Date.now() - new Date(cur.startedAt).getTime() > 3 * 60000);
-      if (cur && cur.status === 'pending' && !stalePending) return j({ status: 'pending' });
-      if (cur && cur.status === 'done' && !(body && body.regenerate)) return j({ status: 'done' });
+      const forced = !!(body && body.regenerate);
+      const stalePending = cur && cur.status === 'pending' && (!cur.startedAt || Date.now() - new Date(cur.startedAt).getTime() > 5 * 60000);
+      // Явный regenerate форсирует свежий прогон даже поверх pending/done: иначе прерванная генерация
+      // (клиент оборвал длинный запрос → запись зависла на pending) блокирует повтор до истечения stale.
+      if (cur && cur.status === 'pending' && !stalePending && !forced) return j({ status: 'pending' });
+      if (cur && cur.status === 'done' && !forced) return j({ status: 'done' });
       const lang = langOf();
       // Сразу помечаем pending+startedAt, чтобы опрос показывал «генерируется…» и подсветил кнопку зелёным по готовности.
       try { const pre = await S.one('tests', test.id) || test; pre.decodes = pre.decodes || {}; pre.decodes[kind] = { status: 'pending', startedAt: new Date().toISOString(), lang }; await S.upsert('tests', { id: pre.id, data: pre }); } catch (_) {}
-      // Синхронная генерация: Cloudflare обрывает фоновые waitUntil-задачи, поэтому держим
-      // I/O-запрос открытым до готовности расшифровки и возвращаем финальный статус.
-      await runDecodeBackground(env, S, test.id, kind, lang);
+      // Генерация синхронно — клиентское соединение держит воркер активным столько, сколько ждёт браузер
+      // (fetch в startDecode держит запрос ~40–60с, потоковый вызов Claude не даёт idle-таймауту сработать).
+      // waitUntil как подстраховка: если ответ вернётся раньше, CF докрутит промис в фоне. Раньше пробовали
+      // чистый waitUntil без ожидания — Cloudflare убивал фон-задачу после отдачи ответа (короткий бюджет),
+      // и запись зависала на pending → error. Быстрая модель (Sonnet) укладывается в окно клиентского запроса.
+      const genPromise = runDecodeBackground(env, S, test.id, kind, lang);
+      if (exec && typeof exec.waitUntil === 'function') exec.waitUntil(genPromise);
+      await genPromise;
       const after = await S.one('tests', test.id);
       const stt = after && after.decodes && after.decodes[kind];
       if (stt && stt.status === 'error') return j({ error: stt.error || 'Ошибка генерации' }, 502);
@@ -1875,7 +2501,8 @@ async function api(req, env, url, exec) {
         const mailLang = (vac && vac.lang) || 'ru';
         const gsCol = await settings();
         const pick = (mt) => mt && mt.status && mt.status[statusKey] && (mt.status[statusKey][mailLang] || mt.status[statusKey].ru);
-        const tpl = pick(me.settings && me.settings.mailTemplates) || pick(gsCol.defaultMailTemplates);
+        const defStatus = MAIL_DEF_STATUS[statusKey] && (MAIL_DEF_STATUS[statusKey][mailLang] || MAIL_DEF_STATUS[statusKey].ru);
+        const tpl = pick(me.settings && me.settings.mailTemplates) || pick(gsCol.defaultMailTemplates) || defStatus;
         if (tpl && (tpl.subject || tpl.body)) {
           const name = ((part.name || '') + ' ' + (part.surname || '')).trim() || part.email;
           const iv = (part.workflow.interviews || [])[0];
@@ -1893,7 +2520,7 @@ async function api(req, env, url, exec) {
             bodyHtml: fill(tpl.body).replace(/\n/g, '<br>') });
           await fetch('https://api.resend.com/emails', {
             method: 'POST', headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [part.email], subject, html }),
+            body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [part.email], subject, html }),
           });
         }
       }
@@ -1917,6 +2544,7 @@ async function api(req, env, url, exec) {
     }
     if (decision !== undefined) part.workflow.decision = ['hired', 'rejected'].includes(decision) ? decision : null;
     await S.upsert('participants', { id: part.id, data: part });
+    try { const fvac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; if (fvac && processOf(fvac).auto) await runFunnelEdge(part, fvac, me); } catch (_) {}
     return j({ ok: true, workflow: part.workflow });
   }
   let mMot = p.match(/^\/api\/participants\/([\w-]+)\/motivation$/);
@@ -1929,6 +2557,7 @@ async function api(req, env, url, exec) {
     part.workflow.motivation = { level: recruit.MOTIVATION_LEVELS.some(x => x.key === level) ? level : null,
       answers: body.answers || {}, notes: String(body.notes || '').slice(0, 4000), at: new Date().toISOString() };
     await S.upsert('participants', { id: part.id, data: part });
+    try { const fvac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; if (fvac && processOf(fvac).auto) await runFunnelEdge(part, fvac, me); } catch (_) {}
     return j({ ok: true, motivation: part.workflow.motivation });
   }
   let mRef = p.match(/^\/api\/participants\/([\w-]+)\/references$/);
@@ -1946,6 +2575,7 @@ async function api(req, env, url, exec) {
       part.workflow.references.at = new Date().toISOString();
     }
     await S.upsert('participants', { id: part.id, data: part });
+    try { const fvac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; if (fvac && processOf(fvac).auto) await runFunnelEdge(part, fvac, me); } catch (_) {}
     return j({ ok: true, references: part.workflow.references });
   }
   let mInt = p.match(/^\/api\/participants\/([\w-]+)\/interviews$/);
@@ -2105,7 +2735,7 @@ async function api(req, env, url, exec) {
           const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: H.subj, eyebrow: H.subj, headline: greet,
             bodyHtml: `${H.when} — <b>${FL[k][lang]}</b>.<br>${H.kwhen}: <b>${when}</b>.<br>${detail.replace(/(https?:\/\/\S+)/, '<a href="$1">$1</a>')}${ev.role ? '<br>' + H.pos + ': ' + ev.role : ''}` });
           await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [toEmail], subject: H.subj, html }) });
+            body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [toEmail], subject: H.subj, html }) });
           delivery.email = 'sent';
         } catch (e) { delivery.email = 'error'; }
       }
@@ -2237,7 +2867,7 @@ async function api(req, env, url, exec) {
               const summaryHtml = r.summary ? `<br><br><b>Итог звонка:</b><br>${String(r.summary).slice(0, 800).replace(/\n/g, '<br>')}` : '';
               const html = wrapEmailEdge({ lang, baseUrl: (env.BASE_URL || url.origin), subject: T.subj, eyebrow: T.subj, headline: T.head, bodyHtml: T.body + summaryHtml });
               await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [me.email], subject: T.subj, html }) });
+                body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [me.email], subject: T.subj, html }) });
               r.recruiterNotified = true;
             } catch (e) { r.recruiterNotifyError = String(e && (e.message || e)); }
           }
@@ -2475,6 +3105,7 @@ async function api(req, env, url, exec) {
     if (test.status === 'done') return j({ ok: true, already: true });
     test.answers = body.answers || {};
     test.times = body.times || {};
+    test.integrity = sanitizeIntegrity(body.integrity);
     test.finishedAt = new Date().toISOString();
     if (test.startedAt) test.durationSec = Math.round((new Date(test.finishedAt) - new Date(test.startedAt)) / 1000);
     test.status = 'done';
@@ -2511,8 +3142,10 @@ async function api(req, env, url, exec) {
           if (failed) await pushNotif(await nenv(), S, owner, 'test_failed', { title: 'Кандидат НЕ прошёл тест: ' + cand, body: contacts + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: part.id });
           else await pushNotif(await nenv(), S, owner, 'test_done', { title: 'Кандидат прошёл тест: ' + cand, body: contacts + 'Тест: ' + testTitleOf(test.type) + (vac.name ? '\nВакансия: ' + vac.name : ''), pid: part.id });
         } catch (_) {}
+        // АВТОВОРОНКА: авто-решение / реф-звонки / следующий тест процесса (если включена)
+        try { await runFunnelEdge(part, vac, owner); } catch (_) {}
       }
-      // Последовательная отправка: запустить следующий тест из очереди этого кандидата
+      // Последовательная отправка: запустить следующий тест из очереди этого кандидата (ручной мультисенд)
       const rows = await S.select('tests', `participant_id=eq.${test.participantId}&select=data`);
       const queued = rows.map(r => r.data).filter(t => t.status === 'queued').sort((a, b) => (a.queueOrder || 0) - (b.queueOrder || 0));
       const next = queued[0];
@@ -2547,7 +3180,7 @@ async function api(req, env, url, exec) {
     } catch (e) {}
     return j({ test: { id: test.id, type: test.type, title: testTitleOf(test.type), status: test.status,
         knName: (test.knowledge && test.knowledge.name) || null, passScore: (test.knowledge && test.knowledge.passScore) || null,
-        startedAt: test.startedAt, finishedAt: test.finishedAt, durationSec: test.durationSec, publicShare: test.publicShare, code: test.code },
+        startedAt: test.startedAt, finishedAt: test.finishedAt, durationSec: test.durationSec, publicShare: test.publicShare, code: test.code, integrity: test.integrity || null },
       participant: part ? await participantView(part) : null, result, hint });
   }
   let mRate = p.match(/^\/api\/tests\/([\w-]+)\/rate$/);
@@ -2764,8 +3397,9 @@ async function api(req, env, url, exec) {
       const ai = await aiHintForTest(env, { test, type: test.type, heuristic: hint, lang, target: tl, vacName: vac ? vac.name : '' });
       hint = ai.hint; if (ai.dirty) await S.upsert('tests', { id: test.id, data: test });
     } catch (e) {}
-    return j({ test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec },
-      participant: part ? { name: part.name, surname: part.surname, age: part.age } : null, result, hint });
+    const pVac = part && part.vacancyId ? await S.one('vacancies', part.vacancyId) : null;
+    return j({ lang, test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec, integrity: test.integrity || null },
+      participant: part ? { name: part.name, surname: part.surname, age: part.age, vacancy: pVac ? pVac.name : '' } : null, result, hint });
   }
 
   // ── STRIPE: оплата пакетов тестов ──
@@ -2850,6 +3484,8 @@ const HTML_MAP = [
   [/^\/storage\/guide(\/|$)/, '/guide'],
   [/^\/privacy$/, '/privacy'],
   [/^\/terms$/, '/terms'],
+  [/^\/support$/, '/support'],
+  [/^\/docs\/integrations$/, '/support'],
   [/^\/blog$/, '/blog'],
   [/^\/blog\/[\w-]+$/, '/blog-post'],
   [/^\/admin$/, '/admin'],
@@ -2869,6 +3505,26 @@ export default {
       // Страница готовой расшифровки (открывается в новой вкладке из портала)
       const mDec = url.pathname.match(/^\/decode\/([\w-]+)\/([a-z]+)$/);
       if (mDec) return await decodePage(req, env, url, mDec[1], mDec[2]);
+      // Публичная расшифровка по ссылке-токену (без авторизации): /rd/{testId}.{kind}.{token}
+      const mRd = url.pathname.match(/^\/rd\/([\w.-]+)$/);
+      if (mRd) {
+        const parts = mRd[1].split('.');
+        if (parts.length >= 3) {
+          const token = parts.pop(), kind = parts.pop(), testId = parts.join('.');
+          const S = supa(env);
+          const test = await S.one('tests', testId);
+          const sh = test && test.decodeShares && test.decodeShares[kind];
+          const fresh = sh && sh.token === token && (Date.now() - new Date(sh.createdAt).getTime() < 30 * 86400000);
+          if (test && fresh) {
+            const owner = await S.one('users', test.userId);
+            if (!(owner && owner.blocked)) {
+              const html = await renderDecodeHtml(env, S, url, test, kind, url.searchParams.get('lang'), { publicView: true });
+              if (html) return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+            }
+          }
+        }
+        return new Response('Ссылка недоступна или истекла', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      }
     } catch (e) {
       return j({ error: 'edge error: ' + (e.message || e) }, 500);
     }
@@ -2890,13 +3546,23 @@ export default {
       const user = rows[0] && rows[0].data;
       if (!user) return new Response('Not found', { status: 404 });
       const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
-      const [vr, ar] = await Promise.all([
+      const [vr, ar, rr] = await Promise.all([
         S2.select('vacancies', `data->>userId=eq.${user.id}&select=data`).catch(() => []),
         S2.select('anketas', `data->>userId=eq.${user.id}&select=data`).catch(() => []),
+        S2.select('requisitions', `data->>userId=eq.${user.id}&select=data`).catch(() => []),
       ]);
-      const anks = ar.map(r => r.data);
-      const jobs = vr.map(r => r.data).filter(v => v.published).map(v => { const a = anks.find(x => x.vacancyId === v.id); return { v, url: a ? `${base}/a/${a.slug}` : '', desc: v.adText || v.name }; }).filter(x => x.url);
-      const items = jobs.map(x => `  <job>\n    <title><![CDATA[${x.v.name}]]></title>\n    <date><![CDATA[${x.v.createdAt || new Date().toISOString()}]]></date>\n    <referencenumber><![CDATA[${x.v.id}]]></referencenumber>\n    <url><![CDATA[${x.url}]]></url>\n    <company><![CDATA[${user.company || ''}]]></company>\n    <city><![CDATA[]]></city>\n    <country><![CDATA[PL]]></country>\n    <description><![CDATA[${x.desc}]]></description>\n  </job>`).join('\n');
+      const anks = ar.map(r => r.data), reqs = rr.map(r => r.data);
+      const formOf = v => v.form || (v.requisitionId ? ((reqs.find(x => x.id === v.requisitionId) || {}).form || null) : null);
+      const jobs = vr.map(r => r.data).filter(v => v.published).map(v => {
+        const a = anks.find(x => x.vacancyId === v.id); const form = formOf(v);
+        const days = (() => { try { const pr = processOf(v); return (pr && pr.linkDays) || 30; } catch (_) { return 30; } })();
+        return { v, form, url: a ? `${base}/a/${a.slug}` : '', desc: v.adText || v.name,
+          expires: new Date((v.createdAt ? new Date(v.createdAt).getTime() : Date.now()) + days * 86400000).toISOString() };
+      }).filter(x => x.url);
+      const items = jobs.map(x => {
+        const city = jobLocality(x.form); const salary = String((x.form && x.form.salary) || '').trim(); const jt = jobEmploymentType(x.form);
+        return `  <job>\n    <title><![CDATA[${x.v.name}]]></title>\n    <date><![CDATA[${x.v.createdAt || new Date().toISOString()}]]></date>\n    <expirationdate><![CDATA[${x.expires}]]></expirationdate>\n    <referencenumber><![CDATA[${x.v.id}]]></referencenumber>\n    <url><![CDATA[${x.url}]]></url>\n    <company><![CDATA[${user.company || ''}]]></company>\n    <city><![CDATA[${city}]]></city>\n    <country><![CDATA[PL]]></country>\n    <jobtype><![CDATA[${jt}]]></jobtype>${salary ? `\n    <salary><![CDATA[${salary}]]></salary>` : ''}\n    <description><![CDATA[${x.desc}]]></description>\n  </job>`;
+      }).join('\n');
       const xml = `<?xml version="1.0" encoding="utf-8"?>\n<source>\n  <publisher><![CDATA[${user.company || 'HR PRO AI'}]]></publisher>\n  <publisherurl><![CDATA[${base}]]></publisherurl>\n  <lastBuildDate><![CDATA[${new Date().toISOString()}]]></lastBuildDate>\n${items}\n</source>`;
       return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
     }
@@ -2949,11 +3615,48 @@ export default {
       const cr = upstream.headers.get('Content-Range'); if (cr) h.set('Content-Range', cr);
       return new Response(upstream.body, { status: upstream.status, headers: h });
     }
-    // HTML SPA-роуты — отдать содержимое нужного файла по clean-пути (без редиректа)
+    // Google for Jobs: серверная JSON-LD разметка (JobPosting) на публичной анкете /a/:slug.
+    // Берём статический anketa.html и инжектим <script ld+json> + title/OG-мета в <head>.
+    const mAnkPage = url.pathname.match(/^\/a\/([\w-]+)\/?$/);
+    if (mAnkPage) {
+      try {
+        const S2 = supa(env);
+        const a = (await S2.select('anketas', `data->>slug=eq.${encodeURIComponent(mAnkPage[1])}&select=data`)).map(r => r.data)[0];
+        if (a && a.vacancyId) {
+          const [vac, owner] = await Promise.all([S2.one('vacancies', a.vacancyId), S2.one('users', a.userId)]);
+          if (vac && vac.published && owner && owner.blocked !== true) {
+            let form = vac.form || null;
+            if (!form && vac.requisitionId) { const rq = await S2.one('requisitions', vac.requisitionId).catch(() => null); form = rq && rq.form; }
+            const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
+            const pageUrl = `${base}/a/${a.slug}`;
+            let validDays = 30; try { const pr = processOf(vac); if (pr && pr.linkDays) validDays = pr.linkDays; } catch (_) {}
+            const validThrough = new Date(Date.now() + validDays * 86400000).toISOString();
+            const jp = buildJobPosting({ vac, form, company: owner.company, logo: (owner.settings && owner.settings.logo) || '',
+              url: pageUrl, validThrough, description: a.description || vac.adText || vac.name });
+            const assetUrl = new URL(url); assetUrl.pathname = '/anketa';
+            const res = await env.ASSETS.fetch(new Request(assetUrl.toString(), { headers: req.headers }));
+            let html = await res.text();
+            const escH = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const ld = `<script type="application/ld+json">${JSON.stringify(jp).replace(/</g, '\\u003c')}</script>`;
+            const title = `${vac.name}${owner.company ? ' — ' + owner.company : ''}`;
+            const metaDesc = String((a.description || vac.adText || vac.name) || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
+            const headInj = `${ld}\n<title>${escH(title)}</title>\n<meta name="description" content="${escH(metaDesc)}">\n<meta property="og:title" content="${escH(title)}">\n<meta property="og:description" content="${escH(metaDesc)}">\n<meta property="og:type" content="website">\n<meta property="og:url" content="${escH(pageUrl)}">`;
+            html = html.replace(/<\/head>/i, headInj + '</head>');
+            return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=600' } });
+          }
+        }
+      } catch (_) { /* фолбэк — обычная статика ниже */ }
+    }
+    // HTML SPA-роуты — отдать содержимое нужного файла по clean-пути (без редиректа).
+    // HTML отдаём с no-cache: иначе edge/браузер держат старую страницу со СТАРЫМ ?v= у css/js,
+    // и новые деплои не видны вернувшимся пользователям. Сами css/js кэшируются по ?v=-штампу.
     for (const [re, clean] of HTML_MAP) {
       if (re.test(url.pathname)) {
         const assetUrl = new URL(url); assetUrl.pathname = clean;
-        return env.ASSETS.fetch(new Request(assetUrl.toString(), { headers: req.headers }));
+        const res = await env.ASSETS.fetch(new Request(assetUrl.toString(), { headers: req.headers }));
+        const h = new Headers(res.headers);
+        h.set('Cache-Control', 'no-cache, must-revalidate');
+        return new Response(res.body, { status: res.status, headers: h });
       }
     }
     // остальное — статика как есть (css/js/img)

@@ -31,9 +31,11 @@ for (const key of Object.keys(POINT_QUESTIONS)) {
 }
 
 // answers: объект { "1": "+"|"M"|"-", ... } для вопросов 1..200
-function scoreAnswer(ans) { // "-" -> idx0, "M" -> idx1, "+" -> idx2
-  if (ans === '+') return 2;
-  if (ans === '-') return 0;
+// Массив SCORING[q] упорядочен [Да(+), Иногда(M), Нет(−)] — как варианты на экране
+// (Да, Может быть, Нет). Поэтому "+" -> idx0, "M" -> idx1, "-" -> idx2.
+function scoreAnswer(ans) {
+  if (ans === '+') return 0;
+  if (ans === '-') return 2;
   return 1; // M / пусто
 }
 
@@ -135,8 +137,10 @@ function evaluate(answers, opts = {}) {
 
   const values = {};
   for (const k of Object.keys(points)) values[k] = points[k].value;
-  const syndromes = SYNDROMES.filter(s => { try { return s.cond(values); } catch (_) { return false; } })
-    .map(s => ({ id: s.id, title: s.title, text: s.text }));
+  // Контекст «молний» (плавающих точек) для синдромов ПИН/подавление.
+  const synCtx = { mB: !!points.B.manic, mE: !!points.E.manic };
+  const syndromes = SYNDROMES.filter(s => { try { return s.cond(values, synCtx); } catch (_) { return false; } })
+    .map(s => ({ id: s.id, title: s.title, text: s.text, f: s.f || '' }));
 
   const cheat = detectCheating(answers, points);
 

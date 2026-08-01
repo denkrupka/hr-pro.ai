@@ -70,7 +70,7 @@ export async function pushNotif(env, S, user, typeKey, { title, body = '', link 
       const lang = ['ru', 'pl', 'en'].includes((user.settings || {}).uiLang) ? user.settings.uiLang : 'ru';
       const html = wrapEmailEdge({ lang, baseUrl: env.BASE_URL || 'https://hr-pro.ai', subject: n.title, eyebrow: 'HR PRO AI', headline: n.title, bodyHtml: (n.body ? String(n.body).replace(/</g, '&lt;').replace(/\n/g, '<br>') : '') + (n.link ? `<br><br><a href="${n.link}">Открыть в портале</a>` : '') });
       await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [user.email], subject: n.title, html }) });
+        body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [user.email], subject: n.title, html }) });
     } catch (_) {}
   }
   // Telegram

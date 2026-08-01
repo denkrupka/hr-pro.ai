@@ -173,7 +173,7 @@ function wrapEmailHtml(opts) {
   const base = (o.baseUrl || '').replace(/\/+$/, '');
   const headline = o.headline || o.subject || '';
   const eyebrow = o.eyebrow || L.eyebrow;
-  const helpUrl = 'mailto:help@hr-pro.ai';
+  const helpUrl = 'mailto:info@hr-pro.ai';
   const privacyUrl = base + '/privacy?lang=' + (o.lang || 'ru');
   const termsUrl = base + '/terms?lang=' + (o.lang || 'ru');
   const unsubUrl = o.unsubUrl || (base + '/unsubscribe');
@@ -211,7 +211,7 @@ function wrapEmailHtml(opts) {
 async function sendEmail(settings, { to, subject, html, text, lang, baseUrl, unsubUrl, eyebrow, headline, ctaLabel, ctaUrl, ctaNote, raw }) {
   const c = cfgOf(settings, 'resend');
   if (!c.apiKey) return { skipped: true, reason: 'Resend не настроен' };
-  const body = { from: c.from || 'onboarding@resend.dev', to: Array.isArray(to) ? to : [to], subject: subject || '' };
+  const body = { from: c.from || 'HR PRO AI <info@hr-pro.ai>', to: Array.isArray(to) ? to : [to], subject: subject || '' };
   // Оборачиваем содержимое в единый дизайн письма HR PRO AI (если не raw)
   if (!raw) {
     const bodyHtml = html || (text ? String(text).replace(/\n/g, '<br>') : '');

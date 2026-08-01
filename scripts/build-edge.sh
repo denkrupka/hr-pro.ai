@@ -7,6 +7,8 @@ mkdir -p dist
 # статика: копируем public/, исключая крупные видео (media/ → Supabase Storage)
 cp -r public/* dist/ 2>/dev/null || true
 rm -rf dist/media dist/uploads
+# обфускация клиентского JS (dist/js/*.js) — исходники public/js остаются читаемыми
+node scripts/obfuscate-client.js
 # кэш-бастинг: версия к локальным css/js в HTML, чтобы браузеры не держали старое
 STAMP=$(date +%s)
 python - "$STAMP" <<'PY'

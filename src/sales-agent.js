@@ -74,7 +74,7 @@ const SALES_SCRIPT = `
 2. ДИАГНОСТИКА (3 вопроса, слушай и цепляйся за слова):
    — «Что сейчас на столе по найму? Кого ищете, как часто нанимаете?»
    — «Что больше всего мешает: время на отклики, качество кандидатов, или что берёшь вроде нормального, а через пару месяцев ясно, что не тот?»
-   — ОЦИФРОВКА (ключевой): «Вспомните последнего сотрудника, который "не пошёл". Сколько он проработал и какая сумма окладов на него ушла?» → клиент сам называет цифру потерь. Резюмируй его словами и получи «да».
+   — ОЦИФРОВКА (ключевой): «Вспомните последнего сотрудника, который "не пошёл". Сколько он проработал и сколько денег на него в итоге ушло — оклад, время, обучение?» → клиент сам называет цифру потерь. Резюмируй его словами и получи «да».
 3. ИДЕАЛЬНАЯ КАРТИНА: одной фразой продукт + как работает (заявка → ИИ публикует на 12 площадок → кандидаты сами проходят тесты → ИИ-звонки → к вам доходят те, за кем видны результаты). Привяжи тест к ЕГО боли: берёт «по-человечески хороших» → Резалт (вейтеры лучше всех проходят собеседование!); продажи → Сэйлс + Тулс; сложные роли → Логис.
 4. КЛЮЧЕВОЙ СДВИГ (говори медленно): «Решение о человеке вы принимаете в первые минуты — а правда о результате вскрывается через три месяца, когда испытательный уже оплачен. Люди, которые лучше всего проходят собеседование, часто как раз те, кто не даёт результата. Мы переносим момент истины с третьего месяца на ДО найма».
 5. ОФФЕР: «Это не подписка. Оплата за тест. Проверили кандидата — заплатили. Ничем не рискуете».
@@ -111,7 +111,7 @@ const SUPPORT_GUIDE = `
 - Языки: переключатель языка в настройках; тесты и письма идут на языке вакансии.
 Если вопрос технический и ты не знаешь ответа по памятке — НЕ выдумывай: скажи, что передашь вопрос команде, возьми суть проблемы, пообещай что специалист свяжется.`;
 
-const SALES_SUMMARY = 'Кратко резюмируй звонок отдела продаж HR-PRO.AI: кто клиент/лид, какая у него ситуация с наймом, что его заинтересовало, какие возражения были, чем закончилось (согласился регистрироваться / зарегистрировался / думает / отказ), о чём договорились дальше. В КОНЦЕ добавь строки: "СТАТУС: <interested|registered|callback|refused|support>"; "EMAIL: <email если прозвучал, иначе прочерк>"; "ПЕРЕЗВОН: <когда договорились, иначе прочерк>".';
+const SALES_SUMMARY = 'ВАЖНО: резюмируй ТОЛЬКО то, что реально сказано в транскрипте. Если транскрипт пустой, состоит лишь из приветствия менеджера, или в нём НЕТ содержательных реплик собеседника (звонок сорвался, автоответчик, собеседник сразу положил трубку) — напиши РОВНО «Разговор не состоялся.» и НИЧЕГО не додумывай (никаких имён, компаний, возражений, договорённостей). НЕ придумывай диалог, которого не было.\n\nЕсли разговор реально состоялся — кратко резюмируй звонок отдела продаж HR-PRO.AI: кто клиент/лид, какая у него ситуация с наймом, что его заинтересовало, какие возражения были, чем закончилось (согласился регистрироваться / зарегистрировался / думает / отказ), о чём договорились дальше. В КОНЦЕ добавь строки: "СТАТУС: <interested|registered|callback|refused|support>"; "EMAIL: <email если прозвучал, иначе прочерк>"; "ПЕРЕЗВОН: <когда договорились, иначе прочерк>".';
 
 const SALES_SCHEMA = { type: 'object', properties: {
   email: { type: 'string', description: 'Email, который назвал собеседник (для регистрации/материалов). Пусто, если не называл.' },
@@ -125,6 +125,7 @@ const SALES_SCHEMA = { type: 'object', properties: {
   do_not_call: { type: 'boolean', description: 'true ТОЛЬКО если собеседник прямо просил больше не звонить, был против звонков или назвал это спамом. НЕ ставь true, если просто сейчас неудобно.' },
   manager_requested: { type: 'boolean', description: 'true, если собеседник просил соединить с живым человеком/менеджером или чтобы менеджер ему перезвонил.' },
   manager_reason: { type: 'string', description: 'Зачем нужен живой менеджер / какой вопрос остался нерешённым.' },
+  spoken_language: { type: 'string', description: 'На каком языке ФАКТИЧЕСКИ прошёл разговор — код: ru (русский), pl (польский), en (английский) или другой (например de — немецкий, uk — украинский). Если собеседник выбрал язык в начале — укажи именно его.' },
 } };
 
 const VOICEMAIL_RULE = 'АВТООТВЕТЧИК: если в начале слышишь типичную запись голосовой почты (просьба оставить сообщение, сигнал) — НИЧЕГО не наговаривай и СРАЗУ заверши звонок функцией завершения.\n';
@@ -140,7 +141,27 @@ const VOICE_RULES = `ЖИВОЙ ГОЛОСОВОЙ РАЗГОВОР (соблю�
 function langLine(lang) {
   return lang === 'pl' ? 'Rozmowę prowadź po polsku (przejdź na język rozmówcy, jeśli wyraźnie mówi innym).'
     : lang === 'en' ? 'Speak English (switch to the caller\'s language if they clearly speak another).'
-    : 'Говори по-русски (перейди на язык собеседника, если он явно говорит на другом).';
+    : lang === 'ru' ? 'Говори по-русски (перейди на язык собеседника, если он явно говорит на другом).'
+    : `Веди ВЕСЬ разговор на языке: ${lang}. Все реплики и приветствие — на этом языке. Если собеседник переходит на другой язык — подстройся под него.`;
+}
+
+// Язык по префиксу телефона: Польша (+48) → pl; СНГ → ru; остальные страны → en.
+function langByPhone(phone) {
+  const n = String(phone || '').replace(/[^\d+]/g, '').replace(/^\+/, '').replace(/^00/, '');
+  if (n.startsWith('48')) return 'pl';
+  // СНГ: RU/KZ +7, BY +375, UA +380, AM +374, AZ +994, GE +995, KG +996, UZ +998, TJ +992, TM +993, MD +373
+  if (/^(7|375|380|374|994|995|996|998|992|993|373)/.test(n)) return 'ru';
+  return 'en';
+}
+
+// Нормализация «фактического языка разговора» из structuredData → код (ru/pl/en) или короткий код/название.
+function normSpokenLang(s) {
+  const t = String(s || '').trim().toLowerCase();
+  if (!t) return '';
+  const map = { russian: 'ru', 'русский': 'ru', rosyjski: 'ru', polish: 'pl', polski: 'pl', 'польский': 'pl', english: 'en', angielski: 'en', 'английский': 'en' };
+  if (map[t]) return map[t];
+  if (['ru', 'pl', 'en'].includes(t)) return t;
+  return t.split(/[\s,;()/]+/)[0].slice(0, 12);
 }
 
 // Текст пакетов из настроек портала → строка для базы знаний.
@@ -154,8 +175,8 @@ function plansText(plans, currency) {
 
 // ── Системный промпт ──
 // mode: 'lead' (продажа: и исходящий по заявке, и входящий незнакомый/лид), 'client' (поддержка клиента).
-function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, inbound }) {
-  const agent = agentName(lang);
+function buildSystem({ mode, lang, baseLang, name, company, leadBlock, plans, currency, inbound, askLanguage }) {
+  const agent = agentName(askLanguage ? (baseLang || lang) : (['ru', 'pl', 'en'].includes(lang) ? lang : (baseLang || 'ru')));
   let sys = '';
   if (mode === 'client') {
     sys += `Ты — ${agent}, виртуальный менеджер компании HR-PRO.AI (портал автоматизации найма). Тебе звонит НАШ КЛИЕНТ${name ? `: ${name}` : ''}${company ? ` (компания ${company})` : ''} — обращайся по имени, тепло и уважительно. Твоя задача — помочь с любым вопросом по порталу: как что настроить, где что находится, как работает. Проведи за руку по шагам.\n`;
@@ -165,6 +186,9 @@ function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, in
     sys += SUPPORT_GUIDE + '\n';
     if (leadBlock) sys += '\nКОНТЕКСТ КЛИЕНТА:\n' + leadBlock + '\n';
     sys += '\nПРАВИЛА:\n- Представляйся виртуальным менеджером HR-PRO.AI (не выдавай себя за живого человека).\n'
+      + '- ЗАПИСЬ: разговор записывается (сказано в первой фразе, не повторяй; если спросят — коротко подтверди).\n'
+      + '- ГРАМОТНАЯ РЕЧЬ: говори чисто, согласуй род/число/падеж, заканчивай фразы до конца.\n'
+      + '- ТИШИНА: если собеседник молчит или не расслышала — мягко переспроси («Алло, вы на связи?»), не завершай звонок молча.\n'
       + '- ЦИФРЫ ТОЛЬКО СЛОВАМИ (текст читает синтезатор речи!): никакой нумерации цифрами в репликах — «первое… второе…», «двадцать пять тестов», «двести сорок девять евро».\n'
       + '- Не раскрывай данные других клиентов и кандидатов. Пароли/платёжные данные по телефону НЕ принимаются — направляй в портал.\n'
       + '- Если клиент недоволен или проблему не решить по памятке — извинись, запиши суть, скажи что специалист свяжется в ближайшее время.\n'
@@ -175,7 +199,12 @@ function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, in
     sys += inbound
       ? `Тебе ЗВОНИТ человек сам (входящий звонок)${name ? `. Ты УЗНАЛА его по номеру телефона: это ${name} — он уже наш лид, СРАЗУ обращайся к нему по имени (не спрашивай, как его зовут)` : ' — номера нет в базе: поприветствуй, представься, узнай имя'} — скорее всего вопрос по подбору персонала или после посещения сайта hr-pro.ai. Дальше веди по скрипту продаж как тёплый лид (продолжай с того места, где остановились в прошлый раз, если контекст ниже есть).\n`
       : `Ты ЗВОНИШЬ человеку, который только что оставил заявку «Перезвоните мне» на сайте hr-pro.ai${name ? `. Его зовут ${name} — обращайся по имени` : ''}. Он ЖДЁТ звонка прямо сейчас — начинай уверенно, со ссылки на заявку.\n`;
-    sys += langLine(lang) + '\n';
+    if (askLanguage) {
+      // Незнакомый входящий: приветствие на языке по стране номера + вопрос о языке, затем подстройка под ответ.
+      sys += `ОПРЕДЕЛЕНИЕ ЯЗЫКА (это НЕЗНАКОМЫЙ входящий, номера нет в базе): начни с приветствия и СРАЗУ спроси, на каком языке собеседнику удобнее разговаривать (предложи русский, польский, английский — или любой другой). Первую фразу скажи на языке по стране его номера. Как только он назовёт язык — немедленно ПЕРЕКЛЮЧИСЬ и веди ВЕСЬ дальнейший разговор ТОЛЬКО на этом языке, даже если это немецкий, украинский, испанский и т.д. ОБЯЗАТЕЛЬНО узнай, как к нему обращаться (имя). В поле spoken_language укажи выбранный им язык.\n`;
+    } else {
+      sys += langLine(lang) + '\n';
+    }
     sys += 'КРИТИЧЕСКИ ВАЖНО — РЕЧЬ ДЛЯ СИНТЕЗАТОРА: всё, что ты пишешь, ОЗВУЧИВАЕТСЯ голосом. НИКОГДА не используй цифры, нумерацию и символы — только слова: «первое… второе… третье…» (НЕ «1… 2… 3»), «десять-пятнадцать минут» (НЕ «10-15»), «девять тысяч злотых», «двадцать пять тестов», «пять тестов в подарок». Названия тестов произноси по-русски как слова: «Резалт», «Тулс», «Логис», «Сэйлс».\n';
     sys += VOICEMAIL_RULE;
     sys += VOICE_RULES;
@@ -192,6 +221,10 @@ function buildSystem({ mode, lang, name, company, leadBlock, plans, currency, in
       + '  Ни в одном случае не уговаривай повторно и не настаивай.\n'
       + '- ССЫЛКА НА РЕГИСТРАЦИЮ — отправляй ЧЕРЕЗ ФУНКЦИИ, слова «отправлю» без вызова функции запрещены. ОСНОВНОЙ способ: SMS на номер собеседника — скажи «отправлю вам ссылку в SMS прямо на этот номер» и вызови send_registration_sms (диктовать ничего не нужно). Email — только если собеседник сам просит на почту: продиктовать по буквам, повторить ПО БУКВАМ, в адресе обязательно есть «собака» (@); после подтверждения вызови send_registration_email. Распознавание речи часто ошибается в буквах — если со второй попытки адрес не сходится, не мучай человека: отправь SMS. Говори «отправила», ТОЛЬКО когда функция вернула успех; при ошибке — скажи честно и предложи другой способ.\n'
       + '- ЦИФРЫ ТОЛЬКО СЛОВАМИ — правило выше, соблюдай всегда.\n'
+      + '- ЗАПИСЬ РАЗГОВОРА: разговор записывается. Об этом уже сказано в первой фразе — сама больше не повторяй, но если собеседник спросит про запись, коротко подтверди («да, для качества») и продолжай.\n'
+      + '- ГРАМОТНАЯ РЕЧЬ: говори чисто и грамотно, согласуй род, число и падеж («частая ситуация», не «частый ситуация»; «сколько денег ушло», не «сколько ушло на оклады»). Заканчивай фразы до конца, не обрывай на полуслове, не мямли.\n'
+      + '- НЕ ОТПУСКАЙ ТЁПЛОГО ЛИДА БЕЗ СЛЕДУЮЩЕГО ШАГА (критично): если собеседник проявил интерес, но не готов регистрироваться прямо сейчас — НЕ заканчивай разговор «в воздухе». Обязательно ЛИБО отправь ссылку на регистрацию в SMS (send_registration_sms) со словами «скину вам ссылку в SMS, посмотрите на спокойную голову», ЛИБО договорись о КОНКРЕТНОМ перезвоне (день и примерное время). Идеально — и то, и другое. Уходить с интересного звонка без email/SMS-ссылки или назначенного шага нельзя.\n'
+      + '- ТИШИНА / «НЕ РАССЛЫШАЛА»: если собеседник молчит или ты не расслышала ответ — НЕ завершай звонок молча. Мягко переспроси («Алло, вы на связи?» / «Простите, вас не расслышала — повторите, пожалуйста?»). Если тишина повторяется — предложи отправить информацию в SMS и уточни, когда удобно перезвонить, и только потом прощайся.\n'
       + '- ЗАВЕРШЕНИЕ (строго): когда разговор закончен или собеседник прощается — скажи последней репликой РОВНО прощальную фразу «Всего доброго!» (по-польски «Wszystkiego dobrego!», по-английски «Have a nice day!») и НЕМЕДЛЕННО вызови функцию завершения звонка. После прощания НЕ добавляй ни одной фразы и НЕ жди ответа — трубку кладёшь ты.';
   }
   return sys;
@@ -220,29 +253,54 @@ function firstMessage({ mode, lang, name, inbound }) {
     : `Здравствуйте${nm}! Меня зовут ${agent}, я виртуальный менеджер компании HR-PRO.AI. Вы оставляли на нашем сайте заявку на звонок по подбору сотрудников — вам удобно сейчас пару минут, я как раз по ней?`;
 }
 
+// Первое сообщение для НЕЗНАКОМОГО входящего: приветствие на языке по префиксу номера + вопрос о предпочтительном языке.
+function askLanguageFirst(baseLang, name) {
+  const agent = agentName(baseLang);
+  const nm = name ? ', ' + name : '';
+  return baseLang === 'pl' ? `Dzień dobry${nm}! Firma HR-PRO.AI, tu ${agent}. W jakim języku będzie Panu/Pani wygodnie rozmawiać — po polsku, rosyjsku, angielsku, czy może w innym?`
+    : baseLang === 'ru' ? `Здравствуйте${nm}! Компания HR-PRO.AI, меня зовут ${agent}. Подскажите, на каком языке вам удобнее разговаривать — русском, польском, английском или другом?`
+    : `Hello${nm}! HR-PRO.AI, my name is ${agent}. Which language is most comfortable for you — English, Polish, Russian, or another one?`;
+}
+
 // Полный ассистент Vapi. elevenKey — API-ключ ElevenLabs (или пусто → azure-голос).
 function buildAssistant(opts) {
-  const { mode, lang: rawLang, name, company, leadBlock, plans, currency, inbound, elevenKey } = opts;
-  const lang = ['ru', 'pl', 'en'].includes(rawLang) ? rawLang : 'ru';
-  const sys = buildSystem({ mode, lang, name, company, leadBlock, plans, currency, inbound });
+  const { mode, lang: rawLang, name, company, leadBlock, plans, currency, inbound, elevenKey, askLanguage } = opts;
+  const std = ['ru', 'pl', 'en'].includes(rawLang);
+  const lang = std ? rawLang : (rawLang ? String(rawLang) : 'ru');     // может быть кастомный код (de/uk/…)
+  const baseLang = std ? rawLang : (askLanguage ? (['ru', 'pl', 'en'].includes(opts.baseLang) ? opts.baseLang : 'en') : 'en'); // база для голоса/приветствия
+  const custom = !std && lang !== 'ru';                                 // нестандартный язык (немецкий и т.п.)
+  const sys = buildSystem({ mode, lang, baseLang, name, company, leadBlock, plans, currency, inbound, askLanguage });
+  // Незнакомый входящий (askLanguage) и кастомный язык — транскрайбер мультиязычный (собеседник может выбрать любой язык).
+  const trLang = (askLanguage || custom) ? 'multi' : lang;
+  const voiceLang = std ? lang : baseLang;
+  // Короткое уведомление о записи разговора — дописываем к первой фразе (гарантированно произносится, на языке звонка).
+  const REC_NOTE = { ru: ' Разговор записывается.', pl: ' Rozmowa jest nagrywana.', en: ' This call is recorded.' };
+  let fm = askLanguage ? askLanguageFirst(baseLang, name) : ((custom && !askLanguage) ? '' : firstMessage({ mode, lang, name, inbound }));
+  if (fm) fm += (REC_NOTE[voiceLang] || REC_NOTE.ru);
+  // Реплики при молчании собеседника — чтобы звонок не обрывался «тихо» (была потеря тёплого лида по silence-timeout).
+  const IDLE = { ru: ['Алло, вы меня слышите?', 'Если сейчас неудобно — я перезвоню, только скажите, когда лучше.'],
+    pl: ['Halo, czy mnie Pan/Pani słyszy?', 'Jeśli teraz nie w porę — oddzwonię, proszę powiedzieć kiedy lepiej.'],
+    en: ['Hello, can you hear me?', 'If now is not a good time, I can call back — just tell me when.'] };
   const assistant = {
-    firstMessageMode: 'assistant-speaks-first',
-    firstMessage: firstMessage({ mode, lang, name, inbound }),
+    firstMessageMode: (custom && !askLanguage) ? 'assistant-speaks-first-with-model-generated-message' : 'assistant-speaks-first',
+    firstMessage: fm,
     model: { provider: 'openai', model: 'gpt-4o', messages: [{ role: 'system', content: sys }] },
-    transcriber: { provider: 'deepgram', model: 'nova-2', language: lang },
-    voice: elevenKey ? { provider: '11labs', voiceId: VOICE_BY_LANG[lang] || VOICE_BY_LANG.ru, model: 'eleven_multilingual_v2' }
-      : { provider: 'azure', voiceId: lang === 'pl' ? 'pl-PL-AgnieszkaNeural' : lang === 'en' ? 'en-US-JennyNeural' : 'ru-RU-SvetlanaNeural' },
+    transcriber: { provider: 'deepgram', model: 'nova-2', language: trLang },
+    voice: elevenKey ? { provider: '11labs', voiceId: VOICE_BY_LANG[voiceLang] || VOICE_BY_LANG.ru, model: 'eleven_multilingual_v2' }
+      : { provider: 'azure', voiceId: voiceLang === 'pl' ? 'pl-PL-AgnieszkaNeural' : voiceLang === 'en' ? 'en-US-JennyNeural' : 'ru-RU-SvetlanaNeural' },
     endCallFunctionEnabled: true,
     endCallPhrases: END_PHRASES,
     artifactPlan: { recordingEnabled: true, recordingFormat: 'mp3' },
     maxDurationSeconds: 900,
+    silenceTimeoutSeconds: 45,
+    messagePlan: { idleMessages: IDLE[voiceLang] || IDLE.ru, idleTimeoutSeconds: 12, idleMessageMaxSpokenCount: 2 },
     voicemailDetection: { provider: 'vapi', backoffPlan: { maxRetries: 10, startAtSeconds: 2, frequencySeconds: 2.5 } },
     serverMessages: ['end-of-call-report'],
     analysisPlan: {
       summaryPlan: { enabled: true, messages: [{ role: 'system', content: SALES_SUMMARY }, { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
       structuredDataPlan: { enabled: true, schema: SALES_SCHEMA, messages: [
         // ВАЖНО: {{schema}} обязателен в кастомных messages — иначе Vapi-экстрактор не видит схему и выдумывает свои ключи.
-        { role: 'system', content: 'Извлеки данные из расшифровки звонка отдела продаж СТРОГО по этой JSON-схеме (используй ровно эти имена полей):\n\n{{schema}}\n\nЕсли пункта нет — оставь поле пустым.' },
+        { role: 'system', content: 'Извлеки данные из расшифровки звонка отдела продаж СТРОГО по этой JSON-схеме (используй ровно эти имена полей):\n\n{{schema}}\n\nЕсли пункта нет — оставь поле пустым. ВАЖНО: если транскрипт пустой или в нём нет реальных реплик собеседника (звонок сорвался/автоответчик/сразу положили трубку) — ВСЕ поля оставь пустыми, НИЧЕГО не придумывай.' },
         { role: 'user', content: 'Транскрипт разговора:\n\n{{transcript}}' }] },
     },
   };
@@ -328,6 +386,9 @@ function applyCallResult(lead, { summary, sd, transcript }) {
   else if (out === 'voicemail' || !answered) lead.status = lead.status === 'new' ? 'no_answer' : (lead.status || 'no_answer');
   else if (lead.status !== 'converted') lead.status = 'talked';
   if (sd && pick(sd.refusal_reason)) lead.refusalReason = pick(sd.refusal_reason);
+  // Фактический язык разговора → запоминаем, чтобы следующий звонок продолжить на нём же.
+  const sl = normSpokenLang(pick(sd && sd.spoken_language));
+  if (sl) lead.lang = sl;
   return lead;
 }
 
@@ -365,6 +426,19 @@ function wantsManager(sd, transcript) {
 // Технический обрыв звонка → надо автоматически перезвонить.
 // Vapi-сбои + случай «клиент якобы положил трубку» посреди живого разговора без прощания (SIP-обрыв выглядит как customer-ended-call).
 const BYE_RX = /(до свидания|до связи|всего доброго|всего хорошего|пока|goodbye|bye|have a nice|do widzenia|wszystkiego dobrego|miłego dnia|dziękuję за|na razie)/i;
+// Был ли РЕАЛЬНЫЙ разговор (а не пустой сброс/автоответчик, по которому анализатор Vapi выдумывает сводку).
+// Транскрипт часто содержит только приветствие Софии → считаем реплики собеседника, а не общий объём.
+function hadRealConversation({ transcript, durationSec }) {
+  const t = String(transcript || '');
+  const dur = (typeof durationSec === 'number' && durationSec >= 0) ? durationSec : null;
+  if (dur != null && dur < 12) return false;                  // мгновенный звонок — реального разговора не было
+  // реплики собеседника (не Софии): строки User/Customer/Client/Клиент…
+  const cust = (t.match(/(?:^|\n)\s*(?:user|customer|human|client|klient|клиент|abonent|rozmówca)\s*:\s*([^\n]+)/gi) || [])
+    .map(l => l.replace(/^[^:]*:\s*/, '').trim()).join(' ').trim();
+  if (cust.length >= 12) return true;                         // собеседник сказал что-то содержательное
+  if (!/[:]/.test(t) && t.trim().length >= 200) return true;  // формат без меток, но длинный транскрипт — вероятно реальный
+  return false;
+}
 function wasInterrupted({ endedReason, transcript, durationSec, sd }) {
   const er = String(endedReason || '');
   if (/pipeline-error|vapifault|provider-closed|worker-shutdown|unknown-error|call\.in-progress\.error|database-error|assistant-not-found/i.test(er)) return true;
@@ -381,4 +455,4 @@ function wasInterrupted({ endedReason, transcript, durationSec, sd }) {
   return false;
 }
 
-module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, historyBlock, CALL_GOALS, applyCallResult, wantsManager, wasInterrupted, isValidEmail, REG_EMAIL, REG_SMS, REG_URL, SALES_SCHEMA, SALES_SUMMARY };
+module.exports = { agentName, phoneKey, toE164, buildAssistant, leadContext, historyBlock, CALL_GOALS, applyCallResult, wantsManager, wasInterrupted, hadRealConversation, isValidEmail, langByPhone, normSpokenLang, REG_EMAIL, REG_SMS, REG_URL, SALES_SCHEMA, SALES_SUMMARY };

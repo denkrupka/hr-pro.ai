@@ -1,0 +1,10 @@
+name = "hr-pro-decode-cron"
+main = "index.js"
+compatibility_date = "2024-11-01"
+account_id = "d045358687b1a0b34b96e822a525a3ef"
+
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+PAGES_URL = "https://hr-pro.ai"

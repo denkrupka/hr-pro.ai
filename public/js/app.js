@@ -66,7 +66,7 @@ const I18N = {
     col_candidate: 'Кандидат', col_results: 'Результаты', col_id: 'ID', col_stage: 'Этап', col_sexage: 'Пол · возраст', col_tel: 'Телефон', col_result: '★ Резалт', col_logic: '★ Логис', col_date: 'Дата', col_city: 'Город', col_comment: 'Комментарий', sending: 'Отправка…',
     pick_title: 'Выберите тесты для отправки', pick_sub: 'Можно выбрать несколько — кандидат получит по одному тесту каждого типа.', q_word: 'вопросов', min_word: 'мин', test_selected: 'Тест выбран ✓', select_test: 'Выбрать тест', done: 'Готово', pick_one: 'Выберите хотя бы один тест',
     desc_tools: 'Тест на оценку характера и личностных качеств по 10 показателям', desc_result: 'Сценарный тест для оценки продуктивности соискателя на предыдущей работе', desc_logic: 'Тест на проверку уровня интеллекта (IQ) — способности мыслить и принимать решения', desc_sales: 'Тест на оценку способностей человека как специалиста в области продаж по 12 показателям',
-    bal_eyebrow: 'Баланс и оплата', bal_title: 'Ваш баланс тестов', bal_available: 'Доступно к отправке', bal_total: 'Всего куплено', bal_pending: 'В ожидании списания', bal_topup_h: 'Пополнить баланс', tests_word: 'тестов', bal_save: 'Выгода', bal_per: 'за тест', bal_buy: 'Купить', bal_hit: 'Хит', bal_history: 'История покупок', bal_no_purch: 'Покупок пока нет.', bal_stripe: 'Оплата картой через Stripe.', bal_demo: 'Демо-режим: оплата зачисляется мгновенно.', bal_paying: 'Оплата…', bal_topped: 'Баланс пополнен ✓', bal_ttl_note: 'Тесты действуют 1 год с даты пополнения.', bal_ttl_next: 'Ближайшее сгорание —',
+    bal_eyebrow: 'Баланс и оплата', bal_title: 'Ваш баланс тестов', bal_available: 'Доступно к отправке', bal_total: 'Всего куплено', bal_pending: 'В ожидании списания', bal_topup_h: 'Пополнить баланс', tests_word: 'тестов', bal_save: 'Выгода', bal_per: 'за тест', bal_buy: 'Купить', bal_hit: 'Хит', bal_history: 'История', bal_no_purch: 'Пока нет движений по балансу.', bal_stripe: 'Оплата картой через Stripe.', bal_demo: 'Демо-режим: оплата зачисляется мгновенно.', bal_paying: 'Оплата…', bal_topped: 'Баланс пополнен ✓', bal_ttl_note: 'Тесты действуют 1 год с даты пополнения.', bal_ttl_next: 'Ближайшее сгорание —',
     set_account: 'Аккаунт', set_title: 'Настройки аккаунта', set_profile: 'Профиль', set_params: 'Параметры', set_notify: 'Уведомления', set_templates: 'Шаблоны писем', set_security: 'Безопасность',
     prof_edit: 'Изменение информации', prof_email: 'Ваш Email', prof_name: 'Ваше имя', prof_surname: 'Ваша фамилия', prof_company: 'Название компании', prof_employees: 'Кол-во сотрудников', prof_phone: 'Контактный номер', prof_logo: 'Логотип компании', prof_no_logo: 'Нет логотипа', prof_upload: 'Загрузить и кадрировать', prof_remove: 'Убрать', save: 'Сохранить', saved: 'Сохранено', cancel: 'Отмена',
     par_tz: 'Часовой пояс', par_uilang: 'Язык интерфейса', order_title: 'Очередность тестов', order_sub: 'Порядок, в котором кандидат получает тесты, когда отправляется несколько сразу.', order_save: 'Сохранить порядок',
@@ -81,15 +81,17 @@ const I18N = {
     tpl_title: 'Шаблоны сообщений кандидатам', mail_cat_send: 'При отправке тестов', mail_cat_status: 'При изменении статуса', tpl_subject: 'Тема письма', tpl_body: 'Текст письма', tpl_save_btn: 'Сохранить шаблоны', tpl_hint: 'Язык — от вакансии. SMS отправляется, если в поле получателя указан телефон.', sms_label: 'Текст SMS', sms_hint: 'Коротко, без темы — до ~360 символов. Те же переменные $…$.', st_rejected: 'Отказано', st_interview: 'Собеседование', st_reserve: 'Резерв', st_accepted: 'Принят', mail_vars: 'Переменные',
     rte_bold: 'Жирный', rte_italic: 'Курсив', rte_underline: 'Подчёркнутый', rte_font: 'Шрифт', rte_format: 'Формат', rte_size: 'Размер', rte_color: 'Цвет текста', rte_ul: 'Маркированный список', rte_ol: 'Нумерованный список', rte_link: 'Вставить ссылку', rte_img: 'Вставить картинку', rte_html: 'Редактировать HTML', fmt_normal: 'Обычный', fmt_h2: 'Заголовок', fmt_h3: 'Подзаголовок', sz_small: 'Мелкий', sz_normal: 'Обычный', sz_large: 'Крупный', g_bold: 'Ж', g_italic: 'К', g_underline: 'Ч',
     links_sent: 'Тесты отправлены', links_sub: 'Сообщение кандидату (email или SMS) и ссылки для прохождения',
-    tp_none: 'Тесты ещё не отправлялись.', queued_badge: 'в очереди', links_seq: 'Первый тест отправлен. Следующий уйдёт кандидату автоматически — после того как он пройдёт предыдущий.', tst_done: 'Выполнен', tst_prog: 'Проходит', tst_wait: 'Ждём ответ', tp_started: 'Начал', tp_finished: 'Закончил', tp_time: 'Время', tp_status: 'Статус', tp_link: 'Ссылка на тест', tp_copy: 'Копировать ссылку', tp_see: 'Смотреть результат →', tp_open: 'Открыть тест', tp_del: 'Удалить тест', prev_test: 'Предыдущий тест', next_test: 'Следующий тест', rep_print: 'Печать', rep_vacancy: 'Вакансия', rep_close: 'Закрыть', ai_hint: 'Подсказка от ИИ', synd_h: 'Синдромы и перевесы', z_vlow: 'Очень низкий', z_low: 'Низкий', z_mid: 'Средний', z_high: 'Высокий', z_vhigh: 'Очень высокий',
+    tp_none: 'Тесты ещё не отправлялись.', queued_badge: 'в очереди', links_seq: 'Первый тест отправлен. Следующий уйдёт кандидату автоматически — после того как он пройдёт предыдущий.', tst_done: 'Выполнен', tst_prog: 'Проходит', tst_wait: 'Ждём ответ', tp_started: 'Начал', tp_finished: 'Закончил', tp_time: 'Время', tp_status: 'Статус', tp_link: 'Ссылка на тест', tp_copy: 'Копировать ссылку', tp_see: 'Смотреть результат →', tp_open: 'Открыть тест', tp_del: 'Удалить тест', prev_test: 'Предыдущий тест', next_test: 'Следующий тест', rep_print: 'Сохранить в PDF', rep_vacancy: 'Вакансия', rep_close: 'Закрыть', ai_hint: 'Подсказка от ИИ', synd_h: 'Синдромы · сочетания и перекосы точек', syn_hi: 'высокая точка', syn_lo: 'низкая точка', syn_reinf: 'усиливают друг друга', syn_skew: 'перекос: одна выше другой', syn_skew2: 'сильный перекос', syn_comp: 'компульсивная', syn_float: 'плавающая', z_vlow: 'Очень низкий', z_low: 'Низкий', z_mid: 'Средний', z_high: 'Высокий', z_vhigh: 'Очень высокий',
     lr_correct: 'Верных', lr_question: 'Вопрос', lr_matrix: 'Абстрактная матрица — оценивается вручную.', lr_answer: 'Ответ:', lr_right: 'Верный:', iq_note_h: 'IQ — только часть пазла', iq_note: 'Интеллект показывает способность видеть сходства и различия, разумно мыслить и принимать решения. Особенно важен при выборе руководителя. Не решайте только по IQ — оцените продуктивность «Резалтом» и характер «Тулсом».',
-    share_title: 'Публичная ссылка на результат', share_sub: 'Просмотр доступен всем, у кого есть ссылка.', share_active: 'Активна', share_inactive: 'Неактивна', share_on: 'Активировать', share_off: 'Отключить', decision: 'Решение:', act_interview: 'Собеседование', act_reserve: 'В резерв', act_reject: 'Отказать', spectrum: 'Спектр профиля', interp_h: 'Объяснение результатов', sales_profile: 'Профиль продавца · 12 показателей', answers_q: 'Ответы по вопросам', ans_maybe: 'Ответы «Может быть»', ans_sometimes: 'Ответы «Иногда»', mark_visual: 'Визуальный', mark_correct: '✔ Верно', mark_skipped: '— Пропущен', mark_wrong: '✕ Неверно', opt_right: 'верный', opt_chosen: 'выбран', variant: 'Вариант',
+    share_title: 'Публичная ссылка на результат', share_sub: 'Просмотр доступен всем, у кого есть ссылка.', share_active: 'Активна', share_inactive: 'Неактивна', share_on: 'Активировать', share_off: 'Отключить', share_copy: 'Копировать', decision: 'Решение:', act_interview: 'Собеседование', act_reserve: 'В резерв', act_reject: 'Отказать', spectrum: 'Спектр профиля', interp_h: 'Объяснение результатов', sales_profile: 'Профиль продавца · 12 показателей', sales_types_h: 'Тип продажника', answers_q: 'Ответы по вопросам', ans_maybe: 'Ответы «Может быть»', ans_sometimes: 'Ответы «Иногда»', mark_visual: 'Визуальный', mark_correct: '✔ Верно', mark_skipped: '— Пропущен', mark_wrong: '✕ Неверно', opt_right: 'верный', opt_chosen: 'выбран', variant: 'Вариант',
+    cheat_badge: 'Замечены признаки читинга', cheat_tip: 'Кликните, чтобы увидеть подробности', cheat_lead: 'Эти технические события сами по себе не доказывают попытку обмана. Это дополнительные сигналы — оценивайте их вместе с ответами кандидата, временем прохождения и общим контекстом.', cheat_tabs: 'Переключения вкладок на вопросах', cheat_copy: 'Копирование текста', cheat_frags: 'Скопированные фрагменты', cheat_paste: 'Вставка текста', cheat_away: 'Время вне вкладки', cheat_answers: 'Ответы: паттерн недостоверного заполнения', cheat_times: 'раз', cheat_close: 'Закрыть',
+    ai_unavail_short: 'ИИ недоступен', ai_unavail_tip: 'Сервис ИИ временно недоступен — обратитесь к администратору', ai_unavail_title: 'Сервис ИИ временно недоступен', ai_unavail_body: 'Генерация временно недоступна: у сервиса закончились кредиты ИИ. Администратор уже уведомлён — как только баланс пополнят, всё заработает. Попробуйте позже.',
     csv_no_data: 'Нет данных для экспорта', csv_tests: 'Тесты', csv_done: 'пройден', csv_pending: 'ожидание',
     faq_help: 'Помощь', faq_title: 'Ответы на часто задаваемые вопросы', faq_search: 'Поиск по вопросам…',
     faqcat_start: 'С чего начать', faqcat_general: 'Общие вопросы', faqcat_tech: 'Технические вопросы', faqcat_func: 'Функционал системы', faqcat_tests: 'Вопросы по тестам', faqcat_pricing: 'Оплата и тарифы',
     ak_eyebrow: 'Сбор откликов', ak_my: 'Мои анкеты', ak_create: 'Создать анкету', ak_prefix: 'Префикс коротких ссылок', ak_prefix_ph: 'например, mycompany', ak_prefix_auto: 'Формируется автоматически из первого слова названия вашей компании (Настройки → Профиль).', ak_copy: 'Копировать', ak_edit: 'Изменить', ak_delete: 'Удалить', ak_empty: 'Пока не создано ни одной анкеты.', ak_empty_link: 'Создадим первую анкету?', ak_vac_pfx: 'Вакансия: ', ak_tests_word: 'тест(ов) · откликов:',
     ak_intro: 'Анкета — ваш персональный «мини-сайт» с короткой ссылкой для сбора откликов. Разместите её в вакансии, соцсетях или отправьте напрямую — кандидаты откликнутся и сразу попадут в вашу воронку.', ak_after: 'После отклика система автоматически:', ak_after1: 'добавит кандидата в нужную вакансию', ak_after2: 'запустит выбранные тесты оценки', ak_after3: 'покажет результат в вашем кабинете',
-    ae_edit_title: 'Редактирование анкеты', ae_create_title: 'Создание анкеты', ae_name: 'Название анкеты', ae_name_ph: 'Введите название', ae_pick_vac: 'Выберите вакансию', ae_slug: 'Короткая ссылка', ae_slug_ph: 'напр. sales-manager', ae_btntext: 'Текст кнопки отклика', ae_ptitle: 'Заголовок страницы', ae_ptitle_ph: 'Напр. Отклик на вакансию', ae_nocaptcha: 'Отключить капчу', ae_sendemail: 'Отправлять e-mail кандидату', ae_msgapply: 'Сообщение после отклика (без тестов)', ae_msgdone: 'Сообщение после завершения тестов', ae_tests: 'Тесты, которые получит кандидат', ae_desc: 'Описание (текст мини-сайта)', ae_save_create: 'Создать анкету', ae_preview: 'Предпросмотр',
+    ae_edit_title: 'Редактирование анкеты', ae_create_title: 'Создание анкеты', ae_name: 'Название анкеты', ae_name_ph: 'Введите название', ae_pick_vac: 'Выберите вакансию', ae_slug: 'Короткая ссылка', ae_slug_ph: 'напр. sales-manager', ae_btntext: 'Текст кнопки отклика', ae_ptitle: 'Заголовок страницы', ae_ptitle_ph: 'Напр. Отклик на вакансию', ae_nocaptcha: 'Отключить капчу', ae_sendemail: 'Отправлять e-mail кандидату', ae_msgapply: 'Сообщение после отклика (без тестов)', ae_msgdone: 'Сообщение после завершения тестов', ae_tests: 'Тесты, которые получит кандидат', ae_desc: 'Описание (текст мини-сайта)', ae_ad: 'Объявление вакансии (мини-сайт)', ae_save_create: 'Создать анкету', ae_preview: 'Предпросмотр',
   },
   pl: {
     nav_vacancies: 'Rekrutacja', rec_applications: 'Zgłoszenia', rec_vacancies: 'Wakaty', nav_anketas: 'Ankiety', nav_candidates: 'Kandydaci', nav_calendar: 'Kalendarz', nav_tests: 'Testy', nav_education: 'Szkolenia', nav_integrations: 'Integracje', nav_balance: 'Saldo', nav_faq: 'FAQ', nav_settings: 'Ustawienia', nav_logout: 'Wyloguj', nav_theme: 'Motyw',
@@ -122,7 +124,7 @@ const I18N = {
     col_candidate: 'Kandydat', col_results: 'Wyniki', col_id: 'ID', col_stage: 'Etap', col_sexage: 'Płeć · wiek', col_tel: 'Telefon', col_result: '★ Result', col_logic: '★ Logic', col_date: 'Data', col_city: 'Miasto', col_comment: 'Komentarz', sending: 'Wysyłanie…',
     pick_title: 'Wybierz testy do wysłania', pick_sub: 'Możesz wybrać kilka — kandydat otrzyma po jednym teście każdego typu.', q_word: 'pytań', min_word: 'min', test_selected: 'Wybrano ✓', select_test: 'Wybierz test', done: 'Gotowe', pick_one: 'Wybierz co najmniej jeden test',
     desc_tools: 'Test oceny charakteru i cech osobowości wg 10 wskaźników', desc_result: 'Scenariuszowy test oceny produktywności kandydata w poprzedniej pracy', desc_logic: 'Test poziomu inteligencji (IQ) — zdolności myślenia i podejmowania decyzji', desc_sales: 'Test oceny umiejętności sprzedażowych wg 12 wskaźników',
-    bal_eyebrow: 'Saldo i płatności', bal_title: 'Twoje saldo testów', bal_available: 'Dostępne do wysłania', bal_total: 'Łącznie kupione', bal_pending: 'Oczekuje na pobranie', bal_topup_h: 'Doładuj saldo', tests_word: 'testów', bal_save: 'Oszczędność', bal_per: 'za test', bal_buy: 'Kup', bal_hit: 'Hit', bal_history: 'Historia zakupów', bal_no_purch: 'Brak zakupów.', bal_stripe: 'Płatność kartą przez Stripe.', bal_demo: 'Tryb demo: płatność księgowana natychmiast.', bal_paying: 'Płatność…', bal_topped: 'Saldo doładowane ✓', bal_ttl_note: 'Testy są ważne 1 rok od daty doładowania.', bal_ttl_next: 'Najbliższe wygaśnięcie —',
+    bal_eyebrow: 'Saldo i płatności', bal_title: 'Twoje saldo testów', bal_available: 'Dostępne do wysłania', bal_total: 'Łącznie kupione', bal_pending: 'Oczekuje na pobranie', bal_topup_h: 'Doładuj saldo', tests_word: 'testów', bal_save: 'Oszczędność', bal_per: 'za test', bal_buy: 'Kup', bal_hit: 'Hit', bal_history: 'Historia', bal_no_purch: 'Brak operacji na saldzie.', bal_stripe: 'Płatność kartą przez Stripe.', bal_demo: 'Tryb demo: płatność księgowana natychmiast.', bal_paying: 'Płatność…', bal_topped: 'Saldo doładowane ✓', bal_ttl_note: 'Testy są ważne 1 rok od daty doładowania.', bal_ttl_next: 'Najbliższe wygaśnięcie —',
     set_account: 'Konto', set_title: 'Ustawienia konta', set_profile: 'Profil', set_params: 'Parametry', set_notify: 'Powiadomienia', set_templates: 'Szablony e-maili', set_security: 'Bezpieczeństwo',
     prof_edit: 'Zmiana danych', prof_email: 'Twój e-mail', prof_name: 'Imię', prof_surname: 'Nazwisko', prof_company: 'Nazwa firmy', prof_employees: 'Liczba pracowników', prof_phone: 'Numer kontaktowy', prof_logo: 'Logo firmy', prof_no_logo: 'Brak logo', prof_upload: 'Wgraj i przytnij', prof_remove: 'Usuń', save: 'Zapisz', saved: 'Zapisano', cancel: 'Anuluj',
     par_tz: 'Strefa czasowa', par_uilang: 'Język interfejsu', order_title: 'Kolejność testów', order_sub: 'Kolejność, w jakiej kandydat otrzymuje testy, gdy wysyłasz kilka naraz.', order_save: 'Zapisz kolejność',
@@ -137,15 +139,17 @@ const I18N = {
     tpl_title: 'Szablony wiadomości do kandydatów', mail_cat_send: 'Przy wysyłce testów', mail_cat_status: 'Przy zmianie statusu', tpl_subject: 'Temat wiadomości', tpl_body: 'Treść wiadomości', tpl_save_btn: 'Zapisz szablony', tpl_hint: 'Język — wg wakatu. SMS jest wysyłany, gdy w polu odbiorcy podano telefon.', sms_label: 'Treść SMS', sms_hint: 'Krótko, bez tematu — do ~360 znaków. Te same zmienne $…$.', st_rejected: 'Odrzucono', st_interview: 'Rozmowa', st_reserve: 'Rezerwa', st_accepted: 'Przyjęty', mail_vars: 'Zmienne',
     rte_bold: 'Pogrubienie', rte_italic: 'Kursywa', rte_underline: 'Podkreślenie', rte_font: 'Czcionka', rte_format: 'Format', rte_size: 'Rozmiar', rte_color: 'Kolor tekstu', rte_ul: 'Lista punktowana', rte_ol: 'Lista numerowana', rte_link: 'Wstaw link', rte_img: 'Wstaw obraz', rte_html: 'Edytuj HTML', fmt_normal: 'Zwykły', fmt_h2: 'Nagłówek', fmt_h3: 'Podnagłówek', sz_small: 'Mały', sz_normal: 'Zwykły', sz_large: 'Duży', g_bold: 'B', g_italic: 'I', g_underline: 'U',
     links_sent: 'Testy wysłane', links_sub: 'Wiadomość do kandydata (e-mail lub SMS) i linki do wypełnienia',
-    tp_none: 'Testy nie zostały jeszcze wysłane.', queued_badge: 'w kolejce', links_seq: 'Pierwszy test wysłany. Kolejny trafi do kandydata automatycznie — po ukończeniu poprzedniego.', tst_done: 'Ukończony', tst_prog: 'W trakcie', tst_wait: 'Czekamy na odpowiedź', tp_started: 'Rozpoczął', tp_finished: 'Zakończył', tp_time: 'Czas', tp_status: 'Status', tp_link: 'Link do testu', tp_copy: 'Kopiuj link', tp_see: 'Zobacz wynik →', tp_open: 'Otwórz test', tp_del: 'Usuń test', prev_test: 'Poprzedni test', next_test: 'Następny test', rep_print: 'Drukuj', rep_vacancy: 'Wakat', rep_close: 'Zamknij', ai_hint: 'Podpowiedź AI', synd_h: 'Syndromy i przewagi', z_vlow: 'Bardzo niski', z_low: 'Niski', z_mid: 'Średni', z_high: 'Wysoki', z_vhigh: 'Bardzo wysoki',
+    tp_none: 'Testy nie zostały jeszcze wysłane.', queued_badge: 'w kolejce', links_seq: 'Pierwszy test wysłany. Kolejny trafi do kandydata automatycznie — po ukończeniu poprzedniego.', tst_done: 'Ukończony', tst_prog: 'W trakcie', tst_wait: 'Czekamy na odpowiedź', tp_started: 'Rozpoczął', tp_finished: 'Zakończył', tp_time: 'Czas', tp_status: 'Status', tp_link: 'Link do testu', tp_copy: 'Kopiuj link', tp_see: 'Zobacz wynik →', tp_open: 'Otwórz test', tp_del: 'Usuń test', prev_test: 'Poprzedni test', next_test: 'Następny test', rep_print: 'Zapisz PDF', rep_vacancy: 'Wakat', rep_close: 'Zamknij', ai_hint: 'Podpowiedź AI', synd_h: 'Syndromy · połączenia i przewagi punktów', syn_hi: 'wysoki punkt', syn_lo: 'niski punkt', syn_reinf: 'wzmacniają się nawzajem', syn_skew: 'przewaga: jeden wyższy od drugiego', syn_skew2: 'silna przewaga', syn_comp: 'kompulsywny', syn_float: 'pływający', z_vlow: 'Bardzo niski', z_low: 'Niski', z_mid: 'Średni', z_high: 'Wysoki', z_vhigh: 'Bardzo wysoki',
     lr_correct: 'Poprawnych', lr_question: 'Pytanie', lr_matrix: 'Abstrakcyjna macierz — oceniana ręcznie.', lr_answer: 'Odpowiedź:', lr_right: 'Poprawna:', iq_note_h: 'IQ to tylko część układanki', iq_note: 'Inteligencja pokazuje zdolność dostrzegania podobieństw i różnic, rozsądnego myślenia i podejmowania decyzji. Szczególnie ważna przy wyborze kierownika. Nie decyduj wyłącznie na podstawie IQ — oceń produktywność testem „Result” i charakter testem „Tools”.',
-    share_title: 'Publiczny link do wyniku', share_sub: 'Podgląd dostępny dla każdego, kto ma link.', share_active: 'Aktywny', share_inactive: 'Nieaktywny', share_on: 'Aktywuj', share_off: 'Wyłącz', decision: 'Decyzja:', act_interview: 'Rozmowa', act_reserve: 'Do rezerwy', act_reject: 'Odrzuć', spectrum: 'Spektrum profilu', interp_h: 'Objaśnienie wyników', sales_profile: 'Profil sprzedawcy · 12 wskaźników', answers_q: 'Odpowiedzi wg pytań', ans_maybe: 'Odpowiedzi „Może”', ans_sometimes: 'Odpowiedzi „Czasami”', mark_visual: 'Wizualne', mark_correct: '✔ Poprawnie', mark_skipped: '— Pominięte', mark_wrong: '✕ Błędnie', opt_right: 'poprawny', opt_chosen: 'wybrany', variant: 'Wariant',
+    share_title: 'Publiczny link do wyniku', share_sub: 'Podgląd dostępny dla każdego, kto ma link.', share_active: 'Aktywny', share_inactive: 'Nieaktywny', share_on: 'Aktywuj', share_off: 'Wyłącz', share_copy: 'Kopiuj', decision: 'Decyzja:', act_interview: 'Rozmowa', act_reserve: 'Do rezerwy', act_reject: 'Odrzuć', spectrum: 'Spektrum profilu', interp_h: 'Objaśnienie wyników', sales_profile: 'Profil sprzedawcy · 12 wskaźników', sales_types_h: 'Typ sprzedawcy', answers_q: 'Odpowiedzi wg pytań', ans_maybe: 'Odpowiedzi „Może”', ans_sometimes: 'Odpowiedzi „Czasami”', mark_visual: 'Wizualne', mark_correct: '✔ Poprawnie', mark_skipped: '— Pominięte', mark_wrong: '✕ Błędnie', opt_right: 'poprawny', opt_chosen: 'wybrany', variant: 'Wariant',
+    cheat_badge: 'Wykryto oznaki oszukiwania', cheat_tip: 'Kliknij, aby zobaczyć szczegóły', cheat_lead: 'Te zdarzenia techniczne same w sobie nie dowodzą oszustwa. To dodatkowe sygnały — oceniaj je razem z odpowiedziami kandydata, czasem i ogólnym kontekstem.', cheat_tabs: 'Przełączenia kart podczas pytań', cheat_copy: 'Kopiowanie tekstu', cheat_frags: 'Skopiowane fragmenty', cheat_paste: 'Wklejanie tekstu', cheat_away: 'Czas poza kartą', cheat_answers: 'Odpowiedzi: wzorzec niewiarygodnego wypełnienia', cheat_times: 'raz(y)', cheat_close: 'Zamknij',
+    ai_unavail_short: 'AI niedostępne', ai_unavail_tip: 'Usługa AI chwilowo niedostępna — skontaktuj się z administratorem', ai_unavail_title: 'Usługa AI chwilowo niedostępna', ai_unavail_body: 'Generowanie jest chwilowo niedostępne: usłudze skończyły się kredyty AI. Administrator został powiadomiony — po uzupełnieniu salda wszystko zadziała. Spróbuj później.',
     csv_no_data: 'Brak danych do eksportu', csv_tests: 'Testy', csv_done: 'ukończony', csv_pending: 'oczekuje',
     faq_help: 'Pomoc', faq_title: 'Odpowiedzi na najczęstsze pytania', faq_search: 'Szukaj w pytaniach…',
     faqcat_start: 'Od czego zacząć', faqcat_general: 'Pytania ogólne', faqcat_tech: 'Pytania techniczne', faqcat_func: 'Funkcje systemu', faqcat_tests: 'Pytania o testy', faqcat_pricing: 'Płatności i cennik',
     ak_eyebrow: 'Zbieranie zgłoszeń', ak_my: 'Moje ankiety', ak_create: 'Utwórz ankietę', ak_prefix: 'Prefiks krótkich linków', ak_prefix_ph: 'np. mycompany', ak_prefix_auto: 'Tworzony automatycznie z pierwszego słowa nazwy Twojej firmy (Ustawienia → Profil).', ak_copy: 'Kopiuj', ak_edit: 'Edytuj', ak_delete: 'Usuń', ak_empty: 'Nie utworzono jeszcze żadnej ankiety.', ak_empty_link: 'Utwórzmy pierwszą ankietę?', ak_vac_pfx: 'Wakat: ', ak_tests_word: 'test(ów) · zgłoszeń:',
     ak_intro: 'Ankieta to Twoja osobista „mini-strona” z krótkim linkiem do zbierania zgłoszeń. Umieść ją w ogłoszeniu, w social media lub wyślij bezpośrednio — kandydaci zgłoszą się i od razu trafią do Twojego lejka.', ak_after: 'Po zgłoszeniu system automatycznie:', ak_after1: 'doda kandydata do właściwego wakatu', ak_after2: 'uruchomi wybrane testy oceny', ak_after3: 'pokaże wynik w Twoim panelu',
-    ae_edit_title: 'Edycja ankiety', ae_create_title: 'Tworzenie ankiety', ae_name: 'Nazwa ankiety', ae_name_ph: 'Wpisz nazwę', ae_pick_vac: 'Wybierz wakat', ae_slug: 'Krótki link', ae_slug_ph: 'np. sales-manager', ae_btntext: 'Tekst przycisku zgłoszenia', ae_ptitle: 'Nagłówek strony', ae_ptitle_ph: 'Np. Zgłoszenie na wakat', ae_nocaptcha: 'Wyłącz captcha', ae_sendemail: 'Wysyłać e-mail do kandydata', ae_msgapply: 'Wiadomość po zgłoszeniu (bez testów)', ae_msgdone: 'Wiadomość po ukończeniu testów', ae_tests: 'Testy, które otrzyma kandydat', ae_desc: 'Opis (tekst mini-strony)', ae_save_create: 'Utwórz ankietę', ae_preview: 'Podgląd',
+    ae_edit_title: 'Edycja ankiety', ae_create_title: 'Tworzenie ankiety', ae_name: 'Nazwa ankiety', ae_name_ph: 'Wpisz nazwę', ae_pick_vac: 'Wybierz wakat', ae_slug: 'Krótki link', ae_slug_ph: 'np. sales-manager', ae_btntext: 'Tekst przycisku zgłoszenia', ae_ptitle: 'Nagłówek strony', ae_ptitle_ph: 'Np. Zgłoszenie na wakat', ae_nocaptcha: 'Wyłącz captcha', ae_sendemail: 'Wysyłać e-mail do kandydata', ae_msgapply: 'Wiadomość po zgłoszeniu (bez testów)', ae_msgdone: 'Wiadomość po ukończeniu testów', ae_tests: 'Testy, które otrzyma kandydat', ae_desc: 'Opis (tekst mini-strony)', ae_ad: 'Ogłoszenie o wakacie (mini-strona)', ae_save_create: 'Utwórz ankietę', ae_preview: 'Podgląd',
   },
   en: {
     nav_vacancies: 'Recruitment', rec_applications: 'Applications', rec_vacancies: 'Vacancies', nav_anketas: 'Forms', nav_candidates: 'Candidates', nav_calendar: 'Calendar', nav_tests: 'Tests', nav_education: 'Learning', nav_integrations: 'Integrations', nav_balance: 'Balance', nav_faq: 'FAQ', nav_settings: 'Settings', nav_logout: 'Log out', nav_theme: 'Theme',
@@ -178,7 +182,7 @@ const I18N = {
     col_candidate: 'Candidate', col_results: 'Results', col_id: 'ID', col_stage: 'Stage', col_sexage: 'Sex · age', col_tel: 'Phone', col_result: '★ Result', col_logic: '★ Logic', col_date: 'Date', col_city: 'City', col_comment: 'Comment', sending: 'Sending…',
     pick_title: 'Select tests to send', pick_sub: 'You can pick several — the candidate gets one test of each type.', q_word: 'questions', min_word: 'min', test_selected: 'Selected ✓', select_test: 'Select test', done: 'Done', pick_one: 'Select at least one test',
     desc_tools: 'Personality and character assessment across 10 traits', desc_result: 'Scenario test assessing the candidate’s productivity at previous jobs', desc_logic: 'Intelligence (IQ) test — thinking speed and decision-making', desc_sales: 'Sales competency assessment across 12 indicators',
-    bal_eyebrow: 'Balance & payment', bal_title: 'Your test balance', bal_available: 'Available to send', bal_total: 'Total purchased', bal_pending: 'Pending charge', bal_topup_h: 'Top up balance', tests_word: 'tests', bal_save: 'Save', bal_per: 'per test', bal_buy: 'Buy', bal_hit: 'Popular', bal_history: 'Purchase history', bal_no_purch: 'No purchases yet.', bal_stripe: 'Card payment via Stripe.', bal_demo: 'Demo mode: payment credited instantly.', bal_paying: 'Processing…', bal_topped: 'Balance topped up ✓', bal_ttl_note: 'Tests are valid for 1 year from the top-up date.', bal_ttl_next: 'Next to expire —',
+    bal_eyebrow: 'Balance & payment', bal_title: 'Your test balance', bal_available: 'Available to send', bal_total: 'Total purchased', bal_pending: 'Pending charge', bal_topup_h: 'Top up balance', tests_word: 'tests', bal_save: 'Save', bal_per: 'per test', bal_buy: 'Buy', bal_hit: 'Popular', bal_history: 'History', bal_no_purch: 'No balance activity yet.', bal_stripe: 'Card payment via Stripe.', bal_demo: 'Demo mode: payment credited instantly.', bal_paying: 'Processing…', bal_topped: 'Balance topped up ✓', bal_ttl_note: 'Tests are valid for 1 year from the top-up date.', bal_ttl_next: 'Next to expire —',
     set_account: 'Account', set_title: 'Account settings', set_profile: 'Profile', set_params: 'Parameters', set_notify: 'Notifications', set_templates: 'Email templates', set_security: 'Security',
     prof_edit: 'Edit information', prof_email: 'Your email', prof_name: 'First name', prof_surname: 'Last name', prof_company: 'Company name', prof_employees: 'Number of employees', prof_phone: 'Contact number', prof_logo: 'Company logo', prof_no_logo: 'No logo', prof_upload: 'Upload and crop', prof_remove: 'Remove', save: 'Save', saved: 'Saved', cancel: 'Cancel',
     par_tz: 'Time zone', par_uilang: 'Interface language', order_title: 'Test order', order_sub: 'The order in which the candidate receives tests when several are sent at once.', order_save: 'Save order',
@@ -193,15 +197,17 @@ const I18N = {
     tpl_title: 'Candidate message templates', mail_cat_send: 'When sending tests', mail_cat_status: 'On status change', tpl_subject: 'Email subject', tpl_body: 'Email body', tpl_save_btn: 'Save templates', tpl_hint: 'Language is set by the vacancy. SMS is sent if the recipient field contains a phone.', sms_label: 'SMS text', sms_hint: 'Short, no subject — up to ~360 chars. Same $…$ variables.', st_rejected: 'Rejected', st_interview: 'Interview', st_reserve: 'Reserve', st_accepted: 'Accepted', mail_vars: 'Variables',
     rte_bold: 'Bold', rte_italic: 'Italic', rte_underline: 'Underline', rte_font: 'Font', rte_format: 'Format', rte_size: 'Size', rte_color: 'Text color', rte_ul: 'Bulleted list', rte_ol: 'Numbered list', rte_link: 'Insert link', rte_img: 'Insert image', rte_html: 'Edit HTML', fmt_normal: 'Normal', fmt_h2: 'Heading', fmt_h3: 'Subheading', sz_small: 'Small', sz_normal: 'Normal', sz_large: 'Large', g_bold: 'B', g_italic: 'I', g_underline: 'U',
     links_sent: 'Tests sent', links_sub: 'Message to the candidate (email or SMS) and links to take the tests',
-    tp_none: 'No tests sent yet.', queued_badge: 'queued', links_seq: 'The first test is sent. The next one goes to the candidate automatically once they finish the previous one.', tst_done: 'Completed', tst_prog: 'In progress', tst_wait: 'Awaiting answer', tp_started: 'Started', tp_finished: 'Finished', tp_time: 'Time', tp_status: 'Status', tp_link: 'Test link', tp_copy: 'Copy link', tp_see: 'View result →', tp_open: 'Open test', tp_del: 'Delete test', prev_test: 'Previous test', next_test: 'Next test', rep_print: 'Print', rep_vacancy: 'Vacancy', rep_close: 'Close', ai_hint: 'AI hint', synd_h: 'Syndromes and imbalances', z_vlow: 'Very low', z_low: 'Low', z_mid: 'Medium', z_high: 'High', z_vhigh: 'Very high',
+    tp_none: 'No tests sent yet.', queued_badge: 'queued', links_seq: 'The first test is sent. The next one goes to the candidate automatically once they finish the previous one.', tst_done: 'Completed', tst_prog: 'In progress', tst_wait: 'Awaiting answer', tp_started: 'Started', tp_finished: 'Finished', tp_time: 'Time', tp_status: 'Status', tp_link: 'Test link', tp_copy: 'Copy link', tp_see: 'View result →', tp_open: 'Open test', tp_del: 'Delete test', prev_test: 'Previous test', next_test: 'Next test', rep_print: 'Save as PDF', rep_vacancy: 'Vacancy', rep_close: 'Close', ai_hint: 'AI hint', synd_h: 'Syndromes · point combinations and skews', syn_hi: 'high point', syn_lo: 'low point', syn_reinf: 'reinforce each other', syn_skew: 'skew: one above the other', syn_skew2: 'strong skew', syn_comp: 'compulsive', syn_float: 'floating', z_vlow: 'Very low', z_low: 'Low', z_mid: 'Medium', z_high: 'High', z_vhigh: 'Very high',
     lr_correct: 'Correct', lr_question: 'Question', lr_matrix: 'Abstract matrix — graded manually.', lr_answer: 'Answer:', lr_right: 'Correct:', iq_note_h: 'IQ is only part of the picture', iq_note: 'Intelligence shows the ability to see similarities and differences, reason soundly and make decisions. It matters especially when choosing a manager. Do not decide on IQ alone — assess productivity with “Result” and character with “Tools”.',
-    share_title: 'Public result link', share_sub: 'Viewable by anyone with the link.', share_active: 'Active', share_inactive: 'Inactive', share_on: 'Activate', share_off: 'Disable', decision: 'Decision:', act_interview: 'Interview', act_reserve: 'To reserve', act_reject: 'Reject', spectrum: 'Profile spectrum', interp_h: 'Results explanation', sales_profile: 'Salesperson profile · 12 indicators', answers_q: 'Answers by question', ans_maybe: '“Maybe” answers', ans_sometimes: '“Sometimes” answers', mark_visual: 'Visual', mark_correct: '✔ Correct', mark_skipped: '— Skipped', mark_wrong: '✕ Wrong', opt_right: 'correct', opt_chosen: 'chosen', variant: 'Option',
+    share_title: 'Public result link', share_sub: 'Viewable by anyone with the link.', share_active: 'Active', share_inactive: 'Inactive', share_on: 'Activate', share_off: 'Disable', share_copy: 'Copy', decision: 'Decision:', act_interview: 'Interview', act_reserve: 'To reserve', act_reject: 'Reject', spectrum: 'Profile spectrum', interp_h: 'Results explanation', sales_profile: 'Salesperson profile · 12 indicators', sales_types_h: 'Salesperson type', answers_q: 'Answers by question', ans_maybe: '“Maybe” answers', ans_sometimes: '“Sometimes” answers', mark_visual: 'Visual', mark_correct: '✔ Correct', mark_skipped: '— Skipped', mark_wrong: '✕ Wrong', opt_right: 'correct', opt_chosen: 'chosen', variant: 'Option',
+    cheat_badge: 'Signs of cheating detected', cheat_tip: 'Click to see details', cheat_lead: 'These technical events do not by themselves prove cheating. They are additional signals — weigh them together with the answers, timing and overall context.', cheat_tabs: 'Tab switches during questions', cheat_copy: 'Text copying', cheat_frags: 'Copied fragments', cheat_paste: 'Text pasting', cheat_away: 'Time away from tab', cheat_answers: 'Answers: unreliable-completion pattern', cheat_times: 'times', cheat_close: 'Close',
+    ai_unavail_short: 'AI unavailable', ai_unavail_tip: 'AI service is temporarily unavailable — contact the administrator', ai_unavail_title: 'AI service temporarily unavailable', ai_unavail_body: 'Generation is temporarily unavailable: the service ran out of AI credits. The administrator has been notified — once the balance is topped up, it will work again. Please try later.',
     csv_no_data: 'No data to export', csv_tests: 'Tests', csv_done: 'completed', csv_pending: 'pending',
     faq_help: 'Help', faq_title: 'Frequently asked questions', faq_search: 'Search questions…',
     faqcat_start: 'Getting started', faqcat_general: 'General questions', faqcat_tech: 'Technical questions', faqcat_func: 'System features', faqcat_tests: 'About the tests', faqcat_pricing: 'Payment & pricing',
     ak_eyebrow: 'Collecting applications', ak_my: 'My forms', ak_create: 'Create form', ak_prefix: 'Short link prefix', ak_prefix_ph: 'e.g. mycompany', ak_prefix_auto: 'Generated automatically from the first word of your company name (Settings → Profile).', ak_copy: 'Copy', ak_edit: 'Edit', ak_delete: 'Delete', ak_empty: 'No forms created yet.', ak_empty_link: 'Create the first form?', ak_vac_pfx: 'Vacancy: ', ak_tests_word: 'test(s) · applications:',
     ak_intro: 'A form is your personal “mini-site” with a short link for collecting applications. Post it in a job ad, on social media, or send it directly — candidates apply and go straight into your funnel.', ak_after: 'After an application, the system automatically:', ak_after1: 'adds the candidate to the right vacancy', ak_after2: 'launches the selected assessment tests', ak_after3: 'shows the result in your dashboard',
-    ae_edit_title: 'Edit form', ae_create_title: 'Create form', ae_name: 'Form name', ae_name_ph: 'Enter a name', ae_pick_vac: 'Select a vacancy', ae_slug: 'Short link', ae_slug_ph: 'e.g. sales-manager', ae_btntext: 'Apply button text', ae_ptitle: 'Page heading', ae_ptitle_ph: 'e.g. Apply for the vacancy', ae_nocaptcha: 'Disable captcha', ae_sendemail: 'Send email to candidate', ae_msgapply: 'Message after applying (no tests)', ae_msgdone: 'Message after finishing tests', ae_tests: 'Tests the candidate will receive', ae_desc: 'Description (mini-site text)', ae_save_create: 'Create form', ae_preview: 'Preview',
+    ae_edit_title: 'Edit form', ae_create_title: 'Create form', ae_name: 'Form name', ae_name_ph: 'Enter a name', ae_pick_vac: 'Select a vacancy', ae_slug: 'Short link', ae_slug_ph: 'e.g. sales-manager', ae_btntext: 'Apply button text', ae_ptitle: 'Page heading', ae_ptitle_ph: 'e.g. Apply for the vacancy', ae_nocaptcha: 'Disable captcha', ae_sendemail: 'Send email to candidate', ae_msgapply: 'Message after applying (no tests)', ae_msgdone: 'Message after finishing tests', ae_tests: 'Tests the candidate will receive', ae_desc: 'Description (mini-site text)', ae_ad: 'Vacancy ad (mini-site)', ae_save_create: 'Create form', ae_preview: 'Preview',
   },
 };
 const FAQ_CAT_KEY = { 'С чего начать': 'faqcat_start', 'Общие вопросы': 'faqcat_general', 'Технические вопросы': 'faqcat_tech', 'Функционал системы': 'faqcat_func', 'Вопросы по тестам': 'faqcat_tests', 'Оплата и тарифы': 'faqcat_pricing' };
@@ -247,6 +253,29 @@ const TEST_SVG = {
   sales: _svg('<circle cx="12" cy="12" r="7.2"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M12 12 18.5 5.5"/><path d="M18.5 5.5h-3M18.5 5.5v3"/>'),
 };
 const TEST_ICON = TEST_SVG;
+// Буквенные чипсы тестов для мобильных карточек кандидатов (стиль из референса)
+const TEST_CHIP = {
+  result: { k: 'Р', c: '#43e0a0', bg: 'rgba(67,224,160,.15)' },
+  tools: { k: 'Т', c: '#8ba6ff', bg: 'rgba(111,151,255,.15)' },
+  logic: { k: 'Л', c: '#b3a4ff', bg: 'rgba(139,108,255,.16)' },
+  sales: { k: 'С', c: '#ff9d84', bg: 'rgba(255,122,92,.15)' },
+  knowledge: { k: 'З', c: '#8ba6ff', bg: 'rgba(111,151,255,.15)' },
+};
+function candChips(tests) {
+  return (tests || []).map(tt => { const m = TEST_CHIP[tt.type] || { k: '·', c: '#8b93ad', bg: 'rgba(255,255,255,.06)' };
+    return `<span class="cmob-chip" style="color:${m.c};background:${m.bg}" title="${testTitle(tt.type)}" onclick="event.stopPropagation();openReport('${tt.id}')">${m.k}</span>`; }).join('');
+}
+// Мобильная карточка кандидата (список кандидатов и «Тесты») — раскладка из референса
+function candCardHtml(c, stageBadge) {
+  return `<div class="cmob-card" onclick="openParticipant('${c.id}')">
+    <div class="cmob-top">
+      <span class="cmob-ava" style="background:${avColor(c.name)}">${esc(initials(c.name, c.email))}</span>
+      <div class="cmob-info"><b>${esc(c.name)}</b><div class="cmob-vac">${esc(c.vacancyName || c.email || c.tel || '—')}</div></div>
+      ${stageBadge ? stageBadge(c) : ''}
+    </div>
+    <div class="cmob-chips">${candChips(c.tests) || '<span class="muted" style="font-size:12px">—</span>'}</div>
+  </div>`;
+}
 const ICON_SEARCH = _svg('<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>');
 const ICON_PRINT = _svg('<path d="M6 9V3h12v6"/><rect x="6" y="13" width="12" height="8" rx="1"/><path d="M6 17H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/>');
 const ICON_SPARK = _svg('<path d="M12 3l1.8 4.9L18.7 9.7 13.8 11.5 12 16.4l-1.8-4.9L5.3 9.7l4.9-1.8L12 3Z"/>');
@@ -282,6 +311,8 @@ function stagePill(stage) {
 }
 function stageOptions(cur) { return STAGES.map(s => `<option value="${s.id}" ${(cur || 'Без этапа') === s.id ? 'selected' : ''}>${tr(s.id)}</option>`).join(''); }
 window.setStageFromReport = async (pid, stage) => { try { await api('/api/participants/' + pid, { method: 'PUT', body: JSON.stringify({ stage }) }); toast('Этап: ' + stage); const rp = state.participants.find(p => p.id === pid); if (rp) rp.stage = stage; } catch (e) { toast(e.message); } };
+// Смена этапа из карточки кандидата (обновляет данные, без перерисовки формы).
+window.setStageFromCard = async (pid, stage) => { try { await api('/api/participants/' + pid, { method: 'PUT', body: JSON.stringify({ stage }) }); if (typeof modalPart !== 'undefined' && modalPart && modalPart.id === pid) modalPart.stage = stage; const rp = state.participants.find(p => p.id === pid); if (rp) rp.stage = stage; toast(t('pm_stage') + ': ' + stage); } catch (e) { toast(e.message); } };
 
 const AV_COLORS = ['#3d6cd1', '#2a4fa0', '#1f9d6b', '#e8553b', '#23306a', '#4e79da'];
 const avColor = s => AV_COLORS[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length];
@@ -315,7 +346,7 @@ document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); if (document.getElementById('sp-input')) closeModal(); else openSearchPalette(); }
 });
 let spSel = 0, spList = [];
-async function openSearchPalette() {
+async function openSearchPalette(initial) {
   await loadParticipantsAll();
   $('#modal-root').innerHTML = `<div class="overlay palette" id="ov"><div class="cmdk">
     <div class="cmdk-top"><span class="cmdk-ic">${ICON_SEARCH}</span><input id="sp-input" placeholder="Поиск кандидатов по имени, email, телефону, городу…" autocomplete="off"><button class="cmdk-x" onclick="closeModal()" aria-label="Закрыть">×</button></div>
@@ -323,7 +354,7 @@ async function openSearchPalette() {
     <div class="cmdk-foot"><span><kbd>↑</kbd><kbd>↓</kbd> навигация</span><span><kbd>↵</kbd> открыть</span><span><kbd>Esc</kbd> закрыть</span></div>
   </div></div>`;
   $('#ov').onclick = e => { if (e.target.id === 'ov') closeModal(); };
-  const inp = $('#sp-input'); inp.focus();
+  const inp = $('#sp-input'); if (initial) inp.value = initial; inp.focus();
   const draw = () => {
     const q = inp.value.toLowerCase().trim();
     spList = q ? state.participants.filter(p => (p.name + ' ' + p.surname + ' ' + p.email + ' ' + (p.tel || '') + ' ' + (p.city || '')).toLowerCase().includes(q)).slice(0, 40) : [];
@@ -340,6 +371,7 @@ async function openSearchPalette() {
 }
 
 $$('.nav-item[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
+$$('.mbn-item[data-view],#mfab').forEach(b => b.onclick = () => setView(b.dataset.view));
 { const bh = $('#brand-home'); if (bh) bh.onclick = () => setView('dashboard'); }
 
 // ---- мобильная оболочка: выезжающее меню (drawer) ----
@@ -354,6 +386,7 @@ function setView(v) {
   try { mnavClose(); } catch (e) {}   // закрыть мобильное меню при навигации
   $('#main').classList.remove('vac-lock');
   $$('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  $$('.mbn-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   { const bh = $('#brand-home'); if (bh) bh.classList.toggle('active', v === 'dashboard'); }
   ({ dashboard: renderDashboard, home: renderHome, anketas: renderAnketas, education: renderEducation, balance: renderBalance, settings: renderSettings, faq: renderFAQ, vacancies: renderRecruitment, candidates: renderCandidates, integrations: renderJobPortals, calendar: renderCalendar }[v] || renderHome)();
   try { maybePageTour(v); } catch (e) {}   // мини-тур страницы при первом входе
@@ -373,9 +406,9 @@ const RI18N = {
     req_by_manager: 'От руководителя', req_has_vac: 'Вакансия создана',
     vac_empty: 'Утверждённых вакансий пока нет. Утвердите заявку во вкладке «Заявки».',
     vac_config: 'Настроить', vac_open: 'Открыть', vac_ad: 'Объявление о вакансии',
-    vac_ad_gen: 'Сгенерировать ИИ', vac_ad_fallback: 'ИИ недоступен — показан базовый шаблон', vac_ad_manual: 'Или отредактируйте вручную:', vac_ad_target: 'Кого ищем',
+    vac_ad_gen: 'Сгенерировать ИИ', vac_ad_fallback: 'ИИ недоступен — показан базовый шаблон', vac_ad_manual: 'Текст объявления (можно форматировать):', vac_ad_target: 'Кого ищем', vac_ad_variant: 'Вариант', vac_ad_comment: 'Комментарий ИИ',
     vac_target_auto: 'Автоопределение', vac_target_performer: 'Виннер', vac_target_executor: 'Дуер',
-    vac_target_boss_hint: 'Руководящая должность — всегда ищем Виннера',
+    vac_target_boss_hint: 'Руководящая должность — всегда ищем Виннера (можно поменять вручную)', vac_target_expl: '<b>Виннер</b> — видит задачу и делает сам.<br><b>Дуер</b> — делает, когда покажут и проконтролируют.', vac_target_more: 'Подробнее в Обучении →',
     vac_stages: 'Этапы отбора', vac_knowledge: 'Проверка знаний', vac_motivation: 'Оценка мотивации',
     vac_publish: 'Опубликовать (создать анкету)', vac_published: 'Опубликована', vac_apply_link: 'Ссылка на анкету',
     vac_stat_cands: 'Кандидатов', vac_stat_done: 'Пройдено', vac_stat_wait: 'Ожидание', vac_draft: 'Черновик', vac_new_card: 'Новая вакансия',
@@ -493,9 +526,9 @@ const RI18N = {
     req_by_manager: 'Od przełożonego', req_has_vac: 'Wakat utworzony',
     vac_empty: 'Brak zatwierdzonych wakatów. Zatwierdź wniosek w zakładce „Wnioski”.',
     vac_config: 'Konfiguruj', vac_open: 'Otwórz', vac_ad: 'Ogłoszenie o pracę',
-    vac_ad_gen: 'Generuj AI', vac_ad_fallback: 'AI niedostępne — pokazano szablon', vac_ad_manual: 'Lub edytuj ręcznie:', vac_ad_target: 'Kogo szukamy',
+    vac_ad_gen: 'Generuj AI', vac_ad_fallback: 'AI niedostępne — pokazano szablon', vac_ad_manual: 'Treść ogłoszenia (można formatować):', vac_ad_target: 'Kogo szukamy', vac_ad_variant: 'Wariant', vac_ad_comment: 'Komentarz AI',
     vac_target_auto: 'Automatycznie', vac_target_performer: 'Winner', vac_target_executor: 'Doer',
-    vac_target_boss_hint: 'Stanowisko kierownicze — zawsze szukamy Winnera',
+    vac_target_boss_hint: 'Stanowisko kierownicze — zawsze szukamy Winnera (można zmienić ręcznie)', vac_target_expl: '<b>Winner</b> — widzi zadanie i robi sam.<br><b>Doer</b> — robi, gdy pokażesz i skontrolujesz.', vac_target_more: 'Więcej w Szkoleniu →',
     vac_stages: 'Etapy selekcji', vac_knowledge: 'Sprawdzenie wiedzy', vac_motivation: 'Ocena motywacji',
     vac_publish: 'Opublikuj (utwórz ankietę)', vac_published: 'Opublikowany', vac_apply_link: 'Link do ankiety',
     vac_stat_cands: 'Kandydaci', vac_stat_done: 'Ukończone', vac_stat_wait: 'Oczekuje', vac_draft: 'Szkic', vac_new_card: 'Nowy wakat',
@@ -613,9 +646,9 @@ const RI18N = {
     req_by_manager: 'From manager', req_has_vac: 'Vacancy created',
     vac_empty: 'No approved vacancies yet. Approve a requisition in the “Requisitions” tab.',
     vac_config: 'Configure', vac_open: 'Open', vac_ad: 'Job ad',
-    vac_ad_gen: 'Generate with AI', vac_ad_fallback: 'AI unavailable — showing basic template', vac_ad_manual: 'Or edit manually:', vac_ad_target: 'Who we seek',
+    vac_ad_gen: 'Generate with AI', vac_ad_fallback: 'AI unavailable — showing basic template', vac_ad_manual: 'Ad text (formatting allowed):', vac_ad_target: 'Who we seek', vac_ad_variant: 'Variant', vac_ad_comment: 'AI comment',
     vac_target_auto: 'Auto-detect', vac_target_performer: 'Winner', vac_target_executor: 'Doer',
-    vac_target_boss_hint: 'Leadership role — we always look for a Winner',
+    vac_target_boss_hint: 'Leadership role — we always look for a Winner (can be changed manually)', vac_target_expl: '<b>Winner</b> — sees the task and does it themselves.<br><b>Doer</b> — does it when shown and supervised.', vac_target_more: 'More in Training →',
     vac_stages: 'Selection stages', vac_knowledge: 'Knowledge check', vac_motivation: 'Motivation assessment',
     vac_publish: 'Publish (create form)', vac_published: 'Published', vac_apply_link: 'Application form link',
     vac_stat_cands: 'Candidates', vac_stat_done: 'Completed', vac_stat_wait: 'Pending', vac_draft: 'Draft', vac_new_card: 'New vacancy',
@@ -736,13 +769,15 @@ async function renderCandidates() {
     return `<span class="cand-stage ${cls}">${esc(c.columnTitle)}</span>`;
   };
   const draw = q => {
-    const rows = candidates.filter(c => candVacFilter === 'all' || c.vacancyId === candVacFilter)
-      .filter(c => !q || (c.name + ' ' + c.email + ' ' + (c.tel || '') + ' ' + (c.vacancyName || '')).toLowerCase().includes(q))
-      .map(c => `<tr onclick="openParticipant('${c.id}')" style="cursor:pointer">
+    const list = candidates.filter(c => candVacFilter === 'all' || c.vacancyId === candVacFilter)
+      .filter(c => !q || (c.name + ' ' + c.email + ' ' + (c.tel || '') + ' ' + (c.vacancyName || '')).toLowerCase().includes(q));
+    const rows = list.map(c => `<tr onclick="openParticipant('${c.id}')" style="cursor:pointer">
         <td><div class="cand"><span class="avatar" style="width:32px;height:32px;background:${avColor(c.name)}">${esc(initials(c.name, c.email))}</span><div><b>${esc(c.name)}</b><div class="muted" style="font-size:12px">${esc(c.email || c.tel || '')}</div></div></div></td>
         <td>${esc(c.vacancyName || '—')}</td><td>${colBadge(c)}</td>
         <td style="white-space:nowrap">${(c.tests || []).map(tt => `<span class="res-icon res-${tt.type}" title="${testTitle(tt.type)}" onclick="event.stopPropagation();openReport('${tt.id}')">${TEST_ICON[tt.type] || ICON_KNOWLEDGE}</span>`).join('') || '<span class="muted">—</span>'}</td><td class="muted">${fmtDate(c.createdAt)}</td></tr>`).join('');
     $('#cand-rows').innerHTML = rows || `<tr><td colspan="5" class="muted" style="text-align:center;padding:30px">${rt('cand_empty')}</td></tr>`;
+    const cards = list.map(c => candCardHtml(c, colBadge)).join('');
+    const cc = $('#cand-cards'); if (cc) cc.innerHTML = cards || `<div class="muted" style="text-align:center;padding:26px">${rt('cand_empty')}</div>`;
   };
   const vacOpts = `<option value="all">${rt('cand_all_vac')}</option>` + vacs.map(([id, name]) => `<option value="${id}" ${candVacFilter === id ? 'selected' : ''}>${esc(name)}</option>`).join('');
   $('#main').innerHTML = `<div class="eyebrow reveal">${t('nav_candidates')}</div><h1 class="page-h reveal d1" style="margin-top:10px">${rt('cand_title')}</h1>
@@ -752,7 +787,8 @@ async function renderCandidates() {
         <select class="field" id="cand-vac" style="max-width:240px">${vacOpts}</select>
         <label class="btn ghost ic-btn" id="cand-cv-lbl" title="${rt('cand_cv_hint')}">${_svg('<path d="M14 3v5h5M9 13h6M9 17h6M8 3h6l5 5v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-linecap="round" stroke-linejoin="round"/>')}${rt('cand_import_cv')}<input type="file" id="cand-cv-inp" accept="application/pdf,image/*" multiple hidden></label>
         <button class="btn ic-btn" id="cand-add">${_svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>')}${rt('cand_add')}</button></div>
-      <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_vac')}</th><th>${rt('cand_col_stage')}</th><th>${t('col_results')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="cand-rows"></tbody></table></div>
+      <div class="table-wrap mob-hide-table" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_vac')}</th><th>${rt('cand_col_stage')}</th><th>${t('col_results')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="cand-rows"></tbody></table></div>
+      <div class="cand-cards" id="cand-cards"></div>
     </div>`;
   $('#cand-q').oninput = e => draw(e.target.value.toLowerCase().trim());
   $('#cand-vac').onchange = e => { candVacFilter = e.target.value; draw($('#cand-q').value.toLowerCase().trim()); };
@@ -1214,12 +1250,32 @@ async function renderVacProcess(body, id) {
         ${st.knowledge !== false ? critRow('knowledge', ICON_KNOWLEDGE, 'res-knowledge', '') : ''}
       </div></div>`;
   const refresh = () => renderVacProcess(body, id);
+  const procPut = payload => api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify(payload) });
   $$('[data-vp]', body).forEach(el => {
     const toggle = async () => {
       const [g, k] = el.dataset.vp.split('.');
       const on = !el.classList.contains('on');
+      // Включение автоворонки — сначала модалка платных ИИ-звонков: включить все звонки или без них.
+      if (on && g === 'auto') {
+        paidCallsModal(async (yes) => {
+          await procPut({ auto: true });
+          const ac = {}; AI_CALL_KEYS.forEach(x => ac[x] = yes);
+          await procPut({ aiCalls: ac });
+          toast(rt('common_saved')); refresh();
+        });
+        return;
+      }
+      // Включение отдельного ИИ-звонка на шаге — та же модалка; согласен → включаем этот звонок.
+      if (on && g === 'aiCalls') {
+        paidCallsModal(async (yes) => {
+          if (!yes) return;
+          await procPut({ aiCalls: { [k]: true } });
+          toast(rt('common_saved')); refresh();
+        }, { single: true });
+        return;
+      }
       const payload = g === 'auto' ? { auto: on } : { [g]: { [k]: on } };
-      await api('/api/vacancies/' + id + '/process', { method: 'PUT', body: JSON.stringify(payload) });
+      await procPut(payload);
       toast(rt('common_saved')); refresh();
     };
     el.onclick = toggle;
@@ -1451,42 +1507,71 @@ async function renderVacAdList(body, id) {
 }
 async function renderVacAdEditor(body, id) {
   const { vacancy } = await api('/api/vacancies/' + id + '/full');
-  // Руководящая должность — всегда ищем Виннера; рядовая — Виннер или Дуер на выбор
-  const isBoss = /руковод|директор|начальн|заведующ|управляющ|главн|kierownik|dyrektor|szef|prezes|head|chief|director|team lead|supervisor|ceo|coo|cto/i.test(vacancy.name || '');
+  // Руководящая должность (по названию ИЛИ по уровню из заявки) — всегда ищем Виннера; рядовая — выбор.
+  const isBoss = vacancy.roleType === 'lead' || vacancy.level === 'lead' ||
+    /руковод|директор|начальн|заведующ|управляющ|главн|kierownik|dyrektor|szef|prezes|head|chief|director|team lead|supervisor|ceo|coo|cto/i.test(vacancy.name || '');
   const targetOpts = (isBoss ? [['performer', rt('vac_target_performer')]] : [['performer', rt('vac_target_performer')], ['executor', rt('vac_target_executor')]])
     .map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('');
-  body.innerHTML = `${adSubTabsHtml()}<div class="card">
-    <div class="row" style="gap:8px;align-items:flex-end;margin-bottom:8px">
-      <div style="flex:1;max-width:340px"><label class="lbl">${rt('vac_ad_target')}</label><select class="field" id="vann-target" ${isBoss ? 'disabled' : ''}>${targetOpts}</select>
-      ${isBoss ? `<div class="muted" style="font-size:12px;margin-top:4px">${rt('vac_target_boss_hint')}</div>` : ''}</div>
-      <button class="btn soft" id="vann-gen">${rt('vac_ad_gen')}</button></div>
-    <label class="lbl">${rt('vac_ad_manual')}</label>
-    <textarea class="field" id="vann-text" rows="16" style="font-family:inherit;min-height:340px">${esc(vacancy.adText || '')}</textarea>
-    <div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">
-      <button class="btn" id="vann-save">${rt('vac_save')}</button>
-      <button class="btn soft" id="vann-publish">${vacancy.published ? rt('vac_published') + ' ✓' : rt('vac_publish')}</button></div>
-    <div id="publish-link"></div></div>`;
-  $$('[data-adtab]').forEach(b => b.onclick = () => { adSubTab = b.dataset.adtab; renderVacAd(body, id); });
-  $('#vann-gen').onclick = async () => {
-    const bt = $('#vann-gen'); bt.disabled = true; const o = bt.textContent; bt.innerHTML = `<span class="db-spin"></span> ${rt('common_gen')}`;
-    try {
-      const d = await api('/api/vacancies/' + id + '/generate-ad', { method: 'POST', body: JSON.stringify({ lang: vacancy.lang, target: $('#vann-target').value }) });
-      $('#vann-text').value = stripTags(d.ad);
-      if (d.ai === false) toast(rt('vac_ad_fallback'));
-    } catch (e) { toast(e.message); }
-    bt.disabled = false; bt.textContent = o;
-  };
-  const saveAd = () => api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ adText: $('#vann-text').value }) });
-  $('#vann-save').onclick = async () => { await saveAd(); toast(rt('common_saved')); };
-  $('#vann-publish').onclick = async () => {
-    await saveAd();
-    await api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ published: true }) });
-    const a = await api('/api/anketas', { method: 'POST', body: JSON.stringify({ title: vacancy.name, vacancyId: id, tests: ['result', 'tools'], description: $('#vann-text').value }) });
-    const url = location.origin + '/a/' + a.anketa.slug;
-    $('#publish-link').innerHTML = `<div class="share-block" style="margin-top:12px"><div class="lbl">${rt('vac_apply_open')}</div>
-      <div class="row" style="gap:6px;margin-top:6px"><input class="field sm" style="flex:1" readonly value="${esc(url)}"><button class="btn ghost xs" onclick="copyLink('${url}')">${rt('common_copy')}</button></div></div>`;
-    toast(rt('vac_publish_done'));
-  };
+  const targetHint = `<div class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">${rt('vac_target_expl')} <a href="#" class="rh-name-link" onclick="setView('education');return false">${rt('vac_target_more')}</a>${isBoss ? `<br><span style="color:var(--brand-2)">${rt('vac_target_boss_hint')}</span>` : ''}</div>`;
+  // Варианты объявления (структурно из ИИ). Фолбэк — один вариант из старого adText.
+  let variants = (vacancy.adVariants && vacancy.adVariants.length) ? vacancy.adVariants.map(v => ({ title: v.title || '', html: v.html || '' })) : [{ title: '', html: vacancy.adText || '' }];
+  let comment = vacancy.adComment || '', sel = 0;
+  const RTE_TB = `<div class="ad-rte-tb no-print">
+    <button type="button" data-cmd="bold" title="${rt('g_bold') || 'Жирный'}"><b>Ж</b></button>
+    <button type="button" data-cmd="italic" title="${rt('g_italic') || 'Курсив'}"><i>К</i></button>
+    <button type="button" data-cmd="underline" title="${rt('g_underline') || 'Подчёркнутый'}"><u>Ч</u></button>
+    <span class="ad-rte-sep"></span>
+    <button type="button" data-cmd="formatBlock" data-val="H3" title="Заголовок">H</button>
+    <button type="button" data-cmd="insertUnorderedList" title="Список">•—</button>
+    <button type="button" data-cmd="removeFormat" title="Очистить">⌫</button></div>`;
+  const syncSel = () => { const ed = $('#vann-editor'); if (ed) variants[sel].html = ed.innerHTML; };
+  function draw() {
+    const tabs = variants.length > 1 ? `<div class="ad-tabs">${variants.map((v, i) => `<button class="ad-tab ${i === sel ? 'on' : ''}" data-adv="${i}">${rt('vac_ad_variant')} ${i + 1}</button>`).join('')}</div>` : '';
+    const commentHtml = comment ? `<div class="ai-banner good ad-comment"><div class="aib-in"><small><span class="ai-spark">${ICON_SPARK}</span>${rt('vac_ad_comment')}</small><div class="ad-comment-body">${esc(comment).replace(/\n/g, '<br>')}</div></div></div>` : '';
+    body.innerHTML = `${adSubTabsHtml()}<div class="card">
+      <div class="row" style="gap:8px;align-items:flex-end;margin-bottom:12px">
+        <div style="flex:1;max-width:360px"><label class="lbl">${rt('vac_ad_target')}</label><select class="field" id="vann-target" ${isBoss ? 'disabled' : ''}>${targetOpts}</select>${targetHint}</div>
+        <button class="btn soft" id="vann-gen">${rt('vac_ad_gen')}</button></div>
+      ${commentHtml}
+      <label class="lbl">${rt('vac_ad_manual')}</label>
+      ${tabs}${RTE_TB}
+      <div class="ad-rte field" id="vann-editor" contenteditable="true">${variants[sel].html || ''}</div>
+      <div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn" id="vann-save">${rt('vac_save')}</button>
+        <button class="btn soft" id="vann-publish">${vacancy.published ? rt('vac_published') + ' ✓' : rt('vac_publish')}</button></div>
+      <div id="publish-link"></div></div>`;
+    $$('[data-adtab]').forEach(b => b.onclick = () => { adSubTab = b.dataset.adtab; renderVacAd(body, id); });
+    $$('.ad-tab').forEach(b => b.onclick = () => { syncSel(); sel = +b.dataset.adv; draw(); });
+    $$('.ad-rte-tb [data-cmd]').forEach(b => b.onclick = () => { document.execCommand(b.dataset.cmd, false, b.dataset.val || null); const ed = $('#vann-editor'); if (ed) ed.focus(); });
+    $('#vann-gen').onclick = async () => {
+      const bt = $('#vann-gen'); bt.disabled = true; const o = bt.textContent; bt.innerHTML = `<span class="db-spin"></span> ${rt('common_gen')}`;
+      try {
+        const d = await api('/api/vacancies/' + id + '/generate-ad', { method: 'POST', body: JSON.stringify({ lang: vacancy.lang, target: $('#vann-target').value }) });
+        variants = (d.variants && d.variants.length) ? d.variants : [{ title: '', html: d.adText || '' }];
+        comment = d.comment || ''; sel = 0; draw();
+        if (d.ai === false) toast(rt('vac_ad_fallback'));
+      } catch (e) { toast(e.message); }
+      const b2 = $('#vann-gen'); if (b2) { b2.disabled = false; b2.textContent = o; }
+    };
+    const saveAd = () => { syncSel(); return api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ adVariants: variants, adComment: comment, adText: variants[sel].html, adMode: 'ai' }) }); };
+    $('#vann-save').onclick = async () => { await saveAd(); toast(rt('common_saved')); };
+    $('#vann-publish').onclick = async () => {
+      await saveAd();
+      await api('/api/vacancies/' + id + '/config', { method: 'PUT', body: JSON.stringify({ published: true }) });
+      // Тесты анкеты = активные тесты процесса найма вакансии (в его очерёдности) — чтобы после отклика
+      // сразу шёл первый тест воронки/процесса, а не хардкод.
+      const proc = vacancy.process || {};
+      const order = (proc.order && proc.order.length) ? proc.order : ['result', 'tools', 'logic', 'sales'];
+      let anketaTests = order.filter(k => (k === 'result' || k === 'tools') ? (proc.stages ? proc.stages[k] !== false : true) : ((k === 'logic' || k === 'sales') ? !!(proc.optional && proc.optional[k]) : false));
+      if (!anketaTests.length) anketaTests = ['result', 'tools'];
+      const a = await api('/api/anketas', { method: 'POST', body: JSON.stringify({ title: vacancy.name, vacancyId: id, tests: anketaTests, description: variants[sel].html }) });
+      const url = location.origin + '/a/' + a.anketa.slug;
+      $('#publish-link').innerHTML = `<div class="share-block" style="margin-top:12px"><div class="lbl">${rt('vac_apply_open')}</div>
+        <div class="row" style="gap:6px;margin-top:6px"><input class="field sm" style="flex:1" readonly value="${esc(url)}"><button class="btn ghost xs" onclick="copyLink('${url}')">${rt('common_copy')}</button></div></div>`;
+      toast(rt('vac_publish_done'));
+    };
+  }
+  draw();
 }
 function stripTags(html) {
   let s = String(html || '').replace(/<li[^>]*>/gi, '\n• ').replace(/<\/(p|h2|h3|div|ul|li)>/gi, '\n').replace(/<br\s*\/?>/gi, '\n');
@@ -2053,7 +2138,7 @@ async function renderDashboard() {
   const vacOptions = vacsD.vacancies.map(v => `<option value="${v.id}">${esc(v.name)}</option>`).join('');
   const recent = d.recent.length ? d.recent.map(p => `<div class="dash-recent-row" data-pid="${p.id}"><span class="avatar" style="width:30px;height:30px;background:${avColor(p.name)}">${esc(initials(p.name, p.email))}</span><div class="rr-main"><b>${esc(p.name)}</b><span class="muted">${esc(p.vacancyName || p.email)}</span></div>${stagePill(p.stage)}</div>`).join('') : `<p class="muted">${t('no_candidates')}</p>`;
   const topVac = d.vacCounts.length ? d.vacCounts.map(v => { const max = Math.max(1, d.vacCounts[0].count); return `<div class="tv-row"><span class="tv-name">${esc(v.name)}</span><div class="tv-track"><div class="tv-bar" style="width:${Math.max(6, v.count / max * 100)}%"></div></div><b>${v.count}</b></div>`; }).join('') : `<p class="muted">${t('no_vacancies')}</p>`;
-  const awaiting = (d.byStage['Собеседование'] || 0) + (d.byStage['Резерв'] || 0) || tot.testsDone || d.recent.length;
+  const awaiting = (d.awaitingDecision != null) ? d.awaitingDecision : ((d.byStage['Собеседование'] || 0) + (d.byStage['Резерв'] || 0));
   const recentRows = d.recent.length ? d.recent.map(p => `<div class="rrow prow" data-pid="${p.id}">
       <div class="rc-main"><span class="avatar" style="width:36px;height:36px;background:${avColor(p.name)}">${esc(initials(p.name, p.email))}</span><div style="min-width:0"><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${esc(p.email || '')}</div></div></div>
       <div class="rc-vac">${esc(p.vacancyName || '—')}</div>
@@ -2093,6 +2178,7 @@ async function renderDashboard() {
   portalNet('neuPortal');
   $('#dash-open-send').onclick = () => openSendModal(vacsD.vacancies, vacOptions);
   $$('.rrow[data-pid]').forEach(r => r.onclick = () => openParticipant(r.dataset.pid));
+  { const dsi = $('#dash-search'); if (dsi) dsi.addEventListener('focus', () => { const v = dsi.value; dsi.blur(); dsi.value = ''; openSearchPalette(v); }); }
   initNotifBell();
   maybeStartTour();   // онбординг-тур при первом входе
 }
@@ -2318,6 +2404,99 @@ window.openColConfig = openColConfig;
 const MAIL_SEND_LABELS = { result: 'Тест Резалт', result_emp: 'Тест Резалт (Сотрудники)', tools: 'Тест Тулс', logic: 'Тест Логис', sales: 'Тест Сэйлс', video: 'Видеоинтервью', regard: 'Тест Регард' };
 const MAIL_STATUS_LABELS = { rejected: 'Отказано', interview: 'Собеседование', reserve: 'Резерв', accepted: 'Принят' };
 const MAIL_VARS = [['$vac$', 'название вакансии'], ['$link$', 'ссылка на тест'], ['$id_part$', 'номер анкеты'], ['$name$', 'имя кандидата'], ['$client$', 'имя пользователя'], ['$company$', 'название компании'], ['$phone$', 'телефон пользователя'], ['$date_interview$', 'дата собеседования'], ['$button_link$', 'ссылка на тест'], ['$button_link_min$', 'ссылка (мини)']];
+// ── Дефолтные шаблоны писем (полные тексты, из hrscanner; синхронизировать с server.js MAIL_DEF_*) ──
+// send: по типу теста; status: по смене статуса. Body — плоский текст, $button_link$ → фирменная кнопка.
+const MAIL_DEF_SEND = {
+  result: {
+    ru: { subject: 'Анкета на вакансию $vac$ от компании «$company$».', body: 'Добрый день!\n\nНаша компания заинтересована в вашей кандидатуре на вакансию «$vac$».\n\nЧтобы предстоящее собеседование было максимально эффективным, в удобное для вас время в течение 48 часов предлагаем вам заполнить короткую вступительную анкету. Она содержит вопросы о ваших результатах на предыдущих местах работы, и её заполнение займёт не более 15 минут. С нетерпением ждём ваших ответов.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам заполнения анкеты.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Анкета на вакансію $vac$ від компанії «$company$».', body: 'Доброго дня!\n\nНаша компанія зацікавлена у вашій кандидатурі на вакансію «$vac$».\n\nЩоб майбутня співбесіда була максимально ефективною, у зручний для вас час протягом 48 годин пропонуємо вам заповнити коротку вступну анкету. Вона містить запитання про ваші результати на попередніх місцях роботи, а її заповнення займе не більше 15 хвилин. З нетерпінням чекаємо на ваші відповіді.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами заповнення анкети.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Ankieta na stanowisko $vac$ od firmy „$company$”.', body: 'Dzień dobry!\n\nNasza firma jest zainteresowana Twoją kandydaturą na stanowisko „$vac$”.\n\nAby przyszła rozmowa była jak najbardziej efektywna, w dogodnym dla Ciebie czasie w ciągu 48 godzin zapraszamy do wypełnienia krótkiej ankiety wstępnej. Zawiera ona pytania o Twoje wyniki w poprzednich miejscach pracy, a jej wypełnienie zajmie nie więcej niż 15 minut. Z niecierpliwością czekamy na Twoje odpowiedzi.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami ankiety.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Questionnaire for the “$vac$” position — $company$.', body: 'Hello!\n\nOur company is interested in your application for the “$vac$” position.\n\nTo make the upcoming interview as effective as possible, at a time convenient for you within the next 48 hours we invite you to complete a short introductory questionnaire. It contains questions about your results at previous jobs and takes no more than 15 minutes. We look forward to your answers.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your questionnaire.\n\nBest regards,\n$client$, $phone$' },
+  },
+  tools: {
+    ru: { subject: 'Тест для кандидата на вакансию $vac$ от компании «$company$».', body: 'Добрый день!\n\nМы получили и уже передали руководителю вашу анкету на вакансию «$vac$». Хотим выразить уважение к достигнутым вами результатам на предыдущем месте работы.\n\nЧтобы познакомиться с вами поближе и понять, за счёт каких личных качеств вы добились таких хороших результатов, приглашаем вас пройти заключительный этап перед собеседованием: это будет тест, заполнение которого займёт у вас от 20 до 40 минут и сэкономит нам с вами порядка часа на собеседовании. Пройти его вы можете как с компьютера, так и с мобильного устройства. В вашем распоряжении 24 часа с момента получения данного письма.\n\nТест содержит простые жизненные ситуации и ваше отношение к ним. По каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам заполнения теста.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Тест для кандидата на вакансію $vac$ від компанії «$company$».', body: 'Доброго дня!\n\nМи отримали та вже передали керівнику вашу анкету на вакансію «$vac$». Хочемо висловити повагу до досягнутих вами результатів на попередньому місці роботи.\n\nЩоб краще познайомитися з вами та зрозуміти, за рахунок яких особистих якостей ви досягли таких хороших результатів, запрошуємо вас пройти завершальний етап перед співбесідою: це буде тест, заповнення якого займе у вас від 20 до 40 хвилин і зекономить нам із вами близько години на співбесіді. Пройти його ви можете як з комп’ютера, так і з мобільного пристрою. У вашому розпорядженні 24 години з моменту отримання цього листа.\n\nТест містить прості життєві ситуації та ваше ставлення до них. На кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами проходження тесту.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Test dla kandydata na stanowisko $vac$ od firmy „$company$”.', body: 'Dzień dobry!\n\nOtrzymaliśmy i przekazaliśmy już przełożonemu Twoją aplikację na stanowisko „$vac$”. Chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzednim miejscu pracy.\n\nAby lepiej Cię poznać i zrozumieć, dzięki jakim cechom osobistym osiągnąłeś(-aś) tak dobre wyniki, zapraszamy do ostatniego etapu przed rozmową: będzie to test, którego wypełnienie zajmie od 20 do 40 minut i zaoszczędzi nam wspólnie около godziny na rozmowie. Możesz go wykonać zarówno na komputerze, jak i na urządzeniu mobilnym. Masz na to 24 godziny od otrzymania tej wiadomości.\n\nTest zawiera proste sytuacje z życia i Twój stosunek do nich. Przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami testu.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Assessment for a candidate: “$vac$” — $company$.', body: 'Hello!\n\nWe have received your application for the “$vac$” position and already forwarded it to the manager. We would like to acknowledge the results you achieved at your previous job.\n\nTo get to know you better and understand which personal qualities helped you achieve such results, we invite you to the final step before the interview: a short test that takes 20 to 40 minutes and saves us both about an hour of interview time. You can take it on a computer or a mobile device. You have 24 hours from the moment you receive this email.\n\nThe test presents simple everyday situations and your attitude to them. For each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your results.\n\nBest regards,\n$client$, $phone$' },
+  },
+  sales: {
+    ru: { subject: 'Тест для специалистов по продажам в компанию «$company$».', body: 'Добрый день!\n\nМы получили и рассмотрели вашу анкету на вакансию «$vac$» и хотим выразить уважение к достигнутым вами результатам на предыдущей работе. Не все кандидаты могут похвастаться подобными успехами.\n\nЧтобы мы смогли оценить ваши навыки работы в продажах, приглашаем вас пройти контрольный этап перед живым собеседованием с руководителем: это будет тест, заполнение которого займёт у вас до 30 минут и сэкономит нам с вами порядка часа на собеседовании. Пройти его вы можете как с компьютера, так и с мобильного устройства. В вашем распоряжении 24 часа с момента получения данного письма.\n\nТест содержит описания рабочих ситуаций менеджера по продажам. По каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам заполнения теста.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Тест для фахівців з продажу в компанію «$company$».', body: 'Доброго дня!\n\nМи отримали та розглянули вашу анкету на вакансію «$vac$» і хочемо висловити повагу до досягнутих вами результатів на попередній роботі. Не всі кандидати можуть похвалитися подібними успіхами.\n\nЩоб ми змогли оцінити ваші навички роботи в продажах, запрошуємо вас пройти контрольний етап перед живою співбесідою з керівником: це буде тест, заповнення якого займе у вас до 30 хвилин і зекономить нам із вами близько години на співбесіді. Пройти його ви можете як з комп’ютера, так і з мобільного пристрою. У вашому розпорядженні 24 години з моменту отримання цього листа.\n\nТест містить описи робочих ситуацій менеджера з продажу. На кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами проходження тесту.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Test dla specjalistów ds. sprzedaży w firmie „$company$”.', body: 'Dzień dobry!\n\nOtrzymaliśmy i przeanalizowaliśmy Twoją aplikację na stanowisko „$vac$” i chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzedniej pracy. Nie wszyscy kandydaci mogą pochwalić się takimi sukcesami.\n\nAbyśmy mogli ocenić Twoje umiejętności sprzedażowe, zapraszamy do etapu kontrolnego przed rozmową z przełożonym: będzie to test, którego wypełnienie zajmie do 30 minut i zaoszczędzi nam wspólnie около godziny na rozmowie. Możesz go wykonać zarówno na komputerze, jak i na urządzeniu mobilnym. Masz na to 24 godziny od otrzymania tej wiadomości.\n\nTest zawiera opisy sytuacji z pracy menedżera sprzedaży. Przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami testu.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Sales assessment — “$company$”.', body: 'Hello!\n\nWe have received and reviewed your application for the “$vac$” position and would like to acknowledge the results you achieved in your previous job. Not every candidate can boast such success.\n\nSo that we can assess your sales skills, we invite you to a check-in step before the in-person interview with the manager: a test that takes up to 30 minutes and saves us both about an hour of interview time. You can take it on a computer or a mobile device. You have 24 hours from the moment you receive this email.\n\nThe test presents real working situations of a sales manager. For each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your results.\n\nBest regards,\n$client$, $phone$' },
+  },
+  logic: {
+    ru: { subject: 'IQ-тест на вакансию $vac$ от компании «$company$».', body: 'Добрый день!\n\nМы получили и уже передали руководителю вашу анкету на вакансию «$vac$». Хотим выразить уважение к достигнутым вами результатам на предыдущем месте работы.\n\nВы претендуете на должность, которая очень важна для нашей компании. Нам важно понять, насколько уверенно вы рассуждаете, оцениваете ситуации и принимаете решения, поэтому предлагаем вам пройти небольшой IQ-тест.\n\nТест состоит из 80 вопросов, на прохождение даётся 30 минут. Держите под рукой листок и ручку. Сложный вопрос можно пропустить и вернуться к нему позже — на результат влияет число вопросов, на которые вы успеете ответить.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам прохождения теста.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'IQ-тест на вакансію $vac$ від компанії «$company$».', body: 'Доброго дня!\n\nМи отримали та вже передали керівнику вашу анкету на вакансію «$vac$». Хочемо висловити повагу до досягнутих вами результатів на попередньому місці роботи.\n\nВи претендуєте на посаду, яка дуже важлива для нашої компанії. Нам важливо зрозуміти, наскільки впевнено ви міркуєте, оцінюєте ситуації та ухвалюєте рішення, тож пропонуємо вам пройти невеликий IQ-тест.\n\nТест складається з 80 запитань, на проходження дається 30 хвилин. Тримайте під рукою аркуш і ручку. Складне запитання можна пропустити й повернутися до нього пізніше — на результат впливає кількість запитань, на які ви встигнете відповісти.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами проходження тесту.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Test IQ na stanowisko $vac$ od firmy „$company$”.', body: 'Dzień dobry!\n\nOtrzymaliśmy i przekazaliśmy już przełożonemu Twoją aplikację na stanowisko „$vac$”. Chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzednim miejscu pracy.\n\nUbiegasz się o stanowisko, które jest dla nas bardzo ważne. Zależy nam, aby zrozumieć, jak pewnie rozumujesz, oceniasz sytuacje i podejmujesz decyzje, dlatego zapraszamy do wykonania krótkiego testu IQ.\n\nTest składa się z 80 pytań, a na jego wykonanie masz 30 minut. Przygotuj kartkę i długopis. Trudne pytanie możesz pominąć i wrócić do niego później — na wynik wpływa liczba pytań, na które zdążysz odpowiedzieć.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami testu.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'IQ test for the “$vac$” position — $company$.', body: 'Hello!\n\nWe have received your application for the “$vac$” position and already forwarded it to the manager. We would like to acknowledge the results you achieved at your previous job.\n\nYou are applying for a role that is very important to our company. We would like to understand how confidently you reason, assess situations and make decisions, so we invite you to take a short IQ test.\n\nThe test has 80 questions and you have 30 minutes to complete it. Keep a pen and paper handy. You can skip a difficult question and come back to it later — the number of questions you manage to answer affects your result.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your results.\n\nBest regards,\n$client$, $phone$' },
+  },
+};
+const MAIL_DEF_STATUS = {
+  rejected: {
+    ru: { subject: 'Ответ от компании $company$', body: '$name$,\nМы получили и рассмотрели ваши ответы и хотим выразить уважение к достигнутым вами результатам.\nОни несколько отличаются от тех, которые мы хотели бы видеть у сотрудников нашей компании, поэтому в данный момент мы не готовы сделать вам предложение.\nВ свою очередь, желаем вам найти такую работу, на которую вы всегда будете идти с радостью и улыбкой.\nУдачи в поисках и хорошей недели!' },
+    uk: { subject: 'Відповідь від компанії $company$', body: '$name$,\nМи отримали та розглянули ваші відповіді й хочемо висловити повагу до досягнутих вами результатів.\nВони дещо відрізняються від тих, які ми хотіли б бачити у співробітників нашої компанії, тож наразі ми не готові зробити вам пропозицію.\nСвоєю чергою, бажаємо вам знайти таку роботу, на яку ви завжди йтимете з радістю та усмішкою.\nУспіхів у пошуках і гарного тижня!' },
+    pl: { subject: 'Odpowiedź od firmy $company$', body: '$name$,\nOtrzymaliśmy i przeanalizowaliśmy Twoje odpowiedzi i chcemy wyrazić uznanie dla osiągniętych przez Ciebie wyników.\nNieco różnią się one od tych, które chcielibyśmy widzieć u pracowników naszej firmy, dlatego obecnie nie jesteśmy gotowi złożyć Ci oferty.\nŻyczymy Ci znalezienia takiej pracy, do której zawsze będziesz iść z radością i uśmiechem.\nPowodzenia w poszukiwaniach i miłego tygodnia!' },
+    en: { subject: 'Response from $company$', body: '$name$,\nWe have received and reviewed your answers and would like to acknowledge the results you achieved.\nThey differ somewhat from what we look for in our team members, so at this time we are not ready to make you an offer.\nIn turn, we wish you to find a job you will always go to with joy and a smile.\nGood luck with your search and have a great week!' },
+  },
+  interview: {
+    ru: { subject: 'Приглашение на собеседование в компанию $company$', body: '$name$,\nМы получили и рассмотрели ваши ответы и рады пригласить вас на собеседование $date_interview$.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Запрошення на співбесіду в компанію $company$', body: '$name$,\nМи отримали та розглянули ваші відповіді й раді запросити вас на співбесіду $date_interview$.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Zaproszenie na rozmowę w firmie $company$', body: '$name$,\nOtrzymaliśmy i przeanalizowaliśmy Twoje odpowiedzi i z przyjemnością zapraszamy Cię na rozmowę $date_interview$.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Interview invitation — $company$', body: '$name$,\nWe have received and reviewed your answers and are glad to invite you to an interview $date_interview$.\n\nBest regards,\n$client$, $phone$' },
+  },
+  reserve: {
+    ru: { subject: 'Ответ от компании $company$', body: '$name$,\nМы получили и рассмотрели ваши ответы и хотим выразить уважение к достигнутым вами результатам. К сожалению, в настоящий момент мы не готовы сделать вам предложение. Ваше резюме будет сохранено в нашей базе, и мы вернёмся к вашей кандидатуре, когда появится подходящая позиция.\nХорошей вам недели!' },
+    uk: { subject: 'Відповідь від компанії $company$', body: '$name$,\nМи отримали та розглянули ваші відповіді й хочемо висловити повагу до досягнутих вами результатів. На жаль, наразі ми не готові зробити вам пропозицію. Ваше резюме буде збережено в нашій базі, і ми повернемося до вашої кандидатури, коли з’явиться відповідна позиція.\nГарного вам тижня!' },
+    pl: { subject: 'Odpowiedź od firmy $company$', body: '$name$,\nOtrzymaliśmy i przeanalizowaliśmy Twoje odpowiedzi i chcemy wyrazić uznanie dla osiągniętych wyników. Niestety obecnie nie jesteśmy gotowi złożyć Ci oferty. Twoje CV zachowamy w naszej bazie i wrócimy do Twojej kandydatury, gdy pojawi się odpowiednie stanowisko.\nMiłego tygodnia!' },
+    en: { subject: 'Response from $company$', body: '$name$,\nWe have received and reviewed your answers and would like to acknowledge your results. Unfortunately, we are not ready to make you an offer at this time. We will keep your CV in our database and get back to you when a suitable position opens up.\nHave a great week!' },
+  },
+  accepted: {
+    ru: { subject: 'Приглашение на работу в компанию $company$', body: '$name$, у нас хорошие новости!\nНам было приятно познакомиться с вами, и мы хотим продолжить общение. Приглашаем вас в команду «$company$» на должность «$vac$».\nЕсли интерес взаимный и вы хотите работать с нами — свяжитесь с нами.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Запрошення на роботу в компанію $company$', body: '$name$, у нас гарні новини!\nНам було приємно познайомитися з вами, і ми хочемо продовжити спілкування. Запрошуємо вас до команди «$company$» на посаду «$vac$».\nЯкщо інтерес взаємний і ви хочете працювати з нами — зв’яжіться з нами.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Zaproszenie do pracy w firmie $company$', body: '$name$, mamy dobre wieści!\nMiło było Cię poznać i chcemy kontynuować rozmowę. Zapraszamy Cię do zespołu „$company$” na stanowisko „$vac$”.\nJeśli zainteresowanie jest obopólne i chcesz z nami pracować — skontaktuj się z nami.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Job offer — $company$', body: '$name$, we have great news!\nIt was a pleasure to get to know you, and we would like to continue the conversation. We invite you to join the “$company$” team as “$vac$”.\nIf the interest is mutual and you would like to work with us, please get in touch.\n\nBest regards,\n$client$, $phone$' },
+  },
+};
+const MAIL_DEF_LANGS = ['ru', 'uk', 'pl', 'en'];
+// Дефолтные шаблоны для редактора (не пустые). Для типов без своего текста (result_emp/video/regard) берём Резалт.
+function defaultMail() {
+  const send = {};
+  Object.keys(MAIL_SEND_LABELS).forEach(item => {
+    send[item] = {};
+    MAIL_DEF_LANGS.forEach(l => {
+      const src = (MAIL_DEF_SEND[item] && MAIL_DEF_SEND[item][l]) || MAIL_DEF_SEND.result[l];
+      send[item][l] = { subject: src.subject, body: src.body };
+    });
+  });
+  const status = {};
+  Object.keys(MAIL_STATUS_LABELS).forEach(item => {
+    status[item] = {};
+    MAIL_DEF_LANGS.forEach(l => {
+      const b = (MAIL_DEF_STATUS[item] && MAIL_DEF_STATUS[item][l]) || { subject: '', body: '' };
+      status[item][l] = { subject: b.subject, body: b.body };
+    });
+  });
+  return { send, status };
+}
+// Шаблоны для показа в редакторе: дефолты, поверх которых наложены сохранённые непустые значения клиента.
+function mergedMail(s) {
+  const base = defaultMail();
+  const saved = s && s.mailTemplates;
+  if (saved && typeof saved === 'object') {
+    ['send', 'status'].forEach(cat => {
+      if (!saved[cat]) return;
+      Object.keys(base[cat]).forEach(item => {
+        if (!saved[cat][item]) return;
+        MAIL_DEF_LANGS.forEach(l => {
+          const t = saved[cat][item][l];
+          if (t && typeof t === 'object' && (t.subject || t.body)) base[cat][item][l] = { subject: t.subject || '', body: t.body || '' };
+        });
+      });
+    });
+  }
+  return base;
+}
 function emptyMail() {
   const mk = keys => keys.reduce((o, k) => (o[k] = { ru: { subject: '', body: '' }, uk: { subject: '', body: '' }, pl: { subject: '', body: '' }, en: { subject: '', body: '' } }, o), {});
   return { send: mk(Object.keys(MAIL_SEND_LABELS)), status: mk(Object.keys(MAIL_STATUS_LABELS)) };
@@ -2326,7 +2505,7 @@ async function openTestsConfig() {
   let s;
   try { s = (await api('/api/settings')).user.settings; } catch (e) { s = (state.user && state.user.settings) || {}; }
   const langs = (state.langs && state.langs.length) ? state.langs : [{ code: 'ru', name: 'Русский' }];
-  const mt = (s.mailTemplates && s.mailTemplates.send) ? JSON.parse(JSON.stringify(s.mailTemplates)) : emptyMail();
+  const mt = mergedMail(s);
   let order = (Array.isArray(s.testOrder) && s.testOrder.length ? s.testOrder : ['result', 'tools', 'logic', 'sales']).filter(t => TEST_LABEL[t]);
   ['result', 'tools', 'logic', 'sales'].forEach(t => { if (!order.includes(t)) order.push(t); });
   let tab = 'mail', mcat = 'send', mitem = 'result', curLang = (s.uiLang && langs.find(l => l.code === s.uiLang)) ? s.uiLang : langs[0].code;
@@ -2418,10 +2597,11 @@ async function renderHome() {
       <div class="search-wrap grow"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="search-box" aria-label="Поиск кандидатов" placeholder="${t('search')}"></div>
       <button class="btn ghost sm ic-btn" id="export-csv">${_svg('<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/>')}${t('export_csv')}</button>
     </div>
-    <div class="table-wrap reveal d3"><table class="cand-table">
+    <div class="table-wrap reveal d3 mob-hide-table"><table class="cand-table">
       <thead><tr><th>${t('col_candidate')}</th>${visibleCols().map(c => `<th>${colTh(c)}</th>`).join('')}<th class="res-col">${t('col_results')}</th><th class="col-cfg-th"><button id="col-cfg" title="Настройка столбцов" aria-label="Настройка столбцов">${_svg('<path d="M4 8h10M18 8h2M4 16h2M10 16h10" stroke-linecap="round"/><circle cx="16" cy="8" r="2.4"/><circle cx="8" cy="16" r="2.4"/>')}</button></th></tr></thead>
       <tbody id="rows"></tbody>
-    </table></div>`;
+    </table></div>
+    <div class="cand-cards reveal d3" id="rows-cards"></div>`;
   $$('.chip[data-sec]').forEach(b => b.onclick = async () => { state.activeSection = b.dataset.sec; state.activeVac = 'all'; await loadVacancies(); renderHome(); });
   $$('.chip[data-vac]').forEach(b => b.onclick = () => { state.activeVac = b.dataset.vac; renderHome(); });
   $('#add-bal').onclick = () => setView('balance');
@@ -2504,6 +2684,25 @@ function renderRows() {
   }).join('');
   $('#rows').innerHTML = rows || `<tr><td colspan="${visibleCols().length + 3}" class="muted" style="text-align:center;padding:44px">${state.participants.length ? 'Ничего не найдено по фильтрам.' : 'Пока нет кандидатов. Отправьте первый тест выше ↑'}</td></tr>`;
   $$('#rows tr[data-pid]').forEach(tr => tr.onclick = e => { const st = e.target.closest('.star-btn'); if (st) return toggleStar(st.dataset.star, e); const ic = e.target.closest('.res-icon'); if (ic) openReport(ic.dataset.test); else openParticipant(tr.dataset.pid); });
+  // Мобильные карточки (тот же вид, что в списке кандидатов)
+  const rc = $('#rows-cards');
+  if (rc) {
+    const cards = list.map(p => {
+      const nm = (p.name || p.surname) ? (p.name + ' ' + p.surname).trim() : p.email;
+      const done = (p.tests || []).filter(tt => tt.status === 'done');
+      const sub = p.email || p.tel || (p.age ? (tr(p.sex) + ' · ' + p.age) : '') || '—';
+      const badge = p.stage ? `<span class="cand-stage cs-stage">${esc(p.stage)}</span>` : '';
+      return `<div class="cmob-card" onclick="openParticipant('${p.id}')">
+        <div class="cmob-top">
+          <span class="cmob-ava" style="background:${avColor(nm)}">${esc(initials(nm, p.email))}</span>
+          <div class="cmob-info"><b>${esc(nm)}</b><div class="cmob-vac">${esc(sub)}</div></div>
+          ${badge}
+        </div>
+        <div class="cmob-chips">${candChips(done) || '<span class="muted" style="font-size:12px">—</span>'}</div>
+      </div>`;
+    }).join('');
+    rc.innerHTML = cards || `<div class="muted" style="text-align:center;padding:34px">${state.participants.length ? 'Ничего не найдено по фильтрам.' : 'Пока нет кандидатов. Отправьте первый тест выше ↑'}</div>`;
+  }
 }
 function csvCell(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
 function exportCsv(listArg) {
@@ -2655,7 +2854,8 @@ function renderCandidatePage() {
   const p = modalPart, wf = modalWf;
   const vacOptions = state.vacancies.map(v => `<option value="${v.id}" ${v.id === p.vacancyId ? 'selected' : ''}>${esc(v.name)}</option>`).join('');
   const nm = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email;
-  const stageBadge = wf ? `<span class="cand-stage ${colBadgeCls(wf.column)}">${esc(wf.columnTitle || '')}</span>` : '';
+  // Этап кандидата — интерактивный выпадающий список (перенесён сюда со страниц результатов тестов).
+  const stageSel = p.id ? `<select class="stage-select no-print" aria-label="${t('pm_stage')}" title="${t('pm_stage')}" onchange="setStageFromCard('${p.id}', this.value)">${stageOptions(p.stage)}</select>` : '';
   const cvBtn = p.cv
     ? `<a class="btn ghost sm ic-btn cv-btn" href="${esc(p.cv.url)}" target="_blank" download="${esc(p.cv.name)}">${_svg('<path d="M14 3v5h5M8 13h8M8 17h5M9 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-5-5H9z"/>')}<span>${t('pm_cv')}</span></a>`
     : `<span class="cv-none">${t('pm_cv')}: —</span>`;
@@ -2665,7 +2865,7 @@ function renderCandidatePage() {
       <span class="avatar" style="width:52px;height:52px;border-radius:15px;font-size:19px;background:${avColor(nm)}">${esc(initials(nm, p.email))}</span>
       <div style="flex:1;min-width:0"><h1 style="margin:0;font-size:25px">${esc(nm)}</h1>
         <div class="muted" style="font-size:13.5px">${esc(p.email || p.tel || '')}${p.vacancyName ? ' · ' + (p.vacancyId ? `<a href="#" class="rep-vac-link" onclick="openVacancyPage('${esc(p.vacancyId)}');return false"><b>${esc(p.vacancyName)}</b></a>` : esc(p.vacancyName)) : ''}</div></div>
-      ${stageBadge}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button><button class="btn ghost sm ic-btn no-print" id="cand-schedule" title="Назначить собеседование">${_svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>')}<span>Собеседование</span></button>${cvBtn}</div>
+      ${stageSel}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button><button class="btn ghost sm ic-btn no-print" id="cand-schedule" title="Назначить собеседование">${_svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>')}<span>Собеседование</span></button>${cvBtn}</div>
     ${wf ? `<div class="card cand-pipe-card reveal d1" style="margin-top:14px">${candidatePipeline(wf)}</div>` : ''}
     <div class="cand-grid reveal d2" style="margin-top:14px">
       <div class="card"><div class="cfg-h">${rt('cand_info')}</div>
@@ -2946,10 +3146,14 @@ function wireCandidateSteps() {
   $$('[data-cdec]').forEach(b => b.onclick = async () => {
     const v = b.dataset.cdec;
     if (v === 'interview') {
-      const d = await api('/api/participants/' + modalPart.id + '/interviews', { method: 'POST' });
-      toast(rt('iv_created'));
+      const p = modalPart;
+      const nm = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email;
+      const dt = new Date(); const iso = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      let ivId = null;
+      try { const d = await api('/api/participants/' + p.id + '/interviews', { method: 'POST' }); ivId = d.interview && d.interview.id; toast(rt('iv_created')); } catch (_) {}
       await refreshCandidateCard();
-      openInterviewForm(modalPart.id, d.interview, refreshCandidateCard);
+      // Сразу открываем модалку планирования собеседования в календаре (предзаполнено кандидатом и связано с этапом).
+      openCalModal(null, iso, { participantId: p.id, candidate: nm, role: p.vacancyName || '', candEmail: p.email || '', candTel: p.tel || '', stage: 'intv', interviewId: ivId });
       return;
     }
     await api('/api/participants/' + modalPart.id + '/gate', { method: 'POST', body: JSON.stringify({ decision: v === 'reset' ? null : v }) });
@@ -3103,11 +3307,42 @@ window.backHome = () => { history.replaceState(null, '', '/app'); setView('home'
 function reportHeader(d, extra) {
   const p = d.participant, nm = p ? ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email : '';
   const vn = p && p.vacancyName;
+  // Имя кандидата — ссылка на его карточку; под именем — вакансия (ссылка на карточку вакансии).
+  const nameHtml = (p && p.id) ? `<a href="#" class="rh-name-link" onclick="openParticipant('${esc(p.id)}');return false">${esc(nm)}</a>` : esc(nm);
+  const vacHtml = vn ? (p.vacancyId
+    ? `<a href="#" class="rh-vac no-print" onclick="openVacancyPage('${esc(p.vacancyId)}');return false">${_svg('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>')}${esc(vn)}</a>`
+    : `<span class="rh-vac static">${_svg('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>')}${esc(vn)}</span>`) : '';
   return `<div class="report-head reveal"><span class="avatar" style="width:44px;height:44px;border-radius:13px;background:${avColor(nm)}">${esc(initials(nm, p && p.email))}</span>
-    <div><div class="muted" style="font-size:13px">«${testTitle(d.test.type)}»${vn ? ` · ${t('rep_vacancy')}: ` + (p.vacancyId ? `<a href="#" class="rep-vac-link" onclick="openVacancyPage('${esc(p.vacancyId)}');return false"><b>${esc(vn)}</b></a>` : `<b style="color:var(--text)">${esc(vn)}</b>`) : ''}</div><h1>${esc(nm)}</h1></div>
-    ${p && p.age ? `<span class="tag"><b>${esc(p.age)}</b> ${t('pm_years')}</span>` : ''}${extra || ''}
-    ${p && p.id ? `<select class="stage-select no-print" aria-label="${t('pm_stage')}" title="${t('pm_stage')}" onchange="setStageFromReport('${p.id}', this.value)">${stageOptions(p.stage)}</select>` : ''}
+    <div class="rh-id"><div class="muted rh-eyebrow" style="font-size:13px">«${testTitle(d.test.type)}»</div><h1>${nameHtml}</h1>${vacHtml}</div>
+    ${p && p.age ? `<span class="tag"><b>${esc(p.age)}</b> ${t('pm_years')}</span>` : ''}${extra || ''}${cheatingBadge(d)}
     <div class="grow"></div><button class="btn ghost sm ic-btn no-print" onclick="window.print()">${ICON_PRINT}${t('rep_print')}</button><button class="btn ghost sm ic-btn no-print" onclick="backHome()" aria-label="${t('rep_close')}">${_svg('<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>')}${t('rep_close')}</button></div>`;
+}
+// Бейдж «Замечены признаки читинга» + модалка с деталями (поведенческие сигналы прохождения + паттерн ответов).
+function hasCheatSignals(d) {
+  const it = d && d.test && d.test.integrity;
+  const beh = it && (it.tabSwitches || it.copyCount || it.pasteCount || (it.copied && it.copied.length));
+  const ans = d && d.result && d.result.cheating;
+  return !!(beh || ans);
+}
+function cheatingBadge(d) {
+  if (!hasCheatSignals(d)) return '';
+  window._reportIntegrity = { it: (d.test && d.test.integrity) || null, answers: !!(d.result && d.result.cheating) };
+  return `<button class="tag warn cheat-badge" onclick="openCheatModal()" title="${esc(t('cheat_tip'))}">⚠ ${t('cheat_badge')}</button>`;
+}
+function fmtAway(ms) { const s = Math.round((ms || 0) / 1000); if (s < 60) return s + ' сек'; const m = Math.floor(s / 60); return m + ' мин ' + (s % 60) + ' сек'; }
+function openCheatModal() {
+  const data = window._reportIntegrity || {}; const it = data.it || {};
+  const rows = [];
+  if (it.tabSwitches) rows.push(`<div class="cheat-row"><b>${t('cheat_tabs')}:</b> ${it.tabSwitches} ${t('cheat_times')}</div>`);
+  if (it.copyCount) rows.push(`<div class="cheat-row"><b>${t('cheat_copy')}:</b> ${it.copyCount} ${t('cheat_times')}</div>`);
+  if (it.pasteCount) rows.push(`<div class="cheat-row"><b>${t('cheat_paste')}:</b> ${it.pasteCount} ${t('cheat_times')}</div>`);
+  if (it.focusLostMs) rows.push(`<div class="cheat-row"><b>${t('cheat_away')}:</b> ${fmtAway(it.focusLostMs)}</div>`);
+  if (it.copied && it.copied.length) rows.push(`<div class="cheat-row"><b>${t('cheat_frags')}:</b><ul class="cheat-frags">${it.copied.map(s => `<li>«${esc(s)}»</li>`).join('')}</ul></div>`);
+  if (data.answers) rows.push(`<div class="cheat-row"><b>${t('cheat_answers')}</b></div>`);
+  mkDecodeModal(`<div class="cheat-modal"><h2 class="db-h" style="margin:0 0 12px">⚠ ${t('cheat_badge')}</h2>
+    <p class="db-note" style="margin:0 0 16px;line-height:1.55">${t('cheat_lead')}</p>
+    ${rows.join('') || '<p class="db-note">—</p>'}
+    <div class="db-modal-foot"><button class="btn" onclick="closeDecodeModal()">${t('cheat_close')}</button></div></div>`);
 }
 let aiBannerSeq = 0;
 function aiBanner(hint, tone) { if (!hint) return ''; const tn = tone || hint.tone || 'good'; const cid = 'aineu' + (++aiBannerSeq);
@@ -3132,38 +3367,55 @@ const CFG_TOOLS = { width: v => (v + 100) / 2, signed: true, kind: 'tools', grp:
 const CFG_SALES = { width: v => v, signed: false, kind: 'sales', grp: SALES_GRP, zbounds: [20, 40, 60, 80], glines: [20, 40, 60, 80], axis: [['0', 0], ['20', 20], ['40', 40], ['60', 60], ['80', 80], ['100', 100]] };
 function zoneHeadRow(cfg) { const b = cfg.zbounds, c = [b[0] / 2, (b[0] + b[1]) / 2, (b[1] + b[2]) / 2, (b[2] + b[3]) / 2, (b[3] + 100) / 2]; return `<div class="oca-row zc"><span></span><span></span><div class="zc-head">${zoneCols().map((z, i) => `<span style="left:${c[i]}%">${z}</span>`).join('')}</div><span></span></div>`; }
 function axisRow(cfg) { return `<div class="oca-row axis"><span></span><span></span><div class="oca-axis">${cfg.axis.map(a => `<i style="left:${a[1]}%">${a[0]}</i>`).join('')}</div><span></span></div>`; }
+// Пояснения к значкам на графике (показываются во всплывающей подсказке при наведении).
+const COMP_TIP = 'Компульсивная точка: показатель «застрял» на максимуме — он выше уверенности (D). Такое качество проявляется навязчиво, человек не может его не проявлять.';
+const BOLT_TIP = 'Плавающая точка («молния»): показатель нестабилен и колеблется под влиянием внешних факторов — то поднимается, то падает.';
 function barRow(pt, cfg, comp) {
   const w = Math.max(0, Math.min(100, cfg.width(pt.value)));
-  const barCls = (cfg.grp[pt.key] || 'g1') + (comp ? ' comp' : '');
+  const barCls = (cfg.grp[pt.key] || 'g1');
   const num = cfg.signed ? (pt.value > 0 ? '+' + pt.value : '' + pt.value) : '' + pt.value;
   const z = zn(w, cfg);
-  const bolt = pt.manic ? `<span class="bolt" title="Плавающая точка (знак молнии) — переменчивость показателя под влиянием внешних факторов">${ICON_BOLT}</span>` : '';
+  // Значки компульсивности / молнии — СЛЕВА от значения (не обводка бара).
+  const compMark = comp ? `<span class="ptmark comp" data-mtip="${esc(COMP_TIP)}" aria-label="компульсивная">‼</span>` : '';
+  const boltMark = pt.manic ? `<span class="ptmark bolt" data-mtip="${esc(BOLT_TIP)}" aria-label="плавающая">${ICON_BOLT}</span>` : '';
+  const marks = (compMark || boltMark) ? `<span class="ptmarks">${compMark}${boltMark}</span>` : '';
   const poles = pt.low ? `<i>${esc(pt.low)} — ${esc(pt.high)}</i>` : (pt.desc ? `<i>${esc(pt.desc)}</i>` : '');
-  return `<div class="oca-row${comp ? ' is-comp' : ''}">
-    <div class="oca-name"><b>${pt.key}.</b> <span>${esc(pt.name)}</span>${bolt}${poles}</div>
-    <div class="oca-val ${z}${comp ? ' comp' : ''}">${num}</div>
+  return `<div class="oca-row">
+    <div class="oca-name"><b>${pt.key}.</b> <span>${esc(pt.name)}</span>${poles}</div>
+    <div class="oca-val ${z}">${marks}<span class="oca-num">${num}</span></div>
     <div class="oca-track" data-tip="${esc(pt.interpretation || pt.label || '')}"><div class="oca-bar ${barCls}" style="width:${w}%"></div>${cfg.glines.map(x => `<i class="gl" style="left:${x}%"></i>`).join('')}</div>
-    <div class="oca-zlab ${z}">${esc(pt.label)}${comp ? ' · компульс.' : ''}</div></div>`;
+    <div class="oca-zlab ${z}">${esc(pt.label)}</div></div>`;
 }
 function chartTipEl() { let el = document.getElementById('chart-tip'); if (!el) { el = document.createElement('div'); el.id = 'chart-tip'; el.className = 'chart-tip'; document.body.appendChild(el); } return el; }
 function wireChartTips() {
   const tip = chartTipEl();
-  $$('.oca-track[data-tip]').forEach(tr => {
-    if (!tr.dataset.tip) return;
-    tr.style.cursor = 'help';
-    tr.addEventListener('mouseenter', () => { tip.textContent = tr.dataset.tip; tip.classList.add('show'); });
-    tr.addEventListener('mousemove', e => { tip.style.left = e.clientX + 'px'; tip.style.top = (e.clientY - 14) + 'px'; });
-    tr.addEventListener('mouseleave', () => tip.classList.remove('show'));
-  });
+  const wire = (el, text) => {
+    if (!text) return;
+    el.style.cursor = 'help';
+    el.addEventListener('mouseenter', () => { tip.textContent = text; tip.classList.add('show'); });
+    el.addEventListener('mousemove', e => { tip.style.left = e.clientX + 'px'; tip.style.top = (e.clientY - 14) + 'px'; });
+    el.addEventListener('mouseleave', () => tip.classList.remove('show'));
+  };
+  $$('.oca-track[data-tip]').forEach(tr => wire(tr, tr.dataset.tip));
+  // Значки компульсивности/молнии на графике и элементы легенды — своя расшифровка при наведении.
+  $$('[data-mtip]').forEach(el => wire(el, el.dataset.mtip));
 }
 function barChart(order, points, cfg, isComp) {
   return `<div class="ocachart">${zoneHeadRow(cfg)}${order.map(k => barRow(points[k], cfg, isComp ? isComp(k) : false)).join('')}${axisRow(cfg)}</div>`;
 }
-function chartLegend(cfg, hasComp) {
+function chartLegend(cfg, hasComp, hasBolt) {
+  const g = (color, label, tip) => `<span data-mtip="${esc(tip)}"><i style="background:${color}"></i>${label}</span>`;
   const groups = cfg.kind === 'tools'
-    ? `<span><i style="background:#3d6cd1"></i>A–C · внутреннее наполнение</span><span><i style="background:#1fa8c9"></i>D · уверенность</span><span><i style="background:#e8932a"></i>E–G · эффективность</span><span><i style="background:#1f9d6b"></i>H–J · отношения</span>`
-    : `<span><i style="background:#7b52c9"></i>A–D · внутренние качества</span><span><i style="background:#e0982a"></i>E–H · эффективность</span><span><i style="background:#1f9d6b"></i>I–L · отношения с клиентами</span>`;
-  return `<div class="oca-legend">${groups}${hasComp ? '<span><i class="ring"></i>компульсивная точка</span>' : ''}</div>`;
+    ? g('#3d6cd1', 'A–C · внутреннее наполнение', 'Внутреннее состояние человека: внимательность, позитивность, самообладание.') +
+      g('#1fa8c9', 'D · уверенность', 'Ключевая точка надёжности и уверенности в себе — опора всего профиля.') +
+      g('#e8932a', 'E–G · эффективность', 'Как человек действует и добивается результата: активность, настойчивость, ответственность.') +
+      g('#1f9d6b', 'H–J · отношения', 'Как человек строит отношения с людьми: объективность, чуткость, общительность.')
+    : g('#7b52c9', 'A–D · внутренние качества', 'Организованность, стрессоустойчивость, экспертность, преданность делу.') +
+      g('#e0982a', 'E–H · эффективность', 'Деловая хватка, результативность, настойчивость, перфекционизм.') +
+      g('#1f9d6b', 'I–L · отношения с клиентами', 'Самоотдача, командная игра, привлечение и удержание клиентов.');
+  const comp = hasComp ? `<span class="lg-mark" data-mtip="${esc(COMP_TIP)}"><b class="lg-comp">‼</b>компульсивная точка</span>` : '';
+  const bolt = hasBolt ? `<span class="lg-mark" data-mtip="${esc(BOLT_TIP)}"><b class="lg-bolt">${ICON_BOLT}</b>плавающая точка (молния)</span>` : '';
+  return `<div class="oca-legend">${groups}${comp}${bolt}</div>`;
 }
 // coloured zone pill for interpretation cards
 function zpill(label, value, cfg) { return `<span class="zpill ${zn(Math.max(0, Math.min(100, cfg.width(value))), cfg)}">${esc(label)}</span>`; }
@@ -3172,17 +3424,55 @@ function interpGrid(order, points, cfg) {
 }
 function fillSpec() { requestAnimationFrame(() => $$('.oca-bar[data-w]').forEach(b => { b.style.width = b.dataset.w + '%'; })); wireChartTips(); }
 
+// «Формула» синдрома → визуальные плашки точек. Строка вида 'A↓+B↓+C↓', 'E↑»D↑', 'E‼', 'B⚡'.
+function synFormula(f) {
+  if (!f) return '';
+  const out = [];
+  for (let i = 0; i < f.length; i++) {
+    const ch = f[i];
+    if (/[A-L]/.test(ch)) {
+      const m = f[i + 1];
+      let cls = '', badge = '';
+      if (m === '↑') { cls = 'up'; badge = '↑'; i++; }
+      else if (m === '↓') { cls = 'down'; badge = '↓'; i++; }
+      else if (m === '‼') { cls = 'comp'; badge = '‼'; i++; }
+      else if (m === '⚡') { cls = 'float'; badge = '⚡'; i++; }
+      out.push(`<span class="syn-pt ${cls}">${ch}${badge ? `<i>${badge}</i>` : ''}</span>`);
+    } else if (ch === '+' || ch === '›' || ch === '»') {
+      out.push(`<span class="syn-op">${ch}</span>`);
+    }
+  }
+  return out.length ? `<div class="syn-f">${out.join('')}</div>` : '';
+}
+// Легенда обозначений. kind: 'tools' — полная, 'sales' — сокращённая (без перекосов/молний).
+function synLegend(kind) {
+  const items = [
+    ['up', '↑', t('syn_hi')], ['down', '↓', t('syn_lo')], ['op', '+', t('syn_reinf')],
+  ];
+  if (kind !== 'sales') items.push(['op', '›', t('syn_skew')], ['op', '»', t('syn_skew2')]);
+  items.push(['comp', '‼', t('syn_comp')]);
+  if (kind !== 'sales') items.push(['float', '⚡', t('syn_float')]);
+  return `<div class="syn-leg">${items.map(([c, s, l]) => `<span><b class="${c}">${s}</b> ${esc(l)}</span>`).join('')}</div>`;
+}
+// Блок карточек синдромов / типов: заголовок + легенда + карточки с формулой.
+function synBlock(list, headKey, kind) {
+  if (!list || !list.length) return '';
+  const cards = list.map(s => `<div class="synd">${synFormula(s.f)}<b>${esc(s.title)}</b>${esc(s.text)}</div>`).join('');
+  return `<h2 style="margin-top:28px">${t(headKey)}</h2>${synLegend(kind)}<div class="synd-grid">${cards}</div>`;
+}
+
 function renderToolsReport(d) {
   const r = d.result;
   const dVal = r.points.D ? r.points.D.value : -100;
   const isComp = k => k !== 'D' && dVal >= 32 && r.points[k].value > dVal;
   const hasComp = r.order.some(isComp);
-  const chart = barChart(r.order, r.points, CFG_TOOLS, isComp) + chartLegend(CFG_TOOLS, hasComp);
-  const synd = r.syndromes.length ? `<h2 style="margin-top:28px">${t('synd_h')}</h2>` + r.syndromes.map(s => `<div class="synd"><b>${esc(s.title)}</b>${esc(s.text)}</div>`).join('') : '';
+  const hasBolt = r.order.some(k => r.points[k].manic);
+  const chart = barChart(r.order, r.points, CFG_TOOLS, isComp) + chartLegend(CFG_TOOLS, hasComp, hasBolt);
+  const synd = synBlock(r.syndromes, 'synd_h', 'tools');
   const manics = r.manics.map(m => `<div class="callout warn"><div class="co-t">Нестабильность (маник ${m.key})</div>${esc(m.text)}</div>`).join('');
   const interp = `<h2 style="margin-top:28px">${t(`interp_h`)}</h2>` + interpGrid(r.order, r.points, CFG_TOOLS);
   const meta = `<div class="row" style="gap:14px;margin-top:22px"><div class="tag">${t(`ans_maybe`)} <b>${r.mAnswers}/200</b></div><div class="tag">${t(`tp_time`)} <b>${fmtDur(d.test.durationSec)}</b></div></div>`;
-  $('#main').innerHTML = reportHeader(d, r.cheating ? '<span class="tag warn">Признаки читинга</span>' : '') +
+  $('#main').innerHTML = reportHeader(d, '') +
     decodeBarHtml(d.test.id, 'tools') +
     `<div class="card reveal d2">${aiBanner({ verdict: d.hint.verdict, notes: d.hint.notes }, r.cheating ? 'low' : 'good')}<h3 class="subh" style="margin:0 0 8px;font-family:Manrope;color:var(--indigo)">${t(`spectrum`)}</h3>${chart}${meta}${manics}${synd}${interp}${shareBlock(d.test)}</div>`;
   wireShare(d.test); fillSpec(); initDecodeBar(d.test.id, 'tools');
@@ -3199,13 +3489,28 @@ const DBICO = {
   gear: '<svg class="db-ico" viewBox="0 0 24 24" style="opacity:1"><path d="M4 21v-6M4 11V3M12 21v-8M12 9V3M20 21v-4M20 13V3M1 15h6M9 9h6M17 17h6"/></svg>',
   check: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
   retry: '<svg class="db-ico" viewBox="0 0 24 24"><path d="M23 4v6h-6M20.5 15A9 9 0 1 1 18.4 5.6L23 10"/></svg>',
+  lock: '<svg class="db-ico" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+};
+// Платные AI-функции: метаданные для модалки покупки (что даёт функция).
+const DECODE_FEATURES = {
+  full: { label: 'Полная расшифровка', once: true, desc: 'Разбор всех 10 точек личности, проверка компульсивности и синдромов, целостный психологический портрет кандидата и вердикт по должности.' },
+  manual: { label: 'Инструкция по эксплуатации кандидата', once: true, desc: 'Практическое руководство для руководителя: как управлять этим человеком, чем мотивировать, как контролировать, давать обратную связь и избегать конфликтов — всё выведено из профиля теста.' },
+  presentation: { label: 'Повышение эффективности кандидата', once: true, desc: 'Пошаговый сценарий встречи с сотрудником: как подать результат теста, разобрать сильные стороны и зоны роста и помочь ему работать эффективнее.' },
+  chat: { label: 'Узнать о кандидате', once: false, desc: 'Задавайте ИИ любые вопросы по кандидату — он знает результаты всех его тестов, заявку, вакансию и резюме и даёт развёрнутые кадровые рекомендации: подходит ли, как ставить задачи, как контролировать, куда перевести.' },
+  productivity: { label: 'Анализ продуктивности', once: true, desc: 'Тип сотрудника (Виннер/Дуер/Вейтер), уровень продуктивности и мотивации, драйверы и соответствие должности — по методике теста «Резалт».' },
 };
 const DECODE_KINDS_TOOLS = [
-  { kind: 'full', label: 'Полная расшифровка' },
-  { kind: 'manual', label: 'Инструкция по эксплуатации' },
-  { kind: 'presentation', label: 'Сценарий предоставления оценки' },
+  { kind: 'full', label: DECODE_FEATURES.full.label },
+  { kind: 'manual', label: DECODE_FEATURES.manual.label },
+  { kind: 'presentation', label: DECODE_FEATURES.presentation.label },
 ];
 let decodeState = {}, decodePoll = null, decodeCtxCb = null, chatBusy = false;
+// ── Платные функции: цена/владение/последовательность ──
+function featurePrice(kind) { return (decodeState.prices && decodeState.prices[kind] != null) ? decodeState.prices[kind] : null; }
+function featureOwned(kind) { return !!(decodeState.purchases && decodeState.purchases[kind]); }
+function featLabel(kind) { return (DECODE_FEATURES[kind] && DECODE_FEATURES[kind].label) || kind; }
+function seqPrevMissing(kind) { const seq = decodeState.seq || []; const i = seq.indexOf(kind); if (i > 0) { const prev = seq[i - 1]; if (!featureOwned(prev)) return prev; } return null; }
+function fmtPrice(p) { if (p == null) return ''; const n = p === 0.5 ? '0,5' : String(p).replace('.', ','); return `${n} ${p === 1 ? 'тест' : 'теста'}`; }
 
 function decodeBarHtml(testId, type) {
   return `<div class="decode-bar no-print reveal" id="decode-bar" data-test="${testId}" data-type="${type}">
@@ -3220,24 +3525,84 @@ function hasPendingDecode(d) { return Object.values(d.states || {}).some(s => s.
 function renderDecodeBtns(testId, d) {
   const el = $('#db-btns'); if (!el) return;
   const list = d.type === 'tools' ? DECODE_KINDS_TOOLS : [{ kind: 'productivity', label: 'Анализ продуктивности' }];
-  let html = list.map(m => { const st = (d.states && d.states[m.kind]) || { status: 'none' }; return decodeBtn(testId, m, st.status); }).join('');
-  if (d.type === 'tools') html += `<button class="db-btn chat" onclick="openDecodeChat('${testId}')">${DBICO.chat} Уточнить${d.chatCount ? ` <span class="db-badge">${Math.ceil(d.chatCount / 2)}</span>` : ''}</button>`;
+  let html = list.map(m => { const st = (d.states && d.states[m.kind]) || { status: 'none' }; return decodeBtn(testId, m, st); }).join('');
+  if (d.type === 'tools') {
+    const chatOwned = featureOwned('chat');
+    const chatTail = (chatOwned && d.chatCount) ? ` <span class="db-badge">${Math.ceil(d.chatCount / 2)}</span>` : '';
+    html += `<button class="db-btn chat${chatOwned ? '' : ' buy'}" onclick="openDecodeChat('${testId}')">${chatOwned ? DBICO.chat : DBICO.lock} ${esc(featLabel('chat'))}${chatTail}</button>`;
+  }
   html += `<button class="db-ctx" title="Контекст вакансии (тип должности, обязанности)" onclick="openDecodeContext('${testId}')">${DBICO.gear}</button>`;
   el.innerHTML = html;
   if (!d.apiConfigured) el.insertAdjacentHTML('beforeend', '<span class="db-warn" title="Задайте ANTHROPIC_API_KEY на сервере">AI не настроен</span>');
 }
-function decodeBtn(testId, m, status) {
+function isBillingErr(msg) { return /credit balance|too low to access|Plans ?& ?Billing|billing|insufficient/i.test(String(msg || '')); }
+window.openAiUnavailable = function () {
+  mkDecodeModal(`<div class="cheat-modal"><h2 class="db-h" style="margin:0 0 12px">⏳ ${t('ai_unavail_title')}</h2>
+    <p class="db-note" style="margin:0 0 18px;line-height:1.6">${t('ai_unavail_body')}</p>
+    <div class="db-modal-foot"><button class="btn" onclick="closeDecodeModal()">${t('cheat_close')}</button></div></div>`);
+};
+function decodeBtn(testId, m, st) {
+  const status = (st && typeof st === 'object') ? st.status : st;
+  const errText = (st && typeof st === 'object') ? st.error : '';
   const L = esc(m.label), ic = DBICO[m.kind] || '';
-  if (status === 'pending') return `<button class="db-btn pending" disabled>${ic} ${L} <span class="db-spin"></span><i>генерируется…</i></button>`;
-  if (status === 'done') return `<button class="db-btn done" onclick="openDecodePage('${testId}','${m.kind}')" title="Открыть готовую расшифровку">${DBICO.check} ${L}</button>`;
-  if (status === 'error') return `<button class="db-btn error" onclick="startDecode('${testId}','${m.kind}',true)" title="Повторить генерацию">${DBICO.retry} ${L} — ошибка</button>`;
+  const owned = featureOwned(m.kind);
+  if (status === 'pending') return `<button class="db-btn generating" disabled title="Генерируется… это займёт 1–2 минуты">${ic} ${L}</button>`;
+  if (status === 'done') return `<button class="db-btn done" onclick="openDecodePage('${testId}','${m.kind}')" title="Готово — открыть расшифровку">${DBICO.check} ${L}</button>`;
+  if (status === 'error') {
+    if (isBillingErr(errText)) return `<button class="db-btn error" onclick="openAiUnavailable()" title="${esc(t('ai_unavail_tip'))}">${DBICO.retry} ${L} — ${t('ai_unavail_short')}</button>`;
+    return `<button class="db-btn error" onclick="onDecodeClick('${testId}','${m.kind}')" title="Повторить">${DBICO.retry} ${L} — ошибка</button>`;
+  }
+  if (!owned) {
+    const prev = seqPrevMissing(m.kind);
+    const cls = prev ? 'db-btn locked' : 'db-btn buy';
+    const ttl = prev ? ` title="Сначала купите: ${esc(featLabel(prev))}"` : '';
+    return `<button class="${cls}"${ttl} onclick="openFeatureModal('${testId}','${m.kind}')">${prev ? DBICO.lock : ic} ${L}</button>`;
+  }
+  // куплена, но ещё не сгенерирована — запускаем генерацию
   return `<button class="db-btn" onclick="onDecodeClick('${testId}','${m.kind}')">${ic} ${L}</button>`;
+}
+// Модалка покупки платной функции: что даёт + цена + Купить/Отмена.
+function openFeatureModal(testId, feature) {
+  const meta = DECODE_FEATURES[feature] || { label: feature, desc: '', once: true };
+  const price = featurePrice(feature);
+  const prev = seqPrevMissing(feature);
+  const priceLine = price != null ? `<div class="feat-price"><span>Стоимость</span><b>${fmtPrice(price)}</b></div>` : '';
+  const accessNote = meta.once ? 'Генерируется один раз и сохраняется — открывать потом можно бесплатно.' : 'Бессрочный доступ — спрашивайте сколько угодно.';
+  let footer;
+  if (prev) {
+    footer = `<div class="feat-prevnote">Эта функция открывается по очереди. Сначала оформите: <b>${esc(featLabel(prev))}</b>.</div>
+      <div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">Отмена</button><button class="btn" onclick="openFeatureModal('${testId}','${prev}')">Купить «${esc(featLabel(prev))}»</button></div>`;
+  } else {
+    footer = `<div class="db-modal-foot"><button class="btn ghost" onclick="closeDecodeModal()">Отмена</button><button class="btn" id="feat-buy" onclick="buyFeature('${testId}','${feature}')">Купить «${esc(meta.label)}»${price != null ? ' · ' + fmtPrice(price) : ''}</button></div>`;
+  }
+  mkDecodeModal(`<h3 class="db-h">${DBICO[feature] || DBICO.lock} ${esc(meta.label)}</h3>
+    <p class="db-note">${esc(meta.desc)}</p>
+    ${priceLine}
+    <div class="feat-access">${esc(accessNote)} Списывается с баланса тестов.</div>
+    <div class="db-err" id="feat-err"></div>
+    ${footer}`);
+}
+async function buyFeature(testId, feature) {
+  const btn = $('#feat-buy'); if (btn) { btn.disabled = true; btn.textContent = 'Покупаем…'; }
+  try {
+    const r = await api(`/api/decode/${testId}/purchase/${feature}`, { method: 'POST', body: JSON.stringify({}) });
+    decodeState.purchases = r.purchases || Object.assign({}, decodeState.purchases, { [feature]: true });
+    if (r.balance) { try { state.user = r.balance; const mb = $('#mnav-bal-num'); if (mb) mb.textContent = (r.balance.balanceAvailable != null ? r.balance.balanceAvailable : (r.balance.balanceTotal || 0)); } catch (e) {} }
+    closeDecodeModal();
+    toast('Куплено — списано с баланса.');
+    renderDecodeBtns(testId, decodeState);
+    if (feature === 'chat') openDecodeChat(testId);
+    else onDecodeClick(testId, feature);
+  } catch (e) {
+    const el = $('#feat-err'); const msg = (e && e.message) || 'Ошибка покупки';
+    if (el) el.textContent = msg; else toast(msg);
+    if (btn) { btn.disabled = false; btn.textContent = 'Купить'; }
+  }
 }
 // Открыть готовую расшифровку в модалке (полный текст, можно прочесть целиком). Ссылка «в новой вкладке» тоже есть.
 function openDecodePage(testId, kind) {
   const url = '/decode/' + testId + '/' + kind + '?lang=' + LANG;
-  const all = [{ kind: 'full', label: 'Полная расшифровка' }, { kind: 'manual', label: 'Инструкция по эксплуатации' }, { kind: 'presentation', label: 'Сценарий предоставления оценки' }, { kind: 'productivity', label: 'Анализ продуктивности' }];
-  const label = (all.find(x => x.kind === kind) || {}).label || 'AI-расшифровка';
+  const label = (DECODE_FEATURES[kind] && DECODE_FEATURES[kind].label) || 'AI-расшифровка';
   mkDecodeModal(`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:-2px 40px 12px 0">
       <h3 class="db-h" style="margin:0">${esc(label)}</h3>
       <a class="btn ghost sm" href="${url}" target="_blank" rel="noopener" style="white-space:nowrap">В новой вкладке ↗</a></div>
@@ -3248,6 +3613,8 @@ function decodeContextComplete(ctx) {
   return !!ctx.roleType && !!(ctx.vacancy || '').trim() && !!(ctx.duties || '').trim();
 }
 function onDecodeClick(testId, kind) {
+  // Платная функция: не куплена — показываем модалку покупки.
+  if (!featureOwned(kind)) { openFeatureModal(testId, kind); return; }
   // Контекст вакансии обязателен: без него не шлём пустой запрос в ИИ.
   if (!decodeContextComplete(decodeState.context)) {
     toast('Заполните контекст вакансии — эти данные уходят в ИИ вместе с результатом теста.');
@@ -3260,7 +3627,7 @@ async function startDecode(testId, kind, regenerate) {
   // Сразу показываем «генерируется…»; опрос запускаем НЕЗАВИСИМО от синхронного запроса
   // (генерация 1–2 мин, длинный POST может оборваться — poll подхватит готовность и подсветит кнопку зелёным).
   try { decodeState.states = decodeState.states || {}; decodeState.states[kind] = { status: 'pending' }; renderDecodeBtns(testId, decodeState); } catch (e) {}
-  toast('Генерация запущена — 1–2 минуты. Кнопка станет зелёной по готовности.');
+  toast('Генерация запущена — до 2–3 минут. Кнопка станет зелёной по готовности.');
   startDecodePoll(testId);
   try {
     await api('/api/decode/' + testId + '/' + kind, { method: 'POST', body: JSON.stringify({ regenerate: !!regenerate, lang: LANG }) });
@@ -3307,7 +3674,8 @@ async function saveDecodeContext(testId) {
 }
 // ── Чат «Уточнить» ──
 async function openDecodeChat(testId) {
-  mkDecodeModal(`<div class="db-chat"><h3 class="db-h">${DBICO.chat} Уточнить у ИИ по кандидату</h3>
+  if (!featureOwned('chat')) { openFeatureModal(testId, 'chat'); return; }
+  mkDecodeModal(`<div class="db-chat"><h3 class="db-h">${DBICO.chat} Узнать о кандидате</h3>
     <div class="dc-msgs" id="dc-msgs"><div class="db-load">Загрузка…</div></div>
     <div class="dc-input"><textarea id="dc-q" class="field" placeholder="Ваш вопрос по этому кандидату… (Ctrl+Enter — отправить)" style="min-height:52px"></textarea>
     <button class="btn" id="dc-send" onclick="sendDecodeChat('${testId}')">Спросить</button></div></div>`, true);
@@ -3345,12 +3713,29 @@ function mkDecodeModal(inner, wide) {
 }
 function closeDecodeModal() { const ov = $('#db-modal-ov'); if (ov) ov.remove(); }
 
+// Модалка платных ИИ-звонков (при включении автоворонки или отдельного звонка на шаге).
+// onChoose(true) — включить звонки; onChoose(false) — без ИИ-звонков. Закрытие (✕) — ничего не делаем.
+function paidCallsModal(onChoose, opts) {
+  opts = opts || {};
+  const single = !!opts.single;
+  mkDecodeModal(`<h3 class="db-h">${ICON_PHONE} Звонки ИИ — платная функция</h3>
+    <p class="db-note">ИИ-агент сам обзванивает кандидатов и их референсов на нужных шагах воронки: звонит, расспрашивает по методике и заносит ответы в карточку — вам не нужно тратить часы на прозвоны и переписку. Да, это платно, но вы экономите своё время: агент работает за вас круглосуточно.</p>
+    <div class="feat-price"><span>Стоимость</span><b>0,1 теста за разговор</b></div>
+    <div class="feat-access">Списывается только за <b>состоявшийся разговор</b>. Недозвон или просьба перезвонить — бесплатно.</div>
+    <div class="db-modal-foot"><button class="btn ghost" id="pc-no">Без ИИ-звонков</button><button class="btn" id="pc-yes">${single ? 'Включить этот звонок' : 'Включить звонки ИИ'}</button></div>`);
+  const yes = $('#pc-yes'), no = $('#pc-no');
+  if (yes) yes.onclick = () => { closeDecodeModal(); onChoose(true); };
+  if (no) no.onclick = () => { closeDecodeModal(); onChoose(false); };
+}
+const AI_CALL_KEYS = ['first', 'afterResult', 'references', 'afterTools', 'motivation'];
+
 function renderSalesReport(d) {
   const r = d.result;
   const chart = barChart(r.order, r.points, CFG_SALES, null) + chartLegend(CFG_SALES, false);
+  const types = synBlock(r.types, 'sales_types_h', 'sales');
   const interp = `<h2 style="margin-top:28px">${t(`interp_h`)}</h2>` + interpGrid(r.order, r.points, CFG_SALES);
   $('#main').innerHTML = reportHeader(d) + `<div class="card reveal d2">${aiBanner(d.hint, d.hint && d.hint.tone)}<h3 class="subh" style="margin:0 0 8px;font-family:Manrope;color:var(--indigo)">${t(`sales_profile`)}</h3>${chart}
-    <div class="row" style="gap:14px;margin-top:22px"><div class="tag">${t(`ans_sometimes`)} <b>${r.midCount}/120</b></div><div class="tag">${t(`tp_time`)} <b>${fmtDur(d.test.durationSec)}</b></div></div>${interp}${shareBlock(d.test)}</div>`;
+    <div class="row" style="gap:14px;margin-top:22px"><div class="tag">${t(`ans_sometimes`)} <b>${r.midCount}/120</b></div><div class="tag">${t(`tp_time`)} <b>${fmtDur(d.test.durationSec)}</b></div></div>${types}${interp}${shareBlock(d.test)}</div>`;
   wireShare(d.test); fillSpec();
 }
 
@@ -3382,8 +3767,26 @@ function renderLogicReport(d) {
   requestAnimationFrame(() => { const c = $('#iq-cursor'); if (c) c.style.left = pos + '%'; });
 }
 function candidateActions(pid) { if (!pid) return ''; return `<div class="row" style="gap:10px;margin-top:20px"><span class="muted" style="align-self:center;font-size:13px">${t(`decision`)}</span><button class="btn soft sm" onclick="setStageFromReport('${pid}','Собеседование')">${t(`act_interview`)}</button><button class="btn ghost sm" onclick="setStageFromReport('${pid}','Резерв')">${t(`act_reserve`)}</button><button class="btn ghost danger sm" onclick="setStageFromReport('${pid}','Отказ')">${t(`act_reject`)}</button></div>`; }
-function shareBlock(test) { return `<div class="test-panel" style="margin-top:24px"><b>${t(`share_title`)}</b><p class="muted" style="margin:6px 0 12px">${t(`share_sub`)}</p><div class="row"><span id="share-state" class="muted">${test.publicShare ? t(`share_active`) : t(`share_inactive`)}</span><button class="btn sm ${test.publicShare ? 'ghost' : 'soft'}" id="share-toggle">${test.publicShare ? t(`share_off`) : t(`share_on`)}</button><span id="share-url"></span></div></div>`; }
-function wireShare(test) { const tgl = $('#share-toggle'); if (!tgl) return; tgl.onclick = async () => { const d = await api('/api/tests/' + test.id + '/share', { method: 'POST', body: JSON.stringify({ enabled: !test.publicShare }) }); test.publicShare = d.publicShare; $(`#share-state`).textContent = d.publicShare ? t(`share_active`) : t(`share_inactive`); tgl.textContent = d.publicShare ? t(`share_off`) : t(`share_on`); tgl.className = 'btn sm ' + (d.publicShare ? 'ghost' : 'soft'); $('#share-url').innerHTML = d.publicShare ? `<a href="${d.url}" target="_blank">${d.url}</a>` : ''; }; }
+function shareUrl(test) { return location.origin + '/r/' + test.id; }
+function shareBlock(test) {
+  const url = shareUrl(test);
+  return `<div class="test-panel share-panel" style="margin-top:24px"><b>${t(`share_title`)}</b><p class="muted" style="margin:6px 0 12px">${t(`share_sub`)}</p>` +
+    `<div class="row" style="align-items:center;gap:10px"><span id="share-state" class="muted">${test.publicShare ? t(`share_active`) : t(`share_inactive`)}</span><button class="btn sm ${test.publicShare ? 'ghost' : 'soft'}" id="share-toggle">${test.publicShare ? t(`share_off`) : t(`share_on`)}</button></div>` +
+    `<div class="row share-url-row" id="share-url-row" style="gap:8px;margin-top:12px;${test.publicShare ? '' : 'display:none'}"><input class="field sm" style="flex:1" readonly id="share-url-input" value="${esc(url)}" onclick="this.select()"><button class="btn ghost sm ic-btn" id="share-copy">${ICON_COPY}${t(`share_copy`)}</button></div>` +
+  `</div>`;
+}
+function wireShare(test) {
+  const tgl = $('#share-toggle'); if (!tgl) return;
+  const cp = $('#share-copy'); if (cp) cp.onclick = () => copyLink($('#share-url-input').value);
+  tgl.onclick = async () => {
+    const d = await api('/api/tests/' + test.id + '/share', { method: 'POST', body: JSON.stringify({ enabled: !test.publicShare }) });
+    test.publicShare = d.publicShare;
+    $(`#share-state`).textContent = d.publicShare ? t(`share_active`) : t(`share_inactive`);
+    tgl.textContent = d.publicShare ? t(`share_off`) : t(`share_on`);
+    tgl.className = 'btn sm ' + (d.publicShare ? 'ghost' : 'soft');
+    const row = $('#share-url-row'); if (row) { row.style.display = d.publicShare ? '' : 'none'; const inp = $('#share-url-input'); if (inp && d.url) inp.value = d.url; }
+  };
+}
 
 // ================= SECONDARY VIEWS =================
 // ================= ИНТЕГРАЦИИ: джоб-порталы (публикация объявлений и отклики) =================
@@ -3405,19 +3808,27 @@ async function renderJobPortals() {
   const { portals, feedUrl } = await api('/api/job-portals');
   let vstatus = {}; try { vstatus = (await api('/api/video-integrations')).status || {}; } catch (e) {}
   const badge = m => m === 'api' ? `<span class="jp-m jp-api">API</span>` : m === 'feed' ? `<span class="jp-m jp-feed">${rt('jp_by_feed')}</span>` : `<span class="jp-m jp-login">${rt('jp_by_login')}</span>`;
+  const DIFF = { easy: ['Просто', 'jp-feed'], key: ['Нужен ключ', 'jp-api'], contract: ['По договору', 'jp-login'] };
+  const diffBadge = d => { const x = DIFF[d] || DIFF.contract; return `<span class="jp-m ${x[1]}">${x[0]}</span>`; };
   const cards = portals.map(p => {
-    const canTest = p.method === 'api' || p.method === 'feed';
-    const actions = p.method === 'feed' && (!p.auth || !p.auth.length)
+    const isAuto = p.method === 'auto';
+    const isFeed = p.method === 'feed' && (!p.auth || !p.auth.length);
+    const actions = isAuto
+      ? `<span class="cstep-st ok">✓ Включено автоматически</span>`
+      : isFeed
       ? `<button class="btn soft sm ic-btn" onclick="copyLink('${esc(p.feedUrl || feedUrl)}')">${ICON_COPY}${rt('jp_copy_feed')}</button>`
       : `<button class="btn ${p.connected ? 'soft' : ''} sm" data-jp-connect="${p.id}">${p.connected ? '✎ ' + rt('jp_edit') : rt('jp_connect')}</button>${p.connected ? `<button class="btn ghost danger sm" data-jp-off="${p.id}">${rt('jp_disconnect')}</button>` : ''}`;
+    const steps = (p.steps || []).map(s => `<li>${esc(s)}</li>`).join('');
     return `<div class="card intg-card">
       <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
         <b style="font-size:15.5px">${esc(p.name)}</b>
-        <span class="cstep-st ${p.connected ? 'ok' : ''}">${p.connected ? rt('jp_on') : rt('jp_off')}</span></div>
-      <div style="margin:6px 0 4px">${badge(p.method)}</div>
-      <p class="muted" style="font-size:12.5px;margin:4px 0 8px;min-height:60px">${esc(p.desc)}</p>
+        <span class="cstep-st ${p.connected || isAuto ? 'ok' : ''}">${p.connected || isAuto ? rt('jp_on') : rt('jp_off')}</span></div>
+      <div style="margin:6px 0 6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${diffBadge(p.diff)}${p.method === 'api' ? badge('api') : ''}${p.cost ? `<span class="jp-m" style="background:rgba(255,255,255,.06);color:#9aa3bf">${esc(p.cost)}</span>` : ''}</div>
+      <p class="muted" style="font-size:12.5px;margin:4px 0 6px">${esc(p.desc)}</p>
+      ${p.what ? `<p style="font-size:12px;margin:0 0 6px;color:#c7cee0"><b>Что даёт:</b> ${esc(p.what)}</p>` : ''}
+      ${steps ? `<details style="margin:0 0 9px"><summary style="cursor:pointer;font-size:12.5px;color:#8b6cff;user-select:none">Как подключить →</summary><ol style="margin:7px 0 0;padding-left:18px;font-size:12px;color:#aab2c8;line-height:1.55">${steps}</ol>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;font-size:12px;color:#8b6cff">Открыть сайт площадки ↗</a>` : ''}</details>` : ''}
       <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">${actions}
-        ${canTest ? `<button class="btn ghost sm" data-jp-test="${p.id}">${rt('jp_test')}</button><span style="font-size:12px" id="jp-res-${p.id}"></span>` : ''}</div>
+        ${p.method === 'api' ? `<button class="btn ghost sm" data-jp-test="${p.id}">${rt('jp_test')}</button><span style="font-size:12px" id="jp-res-${p.id}"></span>` : ''}</div>
     </div>`;
   }).join('');
   const activeTab = renderJobPortals._tab || 'ads';
@@ -3431,7 +3842,21 @@ async function renderJobPortals() {
       <button data-itab="video" style="${tabStyle(activeTab === 'video')}">${tl('video')}</button>
     </div>
     <div id="intg-ads" style="display:${activeTab === 'ads' ? 'block' : 'none'}">
-      <p class="muted d1" style="max-width:720px;line-height:1.55">${rt('jp_intro')}</p>
+      <p class="muted d1" style="max-width:760px;line-height:1.55">${rt('jp_intro')}</p>
+      <div class="card d1" style="margin:14px 0 4px;max-width:760px;background:rgba(139,108,255,.06);border-color:rgba(139,108,255,.2)">
+        <b style="font-size:13.5px">Как это работает</b>
+        <ol style="margin:8px 0 10px;padding-left:18px;font-size:12.5px;color:#c7cee0;line-height:1.6">
+          <li>Создаёте вакансию и жмёте «Опубликовать».</li>
+          <li>Google for Jobs подхватывает её автоматически; на другие площадки — через фид ниже или прямое подключение.</li>
+          <li>Кандидат кликает объявление и попадает на вашу страницу отклика.</li>
+          <li>Его отклик и резюме сразу появляются в списке кандидатов <b>этой вакансии</b> — и включается автоворонка (тесты/звонок).</li>
+        </ol>
+        <label class="lbl" style="font-size:12px">Ваша ссылка-фид (для агрегаторов)</label>
+        <div class="row" style="gap:8px;align-items:center;margin-top:4px">
+          <input class="field" id="jp-feed-url" readonly value="${esc(feedUrl)}" style="font-size:12px;flex:1;min-width:0">
+          <button class="btn soft sm ic-btn" onclick="copyLink('${esc(feedUrl)}')">${ICON_COPY}Копировать</button>
+        </div>
+      </div>
       <div class="intg-grid d2" style="margin-top:14px">${cards}</div>
     </div>
     <div id="intg-video" style="display:${activeTab === 'video' ? 'block' : 'none'}">
@@ -3465,7 +3890,9 @@ async function renderJobPortals() {
   });
   $$('[data-jp-connect]').forEach(b => b.onclick = () => {
     const p = portals.find(x => x.id === b.dataset.jpConnect);
+    const mSteps = (p.steps || []).map(s => `<li>${esc(s)}</li>`).join('');
     openModal(`<div class="report-head"><h2 style="margin:0;font-size:20px">${rt('jp_connect')}: ${esc(p.name)}</h2></div>
+      ${mSteps ? `<div class="card" style="margin:0 0 14px;background:rgba(139,108,255,.06);border-color:rgba(139,108,255,.2)"><b style="font-size:13px">Как получить доступ:</b><ol style="margin:8px 0 0;padding-left:18px;font-size:12.5px;color:#c7cee0;line-height:1.6">${mSteps}</ol>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:12.5px;color:#8b6cff">Открыть сайт площадки ↗</a>` : ''}</div>` : ''}
       <p class="muted" style="margin:0 0 12px;font-size:13px">${esc(p.note || '')}</p>
       ${p.auth.includes('login') ? `<div style="margin-bottom:10px"><label class="lbl">${rt('jp_login')}</label><input class="field" id="jp-login" value="${esc(p.login || '')}" autocomplete="off"></div>
       <div style="margin-bottom:10px"><label class="lbl">${rt('jp_pass')}</label><input class="field" id="jp-pass" type="password" placeholder="${p.hasPassword ? '••••••' : ''}" autocomplete="new-password"></div>` : ''}
@@ -3523,37 +3950,73 @@ async function renderAnketas() {
       <ul class="ak-ul"><li>${t('ak_after1')}</li><li>${t('ak_after2')}</li><li>${t('ak_after3')}</li></ul></div>`;
   $('#ak-new').onclick = () => editAnketa('new');
 }
+const CYR_SLUG = { а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' };
+function slugify(s) { return String(s || '').toLowerCase().split('').map(c => CYR_SLUG[c] != null ? CYR_SLUG[c] : c).join('').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50); }
 async function renderAnketaEdit(id, opts) {
   opts = opts || {};
   $('#main').classList.remove('vac-lock');
   const goBack = opts.onBack || renderAnketas;
   const vacs = (await api('/api/vacancies?sectionId=all')).vacancies;
-  const a = id ? (await api('/api/anketas/' + id)).anketa : { title: '', vacancyId: opts.vacancyId || '', slug: '', tests: ['result', 'tools'], btnText: 'Откликнуться', pageTitle: '', msgApply: 'Спасибо! Ваш отклик получен.', msgDone: 'Отлично! Вы ответили на все вопросы. HR-менеджер свяжется с вами после рассмотрения результатов. Эту страницу можно закрыть.', noCaptcha: false, sendEmail: true, description: '' };
+  const a = id ? (await api('/api/anketas/' + id)).anketa : { title: '', vacancyId: opts.vacancyId || '', slug: '', btnText: '', pageTitle: '', description: '' };
   if (!id && opts.vacancyId) { const v = vacs.find(x => x.id === opts.vacancyId); if (v && !a.title) a.title = v.name; }
-  const vacOpts = `<option value="">${t('ae_pick_vac')}</option>` + vacs.map(v => `<option value="${v.id}" ${v.id === a.vacancyId ? 'selected' : ''}>${esc(v.name)}</option>`).join('');
-  const testChk = ['result', 'tools', 'logic', 'sales'].map(ty => `<label class="ak-chk"><input type="checkbox" data-test="${ty}" ${(a.tests || []).includes(ty) ? 'checked' : ''}><span class="ak-chk-box"></span>${testTitle(ty)}</label>`).join('');
+  const vacOpts = () => `<option value="">${t('ae_pick_vac')}</option>` + vacs.map(v => `<option value="${v.id}" ${v.id === a.vacancyId ? 'selected' : ''}>${esc(v.name)}</option>`).join('');
+  // ── Блок объявления (как на странице «Объявление»): цель + генерация ИИ + rich-editor + варианты ──
+  let variants = (a.description) ? [{ title: '', html: a.description }] : [{ title: '', html: '' }];
+  let comment = '', sel = 0;
+  let slugTouched = !!a.slug;
+  const syncSel = () => { const ed = $('#ae-editor'); if (ed) variants[sel].html = ed.innerHTML; };
+  function curVacId() { const el = $('#ae-vac'); return (el && el.value) || a.vacancyId || ''; }
+  function drawAd() {
+    const box = $('#ae-adblock'); if (!box) return;
+    const vac = vacs.find(x => x.id === curVacId());
+    const isBoss = vac && (vac.roleType === 'lead' || /руковод|директор|начальн|заведующ|управляющ|главн|head|chief|director|team lead|ceo|coo|cto/i.test(vac.name || ''));
+    const tOpts = (isBoss ? [['performer', rt('vac_target_performer')]] : [['performer', rt('vac_target_performer')], ['executor', rt('vac_target_executor')]]).map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('');
+    const tHint = `<div class="muted" style="font-size:12px;margin-top:6px;line-height:1.5">${rt('vac_target_expl')} <a href="#" class="rh-name-link" onclick="setView('education');return false">${rt('vac_target_more')}</a>${isBoss ? `<br><span style="color:var(--brand-2)">${rt('vac_target_boss_hint')}</span>` : ''}</div>`;
+    const tabs = variants.length > 1 ? `<div class="ad-tabs">${variants.map((v, i) => `<button class="ad-tab ${i === sel ? 'on' : ''}" data-adv="${i}">${rt('vac_ad_variant')} ${i + 1}</button>`).join('')}</div>` : '';
+    const commentHtml = comment ? `<div class="ai-banner good ad-comment"><div class="aib-in"><small><span class="ai-spark">${ICON_SPARK}</span>${rt('vac_ad_comment')}</small><div class="ad-comment-body">${esc(comment).replace(/\n/g, '<br>')}</div></div></div>` : '';
+    box.innerHTML = `<div class="row" style="gap:8px;align-items:flex-end;margin-bottom:12px">
+        <div style="flex:1;max-width:360px"><label class="lbl">${rt('vac_ad_target')}</label><select class="field" id="ae-target" ${isBoss ? 'disabled' : ''}>${tOpts}</select>${tHint}</div>
+        <button class="btn soft" id="ae-gen" ${curVacId() ? '' : 'disabled title="Выберите вакансию"'}>${rt('vac_ad_gen')}</button></div>
+      ${commentHtml}<label class="lbl">${rt('vac_ad_manual')}</label>${tabs}
+      <div class="ad-rte-tb no-print"><button type="button" data-cmd="bold"><b>Ж</b></button><button type="button" data-cmd="italic"><i>К</i></button><button type="button" data-cmd="underline"><u>Ч</u></button><span class="ad-rte-sep"></span><button type="button" data-cmd="formatBlock" data-val="H3">H</button><button type="button" data-cmd="insertUnorderedList">•—</button><button type="button" data-cmd="removeFormat">⌫</button></div>
+      <div class="ad-rte field" id="ae-editor" contenteditable="true">${variants[sel].html || ''}</div>`;
+    $$('.ad-tab', box).forEach(b => b.onclick = () => { syncSel(); sel = +b.dataset.adv; drawAd(); });
+    $$('.ad-rte-tb [data-cmd]', box).forEach(b => b.onclick = () => { document.execCommand(b.dataset.cmd, false, b.dataset.val || null); const ed = $('#ae-editor'); if (ed) ed.focus(); });
+    $('#ae-gen').onclick = async () => {
+      const vid = curVacId(); if (!vid) return toast('Выберите вакансию');
+      const bt = $('#ae-gen'); bt.disabled = true; const o = bt.textContent; bt.innerHTML = `<span class="db-spin"></span> ${rt('common_gen')}`;
+      try {
+        const d = await api('/api/vacancies/' + vid + '/generate-ad', { method: 'POST', body: JSON.stringify({ target: $('#ae-target').value }) });
+        variants = (d.variants && d.variants.length) ? d.variants : [{ title: '', html: d.adText || '' }];
+        comment = d.comment || ''; sel = 0; drawAd();
+        if (d.ai === false) toast(rt('vac_ad_fallback'));
+      } catch (e) { toast(e.message); }
+      const b2 = $('#ae-gen'); if (b2) { b2.disabled = false; b2.textContent = o; }
+    };
+  }
   $('#main').innerHTML = `<div class="topbar reveal"><h1 class="page-h">${id ? t('ae_edit_title') : t('ae_create_title')}</h1>
       <button class="btn ghost ic-btn" id="ak-back">${_svg('<path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>')}${t('ak_my')}</button></div>
     <div class="card reveal d1"><div class="form-grid">
       <div><label class="lbl">${t('ae_name')}</label><input class="field" id="ae-title" value="${esc(a.title)}" placeholder="${t('ae_name_ph')}"></div>
-      <div><label class="lbl">${t('pm_vacancy')}</label><select class="field" id="ae-vac">${vacOpts}</select></div>
+      <div><label class="lbl">${t('pm_vacancy')}</label><select class="field" id="ae-vac">${vacOpts()}</select></div>
       <div class="full"><label class="lbl">${t('ae_slug')}</label><div class="row"><span class="muted mono" style="font-size:13px">${location.origin}/a/</span><input class="field" id="ae-slug" value="${esc(a.slug || '')}" placeholder="${t('ae_slug_ph')}" style="flex:1"></div></div>
       <div><label class="lbl">${t('ae_btntext')}</label><input class="field" id="ae-btn" value="${esc(a.btnText || 'Откликнуться')}"></div>
-      <div><label class="lbl">${t('ae_ptitle')}</label><input class="field" id="ae-ptitle" value="${esc(a.pageTitle || '')}" placeholder="${t('ae_ptitle_ph')}"></div>
-      <div class="full"><div class="row" style="gap:26px">${switchRow('noCaptcha', t('ae_nocaptcha'), a.noCaptcha)}${switchRow('sendEmail', t('ae_sendemail'), a.sendEmail)}</div></div>
-      <div><label class="lbl">${t('ae_msgapply')}</label><textarea class="field" id="ae-msgapply">${esc(a.msgApply || '')}</textarea></div>
-      <div><label class="lbl">${t('ae_msgdone')}</label><textarea class="field" id="ae-msgdone">${esc(a.msgDone || '')}</textarea></div>
-      <div class="full"><label class="lbl">${t('ae_tests')}</label><div class="ak-tests">${testChk}</div></div>
-      <div class="full"><label class="lbl">${t('ae_desc')}</label><textarea class="field" id="ae-desc" style="min-height:120px">${esc(a.description || '')}</textarea></div>
+      <div><label class="lbl">${t('ae_ptitle')}</label><input class="field" id="ae-ptitle" value="${esc(a.pageTitle || a.title || '')}" placeholder="${t('ae_ptitle_ph')}"></div>
+      <div class="full"><label class="lbl">${t('ae_ad')}</label><div id="ae-adblock"></div></div>
     </div>
     <div class="row" style="margin-top:18px"><button class="btn" id="ae-save">${id ? t('save') : t('ae_save_create')}</button>${id ? `<button class="btn ghost ic-btn" onclick="window.open('${a.url}','_blank')">${t('ae_preview')}</button>` : ''}</div></div>`;
   $('#ak-back').onclick = () => goBack();
-  $$('.switch[data-switch]').forEach(sw => sw.onclick = () => sw.classList.toggle('on'));
+  // автослаг из вакансии/названия, пока пользователь не тронул поле вручную
+  const refreshSlug = () => { if (slugTouched) return; const base = ($('#ae-title').value || '').trim(); const sl = slugify(base); if (sl) $('#ae-slug').value = sl; };
+  if (!id && !a.slug) refreshSlug();
+  $('#ae-slug').addEventListener('input', () => { slugTouched = true; });
+  $('#ae-title').addEventListener('input', refreshSlug);
+  $('#ae-vac').addEventListener('change', () => { a.vacancyId = $('#ae-vac').value; const v = vacs.find(x => x.id === a.vacancyId); if (v && !slugTouched && !$('#ae-title').value.trim()) { $('#ae-title').value = v.name; } refreshSlug(); drawAd(); });
+  drawAd();
   $('#ae-save').onclick = async () => {
+    syncSel();
     const body = { title: $('#ae-title').value.trim() || 'Новая анкета', vacancyId: $('#ae-vac').value, slug: $('#ae-slug').value.trim(),
-      btnText: $('#ae-btn').value, pageTitle: $('#ae-ptitle').value, msgApply: $('#ae-msgapply').value, msgDone: $('#ae-msgdone').value,
-      description: $('#ae-desc').value, tests: $$('.ak-tests input:checked').map(i => i.dataset.test),
-      noCaptcha: $('.switch[data-switch="noCaptcha"]').classList.contains('on'), sendEmail: $('.switch[data-switch="sendEmail"]').classList.contains('on') };
+      btnText: $('#ae-btn').value, pageTitle: $('#ae-ptitle').value, description: variants[sel] ? variants[sel].html : '' };
     try { if (id) await api('/api/anketas/' + id, { method: 'PUT', body: JSON.stringify(body) }); else await api('/api/anketas', { method: 'POST', body: JSON.stringify(body) }); toast(t(`saved`)); goBack(); }
     catch (e) { toast(e.message); }
   };
@@ -4005,13 +4468,66 @@ async function renderSearch() {
   const draw = f => { const list = state.participants.filter(p => !f || (p.name + p.surname + p.email + (p.tel || '') + (p.city || '')).toLowerCase().includes(f)); $('#gs-rows').innerHTML = list.map(p => { const nm = (p.name + ' ' + p.surname).trim() || p.email; return `<tr onclick="openParticipant('${p.id}')"><td><div class="cand"><span class="avatar" style="width:30px;height:30px;background:${avColor(nm)}">${esc(initials(nm, p.email))}</span><b>${esc(nm)}</b></div></td><td>${esc(p.email)}</td><td>${esc(p.tel || '—')}</td><td>${esc(p.city || '—')}</td><td>${esc(p.vacancyName || '—')}</td></tr>`; }).join('') || `<tr><td colspan="5" class="muted" style="text-align:center;padding:30px">Ничего не найдено</td></tr>`; };
   draw(''); $('#gs').oninput = e => draw(e.target.value.toLowerCase());
 }
+// Названия видов операций баланса для «Истории».
+const LEDGER_KIND = {
+  purchase: { ru: 'Начисление · Пакет тестов', pl: 'Doładowanie · Pakiet testów', en: 'Credit · Test package' },
+  signup_bonus: { ru: 'Начисление · Бонус при регистрации', pl: 'Doładowanie · Bonus rejestracyjny', en: 'Credit · Signup bonus' },
+  admin_credit: { ru: 'Начисление · От администратора', pl: 'Doładowanie · Od administratora', en: 'Credit · By admin' },
+  test_spend: { ru: 'Списание · Тест', pl: 'Zużycie · Test', en: 'Spend · Test' },
+  ai_call: { ru: 'Списание · Звонок ИИ', pl: 'Zużycie · Rozmowa AI', en: 'Spend · AI call' },
+  ai_feature: { ru: 'Списание · AI-функция расшифровки', pl: 'Zużycie · Funkcja AI', en: 'Spend · AI feature' },
+  learning: { ru: 'Списание · Обучение', pl: 'Zużycie · Szkolenie', en: 'Spend · Training' },
+  balance_expired: { ru: 'Списание · Сгорание тестов', pl: 'Zużycie · Wygaśnięcie testów', en: 'Spend · Tests expired' },
+};
+// Локализованные названия платных AI-функций расшифровки (по kind).
+const FEATURE_NAME = {
+  full: { ru: 'Полная расшифровка', pl: 'Pełna interpretacja', en: 'Full report' },
+  manual: { ru: 'Инструкция по эксплуатации кандидата', pl: 'Instrukcja obsługi kandydata', en: 'Candidate operation manual' },
+  presentation: { ru: 'Повышение эффективности кандидата', pl: 'Zwiększenie efektywności kandydata', en: 'Candidate effectiveness boost' },
+  chat: { ru: 'Узнать о кандидате', pl: 'Poznaj kandydata', en: 'Ask about the candidate' },
+  productivity: { ru: 'Расшифровка «Резалт»', pl: 'Interpretacja «Result»', en: '«Result» report' },
+};
+function spendWord() { return LANG === 'pl' ? 'Zużycie' : LANG === 'en' ? 'Spend' : 'Списание'; }
+function ledgerTitle(e) {
+  if (e.kind === 'ai_feature') {
+    const f = FEATURE_NAME[e.feature]; const fn = f ? (f[LANG] || f.ru) : (e.feature || (LANG === 'pl' ? 'Funkcja AI' : LANG === 'en' ? 'AI feature' : 'AI-функция'));
+    return spendWord() + ' · ' + fn;
+  }
+  const m = LEDGER_KIND[e.kind];
+  let base = m ? (m[LANG] || m.ru) : (e.delta > 0 ? (LANG === 'pl' ? 'Doładowanie' : LANG === 'en' ? 'Credit' : 'Начисление') : spendWord());
+  if (e.kind === 'test_spend' && e.testType) base += ' «' + testTitle(e.testType) + '»';
+  return base;
+}
+// Деталь операции. Возвращает HTML (может содержать гиперссылки на карточки сотрудника/вакансии).
+function ledgerDetail(e) {
+  if (e.candidate) {
+    const empL = LANG === 'pl' ? 'Pracownik: ' : LANG === 'en' ? 'Employee: ' : 'Сотрудник: ';
+    const vacL = LANG === 'pl' ? ', Wakat: ' : LANG === 'en' ? ', Vacancy: ' : ', Вакансия: ';
+    const emp = e.participantId ? `<a href="#" class="ledg-link" onclick="openParticipant('${esc(e.participantId)}');return false">${esc(e.candidate)}</a>` : esc(e.candidate);
+    let s = empL + emp;
+    if (e.vacancy) { const vac = e.vacancyId ? `<a href="#" class="ledg-link" onclick="openVacancyPage('${esc(e.vacancyId)}');return false">${esc(e.vacancy)}</a>` : esc(e.vacancy); s += vacL + vac; }
+    return s;
+  }
+  return esc(String(e.comment || ''));
+}
+function fmtTestsAmt(delta) {
+  const a = Math.abs(delta); const s = (Math.round(a * 100) / 100).toString().replace('.', ',');
+  return (delta > 0 ? '+' : '−') + s + ' ' + t('tests_word');
+}
+function ledgerRow(e) {
+  const credit = e.delta > 0; const detail = ledgerDetail(e);
+  return `<div class="ledg-row"><span class="ledg-ic ${credit ? 'credit' : 'debit'}">${credit ? '↑' : '↓'}</span>
+    <div class="ledg-main"><div class="ledg-t">${esc(ledgerTitle(e))}</div>${detail ? `<div class="ledg-sub">${detail}</div>` : ''}</div>
+    <div class="ledg-amt ${credit ? 'credit' : 'debit'}">${fmtTestsAmt(e.delta)}</div>
+    <div class="ledg-date">${fmtDate(e.createdAt)}</div></div>`;
+}
 async function renderBalance() {
-  const [b, plansD, purch] = await Promise.all([api('/api/balance'), api('/api/plans'), api('/api/purchases')]);
+  const [b, plansD, histD] = await Promise.all([api('/api/balance'), api('/api/plans'), api('/api/balance/history').catch(() => ({ log: [] }))]);
   state.user = b.balance; const bal = b.balance;
   // символ валюты приходит с сервера (настраивается в админке)
   const cur = { eur: '€', usd: '$', pln: 'zł', rub: '₽' }[plansD.currency] || plansD.currency || '€';
   const plans = plansD.plans.map(p => `<div class="plan ${p.popular ? 'pop' : ''}" data-plan="${p.id}">${p.popular ? `<div class="ribbon">${t('bal_hit')}</div>` : ''}<div class="qty">${p.qty}</div><div class="muted" style="font-weight:600;margin-bottom:14px">${t('tests_word')}</div>${p.save ? `<span class="save">${t('bal_save')} ${p.save}%</span>` : ''}<div class="price">${p.price.toLocaleString('ru')} ${cur}</div><div class="per">${(p.price / p.qty).toFixed(0)} ${cur} ${t('bal_per')}</div><button class="btn ${p.popular ? '' : 'ghost'}" style="width:100%" data-buy="${p.id}">${t('bal_buy')}</button></div>`).join('');
-  const hist = purch.purchases.length ? purch.purchases.map(p => `<div class="pt-row"><span>+${p.qty} ${t('tests_word')} <span class="muted">· ${p.method === 'stripe' ? 'Stripe' : 'demo'}</span></span><span class="mono">${p.amount.toLocaleString('ru')} ${cur} · ${fmtDate(p.createdAt)}</span></div>`).join('') : `<p class="muted">${t('bal_no_purch')}</p>`;
+  const hist = (histD.log && histD.log.length) ? `<div class="ledger">${histD.log.map(ledgerRow).join('')}</div>` : `<p class="muted" style="padding:6px 2px">${t('bal_no_purch')}</p>`;
   $('#main').innerHTML = `<div class="eyebrow reveal">${t('bal_eyebrow')}</div><h1 class="page-h reveal d1" style="margin-top:10px">${t('bal_title')}</h1>
     <div class="stat-grid reveal d2"><div class="stat"><div class="n" style="color:var(--brand)">${bal.balanceAvailable}</div><div class="l">${t('bal_available')}</div></div><div class="stat"><div class="n">${bal.balanceTotal}</div><div class="l">${t('bal_total')}</div></div><div class="stat"><div class="n" style="color:var(--warn)">${bal.balancePending}</div><div class="l">${t('bal_pending')}</div></div></div>
     <p class="muted reveal d2" style="margin:12px 2px 0;font-size:13.5px;display:flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>${t('bal_ttl_note')}${bal.balanceExpiresAt ? ' ' + t('bal_ttl_next') + ' ' + fmtDate(bal.balanceExpiresAt) + '.' : ''}</span></p>
@@ -4090,7 +4606,8 @@ function settingsBody(u) {
   } else if (settingsTab === 'templates') {
     const langs = state.langs.length ? state.langs : Object.keys(LANG_NAME).map(c => ({ code: c, name: LANG_NAME[c] }));
     if (!langs.some(l => l.code === tplLang)) tplLang = langs[0].code;
-    if (!s.mailTemplates || !s.mailTemplates.send) s.mailTemplates = emptyMail();
+    // Всегда наполняем дефолтами (hrscanner-тексты), поверх — сохранённые непустые значения клиента.
+    s.mailTemplates = mergedMail(s);
     const items = mtCat === 'send' ? MAIL_SEND_OURS : MAIL_STATUS_OURS;
     if (!items[mtItem]) mtItem = Object.keys(items)[0];
     if (!s.mailTemplates[mtCat][mtItem]) s.mailTemplates[mtCat][mtItem] = {};
@@ -4457,8 +4974,10 @@ function drawCalendar() {
     '<div class="cal-wrap reveal">' +
       '<div class="cal-head">' +
         '<div><div class="eyebrow">' + ct('eyebrow') + '</div><h1 style="margin:10px 0 0">' + ct('title') + '</h1></div>' +
-        '<button class="btn ghost ic-btn" id="cal-subscribe" title="' + (LANG === 'pl' ? 'Synchronizuj z kalendarzem' : LANG === 'en' ? 'Sync with your calendar' : 'Синхронизация с вашим календарём') + '">' + _svg('<path d="M21 12a9 9 0 1 1-2.6-6.3M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round"/>') + '</button>' +
-        '<button class="btn" id="cal-new">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + ' ' + ct('neww') + '</button>' +
+        '<div class="cal-head-btns">' +
+          '<button class="btn ghost" id="cal-subscribe" title="' + (LANG === 'pl' ? 'Synchronizacja z kalendarzem' : LANG === 'en' ? 'Sync with calendar' : 'Синхронизация с календарём') + '">' + _svg('<path d="M21 12a9 9 0 1 1-2.6-6.3M21 3v6h-6" stroke-linecap="round" stroke-linejoin="round"/>') + '<span>' + (LANG === 'pl' ? 'Synchronizacja z kalendarzem' : LANG === 'en' ? 'Sync with calendar' : 'Синхронизация с календарём') + '</span></button>' +
+          '<button class="btn" id="cal-new">' + _svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>') + ' ' + ct('neww') + '</button>' +
+        '</div>' +
       '</div>' +
       '<div class="cal-toolbar">' +
         '<div class="cal-nav">' +
@@ -4589,6 +5108,7 @@ function openCalModal(ev, dateIso, prefill) {
   openCalModalInner(ev, dateIso, prefill);
 }
 function openCalModalInner(ev, dateIso, prefill) {
+  if (!Object.keys(CAL_STAGE).length) rebuildCalStages(); // модалку могли открыть из карточки кандидата — без рендера календаря
   const isEdit = !!ev; const f = ev ? Object.assign({}, ev) : Object.assign(calBlank(dateIso), prefill || {});
   f.format = calFmtKey(f.format);
   const setup = interviewSetup() || {};
@@ -4764,24 +5284,32 @@ function openCalModalInner(ev, dateIso, prefill) {
 // Подписка на календарь собеседований во внешнем календаре (ICS-фид: Google / Outlook / Apple).
 async function openCalSubscribe() {
   const T = {
-    ru: { title: 'Синхронизация с вашим календарём', lead: 'Подпишитесь на календарь собеседований — все встречи (и изменения) будут автоматически появляться в вашем Google, Outlook или Apple календаре.', copy: 'Копировать ссылку', copied: 'Ссылка скопирована', hint: 'Google и Outlook обновляют подписанные календари раз в несколько часов. Apple/iPhone — по настройке «Обновление» в календаре.', manual: 'Или добавьте ссылку вручную: в календаре выберите «Добавить по URL» и вставьте её.' },
-    pl: { title: 'Synchronizacja z Twoim kalendarzem', lead: 'Subskrybuj kalendarz rozmów — wszystkie spotkania (i zmiany) będą automatycznie pojawiać się w Twoim kalendarzu Google, Outlook lub Apple.', copy: 'Kopiuj link', copied: 'Link skopiowany', hint: 'Google i Outlook odświeżają subskrybowane kalendarze co kilka godzin.', manual: 'Możesz też dodać link ręcznie: w kalendarzu wybierz „Dodaj przez URL”.' },
-    en: { title: 'Sync with your calendar', lead: 'Subscribe to the interview calendar — all meetings (and changes) will automatically appear in your Google, Outlook or Apple calendar.', copy: 'Copy link', copied: 'Link copied', hint: 'Google and Outlook refresh subscribed calendars every few hours.', manual: 'Or add the link manually: choose "Add by URL" in your calendar.' },
+    ru: { title: 'Синхронизация с вашим календарём', lead: 'Подпишитесь на календарь собеседований — все встречи (и изменения) будут автоматически появляться в вашем Google, Outlook или Apple календаре.', copy: 'Копировать ссылку', copied: 'Ссылка скопирована', hint: 'Google и Outlook обновляют подписанные календари раз в несколько часов. Apple/iPhone — по настройке «Обновление» в календаре.', manual: 'Или добавьте ссылку вручную: в календаре выберите «Добавить по URL» и вставьте её.', qr: 'Наведите камеру телефона на QR-код — подписка на календарь добавится автоматически.' },
+    pl: { title: 'Synchronizacja z Twoim kalendarzem', lead: 'Subskrybuj kalendarz rozmów — wszystkie spotkania (i zmiany) będą automatycznie pojawiać się w Twoim kalendarzu Google, Outlook lub Apple.', copy: 'Kopiuj link', copied: 'Link skopiowany', hint: 'Google i Outlook odświeżają subskrybowane kalendarze co kilka godzin.', manual: 'Możesz też dodać link ręcznie: w kalendarzu wybierz „Dodaj przez URL”.', qr: 'Skieruj aparat telefonu na kod QR — subskrypcja kalendarza doda się automatycznie.' },
+    en: { title: 'Sync with your calendar', lead: 'Subscribe to the interview calendar — all meetings (and changes) will automatically appear in your Google, Outlook or Apple calendar.', copy: 'Copy link', copied: 'Link copied', hint: 'Google and Outlook refresh subscribed calendars every few hours.', manual: 'Or add the link manually: choose "Add by URL" in your calendar.', qr: 'Point your phone camera at the QR code — the calendar subscription will be added automatically.' },
   }[LANG] || {};
   let feed;
   try { feed = await api('/api/calendar/feed'); } catch (e) { toast(e.message); return; }
   const enc = encodeURIComponent(feed.webcal);
   const gUrl = 'https://calendar.google.com/calendar/render?cid=' + enc;
   const oUrl = 'https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(feed.url) + '&name=' + encodeURIComponent('HR PRO AI');
-  const btn = (href, label, svg) => '<a class="btn soft" style="flex:1;justify-content:center;text-align:center" target="_blank" rel="noopener" href="' + href + '">' + svg + ' ' + label + '</a>';
+  const btn = (href, label, svg) => '<a class="btn soft cal-sub-btn" target="_blank" rel="noopener" href="' + href + '">' + svg + '<span>' + label + '</span></a>';
+  let qrTag = '';
+  try {
+    if (typeof qrcode === 'function') {
+      const qr = qrcode(0, 'M'); qr.addData(feed.webcal); qr.make();
+      qrTag = '<div class="cal-qr"><div class="cal-qr-img">' + qr.createImgTag(5, 8) + '</div><p class="db-note" style="margin:10px 0 0;font-size:12px;line-height:1.5;max-width:260px">' + T.qr + '</p></div>';
+    }
+  } catch (_) {}
   mkDecodeModal('<div class="cal-modal">' +
     '<h2 class="db-h" style="margin:0 0 8px">' + T.title + '</h2>' +
     '<p class="db-note" style="margin:0 0 14px;line-height:1.55">' + T.lead + '</p>' +
-    '<div class="row" style="gap:8px;flex-wrap:wrap">' +
+    '<div class="cal-sub-btns">' +
       btn(gUrl, 'Google', _svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/>')) +
       btn(oUrl, 'Outlook', _svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>')) +
-      btn(feed.webcal, 'Apple / iPhone', _svg('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>')) +
+      btn(feed.webcal, 'Apple', _svg('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>')) +
     '</div>' +
+    qrTag +
     '<div class="row" style="gap:6px;margin-top:14px"><input class="field sm" style="flex:1" readonly value="' + esc(feed.url) + '" id="calfeed-url">' +
       '<button class="btn ghost sm" id="calfeed-copy">' + T.copy + '</button></div>' +
     '<p class="db-note" style="margin:12px 0 0;font-size:11.5px;color:#6b7492">' + T.manual + '<br>' + T.hint + '</p>' +

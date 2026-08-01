@@ -118,9 +118,19 @@ async function refreshEntry(settings, p, entry, save) {
   await finalize(p, entry);
   entry.status = 'done';
   entry.doneAt = nowISO();
+  // Платный ИИ-звонок: списываем ТОЛЬКО за состоявшийся разговор (есть содержательный транскрипт).
+  // Недозвон/сброс до разговора → нет транскрипта → не списываем. Списываем один раз на запись.
+  if (!entry.billed && entryAnswered(entry) && typeof _biller === 'function') {
+    try { if (_biller(p, entry) !== false) entry.billed = true; } catch (_) {}
+  }
   if (save) save();
   return entry;
 }
+// Состоялся ли разговор: хотя бы одна попытка с содержательным транскриптом (≥20 символов).
+function entryAnswered(entry) { return (entry.attempts || []).some(a => (a.transcript || '').trim().length >= 20); }
+// Биллинг платных звонков: server.js внедряет функцию, списывающую 0.1 теста с владельца кандидата.
+let _biller = null;
+function setBiller(fn) { _biller = fn; }
 
 // Свести все попытки этапа: извлечь ответы (Claude из склеенных транскриптов) и записать в форму этапа.
 async function finalize(p, entry) {
@@ -191,4 +201,4 @@ function publicView(p, lang) {
   }).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 }
 
-module.exports = { startCall, refreshEntry, refreshAll, publicView, logOf, titleOf, labelsOf, isFinal, MAX_CONTINUATIONS };
+module.exports = { startCall, refreshEntry, refreshAll, publicView, logOf, titleOf, labelsOf, isFinal, entryAnswered, setBiller, MAX_CONTINUATIONS };

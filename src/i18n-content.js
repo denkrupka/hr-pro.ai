@@ -55,6 +55,7 @@ function localizeResult(result, type, lang) {
       if (d.interp[k] && d.interp[k][lvl] != null) p.interpretation = d.interp[k][lvl];
       p.band = pick(ZONE_BAND, lang, p.band); p.label = pick(ZONE_LABEL, lang, p.label);
     }
+    (result.types || []).forEach(tp => { const td = d.types && d.types[tp.id]; if (td) { tp.title = td.title; tp.text = td.text; } });
   } else if (type === 'logic') {
     result.level = pick(ZONE_BAND, lang, result.level);
     if (IQ_BANDS[lang]) result.bands = IQ_BANDS[lang];

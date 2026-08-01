@@ -52,6 +52,7 @@ export function processOf(v) {
 export function vacFull(v) {
   return { id: v.id, name: v.name, lang: v.lang, sectionId: v.sectionId || null,
     requisitionId: v.requisitionId || null, adText: v.adText || '', adMode: v.adMode || 'manual',
+    adComment: v.adComment || '', adVariants: Array.isArray(v.adVariants) ? v.adVariants : [],
     published: !!v.published, workflow: Array.isArray(v.workflow) ? v.workflow : recruit.STAGE_KEYS.slice(),
     knowledge: v.knowledge || { questions: [], passScore: 60 },
     knowledgeTests: knowledgeTestsOf(v),
@@ -108,7 +109,10 @@ export function buildWorkflow(p, lang, vac, tests) {
           st.suggested = gr.percent >= ((t.knowledge && t.knowledge.passScore) || 60);
         } else if (key === 'result') {
           const h = ai.resultHint(t, lang); st.analysis = { verdict: h.verdict, notes: h.notes, tone: h.tone };
-          st.suggested = h.category !== 'Вейтер';
+          const _boss = /руковод|директор|начальн|заведующ|управляющ|главн|head|chief|director|ceo|coo|cto/i.test((vac && vac.name) || '');
+          const _tgt = (proc && proc.target) || (_boss ? 'performer' : 'executor');
+          st.suggested = _tgt === 'performer' ? (h.category === 'Виннер') : (h.category !== 'Вейтер');
+          st.targetType = _tgt; st.resultCategory = h.category;
         } else {
           const r = localizeResult(computeResult(t), 'tools', lang); const h = ai.toolsHint(r, lang);
           st.analysis = { verdict: h.verdict, notes: h.notes }; st.suggested = true;

@@ -29,6 +29,8 @@ export function labelsOf(kind, lang) { if (kind === 'references') return REF_LAB
 
 function logOf(p) { p.workflow = p.workflow || {}; p.workflow.aiCallLog = p.workflow.aiCallLog || []; return p.workflow.aiCallLog; }
 export function isFinal(e) { return e.status === 'done' || e.status === 'failed'; }
+// Состоялся ли разговор: хотя бы одна попытка с содержательным транскриптом (≥20 символов).
+export function entryAnswered(entry) { return (entry.attempts || []).some(a => (a.transcript || '').trim().length >= 20); }
 function lastAttempt(e) { return e.attempts && e.attempts[e.attempts.length - 1]; }
 function countFilled(ans) { return Object.values(ans || {}).filter(v => typeof v === 'string' && v.trim()).length; }
 

@@ -17,14 +17,14 @@ const KINDS = {
     title: tri('HR PRO AI · Полная расшифровка', 'HR PRO AI · Pełna interpretacja', 'HR PRO AI · Full interpretation'),
     eyebrow: tri('Полная расшифровка · отчёт', 'Pełna interpretacja · raport', 'Full interpretation · report'),
     heroTitle: tri('Расшифровка теста личностных качеств', 'Interpretacja testu cech osobowości', 'Personality traits test interpretation'),
-    heroSub: tri('Разбор каждой из 10 точек, проверка компульсивности и синдромов, целостный психологический портрет и вердикт по должности.',
-      'Analiza każdego z 10 punktów, sprawdzenie kompulsywności i syndromów, całościowy portret psychologiczny i werdykt względem stanowiska.',
-      'A breakdown of all 10 points, a compulsivity and syndrome check, a holistic psychological portrait and a verdict for the role.'),
+    heroSub: tri('Разбор каждой из 10 точек, проверка компульсивности и синдромов.',
+      'Analiza każdego z 10 punktów, sprawdzenie kompulsywności i syndromów.',
+      'A breakdown of all 10 points, a compulsivity and syndrome check.'),
   },
   manual: {
     prompt: 'manual',
-    title: tri('HR PRO AI · Инструкция по эксплуатации', 'HR PRO AI · Instrukcja obsługi', 'HR PRO AI · Operating manual'),
-    eyebrow: tri('Инструкция по эксплуатации', 'Instrukcja obsługi', 'Operating manual'),
+    title: tri('HR PRO AI · Инструкция по эксплуатации кандидата', 'HR PRO AI · Instrukcja obsługi kandydata', 'HR PRO AI · Candidate operating manual'),
+    eyebrow: tri('Инструкция по эксплуатации кандидата', 'Instrukcja obsługi kandydata', 'Candidate operating manual'),
     heroTitle: tri('Как работать с этим человеком', 'Jak pracować z tą osobą', 'How to work with this person'),
     heroSub: tri('Практическое руководство для руководителя: стиль управления, мотивация, контроль, обратная связь, конфликты и типичные ошибки — выведены из профиля теста.',
       'Praktyczny przewodnik dla menedżera: styl zarządzania, motywacja, kontrola, informacja zwrotna, konflikty i typowe błędy — wyprowadzone z profilu testu.',
@@ -32,8 +32,8 @@ const KINDS = {
   },
   presentation: {
     prompt: 'presentation',
-    title: tri('HR PRO AI · Сценарий предоставления оценки', 'HR PRO AI · Scenariusz przekazania oceny', 'HR PRO AI · Assessment delivery script'),
-    eyebrow: tri('Сценарий предоставления оценки', 'Scenariusz przekazania oceny', 'Assessment delivery script'),
+    title: tri('HR PRO AI · Повышение эффективности кандидата', 'HR PRO AI · Zwiększenie efektywności kandydata', 'HR PRO AI · Boosting the candidate’s effectiveness'),
+    eyebrow: tri('Повышение эффективности кандидата', 'Zwiększenie efektywności kandydata', 'Boosting the candidate’s effectiveness'),
     heroTitle: tri('Как подать сотруднику результат теста', 'Jak przekazać pracownikowi wynik testu', 'How to present the test result to the employee'),
     heroSub: tri('Пошаговый сценарий встречи: как открыть разговор, разобрать сильные стороны и зоны развития, поговорить о синдромах и завершить — по демонстрации лектора.',
       'Scenariusz spotkania krok po kroku: jak otworzyć rozmowę, omówić mocne strony i obszary rozwoju, poruszyć syndromy i zakończyć — według demonstracji wykładowcy.',
@@ -54,11 +54,35 @@ const TRUNC = tri(
   '<div class="callout warn"><div class="co-title">The response was length-limited</div><div class="co-body">The interpretation exceeded the limit and may be truncated. Regenerate if needed.</div></div>');
 
 function register(app, deps) {
-  const { db, save, nowISO, requireAuth, integ, computeResult, resultHint, getBaseUrl } = deps;
+  const { db, save, nowISO, requireAuth, integ, computeResult, resultHint, getBaseUrl,
+    expireBalance, spendLots, logBalance, publicUser, testTitleOf } = deps;
+  // Платные AI-функции: цены и последовательность покупки.
+  const FEATURE_PRICES = Object.assign({}, aid.AI_FEATURE_PRICES, aid.AI_FEATURE_PRICES_PROD);
+  const FEATURE_SEQ = aid.AI_FEATURE_SEQ;
+  function featureOwned(test, feature) { return !!(test.purchases && test.purchases[feature]); }
   const langOf = req => { const l = (req.query && req.query.lang) || (req.body && req.body.lang) || ''; return ['ru', 'pl', 'en'].includes(l) ? l : 'ru'; };
 
   const ownTest = (id, userId) => db().tests.find(t => t.id === id && t.userId === userId);
   const decFile = (testId, kind) => path.join(DECODE_DIR, `${testId}_${kind}.html`);
+
+  // Расшифровка живёт максимум STALE_MS; если «pending» висит дольше — генерация зависла/прервалась
+  // (например, сервер перезапустили во время фоновой задачи). Помечаем как ошибку, чтобы можно было запустить заново.
+  const STALE_MS = 4 * 60 * 1000;
+  function resolveStale(test) {
+    if (!test || !test.decodes) return false;
+    let changed = false;
+    for (const k of Object.keys(test.decodes)) {
+      const s = test.decodes[k];
+      if (s && s.status === 'pending') {
+        const started = s.startedAt ? new Date(s.startedAt).getTime() : 0;
+        if (!started || Date.now() - started > STALE_MS) {
+          test.decodes[k] = { status: 'error', error: 'Генерация зависла или прервалась — запустите заново', doneAt: nowISO(), lang: s.lang };
+          changed = true;
+        }
+      }
+    }
+    return changed;
+  }
 
   // Обязанности из заявки на найм (динамическая форма): берём поле, похожее на «обязанности», иначе — длинные текстовые.
   function reqDuties(rq) {
@@ -94,6 +118,58 @@ function register(app, deps) {
       jobContextText(ctx) + '\n\n' + aid.toolsResultText(result);
   }
 
+  // ── Текстовые сводки результатов по типам тестов (для полного досье в чате) ──
+  function salesResultText(r) {
+    const lines = (r.order || []).map(k => { const pt = r.points[k]; return `${k}. ${pt.name}: ${pt.value}/100 (${pt.label})`; });
+    let out = 'РЕЗУЛЬТАТ ТЕСТА «СЕЙЛС» (12 показателей продаж, шкала 0–100):\n' + lines.join('\n');
+    if (r.types && r.types.length) out += '\n\nТип(ы) продажника: ' + r.types.map(tp => `${tp.title} — ${tp.text}`).join('\n• ');
+    return out;
+  }
+  function logicResultText(r) {
+    return `РЕЗУЛЬТАТ ТЕСТА «ЛОГИС» (интеллект): IQ ${r.iq} — ${r.level}. Верных ответов: ${r.correct}/${r.total}.`;
+  }
+  function prodResultText(t, lang) {
+    try { const h = resultHint(t, lang); if (h) return 'РЕЗУЛЬТАТ ТЕСТА «РЕЗАЛТ» (продуктивность, Виннер/Дуер/Вейтер):\n' + h.verdict + '\n' + (h.notes || []).map(n => '• ' + n).join('\n'); } catch (_) {}
+    return 'РЕЗУЛЬТАТ ТЕСТА «РЕЗАЛТ» (продуктивность): тест пройден, авто-анализ недоступен.';
+  }
+  function knowResultText(r) {
+    const sc = r.score != null ? r.score : (r.correct != null ? r.correct : null);
+    const tot = r.total != null ? r.total : null;
+    const pct = r.percent != null ? r.percent : null;
+    return `РЕЗУЛЬТАТ ТЕСТА «ПРОВЕРКА ЗНАНИЙ»: ${sc != null ? sc : '—'}${tot ? '/' + tot : ''}${pct != null ? ` (${pct}%)` : ''}.`;
+  }
+  // Полное досье кандидата для чата «Узнать о кандидате»: все тесты + заявка + вакансия + объявление + резюме.
+  function candidateDossier(test, ctx, lang) {
+    const data = db();
+    const p = ctx.p;
+    const parts = [];
+    const demo = p ? [p.age ? 'возраст ' + p.age : '', p.city ? 'город ' + p.city : '', p.sex ? 'пол ' + p.sex : ''].filter(Boolean).join(', ') : '';
+    parts.push('КАНДИДАТ: ' + (ctx.candidate || '—') + (demo ? ` (${demo})` : ''));
+    parts.push(jobContextText(ctx));
+    if (ctx.vac && ctx.vac.adText) parts.push('ТЕКСТ ОБЪЯВЛЕНИЯ О ВАКАНСИИ:\n' + String(ctx.vac.adText).trim().slice(0, 4000));
+    if (ctx.rq && ctx.rq.form) {
+      const rf = Object.entries(ctx.rq.form)
+        .filter(([, v]) => (typeof v === 'string' && v.trim()) || (Array.isArray(v) && v.length))
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('\n');
+      if (rf) parts.push('ЗАЯВКА НА НАЙМ (требования должности):\n' + rf);
+    }
+    if (p && p.cv && p.cv.name) parts.push('РЕЗЮМЕ (CV): прикреплён файл «' + p.cv.name + '»' + (p.cvText ? ':\n' + String(p.cvText).slice(0, 4000) : ' (текст резюме недоступен для чтения ИИ — учитывай, что он есть у рекрутёра).'));
+    const tests = data.tests.filter(x => x.participantId === test.participantId && x.userId === test.userId && x.status === 'done');
+    const blocks = tests.map(x => {
+      try {
+        const r = computeResult(x);
+        if (x.type === 'tools') return aid.toolsResultText(r);
+        if (x.type === 'sales') return salesResultText(r);
+        if (x.type === 'logic') return logicResultText(r);
+        if (x.type === 'result') return prodResultText(x, lang);
+        if (x.type === 'knowledge') return knowResultText(r);
+      } catch (_) {}
+      return null;
+    }).filter(Boolean);
+    parts.push('РЕЗУЛЬТАТЫ ВСЕХ ПРОЙДЕННЫХ ТЕСТОВ КАНДИДАТА:\n\n' + (blocks.join('\n\n─────────\n\n') || 'нет завершённых тестов'));
+    return 'ДОСЬЕ КАНДИДАТА (полный контекст, не меняется в течение беседы):\n\n' + parts.join('\n\n');
+  }
+
   // ── письмо «расшифровка готова» владельцу (HR) ──
   const MAIL = {
     subj: tri('Расшифровка готова', 'Interpretacja gotowa', 'Interpretation ready'),
@@ -125,9 +201,16 @@ function register(app, deps) {
     const cfg = KINDS[kind];
     const result = computeResult(test);
     const ctx = vacCtx(test);
-    const promptBlock = aid.PROMPTS[cfg.prompt] + '\n\n' + aid.GUARD_TOOLS + aid.langLine(lang) + '\n\n' + aid.HTML_CONTRACT;
+    const STRUCT = { full: aid.FULL_STRUCTURE, manual: aid.MANUAL_STRUCTURE, presentation: aid.PRESENTATION_STRUCTURE }[kind];
+    const promptBlock = aid.PROMPTS[cfg.prompt] + '\n\n' + aid.GUARD_TOOLS + aid.langLine(lang) + '\n\n' + aid.HTML_CONTRACT +
+      (STRUCT ? '\n\n' + STRUCT : '');
+    const TASK = {
+      full: 'Разбери ВСЕ 10 точек A–J и собери полную расшифровку по структуре ниже.',
+      manual: 'Составь ДЕТАЛЬНУЮ инструкцию по эксплуатации сотрудника (как им управлять, мотивировать, контролировать) — по структуре из раздела ОФОРМЛЕНИЕ ИНСТРУКЦИИ. Не делай поточечный разбор 10 точек — только выводы для управления.',
+      presentation: 'Составь ПОШАГОВЫЙ сценарий встречи для предоставления оценки сотруднику — по структуре из раздела ОФОРМЛЕНИЕ СЦЕНАРИЯ ВСТРЕЧИ. Не делай поточечный разбор 10 точек — это скрипт встречи с дословными фразами.',
+    }[kind] || 'Выполни задачу по методике.';
     const userContent = jobContextText(ctx) + '\n\n' + aid.toolsResultText(result) +
-      '\n\nВыполни задачу строго по методике из базы знаний и в заданном HTML-формате. Разбери ВСЕ 10 точек A–J.';
+      '\n\nВыполни задачу строго по методике из базы знаний и в заданном HTML-формате. ' + TASK;
     const out = await aid.callClaude({
       kbBlock: aid.TOOLS_KB_BLOCK, promptBlock,
       messages: [{ role: 'user', content: userContent }], maxTokens: aid.MAX_TOKENS_DECODE,
@@ -187,6 +270,7 @@ function register(app, deps) {
   app.get('/api/decode/:testId', requireAuth, (req, res) => {
     const test = ownTest(req.params.testId, req.user.id);
     if (!test) return res.status(404).json({ error: 'Не найдено' });
+    if (resolveStale(test)) save();
     const ctx = vacCtx(test);
     const kinds = kindsForType(test.type);
     const states = {};
@@ -196,8 +280,37 @@ function register(app, deps) {
       hasChat: test.type === 'tools',
       chatCount: (test.aiChat || []).length,
       apiConfigured: aid.hasApiKey(),
+      purchases: test.purchases || {},
+      prices: FEATURE_PRICES, seq: FEATURE_SEQ,
       context: { candidate: ctx.candidate, vacancy: ctx.vacName, roleType: ctx.roleType, duties: ctx.duties },
     });
+  });
+
+  // ── ПОКУПКА платной AI-функции (списывает тесты с баланса) ──
+  app.post('/api/decode/:testId/purchase/:feature', requireAuth, (req, res) => {
+    const test = ownTest(req.params.testId, req.user.id);
+    if (!test) return res.status(404).json({ error: 'Не найдено' });
+    const feature = req.params.feature;
+    const price = FEATURE_PRICES[feature];
+    if (price == null) return res.status(400).json({ error: 'Неизвестная функция' });
+    // функция должна подходить типу теста
+    const allowed = test.type === 'tools' ? ['full', 'manual', 'presentation', 'chat'] : test.type === 'result' ? ['productivity'] : [];
+    if (!allowed.includes(feature)) return res.status(400).json({ error: 'Функция недоступна для этого теста' });
+    test.purchases = test.purchases || {};
+    if (test.purchases[feature]) return res.json({ ok: true, alreadyOwned: true, purchases: test.purchases, balance: publicUser(req.user) });
+    // последовательность покупки для full → manual → presentation
+    const si = FEATURE_SEQ.indexOf(feature);
+    if (si > 0) { const prev = FEATURE_SEQ[si - 1]; if (!test.purchases[prev]) return res.status(409).json({ error: 'Сначала купите предыдущую функцию', needPrev: prev }); }
+    const u = req.user;
+    if (typeof expireBalance === 'function') expireBalance(u);
+    const avail = (u.balanceTotal || 0) - (u.balancePending || 0);
+    if (avail < price) return res.status(400).json({ error: `Недостаточно тестов на балансе (нужно ${price}, доступно ${avail})`, insufficient: true });
+    u.balanceTotal = Math.max(0, (u.balanceTotal || 0) - price);
+    if (typeof spendLots === 'function') spendLots(u, price);
+    if (typeof logBalance === 'function') logBalance(u.id, -price, 'ai_feature', { testId: test.id, feature, comment: `AI-функция «${feature}» — тест «${(testTitleOf && testTitleOf(test.type)) || test.type}»` });
+    test.purchases[feature] = true;
+    save();
+    res.json({ ok: true, purchases: test.purchases, balance: publicUser(req.user) });
   });
 
   // ── Сохранить контекст вакансии (вакансия/тип должности/обязанности) ──
@@ -230,9 +343,12 @@ function register(app, deps) {
     if (kind === 'chat' || kind === 'context') return next();   // зарезервированные пути — свои роуты
     if (!kindsForType(test.type).includes(kind)) return res.status(400).json({ error: 'Недопустимый тип расшифровки' });
     if (!aid.hasApiKey()) return res.status(503).json({ error: 'AI не настроен: задайте ANTHROPIC_API_KEY на сервере' });
+    // Платная функция: генерировать можно только после покупки.
+    if (!featureOwned(test, kind)) return res.status(402).json({ error: 'Функция не куплена', needPurchase: true, feature: kind });
     // Контекст вакансии обязателен — не отправляем в ИИ пустой запрос по этим данным.
     const vc = vacCtx(test);
     if (!vc.roleType || !vc.vacName || !vc.duties) return res.status(422).json({ error: 'Заполните контекст вакансии (вакансия, тип должности, обязанности)' });
+    resolveStale(test); // зависший pending → error, чтобы запуск ниже не блокировался
     const cur = test.decodes && test.decodes[kind];
     if (cur && cur.status === 'pending') return res.json({ status: 'pending' });
     if (cur && cur.status === 'done' && !(req.body && req.body.regenerate)) return res.json({ status: 'done' });
@@ -243,38 +359,88 @@ function register(app, deps) {
     res.json({ status: 'pending' });
   });
 
-  // ── СТРАНИЦА результата (стилизованная, с PDF-печатью) ──
+  // Собирает HTML расшифровки. opts.publicView — публичный просмотр по ссылке (без тулбара портала/шаринга).
+  function buildDecodeHtml(test, kind, langHint, opts = {}) {
+    const st = test.decodes && test.decodes[kind];
+    if (!st || st.status !== 'done') return null;
+    let content = '';
+    try { content = fs.readFileSync(decFile(test.id, kind), 'utf8'); } catch (_) { return null; }
+    const lang = (st.lang && ['ru', 'pl', 'en'].includes(st.lang)) ? st.lang : (['ru', 'pl', 'en'].includes(langHint) ? langHint : 'ru');
+    const ctx = vacCtx(test);
+    const trunc = st.truncated ? pick(TRUNC, lang) : '';
+    const common = { lang, publicView: !!opts.publicView, share: opts.publicView ? null : { testId: test.id, kind }, backUrl: opts.publicView ? '' : `${getBaseUrl()}/result/${test.id}` };
+    if (test.type === 'tools') {
+      let result = computeResult(test);
+      try { const oca = require('./scoring/oca'); if (oca.localizeResult) result = oca.localizeResult(result, 'tools', lang); } catch (_) {}
+      const cfg = KINDS[kind];
+      return aid.tpl.page(Object.assign({}, common, {
+        title: pick(cfg.title, lang), eyebrow: pick(cfg.eyebrow, lang), heroTitle: pick(cfg.heroTitle, lang), heroSub: pick(cfg.heroSub, lang),
+        candidate: ctx.candidate, vacancy: ctx.vacName, roleWordKey: kind === 'manual' ? 'employee' : 'candidate',
+        spectrumHtml: aid.tpl.spectrum(result.points, result.order, lang),
+        syndromesHtml: kind === 'full' ? aid.tpl.syndromesBlock(result, lang) : '',
+        isLead: ctx.roleType === 'lead', bodyHtml: trunc + content,
+      }));
+    }
+    return aid.tpl.page(Object.assign({}, common, {
+      title: pick(PROD.title, lang), eyebrow: pick(PROD.eyebrow, lang), heroTitle: pick(PROD.heroTitle, lang), heroSub: pick(PROD.heroSub, lang),
+      candidate: ctx.candidate, vacancy: ctx.vacName, spectrumHtml: '', bodyHtml: trunc + content,
+    }));
+  }
+  const shareToken = () => Math.random().toString(36).slice(2, 12);
+  // ── СТРАНИЦА расшифровки (для владельца, с тулбаром и шарингом) ──
   app.get('/decode/:testId/:kind', requireAuth, (req, res) => {
     const test = ownTest(req.params.testId, req.user.id);
     if (!test) return res.status(404).send('Не найдено');
     const kind = req.params.kind;
     if (!kindsForType(test.type).includes(kind)) return res.status(404).send('Не найдено');
+    const html = buildDecodeHtml(test, kind, langOf(req));
+    if (!html) return res.status(409).send('Расшифровка ещё не готова');
+    res.set('Content-Type', 'text/html; charset=utf-8').send(html);
+  });
+  // Публичная ссылка на расшифровку: создать/получить/отозвать токен (30 дней) — владелец.
+  app.post('/api/decode/:testId/:kind/share', requireAuth, (req, res) => {
+    const test = ownTest(req.params.testId, req.user.id);
+    if (!test) return res.status(404).json({ error: 'Не найдено' });
+    const kind = req.params.kind;
+    if (!kindsForType(test.type).includes(kind)) return res.status(400).json({ error: 'Недопустимо' });
     const st = test.decodes && test.decodes[kind];
-    if (!st || st.status !== 'done') return res.status(409).send('Расшифровка ещё не готова');
-    let content = '';
-    try { content = fs.readFileSync(decFile(test.id, kind), 'utf8'); } catch (_) { return res.status(410).send('Файл расшифровки не найден'); }
-    const lang = (st.lang && ['ru', 'pl', 'en'].includes(st.lang)) ? st.lang : langOf(req);
-    const ctx = vacCtx(test);
-    const backUrl = `${getBaseUrl()}/result/${test.id}`;
-    const trunc = st.truncated ? pick(TRUNC, lang) : '';
-
-    let html;
-    if (test.type === 'tools') {
-      const result = computeResult(test);
-      const cfg = KINDS[kind];
-      html = aid.tpl.page({
-        lang, title: pick(cfg.title, lang), eyebrow: pick(cfg.eyebrow, lang), heroTitle: pick(cfg.heroTitle, lang), heroSub: pick(cfg.heroSub, lang),
-        candidate: ctx.candidate, vacancy: ctx.vacName, roleWordKey: kind === 'manual' ? 'employee' : 'candidate',
-        spectrumHtml: aid.tpl.spectrum(result.points, result.order),
-        bodyHtml: trunc + content, backUrl,
-      });
-    } else {
-      html = aid.tpl.page({
-        lang, title: pick(PROD.title, lang), eyebrow: pick(PROD.eyebrow, lang), heroTitle: pick(PROD.heroTitle, lang), heroSub: pick(PROD.heroSub, lang),
-        candidate: ctx.candidate, vacancy: ctx.vacName,
-        spectrumHtml: '', bodyHtml: trunc + content, backUrl,
-      });
-    }
+    if (!st || st.status !== 'done') return res.status(409).json({ error: 'Расшифровка не готова' });
+    test.decodeShares = test.decodeShares || {};
+    if (req.body && req.body.revoke) { delete test.decodeShares[kind]; save(); return res.json({ ok: true, revoked: true }); }
+    let sh = test.decodeShares[kind];
+    if (!sh || !sh.token) { sh = { token: shareToken(), createdAt: nowISO() }; test.decodeShares[kind] = sh; save(); }
+    res.json({ ok: true, url: `${getBaseUrl()}/rd/${test.id}.${kind}.${sh.token}`, token: sh.token });
+  });
+  // Отправить ссылку на расшифровку по SMS — владелец.
+  app.post('/api/decode/:testId/:kind/share/sms', requireAuth, async (req, res) => {
+    const test = ownTest(req.params.testId, req.user.id);
+    if (!test) return res.status(404).json({ error: 'Не найдено' });
+    const kind = req.params.kind;
+    const to = String((req.body && req.body.to) || '').replace(/[^\d+]/g, '');
+    if (to.replace(/\D/g, '').length < 9) return res.status(400).json({ error: 'Некорректный номер' });
+    test.decodeShares = test.decodeShares || {};
+    let sh = test.decodeShares[kind];
+    if (!sh || !sh.token) { sh = { token: shareToken(), createdAt: nowISO() }; test.decodeShares[kind] = sh; save(); }
+    const shareUrl = `${getBaseUrl()}/rd/${test.id}.${kind}.${sh.token}`;
+    try {
+      const r = await integ.sendSms(null, { to, message: 'HR PRO AI — расшифровка теста кандидата: ' + shareUrl });
+      if (r && r.skipped) return res.status(503).json({ error: 'SMS не настроен' });
+      res.json({ ok: true });
+    } catch (e) { res.status(502).json({ error: e.message }); }
+  });
+  // Публичная расшифровка по ссылке-токену (без авторизации): /rd/{testId}.{kind}.{token}
+  app.get('/rd/:combo', (req, res) => {
+    const parts = String(req.params.combo || '').split('.');
+    if (parts.length < 3) return res.status(404).send('Ссылка недоступна');
+    const token = parts.pop(), kind = parts.pop(), testId = parts.join('.');
+    const test = db().tests.find(t => t.id === testId);
+    const sh = test && test.decodeShares && test.decodeShares[kind];
+    const fresh = sh && sh.token === token && (Date.now() - new Date(sh.createdAt).getTime() < 30 * 86400000);
+    if (!test || !fresh) return res.status(404).send('Ссылка недоступна или истекла');
+    const owner = db().users.find(u => u.id === test.userId);
+    if (owner && owner.blocked) return res.status(404).send('Ссылка недоступна');
+    const html = buildDecodeHtml(test, kind, langOf(req), { publicView: true });
+    if (!html) return res.status(409).send('Расшифровка ещё не готова');
     res.set('Content-Type', 'text/html; charset=utf-8').send(html);
   });
 
@@ -289,15 +455,16 @@ function register(app, deps) {
     if (!test) return res.status(404).json({ error: 'Не найдено' });
     if (test.type !== 'tools') return res.status(400).json({ error: 'Чат доступен для теста «Тулс»' });
     if (!aid.hasApiKey()) return res.status(503).json({ error: 'AI не настроен: задайте ANTHROPIC_API_KEY на сервере' });
+    if (!featureOwned(test, 'chat')) return res.status(402).json({ error: 'Функция не куплена', needPurchase: true, feature: 'chat' });
     const message = String((req.body && req.body.message) || '').trim();
     if (!message) return res.status(400).json({ error: 'Пустой вопрос' });
     const lang = langOf(req);
     const ctx = vacCtx(test);
     test.aiChat = test.aiChat || [];
     const history = test.aiChat.map(m => ({ role: m.role, content: m.content }));
-    // Промт чата + guardrails + стабильный контекст кандидата — второй (не кэшируемый) system-блок.
-    const promptBlock = aid.PROMPTS.chat + '\n\n' + aid.GUARD_TOOLS + aid.langLine(lang) + '\n\n' + candidateCtxBlock(test, ctx) +
-      '\n\nОтвечай на вопросы пользователя по этому кандидату строго по методике из базы знаний. Кратко и по делу, но полно. Обычный текст/markdown (без больших HTML-документов).';
+    // Промт чата + guardrails + ПОЛНОЕ досье кандидата — второй (не кэшируемый) system-блок.
+    const promptBlock = aid.PROMPTS.chat + '\n\n' + aid.GUARD_TOOLS + aid.langLine(lang) + '\n\n' + candidateDossier(test, ctx, lang) +
+      '\n\nУ тебя есть ПОЛНОЕ досье кандидата: результаты всех его тестов (личность «Тулс», продажи «Сейлс», интеллект «Логис», продуктивность «Резалт», знания), заявка на найм, вакансия, объявление и резюме. Отвечай на вопросы рекрутёра развёрнуто и практично, опираясь на методику из базы знаний и на эти данные. Можешь давать полноценные кадровые рекомендации: подходит ли кандидат на роль или на перевод (например, с тёплых продаж на холодные, в поле за новыми клиентами), стоит ли это делать, как ставить ему задачи, как контролировать, в чём риски и как мотивировать. Если данных по какому-то тесту нет — так и скажи, не выдумывай. Обычный текст/markdown (без больших HTML-документов).';
     try {
       const out = await aid.callClaude({
         kbBlock: aid.TOOLS_KB_BLOCK, promptBlock,

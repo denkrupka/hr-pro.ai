@@ -1,6 +1,6 @@
 'use strict';
 // Движок подсчёта теста «Сэйлс» (12 показателей, шкала 0–100).
-const { INDICATORS, INTERP } = require('./sales-data');
+const { INDICATORS, INTERP, SALES_TYPES } = require('./sales-data');
 let POLARITY = {};
 try { POLARITY = require('../../data/sales-polarity.json'); } catch (_) { POLARITY = {}; }
 
@@ -83,7 +83,12 @@ function evaluate(answers) {
       interpretation: (INTERP[ind.key] && INTERP[ind.key][z.level]) || '',
     };
   }
-  return { points, order: INDICATORS.map(i => i.key), midCount, answered };
+  // «Тип продажника» — устойчивые сочетания показателей.
+  const values = {};
+  for (const k of Object.keys(points)) values[k] = points[k].value;
+  const types = SALES_TYPES.filter(tp => { try { return tp.cond(values); } catch (_) { return false; } })
+    .map(tp => ({ id: tp.id, title: tp.title, text: tp.text, f: tp.f || '' }));
+  return { points, order: INDICATORS.map(i => i.key), midCount, answered, types };
 }
 
 module.exports = { evaluate, INDICATORS, ZONES };

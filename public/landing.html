@@ -48,6 +48,9 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Что входит в бесплатный старт?","acceptedAnswer":{"@type":"Answer","text":"При регистрации вы и ваша компания получаете по одному бесплатному тесту каждого вида (Тулс, Резалт, Логис, Сэйлс и Знания) и две готовые вакансии — без единого платежа и без карты."}},{"@type":"Question","name":"Чем это лучше обычного собеседования?","acceptedAnswer":{"@type":"Answer","text":"Собеседование измеряет умение производить впечатление. Мы измеряем то, что предсказывает работу: как человек давал результат раньше, его личность по 10 чертам, интеллект и навыки продаж. Детектор недостоверности ловит «правильные» ответы."}},{"@type":"Question","name":"Сколько времени занимает тестирование?","acceptedAnswer":{"@type":"Answer","text":"Кандидат проходит тест за 10–35 минут с телефона или компьютера. Первый профиль вы видите уже через 10 минут после отправки ссылки."}},{"@type":"Question","name":"Как устроена оплата?","acceptedAnswer":{"@type":"Answer","text":"Модель pay-per-test: один отправленный тест — одно списание. Никакой подписки, пакеты тестов дешевле поштучных. Оплата через Stripe."}},{"@type":"Question","name":"На каких языках работает платформа?","acceptedAnswer":{"@type":"Answer","text":"Интерфейс и лендинг — русский, польский, английский. Письма и SMS кандидатам — ещё и украинский."}},{"@type":"Question","name":"Тесты можно обмануть?","acceptedAnswer":{"@type":"Answer","text":"Кандидат не знает, что мы меряем: 200 вопросов идут вперемешку. Тест подсвечивает неискренние ответы и показывает, можно ли доверять результату."}},{"@type":"Question","name":"Насколько это безопасно для данных?","acceptedAnswer":{"@type":"Answer","text":"Пароли хранятся через PBKDF2, сессии подписаны, доступ к базе — только по сервисному ключу. Кандидат явно даёт согласие на обработку данных перед тестом."}},{"@type":"Question","name":"Почему тест учитывает пол и возраст?","acceptedAnswer":{"@type":"Answer","text":"Мы сравниваем человека с его возрастной группой, а не со всеми подряд. Иначе решение — по кривой шкале."}}]}</script>
 <style>
 /* ============ ВЕСЬ ЛЕНДИНГ — тёмная hi-tech тема (палитра hero) ============ */
+/* защита от горизонтального переполнения на мобильном (клип не ломает position:sticky) */
+html{overflow-x:hidden;overflow-x:clip}
+body.lp{max-width:100%;overflow-x:hidden;overflow-x:clip}
 body.lp{
   --canvas:#070a16;--surface:#0f1430;--surface-2:#151c3c;--surface-3:#1e2750;
   --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);
@@ -233,6 +236,36 @@ body.lp .lp-nav .lang-switch button{color:#8b93ad;border-color:rgba(255,255,255,
 body.lp .lp-nav .lang-switch button.on{color:#fff;background:var(--brand);border-color:var(--brand)}
 body.lp .lp-nav .btn.ghost{background:rgba(255,255,255,.08);color:#eef1fb;border-color:rgba(255,255,255,.24);box-shadow:none}
 body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
+/* mobile hamburger + drawer */
+.lp-burger{display:none;width:42px;height:42px;place-items:center;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);cursor:pointer}
+#lp-drawer{position:fixed;inset:0;z-index:100000;visibility:hidden;overflow:hidden}
+#lp-drawer.open{visibility:visible}
+#lp-drawer .ov{position:absolute;inset:0;background:rgba(4,5,12,.6);backdrop-filter:blur(4px);opacity:0;transition:opacity .26s}
+#lp-drawer.open .ov{opacity:1}
+#lp-drawer .panel{position:absolute;top:0;right:0;bottom:0;width:min(82%,340px);background:linear-gradient(180deg,#13152f,#0b0c1c);border-left:1px solid rgba(255,255,255,.09);padding:20px 20px 26px;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.7,.2,1)}
+#lp-drawer.open .panel{transform:translateX(0)}
+#lp-drawer .dlink{padding:13px 12px;border-radius:12px;font-family:Manrope,sans-serif;font-weight:600;font-size:16px;color:#c3cbe4;display:block}
+#lp-drawer .dlink:active{background:rgba(255,255,255,.06)}
+#lp-drawer .dlang{display:flex;gap:6px;padding:0 4px}
+#lp-drawer .dlang button{flex:1;font:700 12px/1 'JetBrains Mono',monospace;padding:10px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8b93ad}
+#lp-drawer .dlang button.on{background:rgba(77,124,255,.85);border-color:#6f97ff;color:#fff}
+#lp-drawer .dbtn{text-align:center;padding:13px;border-radius:13px;font-weight:650;font-size:15px;font-family:Inter,sans-serif}
+#lp-drawer .dbtn.ghost{background:rgba(255,255,255,.05);color:#e8ecf8;border:1px solid rgba(255,255,255,.14)}
+#lp-drawer .dbtn:not(.ghost){background:linear-gradient(135deg,#7b5cff,#4f78e6);color:#fff;box-shadow:0 10px 24px rgba(123,108,255,.3)}
+@media(max-width:820px){.lp-nav .lp-links{display:none!important}.lp-burger{display:grid}}
+/* mobile hero — под макет: чистый верх, CTA на всю ширину, без нижней sticky-плашки */
+@media(max-width:760px){
+  .lp-bar{display:none!important}
+  .sticky-cta{display:none!important}
+  .hd-cta{flex-direction:column;gap:11px;margin-top:26px}
+  .hd-cta .hd-btn{width:100%;box-sizing:border-box;text-align:center;justify-content:center;padding:15px 16px;font-size:15.5px}
+  .hd-cta-note{text-align:center}
+  .hd-h1{font-size:34px!important;line-height:1.1}
+  .hd-lead{font-size:15.5px;margin-top:18px}
+  .hd-trust{gap:14px;margin-top:28px}
+  .hd-trust .n{font-size:22px}
+  .hd-trust .l{font-size:12px}
+}
 @media(max-width:900px){.hd-inner{grid-template-columns:1fr;padding-top:48px}.hd-visual{margin-top:8px}}
 @keyframes scan1a{0%{transform:translateY(-90px)}100%{transform:translateY(440px)}}
 @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
@@ -281,6 +314,15 @@ body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
 .cmp-head>div{font-family:'Manrope';font-weight:800;font-size:15px;background:var(--surface-2)}
 .cmp-head .new{background:var(--brand);color:#fff}
 .cmp .ic{width:20px;height:20px;flex:0 0 auto;margin-right:9px}
+.cmp-row .cf{min-width:0}.cmp-row>div{overflow-wrap:anywhere}
+@media(max-width:600px){
+  .cmp{margin-top:28px}
+  .cmp-row{grid-template-columns:1.15fr 1fr 1fr}
+  .cmp-row>div{padding:11px 9px;font-size:12px}
+  .cmp-head>div{font-size:12px}
+  .cmp .ic{width:14px;height:14px;margin-right:5px}
+}
+@media(max-width:380px){.cmp-row>div{padding:9px 6px;font-size:11px}}
 /* stats band */
 .stats-band{max-width:var(--maxw);margin:0 auto;padding:0 40px}
 .stats-inner{background:linear-gradient(140deg,var(--ink),var(--ink-2));border-radius:var(--r-xl);padding:48px 40px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
@@ -451,7 +493,31 @@ body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
     <a href="/login" class="btn ghost sm" data-i18n="nav_login">Войти</a>
     <a href="/login?mode=register" class="btn sm" data-i18n="nav_start">Начать бесплатно</a>
   </div>
+  <button class="lp-burger" id="lp-burger" aria-label="menu"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="#eef1fb" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 </nav>
+<div id="lp-drawer" aria-hidden="true">
+  <div class="ov" id="lp-drawer-ov"></div>
+  <div class="panel">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:Manrope,sans-serif;font-weight:800;font-size:15px;color:#fff" data-i18n="menu_title">Меню</div>
+      <button id="lp-drawer-x" aria-label="close" style="width:38px;height:38px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#c3cbe4;cursor:pointer;font-size:15px;display:grid;place-items:center">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px;margin-top:22px">
+      <a class="dlink" href="#problem" data-i18n="nav_why">Зачем</a>
+      <a class="dlink" href="#tests" data-i18n="nav_tests">Тесты</a>
+      <a class="dlink" href="#system" data-i18n="nav_system">Возможности</a>
+      <a class="dlink" href="#pricing" data-i18n="nav_pricing">Цены</a>
+      <a class="dlink" href="#faq" data-i18n="nav_faq">FAQ</a>
+      <a class="dlink" href="/blog" data-i18n="nav_blog">Блог</a>
+    </div>
+    <div style="height:1px;background:rgba(255,255,255,.08);margin:16px 6px"></div>
+    <div class="dlang" id="lp-drawer-lang"><button data-lang="ru">RU</button><button data-lang="pl">PL</button><button data-lang="en">EN</button></div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+      <a href="/login" class="dbtn ghost" data-i18n="nav_login">Войти</a>
+      <a href="/login?mode=register" class="dbtn" data-i18n="nav_start">Начать бесплатно</a>
+    </div>
+  </div>
+</div>
 
 <header class="hd">
   <div class="hd-bg" aria-hidden="true">
@@ -830,7 +896,7 @@ body.lp .lp-nav .btn.ghost:hover{background:rgba(255,255,255,.16)}
   <div class="tst-grid">
     <div class="tst reveal"><div class="stars">★★★★★</div><div class="q" data-i18n="tst1_q">«Раньше первичный отбор занимал у меня две недели интервью. Теперь я вижу Виннеров сразу и зову на встречу только их. Экономия времени — колоссальная.»</div><div class="who"><div class="av">М</div><div><b data-i18n="tst1_n">Марина, HR-менеджер</b><span data-i18n="tst1_r">ритейл-сеть, 40+ найма/мес</span></div></div></div>
     <div class="tst reveal d1"><div class="stars">★★★★★</div><div class="q" data-i18n="tst2_q">«Тест Сэйлс сэкономил нам два провальных найма в отдел продаж. График сразу показал, что харизматичный кандидат не умеет удерживать клиентов.»</div><div class="who"><div class="av">D</div><div><b data-i18n="tst2_n">Dawid, Head of Sales</b><span data-i18n="tst2_r">SaaS, Варшава</span></div></div></div>
-    <div class="tst reveal d2"><div class="stars">★★★★★</div><div class="q" data-i18n="tst3_q">«Автоворонка и ИИ-звонки закрыли рутину. Кандидат сам проходит цепочку тестов, а мне приходит готовое решение. Оплата за тест — честно и предсказуемо.»</div><div class="who"><div class="av">О</div><div><b data-i18n="tst3_n">Ольга, руководитель подбора</b><span data-i18n="tst3_r">кадровое агентство</span></div></div></div>
+    <div class="tst reveal d2"><div class="stars">★★★★★</div><div class="q" data-i18n="tst3_q">«Раньше на первый шаг найма уходило по 2–3 дня мучений: составь профиль кандидата, размести на десятке разных площадок, потом всем отвечай. А площадки все разные и в ценах наглеют. Здесь я в одну кнопку публикую сразу на все — мега удобно и ещё выгодно по деньгам.»</div><div class="who"><div class="av">Е</div><div><b data-i18n="tst3_n">Елена</b><span data-i18n="tst3_r">FinanceFirst</span></div></div></div>
   </div>
 </section>
 
@@ -1100,7 +1166,7 @@ const I18N={
     tst_eyebrow:'Отзывы',tst_h2:'Они больше не зовут на интервью всех подряд',
     tst1_q:'«Раньше первичный отбор занимал у меня две недели интервью. Теперь я вижу Виннеров сразу и зову на встречу только их. Экономия времени — колоссальная.»',tst1_n:'Марина, HR-менеджер',tst1_r:'ритейл-сеть, 40+ найма/мес',
     tst2_q:'«Тест Сэйлс сэкономил нам два провальных найма в отдел продаж. График сразу показал, что харизматичный кандидат не умеет удерживать клиентов.»',tst2_n:'Dawid, Head of Sales',tst2_r:'SaaS, Варшава',
-    tst3_q:'«Автоворонка и ИИ-звонки закрыли рутину. Кандидат сам проходит цепочку тестов, а мне приходит готовое решение. Оплата за тест — честно и предсказуемо.»',tst3_n:'Ольга, руководитель подбора',tst3_r:'кадровое агентство',
+    tst3_q:'«Раньше на первый шаг найма уходило по 2–3 дня мучений: составь профиль кандидата, размести на десятке разных площадок, потом всем отвечай. А площадки все разные и в ценах наглеют. Здесь я в одну кнопку публикую сразу на все — мега удобно и ещё выгодно по деньгам.»',tst3_n:'Елена',tst3_r:'FinanceFirst',
     pricing_eyebrow:'Прозрачные цены',pricing_h2:'Одна ошибка найма — 18 500 €. Одна проверка — 6 €',pricing_sub:'Платите за тесты, а не за подписку. Один тест — один кандидат. Чем больше пакет, тем ниже цена за тест.',
     grt1:'По тесту каждого вида — бесплатно',grt2:'Без карты при регистрации',grt3:'Без подписки — платите за тесты',grt4:'Оплата Stripe, безопасно',
     faq_eyebrow:'Вопросы',faq_h2:'Что обычно спрашивают',
@@ -1209,7 +1275,7 @@ const I18N={
     tst_eyebrow:'Opinie',tst_h2:'Nie zapraszają już na rozmowę wszystkich po kolei',
     tst1_q:'„Wcześniej wstępna selekcja zajmowała mi dwa tygodnie rozmów. Teraz od razu widzę Winnerów i zapraszam tylko ich. Oszczędność czasu ogromna.”',tst1_n:'Marina, HR-menedżer',tst1_r:'sieć retail, 40+ najmów/mies.',
     tst2_q:'„Test Sales oszczędził nam dwa nietrafione najmy w dziale sprzedaży. Wykres od razu pokazał, że charyzmatyczny kandydat nie utrzymuje klientów.”',tst2_n:'Dawid, Head of Sales',tst2_r:'SaaS, Warszawa',
-    tst3_q:'„Autolejek i rozmowy AI zamknęły rutynę. Kandydat sam przechodzi ścieżkę testów, a mnie przychodzi gotowa decyzja. Płatność za test — uczciwie i przewidywalnie.”',tst3_n:'Olga, kierownik rekrutacji',tst3_r:'agencja kadrowa',
+    tst3_q:'„Wcześniej pierwszy krok rekrutacji zajmował mi 2–3 dni męki: opisz profil kandydata, opublikuj na kilkunastu różnych portalach, a potem wszystkim odpowiadaj. A portale są różne i zawyżają ceny. Tutaj jednym kliknięciem publikuję od razu na wszystkich — mega wygodnie i jeszcze taniej.”',tst3_n:'Elena',tst3_r:'FinanceFirst',
     pricing_eyebrow:'Przejrzyste ceny',pricing_h2:'Jeden błąd rekrutacji — 18 500 €. Jedno sprawdzenie — 6 €',pricing_sub:'Płać za testy, a nie za abonament. Jeden test — jeden kandydat. Im większy pakiet, tym niższa cena za test.',
     grt1:'Po teście każdego rodzaju — za darmo',grt2:'Bez karty przy rejestracji',grt3:'Bez abonamentu — płacisz za testy',grt4:'Płatność Stripe, bezpiecznie',
     faq_eyebrow:'Pytania',faq_h2:'O co zwykle pytają',
@@ -1319,7 +1385,7 @@ const I18N={
     tst_eyebrow:'Testimonials',tst_h2:'They no longer invite everyone to an interview',
     tst1_q:'“Initial screening used to take me two weeks of interviews. Now I spot Winners instantly and only invite them. The time saved is huge.”',tst1_n:'Marina, HR Manager',tst1_r:'retail chain, 40+ hires/mo',
     tst2_q:'“The Sales test saved us two bad hires in the sales team. The chart instantly showed the charismatic candidate couldn’t retain clients.”',tst2_n:'Dawid, Head of Sales',tst2_r:'SaaS, Warsaw',
-    tst3_q:'“The auto-funnel and AI calls closed the routine. The candidate walks the test chain on their own and I get a ready decision. Pay-per-test is fair and predictable.”',tst3_n:'Olga, Head of Recruiting',tst3_r:'staffing agency',
+    tst3_q:'“Before, the first hiring step cost me 2–3 days of agony: write the candidate profile, post it on a dozen different job boards, then reply to everyone. And every board is different and gouges on price. Here I publish to all of them with one button — super convenient and cheaper too.”',tst3_n:'Elena',tst3_r:'FinanceFirst',
     pricing_eyebrow:'Transparent pricing',pricing_h2:'One hiring mistake — €18,500. One check — €6',pricing_sub:'Pay for tests, not a subscription. One test — one candidate. The bigger the bundle, the lower the price per test.',
     grt1:'One test of each type — free',grt2:'No card to sign up',grt3:'No subscription — pay per test',grt4:'Stripe payments, secure',
     faq_eyebrow:'Questions',faq_h2:'What people usually ask',
@@ -1464,11 +1530,23 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-meta]').forEach(el=>{el.setAttribute('content',t(el.getAttribute('data-i18n-meta')));});
   document.title=t('page_title');
   renderHeroBars();renderPlans();renderFaq();renderPopBullets();
-  document.querySelectorAll('#lang-switch button,#pop-lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  document.querySelectorAll('#lang-switch button,#pop-lang button,#lp-drawer-lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
   const FLG={ru:'🇷🇺',pl:'🇵🇱',en:'🇬🇧'},cur=document.getElementById('lang-dd-cur'),flg=document.getElementById('lang-dd-flag');
   if(cur)cur.textContent=LANG.toUpperCase(); if(flg)flg.textContent=FLG[LANG]||'🌐';
 }
 document.querySelectorAll('#lang-switch button').forEach(b=>b.onclick=()=>{localStorage.setItem('hp_lang',b.dataset.lang);applyLang();});
+// mobile nav drawer
+try{ I18N.ru.menu_title='Меню'; I18N.pl.menu_title='Menu'; I18N.en.menu_title='Menu'; }catch(_){}
+(function(){
+  var dr=document.getElementById('lp-drawer'); if(!dr) return;
+  var open=function(){ dr.classList.add('open'); dr.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; };
+  var close=function(){ dr.classList.remove('open'); dr.setAttribute('aria-hidden','true'); document.body.style.overflow=''; };
+  var bg=document.getElementById('lp-burger'); if(bg) bg.onclick=open;
+  var x=document.getElementById('lp-drawer-x'); if(x) x.onclick=close;
+  var ov=document.getElementById('lp-drawer-ov'); if(ov) ov.onclick=close;
+  dr.querySelectorAll('.dlink,.dbtn').forEach(function(a){ a.addEventListener('click',close); });
+  dr.querySelectorAll('#lp-drawer-lang button').forEach(function(b){ b.onclick=function(){ localStorage.setItem('hp_lang',b.dataset.lang); applyLang(); }; });
+})();
 (function(){const dd=document.getElementById('lang-dd'),btn=document.getElementById('lang-dd-btn');
   if(!dd||!btn)return;
   btn.addEventListener('click',e=>{e.stopPropagation();dd.classList.toggle('open');});

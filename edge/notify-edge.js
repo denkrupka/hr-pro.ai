@@ -1,3 +1,4 @@
+import { MAIL_DEF_SEND } from './mail-defaults-edge.js';
 // SECRET обязателен (fail-closed): без него подпись токенов подделываема.
 function reqSecret(s){ if(!s) throw new Error('SECRET env is required'); return s; }
 // Отправка приглашений кандидату на edge: Resend (email) + SMSAPI (SMS).
@@ -151,7 +152,7 @@ export function wrapEmailEdge(o) {
             <p style="margin:0 0 12px;font-family:'Inter',Arial,sans-serif;font-size:12.5px;line-height:1.5;color:#8b93ad;">${L.mission}</p>
             <p style="margin:0 0 12px;font-size:11.5px;line-height:1.6;color:#6b7492;">${L.legal}</p>
             <p style="margin:0;font-size:11.5px;color:#8b93ad;">
-              <a href="${o.helpUrl || 'mailto:help@hr-pro.ai'}" style="color:#8b93ad;text-decoration:underline;">${L.help}</a>
+              <a href="${o.helpUrl || 'mailto:info@hr-pro.ai'}" style="color:#8b93ad;text-decoration:underline;">${L.help}</a>
               &nbsp;&nbsp;·&nbsp;&nbsp;
               <a href="${base}/privacy?lang=${lang}" style="color:#8b93ad;text-decoration:underline;">${L.privacy}</a>
               &nbsp;&nbsp;·&nbsp;&nbsp;
@@ -192,8 +193,8 @@ export async function notifyCandidate(env, user, p, test, vac, link, title) {
   if (p.email && resendKey && !unsubbed) {
     const base = (env.BASE_URL || 'https://hr-pro.ai').replace(/\/+$/, '');
     const ctaLabel = { ru: 'Начать', pl: 'Zacznij', en: 'Start' }[lang] || 'Начать';
-    // Клиентские редактируемые шаблоны (mailTemplates, по типу теста, $...$) имеют приоритет.
-    const mt = s.mailTemplates && s.mailTemplates.send;
+    // Клиентские редактируемые шаблоны (mailTemplates, по типу теста, $...$) имеют приоритет; иначе — дефолты hrscanner.
+    const mt = (s.mailTemplates && s.mailTemplates.send) || MAIL_DEF_SEND;
     let subject, bodyHtml, ctaUrl = link;
     if (mt) {
       const st = mt[test.type] ? test.type : 'result';
@@ -217,7 +218,7 @@ export async function notifyCandidate(env, user, p, test, vac, link, title) {
       const html = wrapEmailEdge({ lang, baseUrl: base, unsubUrl, subject, ctaUrl, ctaLabel: ctaUrl ? ctaLabel : '', bodyHtml });
       const r = await fetch('https://api.resend.com/emails', {
         method: 'POST', headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [p.email], subject, html }),
+        body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [p.email], subject, html }),
       });
       out.email = r.ok ? 'sent' : ('err ' + r.status);
     } catch (e) { out.email = 'err'; }

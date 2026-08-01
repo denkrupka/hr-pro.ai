@@ -20,6 +20,7 @@ const refai = require('./src/references-ai');
 const aiCallPrompts = require('./src/ai-call-prompts');
 const callLog = require('./src/ai-call-log');
 const scheduler = require('./src/call-scheduler');
+const salesSched = require('./src/sales-scheduler');
 const aiFinal = require('./src/ai-final');
 const aiAd = require('./src/ai-ad');
 const { localizeResult } = require('./src/i18n-content');
@@ -215,70 +216,57 @@ const TEST_NAMES = {
   en: { result: 'Result', result_emp: 'Result (Employees)', tools: 'Tools', logic: 'Logic', sales: 'Sales', video: 'Video interview', regard: 'Regard' },
 };
 // Тема письма-приглашения (одна на все тесты, как в HR-сканере)
-const MAIL_SEND_SUBJECT = {
-  ru: 'Тест для кандидата на вакансию $vac$ от компании «$company$».',
-  uk: 'Тест для кандидата на вакансію $vac$ від компанії «$company$».',
-  pl: 'Test dla kandydata na stanowisko $vac$ od firmy „$company$”.',
-  en: 'Assessment for a candidate: “$vac$” — $company$.',
-};
-// Каркас письма (в {DESC} подставляется описание конкретного теста)
-const MAIL_SEND_SKELETON = {
-  ru: 'Добрый день!\n\nМы получили и уже передали руководителю вашу анкету на вакансию «$vac$». Хотим выразить уважение к достигнутым вами результатам на предыдущем месте работы.\n\nЧтобы познакомиться с вами поближе и понять, за счёт каких личных качеств вы добились таких хороших результатов, приглашаем вас пройти заключительный этап перед собеседованием. Пройти тест можно как с компьютера, так и с мобильного устройства. В вашем распоряжении 24 часа с момента получения данного письма.\n\n{DESC}\n\nДля перехода к тесту, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$',
-  uk: 'Доброго дня!\n\nМи отримали та вже передали керівнику вашу анкету на вакансію «$vac$». Хочемо висловити повагу до досягнутих вами результатів на попередньому місці роботи.\n\nЩоб краще познайомитися з вами та зрозуміти, за рахунок яких особистих якостей ви досягли таких хороших результатів, запрошуємо вас пройти завершальний етап перед співбесідою. Пройти тест можна як з комп’ютера, так і з мобільного пристрою. У вашому розпорядженні 24 години з моменту отримання цього листа.\n\n{DESC}\n\nДля переходу до тесту, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$',
-  pl: 'Dzień dobry!\n\nOtrzymaliśmy i przekazaliśmy już przełożonemu Twoją aplikację na stanowisko „$vac$”. Chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzednim miejscu pracy.\n\nAby lepiej Cię poznać i zrozumieć, dzięki jakim cechom osiągnąłeś(-aś) tak dobre wyniki, zapraszamy do ostatniego etapu przed rozmową. Test możesz wykonać zarówno na komputerze, jak i na urządzeniu mobilnym. Masz na to 24 godziny od otrzymania tej wiadomości.\n\n{DESC}\n\nAby przejść do testu, otwórz ten link na komputerze lub telefonie:\n\n$button_link$',
-  en: 'Hello!\n\nWe have received your application for the “$vac$” position and already forwarded it to the manager. We would like to acknowledge the results you achieved at your previous job.\n\nTo get to know you better and understand which personal qualities helped you achieve such results, we invite you to the final step before the interview. You can take the test on a computer or a mobile device. You have 24 hours from the moment you receive this email.\n\n{DESC}\n\nTo start the test, open this link on your computer or phone:\n\n$button_link$',
-};
-// Описание под конкретный тест (по языкам)
-const MAIL_SEND_DESC = {
-  ru: {
-    result: 'Вступительная анкета займёт от 20 до 40 минут. Он содержит простые жизненные ситуации и ваше отношение к ним — по каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.',
-    tools: 'Тест «Тулс» займёт около 30–40 минут и состоит из 200 вопросов о ваших привычках, взглядах и реакциях. По каждому вопросу выберите «да», «может быть» или «нет». Правильных или неправильных ответов нет — отвечайте честно, тогда результат точнее опишет ваши сильные стороны.',
-    logic: 'Тест «Логис» займёт около 15–20 минут и проверяет скорость мышления и умение решать задачи. Он состоит из логических вопросов, часть из которых сложнее других. Отвечайте спокойно и сосредоточенно.',
-    sales: 'Тест «Сэйлс» займёт около 20–30 минут и оценивает ваш подход к продажам и работе с клиентами. По каждому утверждению выберите «да», «иногда» или «нет». Правильных или неправильных ответов нет — отвечайте так, как поступаете обычно.',
+// ── Дефолтные шаблоны писем (полные тексты, из hrscanner; синхронизировать с public/js/app.js MAIL_DEF_*) ──
+const MAIL_DEF_SEND = {
+  result: {
+    ru: { subject: 'Анкета на вакансию $vac$ от компании «$company$».', body: 'Добрый день!\n\nНаша компания заинтересована в вашей кандидатуре на вакансию «$vac$».\n\nЧтобы предстоящее собеседование было максимально эффективным, в удобное для вас время в течение 48 часов предлагаем вам заполнить короткую вступительную анкету. Она содержит вопросы о ваших результатах на предыдущих местах работы, и её заполнение займёт не более 15 минут. С нетерпением ждём ваших ответов.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам заполнения анкеты.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Анкета на вакансію $vac$ від компанії «$company$».', body: 'Доброго дня!\n\nНаша компанія зацікавлена у вашій кандидатурі на вакансію «$vac$».\n\nЩоб майбутня співбесіда була максимально ефективною, у зручний для вас час протягом 48 годин пропонуємо вам заповнити коротку вступну анкету. Вона містить запитання про ваші результати на попередніх місцях роботи, а її заповнення займе не більше 15 хвилин. З нетерпінням чекаємо на ваші відповіді.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами заповнення анкети.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Ankieta na stanowisko $vac$ od firmy „$company$”.', body: 'Dzień dobry!\n\nNasza firma jest zainteresowana Twoją kandydaturą na stanowisko „$vac$”.\n\nAby przyszła rozmowa była jak najbardziej efektywna, w dogodnym dla Ciebie czasie w ciągu 48 godzin zapraszamy do wypełnienia krótkiej ankiety wstępnej. Zawiera ona pytania o Twoje wyniki w poprzednich miejscach pracy, a jej wypełnienie zajmie nie więcej niż 15 minut. Z niecierpliwością czekamy na Twoje odpowiedzi.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami ankiety.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Questionnaire for the “$vac$” position — $company$.', body: 'Hello!\n\nOur company is interested in your application for the “$vac$” position.\n\nTo make the upcoming interview as effective as possible, at a time convenient for you within the next 48 hours we invite you to complete a short introductory questionnaire. It contains questions about your results at previous jobs and takes no more than 15 minutes. We look forward to your answers.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your questionnaire.\n\nBest regards,\n$client$, $phone$' },
   },
-  uk: {
-    result: 'Вступна анкета триватиме від 20 до 40 хвилин. Він містить прості життєві ситуації та ваше ставлення до них — на кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.',
-    tools: 'Тест «Тулс» триватиме близько 30–40 хвилин і складається з 200 запитань про ваші звички, погляди та реакції. На кожне запитання оберіть «так», «можливо» або «ні». Правильних чи неправильних відповідей немає — відповідайте чесно, тоді результат точніше опише ваші сильні сторони.',
-    logic: 'Тест «Логіс» триватиме близько 15–20 хвилин і перевіряє швидкість мислення та вміння розв’язувати задачі. Він складається з логічних запитань, частина з яких складніша за інші. Відповідайте спокійно та зосереджено.',
-    sales: 'Тест «Сейлс» триватиме близько 20–30 хвилин і оцінює ваш підхід до продажів і роботи з клієнтами. На кожне твердження оберіть «так», «іноді» або «ні». Правильних чи неправильних відповідей немає — відповідайте так, як робите зазвичай.',
+  tools: {
+    ru: { subject: 'Тест для кандидата на вакансию $vac$ от компании «$company$».', body: 'Добрый день!\n\nМы получили и уже передали руководителю вашу анкету на вакансию «$vac$». Хотим выразить уважение к достигнутым вами результатам на предыдущем месте работы.\n\nЧтобы познакомиться с вами поближе и понять, за счёт каких личных качеств вы добились таких хороших результатов, приглашаем вас пройти заключительный этап перед собеседованием: это будет тест, заполнение которого займёт у вас от 20 до 40 минут и сэкономит нам с вами порядка часа на собеседовании. Пройти его вы можете как с компьютера, так и с мобильного устройства. В вашем распоряжении 24 часа с момента получения данного письма.\n\nТест содержит простые жизненные ситуации и ваше отношение к ним. По каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам заполнения теста.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Тест для кандидата на вакансію $vac$ від компанії «$company$».', body: 'Доброго дня!\n\nМи отримали та вже передали керівнику вашу анкету на вакансію «$vac$». Хочемо висловити повагу до досягнутих вами результатів на попередньому місці роботи.\n\nЩоб краще познайомитися з вами та зрозуміти, за рахунок яких особистих якостей ви досягли таких хороших результатів, запрошуємо вас пройти завершальний етап перед співбесідою: це буде тест, заповнення якого займе у вас від 20 до 40 хвилин і зекономить нам із вами близько години на співбесіді. Пройти його ви можете як з комп’ютера, так і з мобільного пристрою. У вашому розпорядженні 24 години з моменту отримання цього листа.\n\nТест містить прості життєві ситуації та ваше ставлення до них. На кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами проходження тесту.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Test dla kandydata na stanowisko $vac$ od firmy „$company$”.', body: 'Dzień dobry!\n\nOtrzymaliśmy i przekazaliśmy już przełożonemu Twoją aplikację na stanowisko „$vac$”. Chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzednim miejscu pracy.\n\nAby lepiej Cię poznać i zrozumieć, dzięki jakim cechom osobistym osiągnąłeś(-aś) tak dobre wyniki, zapraszamy do ostatniego etapu przed rozmową: będzie to test, którego wypełnienie zajmie od 20 do 40 minut i zaoszczędzi nam wspólnie около godziny na rozmowie. Możesz go wykonać zarówno na komputerze, jak i na urządzeniu mobilnym. Masz na to 24 godziny od otrzymania tej wiadomości.\n\nTest zawiera proste sytuacje z życia i Twój stosunek do nich. Przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami testu.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Assessment for a candidate: “$vac$” — $company$.', body: 'Hello!\n\nWe have received your application for the “$vac$” position and already forwarded it to the manager. We would like to acknowledge the results you achieved at your previous job.\n\nTo get to know you better and understand which personal qualities helped you achieve such results, we invite you to the final step before the interview: a short test that takes 20 to 40 minutes and saves us both about an hour of interview time. You can take it on a computer or a mobile device. You have 24 hours from the moment you receive this email.\n\nThe test presents simple everyday situations and your attitude to them. For each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your results.\n\nBest regards,\n$client$, $phone$' },
   },
-  pl: {
-    result: 'Ankieta wstępna zajmie od 20 do 40 minut. Zawiera proste sytuacje z życia i Twój stosunek do nich — przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.',
-    tools: 'Test „Tools” zajmie około 30–40 minut i składa się z 200 pytań o Twoje nawyki, poglądy i reakcje. Przy każdym pytaniu wybierz „tak”, „może” lub „nie”. Nie ma odpowiedzi dobrych ani złych — odpowiadaj szczerze, a wynik dokładniej opisze Twoje mocne strony.',
-    logic: 'Test „Logic” zajmie około 15–20 minut i sprawdza szybkość myślenia oraz umiejętność rozwiązywania zadań. Składa się z pytań logicznych, z których część jest trudniejsza. Odpowiadaj spokojnie i w skupieniu.',
-    sales: 'Test „Sales” zajmie około 20–30 minut i ocenia Twoje podejście do sprzedaży i pracy z klientem. Przy każdym stwierdzeniu wybierz „tak”, „czasami” lub „nie”. Nie ma odpowiedzi dobrych ani złych — odpowiadaj tak, jak zwykle postępujesz.',
+  sales: {
+    ru: { subject: 'Тест для специалистов по продажам в компанию «$company$».', body: 'Добрый день!\n\nМы получили и рассмотрели вашу анкету на вакансию «$vac$» и хотим выразить уважение к достигнутым вами результатам на предыдущей работе. Не все кандидаты могут похвастаться подобными успехами.\n\nЧтобы мы смогли оценить ваши навыки работы в продажах, приглашаем вас пройти контрольный этап перед живым собеседованием с руководителем: это будет тест, заполнение которого займёт у вас до 30 минут и сэкономит нам с вами порядка часа на собеседовании. Пройти его вы можете как с компьютера, так и с мобильного устройства. В вашем распоряжении 24 часа с момента получения данного письма.\n\nТест содержит описания рабочих ситуаций менеджера по продажам. По каждому вопросу вы выберете один из трёх вариантов ответа. Правильных или неправильных ответов нет, поэтому отвечайте максимально честно и откровенно.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам заполнения теста.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Тест для фахівців з продажу в компанію «$company$».', body: 'Доброго дня!\n\nМи отримали та розглянули вашу анкету на вакансію «$vac$» і хочемо висловити повагу до досягнутих вами результатів на попередній роботі. Не всі кандидати можуть похвалитися подібними успіхами.\n\nЩоб ми змогли оцінити ваші навички роботи в продажах, запрошуємо вас пройти контрольний етап перед живою співбесідою з керівником: це буде тест, заповнення якого займе у вас до 30 хвилин і зекономить нам із вами близько години на співбесіді. Пройти його ви можете як з комп’ютера, так і з мобільного пристрою. У вашому розпорядженні 24 години з моменту отримання цього листа.\n\nТест містить описи робочих ситуацій менеджера з продажу. На кожне запитання ви оберете один із трьох варіантів відповіді. Правильних чи неправильних відповідей немає, тож відповідайте максимально чесно та відверто.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами проходження тесту.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Test dla specjalistów ds. sprzedaży w firmie „$company$”.', body: 'Dzień dobry!\n\nOtrzymaliśmy i przeanalizowaliśmy Twoją aplikację na stanowisko „$vac$” i chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzedniej pracy. Nie wszyscy kandydaci mogą pochwalić się takimi sukcesami.\n\nAbyśmy mogli ocenić Twoje umiejętności sprzedażowe, zapraszamy do etapu kontrolnego przed rozmową z przełożonym: będzie to test, którego wypełnienie zajmie do 30 minut i zaoszczędzi nam wspólnie около godziny na rozmowie. Możesz go wykonać zarówno na komputerze, jak i na urządzeniu mobilnym. Masz na to 24 godziny od otrzymania tej wiadomości.\n\nTest zawiera opisy sytuacji z pracy menedżera sprzedaży. Przy każdym pytaniu wybierzesz jedną z trzech odpowiedzi. Nie ma odpowiedzi dobrych ani złych, dlatego odpowiadaj jak najbardziej szczerze.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami testu.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Sales assessment — “$company$”.', body: 'Hello!\n\nWe have received and reviewed your application for the “$vac$” position and would like to acknowledge the results you achieved in your previous job. Not every candidate can boast such success.\n\nSo that we can assess your sales skills, we invite you to a check-in step before the in-person interview with the manager: a test that takes up to 30 minutes and saves us both about an hour of interview time. You can take it on a computer or a mobile device. You have 24 hours from the moment you receive this email.\n\nThe test presents real working situations of a sales manager. For each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your results.\n\nBest regards,\n$client$, $phone$' },
   },
-  en: {
-    result: 'The introductory questionnaire takes 20 to 40 minutes. It presents simple everyday situations and your attitude to them — for each question you choose one of three answers. There are no right or wrong answers, so please answer as honestly and openly as possible.',
-    tools: 'The “Tools” test takes about 30–40 minutes and consists of 200 questions about your habits, views and reactions. For each question choose “yes”, “maybe” or “no”. There are no right or wrong answers — answer honestly and the result will describe your strengths more accurately.',
-    logic: 'The “Logic” test takes about 15–20 minutes and measures your thinking speed and problem-solving. It consists of logic questions, some harder than others. Stay calm and focused as you answer.',
-    sales: 'The “Sales” test takes about 20–30 minutes and assesses your approach to sales and working with clients. For each statement choose “yes”, “sometimes” or “no”. There are no right or wrong answers — answer the way you usually act.',
+  logic: {
+    ru: { subject: 'IQ-тест на вакансию $vac$ от компании «$company$».', body: 'Добрый день!\n\nМы получили и уже передали руководителю вашу анкету на вакансию «$vac$». Хотим выразить уважение к достигнутым вами результатам на предыдущем месте работы.\n\nВы претендуете на должность, которая очень важна для нашей компании. Нам важно понять, насколько уверенно вы рассуждаете, оцениваете ситуации и принимаете решения, поэтому предлагаем вам пройти небольшой IQ-тест.\n\nТест состоит из 80 вопросов, на прохождение даётся 30 минут. Держите под рукой листок и ручку. Сложный вопрос можно пропустить и вернуться к нему позже — на результат влияет число вопросов, на которые вы успеете ответить.\n\nЧтобы приступить, откройте эту ссылку на компьютере или мобильном:\n\n$button_link$\n\nМы свяжемся с вами по результатам прохождения теста.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'IQ-тест на вакансію $vac$ від компанії «$company$».', body: 'Доброго дня!\n\nМи отримали та вже передали керівнику вашу анкету на вакансію «$vac$». Хочемо висловити повагу до досягнутих вами результатів на попередньому місці роботи.\n\nВи претендуєте на посаду, яка дуже важлива для нашої компанії. Нам важливо зрозуміти, наскільки впевнено ви міркуєте, оцінюєте ситуації та ухвалюєте рішення, тож пропонуємо вам пройти невеликий IQ-тест.\n\nТест складається з 80 запитань, на проходження дається 30 хвилин. Тримайте під рукою аркуш і ручку. Складне запитання можна пропустити й повернутися до нього пізніше — на результат впливає кількість запитань, на які ви встигнете відповісти.\n\nЩоб розпочати, відкрийте це посилання на комп’ютері або мобільному:\n\n$button_link$\n\nМи зв’яжемося з вами за результатами проходження тесту.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Test IQ na stanowisko $vac$ od firmy „$company$”.', body: 'Dzień dobry!\n\nOtrzymaliśmy i przekazaliśmy już przełożonemu Twoją aplikację na stanowisko „$vac$”. Chcemy wyrazić uznanie dla wyników, które osiągnąłeś(-aś) w poprzednim miejscu pracy.\n\nUbiegasz się o stanowisko, które jest dla nas bardzo ważne. Zależy nam, aby zrozumieć, jak pewnie rozumujesz, oceniasz sytuacje i podejmujesz decyzje, dlatego zapraszamy do wykonania krótkiego testu IQ.\n\nTest składa się z 80 pytań, a na jego wykonanie masz 30 minut. Przygotuj kartkę i długopis. Trudne pytanie możesz pominąć i wrócić do niego później — na wynik wpływa liczba pytań, na które zdążysz odpowiedzieć.\n\nAby rozpocząć, otwórz ten link na komputerze lub telefonie:\n\n$button_link$\n\nSkontaktujemy się z Tobą po zapoznaniu się z wynikami testu.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'IQ test for the “$vac$” position — $company$.', body: 'Hello!\n\nWe have received your application for the “$vac$” position and already forwarded it to the manager. We would like to acknowledge the results you achieved at your previous job.\n\nYou are applying for a role that is very important to our company. We would like to understand how confidently you reason, assess situations and make decisions, so we invite you to take a short IQ test.\n\nThe test has 80 questions and you have 30 minutes to complete it. Keep a pen and paper handy. You can skip a difficult question and come back to it later — the number of questions you manage to answer affects your result.\n\nTo begin, open this link on your computer or phone:\n\n$button_link$\n\nWe will get back to you once we review your results.\n\nBest regards,\n$client$, $phone$' },
   },
 };
-const MAIL_STATUS_BASE = {
+const MAIL_DEF_STATUS = {
   rejected: {
-    ru: { subject: 'Результат рассмотрения — $company$', body: 'Здравствуйте, $name$!\n\nБлагодарим за интерес к вакансии «$vac$» в компании «$company$». К сожалению, в этот раз мы приняли решение не продолжать процесс отбора. Желаем вам успехов в поиске!' },
-    uk: { subject: 'Результат розгляду — $company$', body: 'Вітаємо, $name$!\n\nДякуємо за інтерес до вакансії «$vac$» у компанії «$company$». На жаль, цього разу ми вирішили не продовжувати відбір. Бажаємо вам успіхів!' },
-    pl: { subject: 'Wynik rekrutacji — $company$', body: 'Dzień dobry, $name$!\n\nDziękujemy za zainteresowanie stanowiskiem „$vac$” w firmie „$company$”. Niestety tym razem zdecydowaliśmy nie kontynuować procesu rekrutacji. Życzymy powodzenia!' },
-    en: { subject: 'Application update — $company$', body: 'Hello $name$!\n\nThank you for your interest in the “$vac$” position at $company$. Unfortunately, we have decided not to move forward this time. We wish you the best of luck!' },
+    ru: { subject: 'Ответ от компании $company$', body: '$name$,\nМы получили и рассмотрели ваши ответы и хотим выразить уважение к достигнутым вами результатам.\nОни несколько отличаются от тех, которые мы хотели бы видеть у сотрудников нашей компании, поэтому в данный момент мы не готовы сделать вам предложение.\nВ свою очередь, желаем вам найти такую работу, на которую вы всегда будете идти с радостью и улыбкой.\nУдачи в поисках и хорошей недели!' },
+    uk: { subject: 'Відповідь від компанії $company$', body: '$name$,\nМи отримали та розглянули ваші відповіді й хочемо висловити повагу до досягнутих вами результатів.\nВони дещо відрізняються від тих, які ми хотіли б бачити у співробітників нашої компанії, тож наразі ми не готові зробити вам пропозицію.\nСвоєю чергою, бажаємо вам знайти таку роботу, на яку ви завжди йтимете з радістю та усмішкою.\nУспіхів у пошуках і гарного тижня!' },
+    pl: { subject: 'Odpowiedź od firmy $company$', body: '$name$,\nOtrzymaliśmy i przeanalizowaliśmy Twoje odpowiedzi i chcemy wyrazić uznanie dla osiągniętych przez Ciebie wyników.\nNieco różnią się one od tych, które chcielibyśmy widzieć u pracowników naszej firmy, dlatego obecnie nie jesteśmy gotowi złożyć Ci oferty.\nŻyczymy Ci znalezienia takiej pracy, do której zawsze będziesz iść z radością i uśmiechem.\nPowodzenia w poszukiwaniach i miłego tygodnia!' },
+    en: { subject: 'Response from $company$', body: '$name$,\nWe have received and reviewed your answers and would like to acknowledge the results you achieved.\nThey differ somewhat from what we look for in our team members, so at this time we are not ready to make you an offer.\nIn turn, we wish you to find a job you will always go to with joy and a smile.\nGood luck with your search and have a great week!' },
   },
   interview: {
-    ru: { subject: 'Приглашение на собеседование — $company$', body: 'Здравствуйте, $name$!\n\nМы рады пригласить вас на собеседование по вакансии «$vac$» в компании «$company$».\nДата: $date_interview$.\n\nЕсли у вас есть вопросы — просто ответьте на это письмо.' },
-    uk: { subject: 'Запрошення на співбесіду — $company$', body: 'Вітаємо, $name$!\n\nРаді запросити вас на співбесіду за вакансією «$vac$» у компанії «$company$».\nДата: $date_interview$.\n\nЯкщо у вас є запитання — просто дайте відповідь на цей лист.' },
-    pl: { subject: 'Zaproszenie na rozmowę — $company$', body: 'Dzień dobry, $name$!\n\nZ przyjemnością zapraszamy na rozmowę kwalifikacyjną na stanowisko „$vac$” w firmie „$company$”.\nData: $date_interview$.\n\nW razie pytań prosimy o odpowiedź na tę wiadomość.' },
-    en: { subject: 'Interview invitation — $company$', body: 'Hello $name$!\n\nWe are glad to invite you to an interview for the “$vac$” position at $company$.\nDate: $date_interview$.\n\nIf you have any questions, just reply to this email.' },
+    ru: { subject: 'Приглашение на собеседование в компанию $company$', body: '$name$,\nМы получили и рассмотрели ваши ответы и рады пригласить вас на собеседование $date_interview$.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Запрошення на співбесіду в компанію $company$', body: '$name$,\nМи отримали та розглянули ваші відповіді й раді запросити вас на співбесіду $date_interview$.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Zaproszenie na rozmowę w firmie $company$', body: '$name$,\nOtrzymaliśmy i przeanalizowaliśmy Twoje odpowiedzi i z przyjemnością zapraszamy Cię na rozmowę $date_interview$.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Interview invitation — $company$', body: '$name$,\nWe have received and reviewed your answers and are glad to invite you to an interview $date_interview$.\n\nBest regards,\n$client$, $phone$' },
   },
   reserve: {
-    ru: { subject: 'Ваша кандидатура — $company$', body: 'Здравствуйте, $name$!\n\nСпасибо за участие в отборе на вакансию «$vac$». На данный момент мы включили вашу кандидатуру в кадровый резерв и обязательно вернёмся к вам при появлении подходящей позиции.' },
-    uk: { subject: 'Ваша кандидатура — $company$', body: 'Вітаємо, $name$!\n\nДякуємо за участь у відборі на вакансію «$vac$». Наразі ми включили вашу кандидатуру до кадрового резерву і повернемося до вас за появи відповідної позиції.' },
-    pl: { subject: 'Twoja kandydatura — $company$', body: 'Dzień dobry, $name$!\n\nDziękujemy za udział w rekrutacji na stanowisko „$vac$”. Obecnie umieściliśmy Twoją kandydaturę w rezerwie i wrócimy do Ciebie, gdy pojawi się odpowiednie stanowisko.' },
-    en: { subject: 'Your application — $company$', body: 'Hello $name$!\n\nThank you for taking part in the selection for the “$vac$” position. For now we have added you to our talent pool and will get back to you when a suitable role opens up.' },
+    ru: { subject: 'Ответ от компании $company$', body: '$name$,\nМы получили и рассмотрели ваши ответы и хотим выразить уважение к достигнутым вами результатам. К сожалению, в настоящий момент мы не готовы сделать вам предложение. Ваше резюме будет сохранено в нашей базе, и мы вернёмся к вашей кандидатуре, когда появится подходящая позиция.\nХорошей вам недели!' },
+    uk: { subject: 'Відповідь від компанії $company$', body: '$name$,\nМи отримали та розглянули ваші відповіді й хочемо висловити повагу до досягнутих вами результатів. На жаль, наразі ми не готові зробити вам пропозицію. Ваше резюме буде збережено в нашій базі, і ми повернемося до вашої кандидатури, коли з’явиться відповідна позиція.\nГарного вам тижня!' },
+    pl: { subject: 'Odpowiedź od firmy $company$', body: '$name$,\nOtrzymaliśmy i przeanalizowaliśmy Twoje odpowiedzi i chcemy wyrazić uznanie dla osiągniętych wyników. Niestety obecnie nie jesteśmy gotowi złożyć Ci oferty. Twoje CV zachowamy w naszej bazie i wrócimy do Twojej kandydatury, gdy pojawi się odpowiednie stanowisko.\nMiłego tygodnia!' },
+    en: { subject: 'Response from $company$', body: '$name$,\nWe have received and reviewed your answers and would like to acknowledge your results. Unfortunately, we are not ready to make you an offer at this time. We will keep your CV in our database and get back to you when a suitable position opens up.\nHave a great week!' },
   },
   accepted: {
-    ru: { subject: 'Поздравляем! — $company$', body: 'Здравствуйте, $name$!\n\nРады сообщить, что по итогам отбора на вакансию «$vac$» мы готовы сделать вам предложение. В ближайшее время с вами свяжется наш HR-менеджер компании «$company$».' },
-    uk: { subject: 'Вітаємо! — $company$', body: 'Вітаємо, $name$!\n\nРаді повідомити, що за підсумками відбору на вакансію «$vac$» ми готові зробити вам пропозицію. Найближчим часом з вами зв’яжеться наш HR-менеджер компанії «$company$».' },
-    pl: { subject: 'Gratulacje! — $company$', body: 'Dzień dobry, $name$!\n\nMiło nam poinformować, że po rekrutacji na stanowisko „$vac$” jesteśmy gotowi złożyć Ci ofertę. Wkrótce skontaktuje się z Tobą nasz menedżer HR firmy „$company$”.' },
-    en: { subject: 'Congratulations! — $company$', body: 'Hello $name$!\n\nWe are happy to let you know that after the selection for the “$vac$” position we are ready to make you an offer. Our HR manager at $company$ will contact you shortly.' },
+    ru: { subject: 'Приглашение на работу в компанию $company$', body: '$name$, у нас хорошие новости!\nНам было приятно познакомиться с вами, и мы хотим продолжить общение. Приглашаем вас в команду «$company$» на должность «$vac$».\nЕсли интерес взаимный и вы хотите работать с нами — свяжитесь с нами.\n\nС уважением,\n$client$, $phone$' },
+    uk: { subject: 'Запрошення на роботу в компанію $company$', body: '$name$, у нас гарні новини!\nНам було приємно познайомитися з вами, і ми хочемо продовжити спілкування. Запрошуємо вас до команди «$company$» на посаду «$vac$».\nЯкщо інтерес взаємний і ви хочете працювати з нами — зв’яжіться з нами.\n\nЗ повагою,\n$client$, $phone$' },
+    pl: { subject: 'Zaproszenie do pracy w firmie $company$', body: '$name$, mamy dobre wieści!\nMiło było Cię poznać i chcemy kontynuować rozmowę. Zapraszamy Cię do zespołu „$company$” na stanowisko „$vac$”.\nJeśli zainteresowanie jest obopólne i chcesz z nami pracować — skontaktuj się z nami.\n\nZ poważaniem,\n$client$, $phone$' },
+    en: { subject: 'Job offer — $company$', body: '$name$, we have great news!\nIt was a pleasure to get to know you, and we would like to continue the conversation. We invite you to join the “$company$” team as “$vac$”.\nIf the interest is mutual and you would like to work with us, please get in touch.\n\nBest regards,\n$client$, $phone$' },
   },
 };
 function DEFAULT_MAIL() {
@@ -286,17 +274,21 @@ function DEFAULT_MAIL() {
   MAIL_SEND_ITEMS.forEach(item => {
     send[item] = {};
     MAIL_LANGS.forEach(l => {
-      const desc = MAIL_SEND_DESC[l][item] || MAIL_SEND_DESC[l].result;
-      send[item][l] = { subject: MAIL_SEND_SUBJECT[l], body: MAIL_SEND_SKELETON[l].replace('{DESC}', desc) };
+      const src = (MAIL_DEF_SEND[item] && MAIL_DEF_SEND[item][l]) || MAIL_DEF_SEND.result[l];
+      send[item][l] = { subject: src.subject, body: src.body };
     });
   });
   const status = {};
   MAIL_STATUS_ITEMS.forEach(item => {
     status[item] = {};
-    MAIL_LANGS.forEach(l => { status[item][l] = { subject: MAIL_STATUS_BASE[item][l].subject, body: MAIL_STATUS_BASE[item][l].body }; });
+    MAIL_LANGS.forEach(l => {
+      const bb = (MAIL_DEF_STATUS[item] && MAIL_DEF_STATUS[item][l]) || { subject: '', body: '' };
+      status[item][l] = { subject: bb.subject, body: bb.body };
+    });
   });
   return { send, status };
 }
+
 function cleanMailTemplates(input, base) {
   const out = base || DEFAULT_MAIL();
   if (!input || typeof input !== 'object') return out;
@@ -434,6 +426,20 @@ function balanceExpiresAt(u) { // ближайшая дата сгорания �
   return act[0] || null;
 }
 function sweepExpiries() { const d = db(); let any = false; d.users.forEach(u => { if (expireBalance(u) > 0) any = true; }); if (any) save(); }
+// Платный ИИ-звонок: 0.1 теста за состоявшийся разговор (списывается при финализации звонка в ai-call-log).
+const AI_CALL_PRICE = 0.1;
+callLog.setBiller((p, entry) => {
+  try {
+    const owner = db().users.find(u => u.id === p.userId);
+    if (!owner) return false;
+    expireBalance(owner);
+    owner.balanceTotal = Math.max(0, (owner.balanceTotal || 0) - AI_CALL_PRICE);
+    spendLots(owner, AI_CALL_PRICE);
+    const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || p.id;
+    logBalance(owner.id, -AI_CALL_PRICE, 'ai_call', { comment: `ИИ-звонок (${entry.kind}) — ${cand}` });
+    return true;
+  } catch (_) { return false; }
+});
 // Журнал действий администраторов — пишется при каждой мутации из админки
 function logAdmin(req, action, targetType, targetId, details) {
   db().adminLog.push({ id: uid(12), adminId: (req.adminUser || req.user).id, action,
@@ -705,6 +711,13 @@ app.post('/api/participants', requireAuth, (req, res) => {
     tel: String(b.tel || ''), city: String(b.city || ''), stage: 'Без этапа',
     comment: String(b.comment || ''), color: '#FFFFFF', starred: false, createdAt: nowISO() };
   data.participants.push(p);
+  // автоворонка: кандидат добавлен вручную на вакансию с автоворонкой → intro-звонок + первый тест
+  try {
+    if (vac && processOf(vac).auto && (p.email || p.tel)) {
+      if (p.tel) aiCallFor(req.user, p, vac, 'first');
+      advanceFunnel(p);
+    }
+  } catch (e) { console.error('[funnel:add]', e.message); }
   save(); res.json({ participant: participantView(p) });
 });
 app.put('/api/participants/:id', requireAuth, (req, res) => {
@@ -828,7 +841,49 @@ function aiCallFor(owner, p, vac, kind) {
       .catch(e => console.error('[vapi:queue]', kind, e.message));
   } catch (e) { console.error('[vapi:auto]', e.message); }
 }
-// Продвинуть кандидата по автоворонке: отправить следующий тест процесса,
+// Письмо кандидату по статусу решения (rejected/accepted) — для авто-решений воронки.
+function sendStatusMailNode(owner, p, statusKey, vac) {
+  try {
+    if (!statusKey || !p.email || !integ.isConfigured(owner.settings, 'resend') || isUnsubscribed(p.email)) return;
+    const lang = (vac && vac.lang) || 'ru';
+    const gs = portalSettings();
+    const pick = m => m && m.status && m.status[statusKey] && (m.status[statusKey][lang] || m.status[statusKey].ru);
+    const def = MAIL_DEF_STATUS[statusKey] && (MAIL_DEF_STATUS[statusKey][lang] || MAIL_DEF_STATUS[statusKey].ru);
+    const tpl = pick(owner.settings && owner.settings.mailTemplates) || pick(gs.defaultMailTemplates) || def;
+    if (!tpl || (!tpl.subject && !tpl.body)) return;
+    const name = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email;
+    const iv = ((p.workflow && p.workflow.interviews) || [])[0];
+    const vars = { name, candidate: name, client: owner.name || '', company: owner.company || '', vac: vac ? vac.name : '', vacancy: vac ? vac.name : '', phone: p.tel || '', date_interview: (iv && (iv.at || iv.date)) || '', id_part: p.id, link: '', button_link: '' };
+    const fill = s => String(s || '').replace(/\$(\w+)\$/g, (m, k) => (vars[k] != null ? vars[k] : m)).replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? vars[k] : m));
+    const subject = fill(tpl.subject) || (owner.company || 'HR PRO AI');
+    const bodyHtml = fill(tpl.body).replace(/\n/g, '<br>');
+    integ.sendEmail(owner.settings, { to: p.email, subject, lang, baseUrl: BASE_URL, unsubUrl: unsubUrlFor(p.email, lang), bodyHtml }).catch(e => console.error('[resend:status]', e.message));
+  } catch (e) { console.error('[sendStatusMailNode]', e.message); }
+}
+// Автоворонка: ИИ обзванивает бывших руководителей (референсы) по контактам из «Резалта».
+async function startRefCallsNode(owner, p, vac, refStage) {
+  try {
+    const data = db();
+    const lang = (vac && vac.lang) || 'ru';
+    const cfg = scheduler.resolveAiCall(data.vacancies, p.userId, vac);
+    p.workflow.references = p.workflow.references || {}; p.workflow.references.multi = p.workflow.references.multi || {};
+    p.workflow._refsAiStarted = true; save();
+    const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || 'кандидат';
+    for (const rf of refStage.refs) {
+      const c = rf && rf.contact; const ri = rf.i != null ? rf.i : refStage.refs.indexOf(rf);
+      if (rf.done || !(c && c.phone)) continue;
+      const iv = refai.buildRefInterview({ candidateName: cand, vacancyName: vac && vac.name, contact: c, lang, company: owner.company || '', recruiter: [owner.name, owner.surname].filter(Boolean).join(' '), agentName: cfg.agentName || '' });
+      const supervisor = [c.name, c.surname].filter(Boolean).join(' ').trim();
+      const vars = { candidate: cand, supervisor, company: owner.company || '', language: lang, agent_name: cfg.agentName || aiCallPrompts.agentName(lang) };
+      try {
+        const r = await scheduler.enqueueCall(data, save, owner.settings, p, { userId: p.userId, participantId: p.id, kind: 'references', refIndex: ri, cfg,
+          opts: { to: c.phone, lang, task: iv.systemPrompt, firstMessage: iv.firstMessage, structuredDataSchema: iv.structuredDataSchema, summaryPrompt: iv.summaryPrompt, vars } });
+        if (r && !r.skipped) { const cur = p.workflow.references.multi[ri] || {}; cur.aiCall = { callId: r.callId || null, status: 'calling', startedAt: nowISO(), entryId: r.item && r.item.entryId, queued: !!r.deferred }; p.workflow.references.multi[ri] = cur; save(); }
+      } catch (e) { console.error('[ref:auto]', e.message); }
+    }
+  } catch (e) { console.error('[startRefCallsNode]', e.message); }
+}
+// Продвинуть кандидата по автоворонке: авто-решение (отказ/найм) → реф-звонки → следующий тест процесса,
 // если предыдущие тестовые шаги пройдены (ручные этапы автоотправку не блокируют)
 function advanceFunnel(p) {
   const data = db();
@@ -838,11 +893,37 @@ function advanceFunnel(p) {
   if (!p.email && !p.tel) return; // некому отправлять — воронка ждёт контакта
   const proc = processOf(vac);
   if (!proc.auto) return;
-  const wf = p.workflow || {};
-  // решение принято (ручное или авто-отказ по критичному критерию отбора) — воронка стоит
-  if (buildWorkflow(p, 'ru').decision) return;
-  const skipped = wf.skipped || {};
-  const tests = data.tests.filter(t => t.participantId === p.id);
+  p.workflow = p.workflow || {};
+  const wf = buildWorkflow(p, 'ru');
+  const cand = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email || p.tel || 'кандидат';
+  const cbody = (p.tel ? '📞 ' + p.tel + '\n' : '') + (p.email ? '✉️ ' + p.email + '\n' : '') + (vac.name ? 'Вакансия: ' + vac.name : '');
+  // 1) АВТО-ОТКАЗ по критериям отбора (провал критичного этапа)
+  if (wf.column === 'rejected' && !p.workflow.decision) {
+    p.workflow.decision = 'rejected'; p.workflow.column = 'rejected'; save();
+    sendStatusMailNode(owner, p, 'rejected', vac);
+    try { notif.pushNotif(owner, 'decision', { title: '❌ Автоотказ по критериям: ' + cand, body: cbody, pid: p.id }, save); } catch (e) {}
+    return;
+  }
+  // 2) АВТО-РЕКОМЕНДАЦИЯ К ТРУДОУСТРОЙСТВУ (пройдены все этапы)
+  if (wf.column === 'hired' && !p.workflow.decision) {
+    p.workflow.decision = 'hired'; p.workflow.column = 'hired'; save();
+    try { notif.pushNotif(owner, 'decision', { title: '✅ Кандидат рекомендован к трудоустройству: ' + cand, body: cbody, pid: p.id }, save); } catch (e) {}
+    return;
+  }
+  // решение принято (ручное) — воронка стоит
+  if (wf.decision) return;
+  const tests0 = data.tests.filter(t => t.participantId === p.id);
+  const resultDone = tests0.some(t => t.type === 'result' && t.status === 'done');
+  // 3) РЕФЕРЕНС-ЗВОНКИ: этап активен, есть контакты, ИИ настроен, ещё не запускали
+  const refStage = (wf.stages || []).find(s => s.key === 'references');
+  if (refStage && !refStage.skipped && refStage.refs && refStage.refs.length) {
+    if (refStage.aiCall && !refStage.done && resultDone && !p.workflow._refsAiStarted) {
+      startRefCallsNode(owner, p, vac, refStage); return; // async fire-and-forget
+    }
+    if (!refStage.done && resultDone) return; // ждём завершения референсов перед следующими тестами
+  }
+  const skipped = (p.workflow || {}).skipped || {};
+  const tests = tests0;
   // последовательность тестовых шагов процесса — в настроенной очерёдности вакансии
   const seq = [];
   (proc.order || ['result', 'tools', 'logic', 'sales', 'knowledge']).forEach(key => {
@@ -1078,7 +1159,11 @@ app.get('/api/dashboard', requireAuth, (req, res) => {
   const doneByType = { tools: 0, result: 0, logic: 0, sales: 0 }; done.forEach(t => { if (doneByType[t.type] != null) doneByType[t.type]++; });
   // воронка найма
   const applied = parts.length;
-  const tested = new Set(done.map(t => t.participantId)).size;
+  const testedSet = new Set(done.map(t => t.participantId));
+  const tested = testedSet.size;
+  // Уникальные КАНДИДАТЫ (не тесты) с пройденным тестом, по которым ещё нет финального решения.
+  const _finalStages = new Set(['Принят', 'Отказ', 'Отказано']);
+  const awaitingDecision = parts.filter(p => testedSet.has(p.id) && !_finalStages.has(p.stage)).length;
   const funnel = [
     { key: 'applied', label: 'Кандидаты', value: applied },
     { key: 'tested', label: 'Прошли тест', value: tested },
@@ -1100,7 +1185,7 @@ app.get('/api/dashboard', requireAuth, (req, res) => {
       balance: req.user.balanceTotal - req.user.balancePending, vacancies: vacs.length, anketas: anketas.length,
       applications: parts.filter(p => p.anketaId).length,
       conversion: applied ? Math.round(100 * (byStage['Принят'] || 0) / applied) : 0 },
-    byStage, byType, doneByType, funnel, days, vacCounts, recent,
+    byStage, byType, doneByType, funnel, days, vacCounts, recent, awaitingDecision,
   });
 });
 
@@ -1232,7 +1317,8 @@ function applyAnketaFields(a, b) {
   if (b.title != null) a.title = String(b.title);
   if (b.vacancyId !== undefined) a.vacancyId = b.vacancyId || null;
   if (Array.isArray(b.tests)) a.tests = b.tests.filter(t => TEST_TYPES[t]);
-  ['btnText', 'pageTitle', 'msgApply', 'msgDone', 'description'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
+  ['btnText', 'pageTitle', 'msgApply', 'msgDone'].forEach(f => { if (b[f] != null) a[f] = String(b[f]); });
+  if (b.description != null) a.description = aiAd.sanitizeAdHtml(String(b.description).slice(0, 40000)); // объявление-HTML → безопасные теги
   ['noCaptcha', 'sendEmail'].forEach(f => { if (b[f] != null) a[f] = !!b[f]; });
 }
 app.post('/api/anketas', requireAuth, (req, res) => {
@@ -1298,16 +1384,27 @@ app.post('/api/a/:slug/apply', (req, res) => {
   const links = [];
   const avac = data.vacancies.find(v => v.id === a.vacancyId);
   const alang = avac ? (avac.lang || 'ru') : 'ru';
-  orderTypes((a.tests || []).filter(t => TEST_TYPES[t]), owner, avac).forEach(type => {
-    if (!TEST_TYPES[type]) return;
+  // Тесты определяет ПРОЦЕСС найма вакансии (не анкета). После отклика уходит только ПЕРВЫЙ тест;
+  // остальные — автоворонкой (если включена) после прохождения предыдущего, либо не уходят (если выключена).
+  let seqTypes = [];
+  if (avac) { const proc = processOf(avac);
+    (proc.order || ['result', 'tools', 'logic', 'sales']).forEach(key => {
+      if (key === 'result' || key === 'tools') { if (proc.stages[key] !== false) seqTypes.push(key); }
+      else if (key === 'logic' || key === 'sales') { if (proc.optional && proc.optional[key]) seqTypes.push(key); }
+    });
+  }
+  if (!seqTypes.length) seqTypes = orderTypes((a.tests || []).filter(t => TEST_TYPES[t]), owner, avac);
+  const firstType = seqTypes.find(t => TEST_TYPES[t]);
+  if (firstType) {
     const available = owner ? owner.balanceTotal - owner.balancePending : 0;
-    if (owner && available < 1) return; // не хватает баланса — пропускаем тест
-    const code = shortCode(10);
-    const test = { id: uid(12), participantId: p.id, userId: a.userId, type, status: 'sent', code, lang: alang,
-      sentAt: nowISO(), startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
-    data.tests.push(test); if (owner) owner.balancePending += 1;
-    links.push({ type, title: TEST_TYPES[type].title, link: `${BASE_URL}/t/${code}` });
-  });
+    if (!owner || available >= 1) {
+      const code = shortCode(10);
+      const test = { id: uid(12), participantId: p.id, userId: a.userId, type: firstType, status: 'sent', code, lang: alang,
+        sentAt: nowISO(), startedAt: null, finishedAt: null, durationSec: null, answers: {}, times: {}, result: null, ratings: {}, overallRate: null, publicShare: false };
+      data.tests.push(test); if (owner) owner.balancePending += 1;
+      links.push({ type: firstType, title: TEST_TYPES[firstType].title, link: `${BASE_URL}/t/${code}` });
+    }
+  }
   // кандидат попал в воронку: звонок ИИ «первый контакт» и автоотправка первого теста процесса
   try { if (owner && avac) { aiCallFor(owner, p, avac, 'first'); advanceFunnel(p); } }
   catch (e) { console.error('[funnel:apply]', e.message); }
@@ -1342,6 +1439,33 @@ app.get('/api/plans', (req, res) => res.json({ plans: activePlans(), currency: p
 app.get('/api/purchases', requireAuth, (req, res) => {
   const list = db().purchases.filter(p => p.userId === req.user.id).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
   res.json({ purchases: list });
+});
+// Полная история движений баланса: начисления (пакеты, стартовый бонус) и списания (тесты, ИИ-звонки/функции, обучение, сгорание).
+app.get('/api/balance/history', requireAuth, (req, res) => {
+  const data = db();
+  const rows = (data.balanceLog || []).filter(e => e.userId === req.user.id);
+  const enrich = (e) => {
+    const item = { delta: e.delta, kind: e.kind, comment: e.comment || '', createdAt: e.createdAt, balanceAfter: e.balanceAfter };
+    if (e.testId) {
+      const test = data.tests.find(t => t.id === e.testId);
+      if (test) {
+        item.testType = test.type;
+        const p = data.participants.find(x => x.id === test.participantId);
+        if (p) { item.candidate = ((p.name || '') + ' ' + (p.surname || '')).trim() || p.email; item.vacancy = p.vacancyName || ''; item.participantId = p.id; item.vacancyId = p.vacancyId || ''; }
+      }
+    }
+    if (e.kind === 'ai_feature') item.feature = e.feature || (String(e.comment || '').match(/«([a-z]+)»/) || [])[1] || '';
+    return item;
+  };
+  const out = rows.map(enrich);
+  // Стартовый бонус: если записи в логе нет (старые аккаунты), синтезируем из лота.
+  if (!rows.some(e => e.kind === 'signup_bonus')) {
+    const lots = req.user.balanceLots || [];
+    const sb = lots.find(l => l.source === 'signup_bonus') || lots.find(l => l.source === 'legacy');
+    if (sb && sb.qty > 0) out.push({ delta: sb.qty, kind: 'signup_bonus', comment: '', createdAt: sb.createdAt || req.user.createdAt });
+  }
+  out.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+  res.json({ log: out });
 });
 
 function creditPurchase(user, plan, method, sessionId) {
@@ -1477,8 +1601,10 @@ function computeResult(test) {
         given: given != null ? Number(given) : null, answer: q.answer, correct: ok };
     });
     const percent = Math.round(100 * correct / total);
-    // IQ-балл как на портале: база 75 при 0 верных, шкала до ~155 (нормируем на 80-вопросный масштаб).
-    const iq = Math.round(75 + correct * (80 / total));
+    // IQ по методике источника (Otis): верные + база (75 муж / 70 жен). Масштабируем на 80-вопросный эталон.
+    const pIq = db().participants.find(x => x.id === test.participantId);
+    const maleIq = /^(м|m|муж|male)/i.test(String((pIq && pIq.sex) || ''));
+    const iq = Math.round((maleIq ? 75 : 70) + correct * (80 / total));
     const level = iq < 80 ? 'Очень низкий' : iq < 100 ? 'Низкий' : iq < 120 ? 'Средний' : iq < 140 ? 'Высокий' : 'Очень высокий';
     const bands = [
       { range: 'До 80 баллов', text: 'Очень низкий уровень интеллекта. Не подходит для руководящих должностей и должностей, требующих применения умственных способностей.' },
@@ -1515,7 +1641,7 @@ app.get('/api/tests/:id/result', requireAuth, (req, res) => {
   res.json({ test: { id: test.id, type: test.type, title: testTitleOf(test.type), status: test.status,
       knName: (test.knowledge && test.knowledge.name) || null, passScore: (test.knowledge && test.knowledge.passScore) || null,
       startedAt: test.startedAt, finishedAt: test.finishedAt, durationSec: test.durationSec,
-      publicShare: test.publicShare, code: test.code },
+      publicShare: test.publicShare, code: test.code, integrity: test.integrity || null },
     participant: p ? participantView(p) : null, result, hint });
 });
 
@@ -1542,6 +1668,8 @@ app.post('/api/tests/:id/share', requireAuth, (req, res) => {
 aiDecodeRoutes.register(app, {
   db, save, nowISO, requireAuth, integ, computeResult,
   resultHint: ai.resultHint, getBaseUrl: () => BASE_URL,
+  // баланс тестов для платных AI-функций
+  expireBalance, spendLots, logBalance, publicUser, testTitleOf,
 });
 
 // ---------- CANDIDATE (public, by code) ----------
@@ -1612,13 +1740,29 @@ app.post('/api/take/:code/start', (req, res) => {
   res.json({ ok: true });
 });
 
+// Санитайз сигналов честности прохождения (детектор читинга): границы + обрезка строк.
+function sanitizeIntegrity(x) {
+  if (!x || typeof x !== 'object') return null;
+  const n = (v, max) => Math.max(0, Math.min(max, Math.round(+v || 0)));
+  const tabByQ = {};
+  if (x.tabByQ && typeof x.tabByQ === 'object') { for (const k of Object.keys(x.tabByQ).slice(0, 300)) tabByQ[String(k).slice(0, 40)] = n(x.tabByQ[k], 9999); }
+  const out = {
+    tabSwitches: n(x.tabSwitches, 99999), copyCount: n(x.copyCount, 99999), pasteCount: n(x.pasteCount, 99999),
+    focusLostMs: n(x.focusLostMs, 100 * 3600 * 1000), tabByQ,
+    copied: Array.isArray(x.copied) ? x.copied.slice(0, 25).map(s => String(s == null ? '' : s).slice(0, 200)).filter(Boolean) : [],
+  };
+  // сохраняем только если реально есть сигналы
+  if (!out.tabSwitches && !out.copyCount && !out.pasteCount && !out.copied.length) return null;
+  return out;
+}
 app.post('/api/take/:code/submit', (req, res) => {
   const test = findByCode(req.params.code);
   if (!test) return res.status(404).json({ error: 'Тест не найден' });
   if (test.status === 'done') return res.json({ ok: true, already: true });
-  const { answers, times } = req.body || {};
+  const { answers, times, integrity } = req.body || {};
   test.answers = answers || {};
   test.times = times || {};
+  test.integrity = sanitizeIntegrity(integrity);
   test.finishedAt = nowISO();
   if (test.startedAt) test.durationSec = Math.round((new Date(test.finishedAt) - new Date(test.startedAt)) / 1000);
   test.status = 'done';
@@ -1665,6 +1809,87 @@ function clientByPhone(phone) {
   if (l && l.userId) { const u = db().users.find(x => x.id === l.userId); if (u) return u; }
   return db().users.find(u => u.settings && u.settings.phone && salesAgent.phoneKey(u.settings.phone) === key) || null;
 }
+// Разместить исходящий звонок Софии лиду (перезвон/ретрай планировщика). Мутирует lead.
+async function placeSalesLeadCall(lead, opts = {}) {
+  const vcfg = integ.cfgOf(null, 'vapi');
+  if (!vcfg.apiKey) return { ok: false, reason: 'no vapi key' };
+  if (salesSched.isTerminal(lead)) return { ok: false, reason: 'terminal status' };
+  const gs = portalSettings();
+  const salesPhoneId = gs.vapiSalesPhoneId || vcfg.salesPhoneNumberId || '';
+  if (!salesPhoneId) return { ok: false, reason: 'no sales phone' };
+  const hourKey = Math.floor(Date.now() / 3600000);
+  const guard = (gs.salesCallGuard && gs.salesCallGuard.hour === hourKey) ? gs.salesCallGuard : { hour: hourKey, count: 0 };
+  const CALL_CAP = Number(process.env.SALES_CALL_HOURLY_CAP || gs.salesCallHourlyCap || 40);
+  if (guard.count >= CALL_CAP) return { ok: false, reason: 'hourly cap' };
+  const lg = lead.lang || 'ru';
+  const secret = gs.vapiInboundSecret || '';
+  let leadBlock = salesAgent.leadContext(lead);
+  const hist = salesAgent.historyBlock(lead); if (hist) leadBlock += '\n\n' + hist;
+  if (opts.resumePrompt) leadBlock += '\n\n' + opts.resumePrompt;
+  const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: lg, name: lead.name || '', leadBlock, plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
+    toolServerUrl: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', toolSecret: secret });
+  if (secret) assistant.server = { url: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', secret };
+  let callId = '';
+  try {
+    const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(lead.phone) }, assistant }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.id) { callId = d.id; guard.count += 1; gs.salesCallGuard = guard; }
+    else { lead.lastCallError = (d && d.message ? String(Array.isArray(d.message) ? d.message.join('; ') : d.message) : 'HTTP ' + r.status).slice(0, 300); }
+  } catch (e) { return { ok: false, reason: e.message }; }
+  if (!callId) return { ok: false, reason: lead.lastCallError || 'vapi failed' };
+  lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
+  lead.aiCallLog.push({ callId, kind: opts.kind || 'callback', dir: 'out', createdAt: nowISO(), status: 'calling', lang: lg });
+  if (lead.aiCallLog.length > 50) lead.aiCallLog = lead.aiCallLog.slice(-50);
+  const sch = lead.callSchedule = lead.callSchedule || { status: 'calling', attempts: 0, callbacks: 0 };
+  sch.status = 'calling'; sch.callId = callId; sch.startedAt = nowISO(); sch.attempts = (sch.attempts || 0) + 1;
+  lead.callActive = true;
+  return { ok: true, callId };
+}
+// Разместить исходящий звонок Софии КЛИЕНТУ (перезвон/ретрай планировщика). Мутирует user.
+async function placeSalesClientCall(user, opts = {}) {
+  const vcfg = integ.cfgOf(null, 'vapi');
+  if (!vcfg.apiKey) return { ok: false, reason: 'no vapi key' };
+  if (user.blocked || user.salesDoNotCall) return { ok: false, reason: 'do not call' };
+  const phone = (user.settings && user.settings.phone) || '';
+  if (!phone) return { ok: false, reason: 'no phone' };
+  const gs = portalSettings();
+  const salesPhoneId = gs.vapiSalesPhoneId || vcfg.salesPhoneNumberId || '';
+  if (!salesPhoneId) return { ok: false, reason: 'no sales phone' };
+  const hourKey = Math.floor(Date.now() / 3600000);
+  const guard = (gs.salesCallGuard && gs.salesCallGuard.hour === hourKey) ? gs.salesCallGuard : { hour: hourKey, count: 0 };
+  const CALL_CAP = Number(process.env.SALES_CALL_HOURLY_CAP || gs.salesCallHourlyCap || 40);
+  if (guard.count >= CALL_CAP) return { ok: false, reason: 'hourly cap' };
+  // Продолжаем на языке прошлых разговоров (salesLang), фолбэк — язык интерфейса, затем русский.
+  const lang = user.salesLang || (['ru', 'pl', 'en'].includes(user.settings && user.settings.uiLang) ? user.settings.uiLang : 'ru');
+  const secret = gs.vapiInboundSecret || '';
+  let block = [`Компания: ${user.company || '—'}.`, `Баланс тестов: ${Math.max(0, (user.balanceTotal || 0) - (user.balancePending || 0))} доступно.`, `Зарегистрирован: ${String(user.createdAt || '').slice(0, 10)}.`].join('\n');
+  const hist = salesAgent.historyBlock({ aiCallLog: user.salesCalls || [] }); if (hist) block += '\n\n' + hist;
+  if (opts.resumePrompt) block += '\n\n' + opts.resumePrompt;
+  const assistant = salesAgent.buildAssistant({ mode: 'client', lang, name: user.name || '', company: user.company || '', leadBlock: block,
+    plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey, toolServerUrl: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', toolSecret: secret });
+  if (opts.firstMessage || ['ru', 'pl', 'en'].includes(lang)) {
+    assistant.firstMessage = opts.firstMessage || (lang === 'pl' ? `Dzień dobry${user.name ? ', ' + user.name : ''}! Tu Zofia z HR-PRO.AI. Dzwonię w sprawie naszego portalu — ma Pan chwilę?`
+      : lang === 'en' ? `Hello${user.name ? ', ' + user.name : ''}! This is Sofia from HR-PRO.AI. I'm calling about our portal — do you have a minute?`
+      : `Здравствуйте${user.name ? ', ' + user.name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`);
+  }
+  if (secret) assistant.server = { url: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', secret };
+  let callId = '';
+  try {
+    const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneNumberId: salesPhoneId, customer: { number: salesAgent.toE164(phone) }, assistant, metadata: { kind: 'client', userId: user.id } }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.id) { callId = d.id; guard.count += 1; gs.salesCallGuard = guard; }
+  } catch (e) { return { ok: false, reason: e.message }; }
+  if (!callId) return { ok: false, reason: 'vapi failed' };
+  user.salesCalls = Array.isArray(user.salesCalls) ? user.salesCalls : [];
+  user.salesCalls.push({ callId, kind: opts.kind || 'callback', dir: 'out', goal: opts.goal || 'upsell', createdAt: nowISO(), status: 'calling', lang });
+  if (user.salesCalls.length > 50) user.salesCalls = user.salesCalls.slice(-50);
+  const sch = user.callSchedule = user.callSchedule || { status: 'calling', attempts: 0, callbacks: 0 };
+  sch.status = 'calling'; sch.callId = callId; sch.startedAt = nowISO(); sch.attempts = (sch.attempts || 0) + 1;
+  user.callActive = true;
+  return { ok: true, callId };
+}
 // Авто-конверсия лид → клиент (email из звонка Софии или телефон профиля).
 function convertLeadsForUser(u) {
   const em = String(u.email || '').toLowerCase();
@@ -1679,6 +1904,7 @@ function convertLeadsForUser(u) {
       (l.aiCallLog || []).forEach(e => { if (!e.callId || !seen.has(e.callId)) u.salesCalls.push(e); });
       if (!u.settings) u.settings = {};
       if (!u.settings.phone && l.phone) u.settings.phone = l.phone; // подтянем телефон из лида
+      if (!u.salesLang && l.lang) u.salesLang = l.lang; // продолжаем с клиентом на языке разговоров лида
       l.userId = u.id; l.status = 'converted'; l.convertedAt = nowISO(); changed = true;
     }
   });
@@ -1697,7 +1923,11 @@ app.post('/api/leads/callback', async (req, res) => {
   let lead = leadByPhone(phone);
   const now = nowISO();
   if (!lead) { lead = { id: uid(12), name, phone, lang, source: 'callback', status: 'new', createdAt: now, aiCallLog: [], requests: [] }; db().leads.push(lead); }
-  else { if (name) lead.name = name; lead.lang = lang; } // НЕ сбрасываем do_not_call автоматически
+  else { if (name) lead.name = name; if (!lead.lang) lead.lang = lang; } // НЕ сбрасываем do_not_call автоматически
+  // Существующий лид с историей разговоров → продолжаем на языке ПРОШЛЫХ разговоров; новый/без истории → язык лендинга.
+  const hadTalk = Array.isArray(lead.aiCallLog) && lead.aiCallLog.some(e => e.summary || e.transcript);
+  const callLang = hadTalk ? (lead.lang || lang) : lang;
+  if (!hadTalk) lead.lang = lang;
   lead.requests = (lead.requests || []).filter(t => Date.now() - new Date(t).getTime() < 3600000);
   if (lead.requests.length >= 3) { save(); return res.status(429).json({ error: 'Слишком много заявок. Мы уже набираем ваш номер — подождите звонка.', code: 'rate_limit' }); }
   lead.requests.push(now);
@@ -1711,7 +1941,7 @@ app.post('/api/leads/callback', async (req, res) => {
   if (vcfg.apiKey && salesPhoneId && !optedOut && guard.count < CALL_CAP) {
     try {
       const secret = gs.vapiInboundSecret || '';
-      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
+      const assistant = salesAgent.buildAssistant({ mode: 'lead', lang: callLang, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
         toolServerUrl: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', toolSecret: secret });
       if (secret) assistant.server = { url: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', secret };
       const r = await fetch('https://api.vapi.ai/call', { method: 'POST', headers: { Authorization: 'Bearer ' + vcfg.apiKey, 'Content-Type': 'application/json' },
@@ -1722,8 +1952,9 @@ app.post('/api/leads/callback', async (req, res) => {
     } catch (e) { console.error('[sales] call err', e.message); }
   }
   lead.aiCallLog = Array.isArray(lead.aiCallLog) ? lead.aiCallLog : [];
-  lead.aiCallLog.push({ callId, kind: 'callback', dir: 'out', createdAt: now, status: callId ? 'calling' : 'failed', lang });
+  lead.aiCallLog.push({ callId, kind: 'callback', dir: 'out', createdAt: now, status: callId ? 'calling' : 'failed', lang: callLang });
   if (lead.aiCallLog.length > 50) lead.aiCallLog = lead.aiCallLog.slice(-50);
+  if (callId) { lead.callSchedule = { status: 'calling', attempts: 1, callbacks: 0, callId, startedAt: now }; lead.callActive = true; }
   save();
   res.json({ ok: true, calling: !!callId });
 });
@@ -1787,9 +2018,42 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
           entry.status = 'done'; entry.endedAt = nowISO();
           entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
           entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
-          entry.summary = a.summary || msg.summary || entry.summary || '';
-          entry.answers = a.structuredData || entry.answers || null;
+          entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : entry.durationSec || null;
+          // Гард от галлюцинаций Vapi: при пустом/мгновенном звонке анализатор выдумывает сводку — не сохраняем её.
+          const realTalk = salesAgent.hadRealConversation({ transcript: entry.transcript, durationSec: entry.durationSec });
+          entry.summary = realTalk ? (a.summary || msg.summary || entry.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+          entry.answers = realTalk ? (a.structuredData || entry.answers || null) : null;
           if (cu.salesCalls.length > 50) cu.salesCalls = cu.salesCalls.slice(-50);
+          const endedReason = msg.endedReason || (msg.call && msg.call.endedReason) || call.endedReason || '';
+          entry.endedReason = endedReason;
+          if (entry.answers && entry.answers.do_not_call === true) cu.salesDoNotCall = true;
+          // Фактический язык разговора → запоминаем, чтобы следующий звонок продолжить на нём же.
+          { const sl = salesAgent.normSpokenLang(entry.answers && entry.answers.spoken_language); if (sl) cu.salesLang = sl; }
+          // Технический обрыв → немедленный перезвон (1 раз на звонок).
+          if (!entry._redialed && !cu.salesDoNotCall && !cu.blocked
+            && salesAgent.wasInterrupted({ endedReason, transcript: entry.transcript, durationSec: entry.durationSec, sd: entry.answers })) {
+            entry._redialed = true;
+            try {
+              const lgc = cu.salesLang || (['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru');
+              const apology = lgc === 'pl' ? 'WAŻNE: poprzednia rozmowa właśnie się urwała technicznie. Dzwonisz ponownie — przeproś za zerwane połączenie i kontynuuj od miejsca, gdzie skończyliście.'
+                : lgc === 'en' ? 'IMPORTANT: the previous call just dropped technically. You are calling back — apologize for the drop and continue from where you left off.'
+                : 'ВАЖНО: предыдущий разговор ТОЛЬКО ЧТО прервался по технической причине. Ты перезваниваешь: извинись за обрыв связи и продолжи с того места, где остановились.';
+              const fm = lgc === 'pl' ? `Dzień dobry${cu.name ? ', ' + cu.name : ''}! Przepraszam, połączenie się urwało. Możemy kontynuować?`
+                : lgc === 'en' ? `Hello${cu.name ? ', ' + cu.name : ''}! Sorry, the call dropped. May we continue?`
+                : `Здравствуйте${cu.name ? ', ' + cu.name : ''}! Извините, связь оборвалась. Можем продолжить?`;
+              await placeSalesClientCall(cu, { kind: 'redial', resumePrompt: apology, firstMessage: fm });
+            } catch (e) { console.error('[sales] client redial err', e.message); }
+          }
+          // Планировщик перезвонов/недозвонов (как у Евы).
+          try {
+            const lastCall = cu.salesCalls[cu.salesCalls.length - 1] || {};
+            const redialed = !!(lastCall.kind === 'redial' && lastCall.status === 'calling');
+            await salesSched.scheduleAfterReport(cu, {
+              now: new Date(), cfg: salesSched.salesCfg(gs),
+              transcript: entry.transcript, endedReason, lang: cu.salesLang || (cu.settings && cu.settings.uiLang) || 'ru', redialed,
+              terminal: !!cu.salesDoNotCall || !!cu.blocked,
+            });
+          } catch (_) {}
           save();
         }
       } else if (caller) {
@@ -1803,14 +2067,18 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
         entry.status = 'done'; entry.endedAt = nowISO();
         entry.transcript = msg.transcript || art.transcript || entry.transcript || '';
         entry.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || msg.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || entry.recordingUrl || null;
-        entry.summary = a.summary || msg.summary || entry.summary || '';
-        entry.answers = a.structuredData || entry.answers || null;
+        entry.durationSec = (call.startedAt && (msg.endedAt || call.endedAt)) ? Math.max(0, Math.round((new Date(msg.endedAt || call.endedAt) - new Date(call.startedAt)) / 1000)) : (entry.durationSec || null);
+        // Гард от галлюцинаций Vapi: при пустом/мгновенном звонке анализатор выдумывает сводку — не сохраняем её и не применяем данные.
+        const realTalk = salesAgent.hadRealConversation({ transcript: entry.transcript, durationSec: entry.durationSec });
+        entry.summary = realTalk ? (a.summary || msg.summary || entry.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+        entry.answers = realTalk ? (a.structuredData || entry.answers || null) : null;
         salesAgent.applyCallResult(lead, { summary: entry.summary, sd: entry.answers, transcript: entry.transcript });
         if (lead.email && !lead.userId) {
           const u = db().users.find(x => x.email.toLowerCase() === lead.email.toLowerCase());
           if (u) { lead.userId = u.id; lead.status = 'converted'; lead.convertedAt = nowISO(); }
         }
         const endedReason = msg.endedReason || (msg.call && msg.call.endedReason) || call.endedReason || '';
+        entry.endedReason = endedReason;
         // Просил живого менеджера → письмо админам портала
         if (salesAgent.wantsManager(entry.answers, entry.transcript) && !entry._mgrNotified) {
           entry._mgrNotified = true;
@@ -1828,7 +2096,7 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
             const vcfg2 = integ.cfgOf(null, 'vapi');
             const salesPhoneId2 = gs.vapiSalesPhoneId || vcfg2.salesPhoneNumberId || '';
             if (vcfg2.apiKey && salesPhoneId2) {
-              const lg = ['ru', 'pl', 'en'].includes(lead.lang) ? lead.lang : 'ru';
+              const lg = lead.lang || 'ru';
               const secret2 = gs.vapiInboundSecret || '';
               const assistant2 = salesAgent.buildAssistant({ mode: 'lead', lang: lg, name: lead.name || '', plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
                 toolServerUrl: BASE_URL.replace(/\/+$/, '') + '/api/vapi/sales-inbound', toolSecret: secret2,
@@ -1841,6 +2109,16 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
             }
           } catch (e) { console.error('[sales] redial err', e.message); }
         }
+        // Планировщик перезвонов/недозвонов (как у Евы): перезвон по просьбе или ретрай при недозвоне.
+        try {
+          const lastLog = lead.aiCallLog[lead.aiCallLog.length - 1] || {};
+          const redialed = !!(lastLog.kind === 'redial' && lastLog.status === 'calling');
+          await salesSched.scheduleAfterReport(lead, {
+            now: new Date(), cfg: salesSched.salesCfg(gs),
+            transcript: entry.transcript, endedReason, lang: lead.lang, redialed,
+            terminal: ['do_not_call', 'refused', 'registered', 'converted'].includes(lead.status),
+          });
+        } catch (_) {}
         save();
       }
     } catch (e) { console.error('[sales] report err', e.message); }
@@ -1851,7 +2129,7 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
     const u = clientByPhone(caller);
     const elevenKey = integ.cfgOf(null, 'elevenlabs').apiKey;
     if (u) {
-      const lang = ['ru', 'pl', 'en'].includes(u.settings && u.settings.uiLang) ? u.settings.uiLang : 'ru';
+      const lang = u.salesLang || (['ru', 'pl', 'en'].includes(u.settings && u.settings.uiLang) ? u.settings.uiLang : 'ru');
       const bits = [];
       if (u.company) bits.push(`Компания: ${u.company}.`);
       bits.push(`Баланс тестов: ${Math.max(0, (u.balanceTotal || 0) - (u.balancePending || 0))} доступно.`);
@@ -1859,8 +2137,10 @@ app.post('/api/vapi/sales-inbound', async (req, res) => {
       return res.json({ assistant: salesAgent.buildAssistant({ mode: 'client', lang, name: u.name || '', company: u.company || '', leadBlock: bits.join('\n'), plans: gs.plans, currency: gs.currency, inbound: true, elevenKey }) });
     }
     let lead = leadByPhone(caller);
-    if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: 'ru', source: 'inbound', status: 'new', createdAt: nowISO(), aiCallLog: [] }; db().leads.push(lead); save(); }
-    res.json({ assistant: salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: true, elevenKey }) });
+    const unknown = !lead;
+    if (!lead) { lead = { id: uid(12), name: '', phone: caller, lang: salesAgent.langByPhone(caller), source: 'inbound', status: 'new', createdAt: nowISO(), aiCallLog: [] }; db().leads.push(lead); save(); }
+    const askLanguage = unknown && !lead.name;
+    res.json({ assistant: salesAgent.buildAssistant({ mode: 'lead', lang: lead.lang || 'ru', baseLang: salesAgent.langByPhone(caller), askLanguage, name: lead.name || '', leadBlock: salesAgent.leadContext(lead), plans: gs.plans, currency: gs.currency, inbound: true, elevenKey }) });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -1877,8 +2157,9 @@ app.get('/api/r/:id', (req, res) => {
   if (test.type === 'tools') hint = ai.toolsHint(result, lang);
   if (test.type === 'sales') hint = ai.salesHint(result, lang);
   if (test.type === 'logic') hint = ai.logicHint(result, lang);
-  res.json({ test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec },
-    participant: p ? { name: p.name, surname: p.surname, age: p.age } : null, result, hint });
+  const vac = p && p.vacancyId ? db().vacancies.find(v => v.id === p.vacancyId) : null;
+  res.json({ lang, test: { type: test.type, title: testTitleOf(test.type), durationSec: test.durationSec, integrity: test.integrity || null },
+    participant: p ? { name: p.name, surname: p.surname, age: p.age, vacancy: vac ? vac.name : '' } : null, result, hint });
 });
 
 // ---------- EDUCATION ----------
@@ -2114,10 +2395,13 @@ app.post('/api/req/:code', (req, res) => {
 // Собрать объявление: ИИ по методологии (промт+база знаний+заявка), фолбэк — шаблон.
 async function buildAd({ form, lang, company, target, vacancyName }) {
   try {
-    const ad = await aiAd.generateAd({ form, lang, company, target, vacancyName });
-    if (ad && ad.trim()) return { ad, ai: true };
+    const gen = await aiAd.generateAd({ form, lang, company, target, vacancyName });
+    if (gen && gen.variants && gen.variants.length) {
+      return { ai: true, comment: gen.comment || '', variants: gen.variants, adText: gen.variants[0].html };
+    }
   } catch (e) { console.error('[ai-ad]', e.message); }
-  return { ad: air.generateAd(form || { position: vacancyName }, lang, { company, target }), ai: false };
+  const fb = aiAd.sanitizeAdHtml(air.generateAd(form || { position: vacancyName }, lang, { company, target }));
+  return { ai: false, comment: '', variants: [{ title: '', html: fb }], adText: fb };
 }
 app.post('/api/requisitions/:id/generate-ad', requireAuth, async (req, res) => {
   const r = db().requisitions.find(x => x.id === req.params.id && x.userId === req.user.id);
@@ -2135,6 +2419,8 @@ app.post('/api/vacancies/:id/generate-ad', requireAuth, async (req, res) => {
   const form = (r && r.form) || { position: v.name };
   const lang = (req.body && ['ru', 'pl', 'en'].includes(req.body.lang)) ? req.body.lang : (v.lang || 'ru');
   const out = await buildAd({ form, lang, company: req.user.company, target: req.body && req.body.target, vacancyName: v.name });
+  // Сохраняем варианты и комментарий на вакансии, чтобы редактор восстанавливал их при повторном открытии.
+  v.adVariants = out.variants; v.adComment = out.comment; v.adText = out.adText; v.adMode = 'ai'; save();
   res.json(out);
 });
 
@@ -2174,6 +2460,7 @@ function processOf(v) {
 function vacFull(v) {
   return { id: v.id, name: v.name, lang: v.lang, sectionId: v.sectionId || null,
     requisitionId: v.requisitionId || null, adText: v.adText || '', adMode: v.adMode || 'manual',
+    adComment: v.adComment || '', adVariants: Array.isArray(v.adVariants) ? v.adVariants : [],
     published: !!v.published, workflow: Array.isArray(v.workflow) ? v.workflow : recruit.STAGE_KEYS.slice(),
     knowledge: v.knowledge || { questions: [], passScore: 60 },
     knowledgeTests: knowledgeTestsOf(v),
@@ -2273,7 +2560,9 @@ app.put('/api/vacancies/:id/config', requireAuth, (req, res) => {
   const v = db().vacancies.find(x => x.id === req.params.id && x.userId === req.user.id);
   if (!v) return res.status(404).json({ error: 'Не найдено' });
   const b = req.body || {};
-  if (b.adText != null) v.adText = String(b.adText).slice(0, 40000);
+  if (b.adText != null) v.adText = aiAd.sanitizeAdHtml(String(b.adText).slice(0, 40000));
+  if (Array.isArray(b.adVariants)) v.adVariants = b.adVariants.slice(0, 6).map(x => ({ title: String((x && x.title) || '').slice(0, 120), html: aiAd.sanitizeAdHtml(String((x && x.html) || '').slice(0, 40000)) }));
+  if (b.adComment != null) v.adComment = String(b.adComment).slice(0, 8000);
   if (b.adMode && ['ai', 'manual'].includes(b.adMode)) v.adMode = b.adMode;
   if (typeof b.published === 'boolean') v.published = b.published;
   if (Array.isArray(b.workflow)) v.workflow = b.workflow.filter(k => recruit.STAGE_KEYS.includes(k));
@@ -2589,7 +2878,12 @@ function buildWorkflow(p, lang) {
           st.suggested = gr.percent >= ((t.knowledge && t.knowledge.passScore) || 60);
         } else if (key === 'result') {
           const h = ai.resultHint(t, lang); st.analysis = { verdict: h.verdict, notes: h.notes, tone: h.tone };
-          st.suggested = h.category !== 'Вейтер';
+          // Критерий с учётом целевого типа вакансии: нужен Виннер → Дуер и Вейтер НЕ проходят;
+          // рядовая (Дуер тоже ок) → отсеивается только Вейтер.
+          const _boss = /руковод|директор|начальн|заведующ|управляющ|главн|head|chief|director|ceo|coo|cto/i.test((vac && vac.name) || '');
+          const _tgt = (proc && proc.target) || (_boss ? 'performer' : 'executor');
+          st.suggested = _tgt === 'performer' ? (h.category === 'Виннер') : (h.category !== 'Вейтер');
+          st.targetType = _tgt; st.resultCategory = h.category;
         } else {
           const r = localizeResult(computeResult(t), 'tools', lang); const h = ai.toolsHint(r, lang);
           st.analysis = { verdict: h.verdict, notes: h.notes }; st.suggested = true;
@@ -3107,6 +3401,7 @@ app.get('/verify-email', (req, res) => res.sendFile(path.join(PUB, 'verify-email
 app.get(['/guide', '/guide/:slug'], (req, res) => res.sendFile(path.join(PUB, 'guide.html')));
 app.get('/privacy', (req, res) => res.sendFile(path.join(PUB, 'privacy.html')));
 app.get('/terms', (req, res) => res.sendFile(path.join(PUB, 'terms.html')));
+app.get(['/support', '/docs/integrations'], (req, res) => res.sendFile(path.join(PUB, 'support.html')));
 // Одно-кликовая отписка от писем
 app.get('/unsubscribe', (req, res) => {
   const lang = ['ru', 'pl', 'en'].includes(req.query.lang) ? req.query.lang : 'ru';
@@ -3170,5 +3465,41 @@ setInterval(() => { try { sweepExpiries(); } catch (_) {} }, 24 * 3600e3);
 let _tickBusy = false;
 setInterval(() => {
   if (_tickBusy) return; _tickBusy = true;
-  Promise.resolve().then(() => scheduler.tick(db(), save)).catch(e => console.error('[scheduler]', e.message)).finally(() => { _tickBusy = false; });
+  Promise.resolve().then(() => scheduler.tick(db(), save))
+    .then(() => { try { for (const p of db().participants) { if (p.workflow && p.workflow._refsAiStarted && !p.workflow.decision) advanceFunnel(p); } } catch (e) { console.error('[funnel:tick]', e.message); } })
+    .catch(e => console.error('[scheduler]', e.message)).finally(() => { _tickBusy = false; });
+}, 45000);
+// планировщик перезвонов Софии (лиды): перезвон по просьбе / ретрай недозвона / рабочее окно
+let _salesTickBusy = false;
+async function salesLeadsTick() {
+  const scfg = salesSched.salesCfg(portalSettings());
+  const now = new Date();
+  let changed = false;
+  for (const lead of (db().leads || [])) {
+    if (!lead || !lead.callActive || !lead.callSchedule) continue;
+    const sch = lead.callSchedule;
+    if (['done', 'stopped'].includes(sch.status)) { lead.callActive = false; changed = true; continue; }
+    if (sch.status === 'calling') { if (salesSched.releaseIfStuck(lead, now, 20)) changed = true; continue; }
+    const due = salesSched.dueForCall(lead, scfg, now);
+    if (due.deferred) { changed = true; continue; }
+    if (!due.due) continue;
+    const resume = (sch.callbacks || 0) > 0 ? salesAgent.CALL_GOALS.callback.prompt : '';
+    try { await placeSalesLeadCall(lead, { kind: (sch.callbacks || 0) > 0 ? 'callback' : 'retry', resumePrompt: resume }); changed = true; } catch (_) {}
+  }
+  for (const user of (db().users || [])) {
+    if (!user || !user.callActive || !user.callSchedule) continue;
+    const sch = user.callSchedule;
+    if (['done', 'stopped'].includes(sch.status)) { user.callActive = false; changed = true; continue; }
+    if (sch.status === 'calling') { if (salesSched.releaseIfStuck(user, now, 20)) changed = true; continue; }
+    const due = salesSched.dueForCall(user, scfg, now);
+    if (due.deferred) { changed = true; continue; }
+    if (!due.due) continue;
+    const resume = (sch.callbacks || 0) > 0 ? salesAgent.CALL_GOALS.callback.prompt : '';
+    try { await placeSalesClientCall(user, { kind: (sch.callbacks || 0) > 0 ? 'callback' : 'retry', resumePrompt: resume }); changed = true; } catch (_) {}
+  }
+  if (changed) save();
+}
+setInterval(() => {
+  if (_salesTickBusy) return; _salesTickBusy = true;
+  Promise.resolve().then(salesLeadsTick).catch(e => console.error('[sales-scheduler]', e.message)).finally(() => { _salesTickBusy = false; });
 }, 45000);

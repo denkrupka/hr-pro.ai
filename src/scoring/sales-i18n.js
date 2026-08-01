@@ -77,6 +77,18 @@ module.exports = {
         low: 'Sprzedawca słabo podtrzymuje relacje z obecnymi klientami i rzadko poświęca im wystarczająco dużo czasu. Jego klienci niejednokrotnie odchodzą do konkurencji, a wolumen sprzedaży od tych kupujących jest zwykle niewielki.',
       },
     },
+    types: {
+      hunter: { title: 'Łowca', text: 'Świetnie zdobywa nowych klientów i otwiera zimną bazę, ale słabo prowadzi ich dalej. Stawiaj go na generowanie leadów i pierwsze transakcje, a obsługę i dosprzedaż przekaż „farmerowi”.' },
+      farmer: { title: 'Farmer', text: 'Rozwija i pielęgnuje istniejącą bazę, buduje długie relacje i dosprzedaje, ale nowych klientów sam zdobywa niechętnie. Idealny do zarządzania kontami i obsługi klientów kluczowych.' },
+      star: { title: 'Gwiazda sprzedaży (pełny cykl)', text: 'Potrafi i przyprowadzić klienta, i domknąć transakcję, i utrzymać go na długo — rzadki uniwersalista. Można mu powierzyć klientów kluczowych i cały cykl sprzedaży.' },
+      lone_wolf: { title: 'Samotny wilk', text: 'Daje wynik sam z siebie, ale słabo wpasowuje się we wspólny proces: niechętnie dzieli się leadami i informacją. Dobry jako indywidualny sprzedawca, ale nie jako lider zespołu.' },
+      closer: { title: 'Domykacz (finalizuje transakcje)', text: 'Doprowadza transakcję do podpisu i nie odpuszcza tam, gdzie inni się poddają. Niezastąpiony przy zamykaniu trudnych i „zawieszonych” transakcji. Uważaj, by napór nie przechodził w przeciskanie klienta, zwłaszcza przy słabym utrzymaniu.' },
+      expert: { title: 'Ekspert-konsultant', text: 'Świetnie doradza i prowadzi złożone, techniczne sprzedaże, budzi zaufanie ekspertyzą — ale nie lubi domykać. Silny w długich cyklach B2B i presales, słabszy w zimnej i agresywnej sprzedaży.' },
+      burnout_risk: { title: 'Ryzyko wypalenia', text: 'Wkłada się dla klientów, ale ciężko znosi presję i plan — przy ostrych KPI istnieje ryzyko szybkiego wypalenia. Potrzebuje rozsądnego obciążenia, wsparcia i ochrony przed przeciążeniem.' },
+      perfectionist_slow: { title: 'Perfekcjonista-hamulec', text: 'Dopieszcza każdą ofertę, ale zamyka wolno i mało. Dobry tam, gdzie ważna jest precyzja (złożone oferty, przetargi, dokumentacja), słaby w szybkiej sprzedaży masowej.' },
+      chaotic: { title: 'Chaotyczny wynikowiec', text: 'Daje wynik, ale bez dyscypliny i planowania. Sprzedaje na energii, za to CRM, raporty i porządek w sprawach kuleją. Potrzebuje ułożonego procesu, kontroli i ewentualnie asystenta — sam systemu nie zbuduje.' },
+      team_driver: { title: 'Motor zespołu', text: 'I sam sprzedaje, i ciągnie za sobą kolegów — dzieli się doświadczeniem, pomaga, trzyma wspólny nastrój. Dobry kandydat na mentora i lidera zespołu.' },
+    },
   },
   en: {
     indicators: {
@@ -154,6 +166,18 @@ module.exports = {
         mid: 'The salesperson generally maintains relationships with current customers, but does not always give them enough attention. Some customers stay with them for a long time, while others may leave for competitors.',
         low: 'The salesperson maintains relationships with current customers poorly and rarely devotes enough time to them. Their customers often leave for competitors, and the sales volume from these buyers is usually small.',
       },
+    },
+    types: {
+      hunter: { title: 'Hunter', text: 'Excellent at winning new clients and cracking cold lists, but poor at nurturing them afterwards. Put them on lead generation and first deals, and hand ongoing service and upsells to a "farmer".' },
+      farmer: { title: 'Farmer', text: 'Grows and protects the existing base, builds long relationships, and upsells, but is reluctant to win new clients. Ideal for account management and looking after key clients.' },
+      star: { title: 'Sales star (full cycle)', text: 'Can bring a client in, close the deal, and keep them long-term — a rare all-rounder. Can be trusted with key clients and the entire sales cycle.' },
+      lone_wolf: { title: 'Lone wolf', text: 'Delivers results on their own but fits poorly into a shared process: reluctant to share leads and information. Good as an individual seller, but not as a team lead or where everything depends on the team.' },
+      closer: { title: 'Closer (seals the deal)', text: 'Drives the deal to signature and does not give up where others fold. Indispensable at closing hard and stalled deals. Watch that the pressure does not turn into pushing the client, especially when retention is weak.' },
+      expert: { title: 'Expert consultant', text: 'Excels at advising and running complex, technical sales, and inspires trust through expertise — but dislikes closing hard. Strong in long B2B cycles and presales, weaker in cold and aggressive selling.' },
+      burnout_risk: { title: 'Burnout risk', text: 'Gives their all for clients but struggles under pressure and quota — with harsh KPIs there is a risk of burning out fast. Needs a reasonable workload, support, and protection from overload.' },
+      perfectionist_slow: { title: 'Slow perfectionist', text: 'Polishes every proposal but closes slowly and little. Good where precision matters (complex proposals, tenders, documentation), and poor in high-volume fast sales that need speed.' },
+      chaotic: { title: 'Chaotic performer', text: 'Delivers results but without discipline or planning. Sells on drive, but CRM, reports, and orderliness suffer. Needs a set process, oversight, and possibly an assistant — they will not build a system on their own.' },
+      team_driver: { title: 'Team driver', text: 'Sells well and pulls colleagues along — shares experience, helps, and keeps up the shared mood. A good candidate for mentor and team-lead roles.' },
     },
   },
 };

@@ -187,7 +187,7 @@
 [data-theme="dark"] .dash-banner{position:relative;overflow:hidden;border-radius:20px;border:1px solid rgba(139,108,255,.24);padding:26px 30px;margin-bottom:22px;
   background:radial-gradient(ellipse 70% 130% at 12% 0%,rgba(139,108,255,.18),rgba(255,255,255,.02) 70%);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 [data-theme="dark"] .dash-banner canvas{position:absolute;left:0;right:0;top:0;bottom:0;width:100%;height:100%;opacity:.7;pointer-events:none}
-[data-theme="dark"] .aib-in{position:relative;max-width:60%}
+[data-theme="dark"] .dash-banner .aib-in{position:relative;max-width:60%}
 [data-theme="dark"] .aib-kick{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#b7c2ec}
 [data-theme="dark"] .aib-dot{width:8px;height:8px;border-radius:50%;background:#8b6cff;box-shadow:0 0 10px #8b6cff;animation:aibOnline 2.4s ease-in-out infinite}
 @keyframes aibOnline{0%,100%{opacity:.45;box-shadow:0 0 4px rgba(139,108,255,.5)}50%{opacity:1;box-shadow:0 0 12px #8b6cff,0 0 20px rgba(139,108,255,.6)}}
@@ -343,6 +343,31 @@
 /* ============ МОБИЛЬНАЯ ОБОЛОЧКА (off-canvas drawer ≤720px) ============ */
 .mtopbar{display:none}
 .nav-scrim{display:none}
+.mbottomnav{display:none}
+.mfab{display:none}
+.cand-cards{display:none}
+@media(max-width:720px){
+  /* список кандидатов и «Тесты» — карточки как в референсе (таблицу прячем) */
+  .mob-hide-table{display:none!important}
+  .cand-cards{display:flex;flex-direction:column;gap:10px}
+  .cmob-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09);border-radius:15px;padding:14px 15px;cursor:pointer}
+  .cmob-card:active{background:rgba(255,255,255,.05)}
+  .cmob-top{display:flex;align-items:center;gap:12px}
+  .cmob-ava{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--font-h,Manrope),sans-serif;font-weight:700;font-size:14px;color:#fff;text-transform:uppercase}
+  .cmob-info{flex:1;min-width:0}
+  .cmob-info b{display:block;font-size:14px;color:#eef1fb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cmob-vac{font-size:12px;color:#8b93ad;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  .cmob-chips{display:flex;align-items:center;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .cmob-chip{width:26px;height:26px;flex:none;border-radius:8px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:11px;border:1px solid rgba(255,255,255,.06)}
+
+  /* модалки → bottom-sheet на мобильном (выезд снизу, на всю ширину); выше нижней таб-навигации (z:400) и drawer (z:500) */
+  .overlay{z-index:600}
+  .overlay:not(.palette){align-items:flex-end;padding:0}
+  .overlay:not(.palette) .modal{max-width:100%!important;width:100%;border-radius:20px 20px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px) + 20px)!important;max-height:92vh;overflow-y:auto;animation:msheetUp .3s cubic-bezier(.2,.7,.2,1)}
+  .modal .close{top:12px;right:12px;width:34px;height:34px}
+  .modal-grid,.form-grid,.send-card{grid-template-columns:1fr!important}
+}
+@keyframes msheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(max-width:720px){
   /* верхняя панель с гамбургером */
   .mtopbar{display:flex;align-items:center;gap:11px;position:fixed;top:0;left:0;right:0;height:54px;z-index:400;
@@ -375,9 +400,38 @@
     opacity:0;pointer-events:none;transition:opacity .28s}
   .app.mnav-open .nav-scrim{opacity:1;pointer-events:auto}
 
-  /* контент — на всю ширину, отступ под топ-бар */
+  /* контент — на всю ширину, отступ под топ-бар и нижнюю навигацию */
   .app{display:block}
-  .main{margin-top:54px!important;padding:16px 14px 60px!important;width:100%!important}
+  .main{margin-top:54px!important;padding:16px 14px 100px!important;width:100%!important}
+
+  /* нижняя таб-навигация (стиль из дизайна) */
+  .mbottomnav{position:fixed;left:0;right:0;bottom:0;z-index:400;display:flex;align-items:stretch;justify-content:space-around;
+    padding:8px 6px calc(env(safe-area-inset-bottom,0px) + 10px);border-top:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(180deg,rgba(9,10,22,.9),#090a16);backdrop-filter:blur(10px)}
+  .mbn-item{flex:1;min-width:0;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0;color:var(--muted,#8b93ad);font-family:inherit}
+  .mbn-item svg{width:22px;height:22px;stroke:currentColor;fill:none}
+  .mbn-item span{font-size:10px;font-weight:600}
+  .mbn-item.active{color:var(--brand-ml,#b3a4ff)}
+
+  /* спектр профиля на телефоне: буква+название в одну строку, убрать налезающие подписи зон сверху */
+  .oca-row{grid-template-columns:135px 32px 1fr!important;gap:8px!important}
+  .oca-row.axis{grid-template-columns:135px 32px 1fr!important}
+  .oca-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .oca-name b{font-size:12px}
+  .oca-name>span{font-size:11.5px}
+  .oca-val{font-size:13px}
+  .oca-row.zc{display:none}
+
+  /* карточка «Подсказка от ИИ»: меньше паддинг/заголовок — использует ширину, не «растягивается» вниз */
+  .ai-banner{padding:18px 16px!important}
+  .ai-banner h3{font-size:19px;line-height:1.2}
+  .ai-banner ul{font-size:13px;padding-left:16px}
+
+  /* шапки кандидата/отчёта: длинные имена/email не должны вылезать за экран */
+  .report-head{flex-wrap:wrap;gap:8px 10px}
+  .report-head h1{font-size:19px;line-height:1.15;overflow-wrap:anywhere;word-break:break-word;min-width:0}
+  .report-head>div{min-width:0}
+  .main h1,.main .page-h,.main .ptitle{overflow-wrap:anywhere}
 }
 
 /* ---- мобильные правки конкретных страниц (≤720px) ---- */

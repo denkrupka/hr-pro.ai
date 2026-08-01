@@ -172,6 +172,9 @@ label.lbl{display:block;font-size:12.5px;font-weight:600;color:var(--muted);marg
   border-radius:var(--pill);padding:7px 30px 7px 14px;font-size:13px;font-weight:650;color:var(--text);
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b768e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;transition:border-color var(--d1)}
 .stage-select:hover{border-color:var(--brand)}
+/* Опции дропдауна этапа — в нашем дизайне (иначе нативные: белый текст на белом) */
+.stage-select option{background:var(--surface);color:var(--text);font-weight:600}
+[data-theme="dark"] .stage-select option{background:#141c30;color:#eaf0fb}
 
 /* mini stats strip */
 .mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
@@ -279,6 +282,22 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .pt-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);
   border-radius:var(--r-sm);padding:13px 15px;margin-bottom:9px;font-size:14px}
 .pt-row b{font-weight:650}
+/* История баланса (леджер: начисления/списания) */
+.ledger{display:flex;flex-direction:column}
+.ledg-row{display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:14px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.ledg-row:last-child{border-bottom:none}
+.ledg-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:16px}
+.ledg-ic.credit{background:rgba(31,157,107,.14);color:var(--good)}
+.ledg-ic.debit{background:rgba(210,75,75,.14);color:var(--bad)}
+.ledg-t{font-weight:650;font-size:14px;color:var(--text)}
+.ledg-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.ledg-link{color:var(--brand);font-weight:600;text-decoration:none}
+.ledg-link:hover{text-decoration:underline;text-underline-offset:2px}
+.ledg-amt{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;white-space:nowrap}
+.ledg-amt.credit{color:var(--good)}
+.ledg-amt.debit{color:var(--bad)}
+.ledg-date{font-size:12.5px;color:var(--muted);white-space:nowrap;min-width:82px;text-align:right}
+@media(max-width:640px){.ledg-row{grid-template-columns:30px 1fr auto;gap:10px}.ledg-date{grid-column:2/-1;text-align:left;min-width:0;margin-top:-4px}}
 .status-dot{display:inline-flex;align-items:center;gap:7px;font-weight:650}
 .status-dot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
 .status-dot.done::before{background:var(--good);box-shadow:0 0 0 3px rgba(18,184,134,.2)}
@@ -289,6 +308,15 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .report-head h1{font-size:26px}
 .rep-vac-link{color:var(--brand);text-decoration:none}
 .rep-vac-link:hover{text-decoration:underline}
+/* Шапка результата: eyebrow (тест) → имя-ссылка → вакансия-ссылка под именем */
+.rh-id{display:flex;flex-direction:column;gap:1px;min-width:0}
+.rh-eyebrow{margin-bottom:1px}
+a.rh-name-link{color:inherit;text-decoration:none;transition:color var(--d1)}
+a.rh-name-link:hover{color:var(--brand);text-decoration:underline;text-underline-offset:3px}
+.rh-vac{display:inline-flex;align-items:center;gap:6px;margin-top:3px;font-size:12.5px;font-weight:600;color:var(--brand);text-decoration:none;width:fit-content}
+.rh-vac svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;opacity:.9}
+a.rh-vac:hover{text-decoration:underline;text-underline-offset:2px}
+.rh-vac.static{color:var(--muted)}
 .tag{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border-radius:var(--pill);
   padding:7px 15px;font-size:13.5px;font-weight:600;color:var(--text-2)}
 .tag b{font-family:'JetBrains Mono',monospace}
@@ -384,7 +412,7 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 
 /* ===== HR-scanner-style zone-column bar chart ===== */
 .ocachart{border:1px solid var(--line);border-radius:var(--r);padding:16px 20px 12px;background:linear-gradient(180deg,var(--surface),var(--surface-2))}
-.oca-row{display:grid;grid-template-columns:216px 46px 1fr 118px;align-items:center;gap:14px;padding:7px 0}
+.oca-row{display:grid;grid-template-columns:202px 78px 1fr 116px;align-items:center;gap:14px;padding:7px 0}
 .oca-row.zc{padding:0 0 9px;margin-bottom:5px;border-bottom:1px dashed var(--line-2)}
 .zc-head{position:relative;height:14px;font-size:11px;color:var(--muted);font-weight:700}
 .zc-head span{position:absolute;transform:translateX(-50%);white-space:nowrap}
@@ -393,7 +421,14 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .oca-name i{display:block;font-style:normal;font-size:11px;color:var(--muted);margin-top:1px}
 .oca-name .bolt{display:inline-flex;vertical-align:middle;color:#e0982a;margin-left:2px;cursor:help}
 .oca-name .bolt svg{width:13px;height:13px}
-.oca-val{font-family:'JetBrains Mono';font-weight:700;font-size:15.5px;text-align:right}
+.oca-val{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-family:'JetBrains Mono';font-weight:700;font-size:15.5px}
+.oca-val .oca-num{text-align:right}
+/* значки слева от значения: компульсивность (‼) и молния */
+.ptmarks{display:inline-flex;align-items:center;gap:4px}
+.ptmark{display:inline-flex;align-items:center;justify-content:center;cursor:help;line-height:1}
+.ptmark.comp{color:var(--coral);font-weight:900;font-size:16px}
+.ptmark.bolt{color:#e0982a}
+.ptmark.bolt svg{width:14px;height:14px}
 /* 5-zone semantic colours (no grey) — text-safe shades */
 .oca-val.zn0{color:#c0392b}.oca-val.zn1{color:#c2681a}.oca-val.zn2{color:#a07d12}.oca-val.zn3{color:#2a4fa0}.oca-val.zn4{color:#1a7a52}
 .oca-val.comp{color:var(--coral)}
@@ -421,6 +456,10 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .oca-legend span{display:inline-flex;align-items:center;gap:6px}
 .oca-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
 .oca-legend i.ring{background:transparent;border:2px solid var(--coral);border-radius:50%}
+.oca-legend .lg-mark{cursor:help}
+.oca-legend .lg-comp{color:var(--coral);font-weight:900;font-size:14px;margin-right:2px}
+.oca-legend .lg-bolt{display:inline-flex;color:#e0982a;margin-right:3px}
+.oca-legend .lg-bolt svg{width:13px;height:13px}
 /* hover tooltip over a bar — shows the indicator interpretation */
 .chart-tip{position:fixed;z-index:1000;max-width:340px;background:#1e2434;color:#fff;padding:11px 14px;border-radius:11px;font-size:13px;line-height:1.5;font-weight:500;box-shadow:0 14px 40px rgba(15,20,40,.35);transform:translate(-50%,-100%);pointer-events:none;opacity:0;transition:opacity .12s}
 .chart-tip.show{opacity:1}
@@ -434,12 +473,37 @@ tbody tr:hover{background:var(--surface-2);cursor:pointer}
 .zpill{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
 .zpill.zn0{background:#fbe4e2;color:#c0392b}.zpill.zn1{background:#fce9d5;color:#c2681a}.zpill.zn2{background:#f7f0d2;color:#9a7d10}.zpill.zn3{background:#e3ecfd;color:#2a4fa0}.zpill.zn4{background:#e0f2ea;color:#1a7a52}
 [data-theme="dark"] .zpill.zn0{background:#3f221f}[data-theme="dark"] .zpill.zn1{background:#3a2a17}[data-theme="dark"] .zpill.zn2{background:#332e16}[data-theme="dark"] .zpill.zn3{background:#22345c}[data-theme="dark"] .zpill.zn4{background:#15342a}
-@media(max-width:820px){.oca-row{grid-template-columns:120px 40px 1fr;gap:9px}.oca-zlab{display:none}.oca-name i{display:none}.oca-row.axis{grid-template-columns:120px 40px 1fr}}
+@media(max-width:820px){.oca-row{grid-template-columns:112px 62px 1fr;gap:9px}.oca-zlab{display:none}.oca-name i{display:none}.oca-row.axis{grid-template-columns:112px 62px 1fr}}
 
 /* interpretation blocks */
 .synd{background:var(--surface-2);border-radius:var(--r);padding:15px 18px;margin-bottom:11px;
   border-left:3px solid var(--brand)}
 .synd b{display:block;margin-bottom:5px;font-weight:700}
+/* Синдромы / типы: сетка карточек, легенда, плашки точек с индикаторами */
+.synd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:11px}
+.synd-grid .synd{margin-bottom:0}
+@media(max-width:720px){.synd-grid{grid-template-columns:1fr}}
+.syn-leg{display:flex;flex-wrap:wrap;gap:8px 13px;padding:10px 14px;margin:16px 0 16px;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);font-size:12px;color:var(--muted)}
+.syn-leg span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex:none}
+.syn-leg b{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+  border-radius:6px;font-size:12px;font-weight:800;padding:0 4px}
+.syn-leg b.up{background:rgba(47,158,95,.18);color:#37c07a}
+.syn-leg b.down{background:rgba(200,60,60,.18);color:#e06a6a}
+.syn-leg b.comp{background:rgba(90,110,230,.2);color:#8ea2ff}
+.syn-leg b.float{background:rgba(200,150,40,.2);color:#e0b45a}
+.syn-leg b.op{background:rgba(150,162,196,.16);color:#c3cbe4}
+.syn-f{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.syn-pt{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:8px;font-weight:800;font-size:13px;color:#fff;flex:0 0 auto}
+.syn-pt.up{background:#2f9e5f}
+.syn-pt.down{background:#a13b3b}
+.syn-pt.comp{background:#4b5bd6}
+.syn-pt.float{background:#b8862b}
+.syn-pt i{position:absolute;top:-7px;right:-7px;font-style:normal;font-size:10px;line-height:1;
+  background:var(--surface);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 1px var(--line);color:var(--text)}
+.syn-op{color:var(--muted);font-weight:800;font-size:15px;padding:0 1px}
 .callout{border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:var(--r-sm);
   padding:14px 18px;margin:14px 0;background:linear-gradient(180deg,var(--surface-2),var(--surface))}
 .callout .co-t{font-family:'Manrope';font-weight:700;font-size:14.5px;margin-bottom:5px;color:var(--brand-ink)}
@@ -1312,52 +1376,50 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .dv-head svg{width:22px;height:22px;color:var(--brand)}
 .doc-vid{width:100%;max-height:520px;border-radius:14px;background:#000;box-shadow:var(--sh-1);display:block}
 
-/* ============ ПЕЧАТЬ ОТЧЁТА (только сам отчёт, аккуратно) ============ */
+/* ============ ПЕЧАТЬ / СОХРАНЕНИЕ В PDF (наш тёмный дизайн результата) ============ */
 @media print {
-  @page { margin: 12mm 11mm; }
-  /* Печать всегда в светлой теме — сбрасываем переменные тёмной темы, чтобы фон/текст не были тёмными */
-  html, body, [data-theme="dark"] {
-    --canvas:#f4f7fc; --surface:#ffffff; --surface-2:#eef2fb; --surface-3:#dce7fb;
-    --line:#e4eaf4; --line-2:#d7e0ef; --text:#16203a; --text-2:#3a4663; --muted:#6b768e; --faint:#98a2b8;
-    --ink:#16203a; --ink-2:#3a4663; --brand-soft:#eef2fb; --coral-s:#fff0ec; --bg:#ffffff;
+  @page { margin: 10mm; }
+  /* Печатаем в НАШЕЙ тёмной теме — форсим тёмную палитру даже при светлой теме на экране */
+  html, body, [data-theme="light"], [data-theme="dark"] {
+    --canvas:#0a0c1a; --surface:#141c30; --surface-2:#1b2540; --surface-3:#22304f;
+    --line:#26314c; --line-2:#2f3c5a; --text:#eaf0fb; --text-2:#b9c4dc; --muted:#8593ad; --faint:#65718c;
+    --brand-soft:#1b2947; --coral-s:#2e1a15;
   }
-  html, body { background: #fff !important; color: #16203a !important; font-size: 12.5px !important; }
-  /* шапка отчёта — светлая, без тёмной заливки */
-  .report-head { background: transparent !important; }
-  .report-head * { color: #16203a !important; }
-  .report-head .muted, .report-head .tag { color: #6b768e !important; }
-  .report-head .avatar { background:#3d6cd1 !important; color:#fff !important; }
-  .card, .cand-head, .cand-pipe-card, .ai-note, .cstep, .cstep-dec { background:#fff !important; color:#16203a !important; }
-  .sidebar, .lang-switch, .toast, #modal-root, .no-print { display: none !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { background:#0a0c1a !important; color:#eaf0fb !important; font-size:12.5px !important; }
+  /* прячем всё, кроме самого отчёта */
+  .sidebar, .lang-switch, .toast, #modal-root, .no-print, #imp-bar, .imp-bar { display: none !important; }
   .app { display: block !important; }
   .main { padding: 0 !important; max-width: 100% !important; width: 100% !important; margin: 0 !important; }
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   .reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
-  /* заголовок отчёта — как шапка документа */
-  .report-head { padding: 0 0 10px !important; margin: 0 0 12px !important; border-bottom: 2px solid var(--brand) !important; page-break-after: avoid; gap: 10px !important; }
-  .report-head h1 { font-size: 20px !important; }
-  .card { box-shadow: none !important; border: 1px solid #E4EAF4 !important; border-radius: 10px !important; padding: 12px 14px !important; margin-bottom: 10px !important; }
-  /* подсказка ИИ — на бумаге светлая, экономим тонер; тон показываем рамкой слева */
-  .ai-banner { background: #fff !important; color: #111 !important; border: 1px solid #E4EAF4 !important; border-left: 4px solid var(--brand) !important; border-radius: 10px !important; padding: 12px 16px !important; margin-bottom: 12px !important; }
-  .ai-banner::before, .ai-banner canvas.ai-neu { display: none !important; }
-  .ai-banner.win { border-left-color: #0a9b74 !important; }
-  .ai-banner.good { border-left-color: var(--brand) !important; }
-  .ai-banner.mid { border-left-color: #f7860a !important; }
-  .ai-banner.low { border-left-color: #e0435a !important; }
-  .ai-banner small, .ai-banner .ai-spark { color: #666 !important; }
-  .ai-banner h3 { color: #111 !important; font-size: 17px !important; margin: 4px 0 6px !important; }
-  .ai-banner ul { font-size: 12.5px !important; line-height: 1.45 !important; color: #333 !important; }
-  /* компактнее, чтобы отчёт занимал меньше листов */
-  .synd, .interp-card, .oca-row, .chart-row, .iq-scale, .donut-wrap { break-inside: avoid; page-break-inside: avoid; }
+  /* шапка отчёта — тёмная, с фирменной линией снизу */
+  .report-head { background: transparent !important; padding: 0 0 10px !important; margin: 0 0 12px !important; border-bottom: 2px solid var(--brand) !important; page-break-after: avoid; gap: 10px !important; }
+  .report-head h1 { font-size: 20px !important; color:#fff !important; }
+  .report-head .avatar { color:#fff !important; }
+  /* Контейнер отчёта делаем ПРОЗРАЧНЫМ ПОТОКОМ — иначе одна большая карточка рвётся через границу листа
+     (рваная рамка, блоки пополам). Визуальными «карточками» становятся внутренние блоки, которые НЕ рвём. */
+  .card { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 0 4px !important; }
+  .cand-head, .cand-pipe-card, .ai-note, .cstep, .cstep-dec { background:#141c30 !important; color:#eaf0fb !important; border-color:#26314c !important; }
+  /* подсказка ИИ — фирменный тёмный вид, гасим анимацию-канвас */
+  .ai-banner canvas.ai-neu, .ai-banner::before { display: none !important; }
+  .ai-banner h3 { font-size: 17px !important; }
+  /* Небольшие атомарные блоки НЕ разрываем; крупный спектр-график (.ocachart) РАЗРЕШАЕМ перетекать по строкам,
+     иначе он прыгает целиком на след. лист и оставляет большую пустоту. Защищаем отдельные строки .oca-row. */
+  .ai-banner, .interp-card, .synd, .cand-head, .cand-pipe-card, .ai-note, .oca-row, .chart-row, .iq-scale, .donut-wrap, .q-card { break-inside: avoid !important; page-break-inside: avoid !important; }
+  .oca-row.zc, .chart-zonehead { break-after: avoid !important; page-break-after: avoid !important; }  /* шапка зон держится с первой строкой */
+  .ocachart { break-inside: auto !important; }
+  .ai-banner, .interp-grid, .synd-grid, .oca-legend, .cstep, .ai-note { margin: 0 0 14px !important; }
+  /* Сетки в печати — по одной карточке в ряд, чтобы строки сетки не рвались на границе листа. */
+  .interp-grid, .synd-grid { display: block !important; }
+  .interp-card, .synd { margin-bottom: 10px !important; }
   .q-card { padding: 10px 12px !important; }
   h2 { font-size: 17px !important; }
   h3 { font-size: 15px !important; }
-  h2, h3, .subh { page-break-after: avoid; }
+  h2, h3, .subh { break-after: avoid !important; page-break-after: avoid !important; }
   /* видео и внешние документы не печатаем */
   video, .doc-video, .doc-videos, .doc-frame, iframe { display: none !important; }
   a[href]:after { content: "" !important; }
   a { color: inherit !important; text-decoration: none !important; }
-  .stars span { color: #C98A1E !important; }
 }
 
 /* ============ РЕКРУТАЦИЯ (workflow) ============ */
@@ -1580,9 +1642,15 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .ref-wrap{max-height:calc(100vh - 175px);overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:12px}
 .ref-q .lbl{margin-bottom:5px}
 /* секции формы заявки */
-.req-sec{margin-bottom:18px}
-.req-sec-h{font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--brand-ink);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
-[data-theme="dark"] .req-sec-h{color:var(--brand-2)}
+.req-sec{margin-bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+[data-theme="dark"] .req-sec{background:rgba(255,255,255,.022);border-color:rgba(255,255,255,.08)}
+.req-sec-h{display:flex;align-items:center;gap:9px;font-family:'Manrope',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-ink);margin:0 0 14px;padding:0}
+.req-sec-h::before{content:"";width:4px;height:15px;border-radius:3px;background:linear-gradient(180deg,#8b6cff,#6f97ff);flex:none}
+[data-theme="dark"] .req-sec-h{color:#b3a4ff}
+.req-form-wrap .lbl{font-weight:650}
+.req-form-wrap .field{background:var(--surface-2);border-radius:11px}
+[data-theme="dark"] .req-form-wrap .field{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1)}
+.req-form-wrap .field:focus{border-color:rgba(139,108,255,.55)}
 /* таблица личностных качеств */
 .trait-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
 .trait-table td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;font-size:13.5px}
@@ -1679,20 +1747,43 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 /* ============ AI-РАСШИФРОВКИ ТЕСТОВ ============ */
 .decode-bar{margin:14px 0 4px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-lg);
   background:linear-gradient(120deg,var(--brand-soft),var(--surface));box-shadow:var(--sh)}
-.db-inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.db-inner{display:flex;flex-direction:column;align-items:stretch;gap:10px}
 .db-title{font-family:Manrope,sans-serif;font-weight:800;font-size:13px;letter-spacing:.02em;color:var(--brand);flex:none}
-.db-btns{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.db-btns{display:flex;gap:9px;flex-wrap:nowrap;align-items:center;overflow-x:auto;max-width:100%;padding-bottom:2px;scrollbar-width:thin}
+.db-btns .db-btn,.db-btns .db-ctx{flex:none}
 .db-btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
   padding:9px 15px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);transition:.15s}
 .db-btn:hover{border-color:var(--brand);transform:translateY(-1px)}
 .db-btn.chat{background:var(--brand);border-color:transparent;color:#fff}
-.db-btn.done{background:rgba(31,157,107,.12);border-color:rgba(31,157,107,.5);color:var(--good);font-weight:700}
-.db-btn.done:hover{background:rgba(31,157,107,.2)}
-.db-btn.pending{background:var(--surface-2);color:var(--muted);cursor:default}
-.db-btn.pending:hover{transform:none;border-color:var(--line)}
-.db-btn.pending i{font-style:normal;font-size:12px;color:var(--muted)}
+/* доступно (сгенерировано) — зелёная подсветка кнопки */
+.db-btn.done{background:rgba(31,157,107,.14);border-color:rgba(31,157,107,.55);color:var(--good);font-weight:700;box-shadow:0 0 0 1px rgba(31,157,107,.18)}
+.db-btn.done:hover{background:rgba(31,157,107,.22);border-color:rgba(31,157,107,.7)}
+/* идёт генерация — бегущая обводка вокруг кнопки (без текста «генерируется…») */
+@property --dbrun{syntax:'<angle>';inherits:false;initial-value:0deg}
+.db-btn.generating{position:relative;background:var(--surface-2);color:var(--text);border-color:transparent;cursor:default;opacity:.92}
+.db-btn.generating:hover{transform:none}
+.db-btn.generating::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.6px;pointer-events:none;
+  background:conic-gradient(from var(--dbrun,0deg),transparent 0deg,transparent 230deg,#8b6cff 300deg,#6f97ff 340deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:dbrun 1.15s linear infinite}
+@keyframes dbrun{to{--dbrun:360deg}}
+@media (prefers-reduced-motion:reduce){.db-btn.generating::before{animation:none;background:conic-gradient(#8b6cff,#6f97ff)}}
 .db-btn.error{background:rgba(224,85,59,.1);border-color:rgba(224,85,59,.45);color:var(--bad)}
 .db-badge{background:rgba(255,255,255,.28);border-radius:999px;padding:0 7px;font-size:11px;font-weight:700}
+/* платные функции: цена на кнопке, состояние «купить»/«заблокировано» */
+.db-price{background:rgba(139,108,255,.16);color:var(--brand);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;white-space:nowrap}
+.db-btn.buy .db-price{background:rgba(139,108,255,.18)}
+.db-btn.chat.buy{background:var(--surface-2);border-color:var(--line);color:var(--text)}
+.db-btn.chat.buy .db-price{background:rgba(139,108,255,.16);color:var(--brand)}
+.db-btn.locked{opacity:.72;border-style:dashed}
+.db-btn.locked .db-price{background:rgba(150,160,190,.14);color:var(--muted)}
+/* модалка покупки: цена, доступ, примечание о последовательности */
+.feat-price{display:flex;align-items:center;justify-content:space-between;margin:14px 0 4px;padding:12px 14px;border-radius:12px;
+  background:rgba(139,108,255,.1);border:1px solid rgba(139,108,255,.28)}
+.feat-price span{font-size:13px;color:#9aa3bf}
+.feat-price b{font-family:'Manrope';font-weight:800;font-size:18px;color:#c9bcff}
+.feat-access{font-size:12.5px;color:#8b93ad;margin:8px 2px 0}
+.feat-prevnote{font-size:13px;color:#e0b45a;background:rgba(224,180,90,.1);border:1px solid rgba(224,180,90,.28);border-radius:11px;padding:11px 13px;margin:12px 0 2px}
 .db-ctx{cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:10px;
   width:34px;height:34px;font-size:15px;display:inline-flex;align-items:center;justify-content:center}
 .db-ctx:hover{border-color:var(--brand);color:var(--brand)}
@@ -1837,8 +1928,54 @@ code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surf
 .cal-up-b{display:flex;align-items:center;gap:8px}
 .cal-up-t{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--text-2)}
 .cal-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;border:1px solid;border-radius:999px;padding:2px 9px;letter-spacing:.03em}
+/* объявление на анкете отклика — авто-блоки из HTML (h3/p/ul) */
+.anketa-desc{margin:0 0 22px;line-height:1.62;color:var(--text-2);font-size:15px}
+.anketa-desc h3,.anketa-desc h4{font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;line-height:1.22;color:var(--text);margin:24px 0 12px}
+.anketa-desc h3:first-child,.anketa-desc h4:first-child{margin-top:0}
+.anketa-desc p{margin:0 0 12px}
+.anketa-desc ul,.anketa-desc ol{margin:0 0 14px;padding-left:22px}
+.anketa-desc li{margin:6px 0}
+.anketa-desc b,.anketa-desc strong{color:var(--text)}
+/* редактор объявления: вкладки вариантов + rich-editor + плашка комментария ИИ */
+.ad-comment{margin-bottom:16px}
+.ad-comment .ad-comment-body{font-size:13.5px;line-height:1.6;color:var(--text-2);margin-top:8px}
+.ad-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ad-tab{border:1px solid var(--line);background:var(--surface-2);color:var(--text-2);border-radius:10px 10px 0 0;padding:8px 16px;font-size:13px;font-weight:650;cursor:pointer}
+.ad-tab.on{background:var(--brand-soft);color:var(--text);border-color:rgba(139,108,255,.5);border-bottom-color:transparent}
+.ad-rte-tb{display:flex;align-items:center;gap:4px;padding:7px 9px;background:var(--surface-2);border:1px solid var(--line);border-bottom:none;border-radius:11px 11px 0 0;flex-wrap:wrap}
+.ad-rte-tb button{width:30px;height:30px;border:1px solid transparent;background:transparent;color:var(--text-2);border-radius:7px;cursor:pointer;font-size:14px;display:grid;place-items:center}
+.ad-rte-tb button:hover{background:rgba(139,108,255,.14);color:var(--text)}
+.ad-rte-sep{width:1px;height:20px;background:var(--line);margin:0 3px}
+.ad-rte{min-height:340px;border-radius:0 0 12px 12px;padding:16px 18px;line-height:1.6;font-size:14.5px;overflow:auto;outline:none}
+.ad-rte:focus{border-color:rgba(139,108,255,.55)}
+.ad-rte h3{font-family:'Manrope',sans-serif;font-size:18px;margin:0 0 10px;color:var(--text)}
+.ad-rte p{margin:0 0 10px}
+.ad-rte ul{margin:0 0 10px;padding-left:22px}
+.ad-rte li{margin:4px 0}
+/* бейдж и модалка «признаки читинга» */
+.cheat-badge{cursor:pointer;border:1px solid rgba(240,120,110,.5);background:rgba(240,120,110,.12);color:#f0a08c;font-weight:700;white-space:nowrap;transition:filter .15s}
+.cheat-badge:hover{filter:brightness(1.15)}
+.cheat-modal .cheat-row{font-size:14px;line-height:1.5;margin:10px 0;color:var(--text-2)}
+.cheat-modal .cheat-row b{color:var(--text)}
+.cheat-modal .cheat-frags{margin:8px 0 0;padding-left:2px;list-style:none}
+.cheat-modal .cheat-frags li{padding:7px 12px;margin:6px 0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#eaf0fb;word-break:break-word}
+/* кнопки в шапке календаря — рядом */
+.cal-head-btns{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cal-head-btns .btn{white-space:nowrap}
+.cal-head-btns #cal-subscribe span{display:inline}
+@media(max-width:560px){.cal-head-btns{width:100%}.cal-head-btns .btn{flex:1;justify-content:center}}
 /* модалка (внутри тёмной db-modal) */
 .cal-modal .db-lb{margin:14px 0 6px}
+/* кнопки подписки — одного размера */
+.cal-sub-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cal-sub-btn{display:flex;align-items:center;justify-content:center;gap:7px;text-align:center;padding:9px 6px;font-size:13px;min-width:0}
+.cal-sub-btn svg{width:17px;height:17px;flex:none}
+.cal-sub-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:460px){.cal-sub-btns{grid-template-columns:1fr}}
+/* QR-код подписки */
+.cal-qr{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+.cal-qr-img{background:#fff;padding:10px;border-radius:12px;line-height:0;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.cal-qr-img img{display:block;width:150px;height:150px;image-rendering:pixelated}
 .cal-stages{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .cal-stage{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:11px;cursor:pointer;text-align:left;color:#eef1fb;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);font-weight:700;font-size:13px}
 .cal-stage i{width:9px;height:9px;border-radius:50%;flex:none}

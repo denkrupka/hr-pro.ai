@@ -127,7 +127,7 @@ module.exports = function adminApi(app, ctx) {
     const assistant = salesAgentAdm.buildAssistant({ mode: clientUser ? 'client' : 'lead', lang, name: name || '', company: clientUser ? (clientUser.company || '') : '', leadBlock,
       plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: integ.cfgOf(null, 'elevenlabs').apiKey,
       toolServerUrl: base + '/api/vapi/sales-inbound', toolSecret: secret });
-    if (clientUser) {
+    if (clientUser && ['ru', 'pl', 'en'].includes(lang)) {
       assistant.firstMessage = lang === 'pl' ? `Dzień dobry${name ? ', ' + name : ''}! Tu Zofia z HR-PRO.AI. Dzwonię w sprawie naszego portalu — ma Pan chwilę?`
         : lang === 'en' ? `Hello${name ? ', ' + name : ''}! This is Sofia from HR-PRO.AI. I'm calling about our portal — do you have a minute?`
         : `Здравствуйте${name ? ', ' + name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`;
@@ -148,6 +148,8 @@ module.exports = function adminApi(app, ctx) {
       const callId = await startManualSalesCall({ phone: l.phone, lang: l.lang || 'ru', name: l.name || '', lead: l, goal: req.body && req.body.goal, extra: req.body && req.body.extra });
       l.aiCallLog = Array.isArray(l.aiCallLog) ? l.aiCallLog : [];
       l.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (req.body && req.body.goal) || 'close', createdAt: nowISO(), status: 'calling', lang: l.lang || 'ru' });
+      l.callSchedule = { status: 'calling', attempts: 1, callbacks: 0, callId, startedAt: nowISO() };
+      l.callActive = true;
       logAdmin(req, 'lead_call', 'lead', l.id, { goal: req.body && req.body.goal });
       save(); res.json({ ok: true, callId });
     } catch (e) { res.status(502).json({ error: e.message }); }
@@ -158,11 +160,13 @@ module.exports = function adminApi(app, ctx) {
     const phone = (cu.settings && cu.settings.phone) || '';
     if (!phone) return res.status(400).json({ error: 'У клиента не указан телефон (карточка → Изменить → Телефон)' });
     try {
-      const lang = ['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru';
+      const lang = cu.salesLang || (['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru');
       // Журнал — на аккаунте клиента (не в лидах). Отчёт вернётся по metadata.userId.
       const callId = await startManualSalesCall({ phone, lang, name: cu.name || '', clientUser: cu, goal: req.body && req.body.goal, extra: req.body && req.body.extra, metadata: { kind: 'client', userId: cu.id } });
       cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
       cu.salesCalls.push({ callId, kind: 'manual', dir: 'out', goal: (req.body && req.body.goal) || 'upsell', createdAt: nowISO(), status: 'calling', lang });
+      cu.callSchedule = { status: 'calling', attempts: 1, callbacks: 0, callId, startedAt: nowISO() };
+      cu.callActive = true;
       logAdmin(req, 'client_call', 'user', cu.id, { goal: req.body && req.body.goal });
       save(); res.json({ ok: true, callId });
     } catch (e) { res.status(502).json({ error: e.message }); }
@@ -179,10 +183,14 @@ module.exports = function adminApi(app, ctx) {
           const d = await r.json().catch(() => ({})); if (!r.ok) continue;
           const art = d.artifact || {}; const rec = art.recording || {}; const a = d.analysis || {};
           if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          if (d.endedReason) e.endedReason = d.endedReason;
           e.transcript = d.transcript || art.transcript || e.transcript || '';
           e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
-          e.summary = a.summary || e.summary || ''; e.answers = a.structuredData || e.answers || null;
           if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+          // Гард от галлюцинаций Vapi: пустой/мгновенный звонок → не берём выдуманную сводку.
+          const realTalk = salesAgentAdm.hadRealConversation({ transcript: e.transcript, durationSec: e.durationSec });
+          e.summary = realTalk ? (a.summary || e.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+          e.answers = realTalk ? (a.structuredData || e.answers || null) : null;
         } catch (_) {}
       }
       save();
@@ -202,12 +210,15 @@ module.exports = function adminApi(app, ctx) {
           if (!r.ok) continue;
           const art = d.artifact || {}; const rec = art.recording || {};
           if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          if (d.endedReason) e.endedReason = d.endedReason;
           e.transcript = d.transcript || art.transcript || e.transcript || '';
           e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
           const a = d.analysis || {};
-          e.summary = a.summary || e.summary || '';
-          e.answers = a.structuredData || e.answers || null;
           if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+          // Гард от галлюцинаций Vapi: пустой/мгновенный звонок → не берём выдуманную сводку и не применяем данные.
+          const realTalk = salesAgentAdm.hadRealConversation({ transcript: e.transcript, durationSec: e.durationSec });
+          e.summary = realTalk ? (a.summary || e.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+          e.answers = realTalk ? (a.structuredData || e.answers || null) : null;
           if (e.status === 'done') salesAgentAdm.applyCallResult(l, { summary: e.summary, sd: e.answers, transcript: e.transcript });
         } catch (_) {}
       }

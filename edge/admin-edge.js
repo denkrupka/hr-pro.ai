@@ -143,7 +143,7 @@ export async function handleAdmin(p, m, ctx) {
     const assistant = salesAgent.buildAssistant({ mode: clientUser ? 'client' : 'lead', lang, name: name || '', company: clientUser ? (clientUser.company || '') : '', leadBlock,
       plans: gs.plans, currency: gs.currency, inbound: false, elevenKey: env.ELEVENLABS_API_KEY,
       toolServerUrl: base + '/api/vapi/sales-inbound', toolSecret: secret });
-    if (clientUser) { // клиенту звоним первым — приветствие исходящего, не «рада, что позвонили»
+    if (clientUser && ['ru', 'pl', 'en'].includes(lang)) { // клиенту звоним первым — приветствие исходящего (для кастомного языка модель сгенерирует сама)
       assistant.firstMessage = lang === 'pl' ? `Dzień dobry${name ? ', ' + name : ''}! Tu Zofia z HR-PRO.AI. Dzwonię do Pana w sprawie naszego portalu — ma Pan chwilę?`
         : lang === 'en' ? `Hello${name ? ', ' + name : ''}! This is Sofia from HR-PRO.AI. I'm calling about our portal — do you have a minute?`
         : `Здравствуйте${name ? ', ' + name : ''}! Это София из HR-PRO.AI. Звоню по поводу нашего портала — есть минутка?`;
@@ -166,6 +166,9 @@ export async function handleAdmin(p, m, ctx) {
       const callId = await startManualSalesCall({ phone: l.phone, lang: l.lang || 'ru', name: l.name || '', lead: l, goal: body && body.goal, extra: body && body.extra });
       l.aiCallLog = Array.isArray(l.aiCallLog) ? l.aiCallLog : [];
       l.aiCallLog.push({ callId, kind: 'manual', dir: 'out', goal: (body && body.goal) || 'close', createdAt: new Date().toISOString(), status: 'calling', lang: l.lang || 'ru' });
+      // Планировщик: ждём отчёт — перезвон/ретрай назначится в /api/vapi/sales-inbound.
+      l.callSchedule = { status: 'calling', attempts: 1, callbacks: 0, callId, startedAt: new Date().toISOString() };
+      l.callActive = true;
       await S.upsert('leads', { id: l.id, phone_key: rows[0].phone_key, data: l });
       await logAdmin('lead_call', 'lead', l.id, { goal: body && body.goal });
       return j({ ok: true, callId });
@@ -178,11 +181,13 @@ export async function handleAdmin(p, m, ctx) {
     const phone = (cu.settings && cu.settings.phone) || '';
     if (!phone) return j({ error: 'У клиента не указан телефон (карточка → Изменить → Телефон)' }, 400);
     try {
-      const lang = ['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru';
+      const lang = cu.salesLang || (['ru', 'pl', 'en'].includes(cu.settings && cu.settings.uiLang) ? cu.settings.uiLang : 'ru');
       // Журнал — на аккаунте клиента (не в лидах). Отчёт вернётся по metadata.userId.
       const callId = await startManualSalesCall({ phone, lang, name: cu.name || '', clientUser: cu, goal: body && body.goal, extra: body && body.extra, metadata: { kind: 'client', userId: cu.id } });
       cu.salesCalls = Array.isArray(cu.salesCalls) ? cu.salesCalls : [];
       cu.salesCalls.push({ callId, kind: 'manual', dir: 'out', goal: (body && body.goal) || 'upsell', createdAt: new Date().toISOString(), status: 'calling', lang });
+      cu.callSchedule = { status: 'calling', attempts: 1, callbacks: 0, callId, startedAt: new Date().toISOString() };
+      cu.callActive = true;
       await saveUser(cu);
       await logAdmin('client_call', 'user', cu.id, { goal: body && body.goal });
       return j({ ok: true, callId });
@@ -200,10 +205,14 @@ export async function handleAdmin(p, m, ctx) {
           const d = await r.json().catch(() => ({})); if (!r.ok) continue;
           const art = d.artifact || {}; const rec = art.recording || {}; const a = d.analysis || {};
           if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          if (d.endedReason) e.endedReason = d.endedReason;
           e.transcript = d.transcript || art.transcript || e.transcript || '';
           e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
-          e.summary = a.summary || e.summary || ''; e.answers = a.structuredData || e.answers || null;
           if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+          // Гард от галлюцинаций Vapi: пустой/мгновенный звонок → не берём выдуманную сводку.
+          const realTalk = salesAgent.hadRealConversation({ transcript: e.transcript, durationSec: e.durationSec });
+          e.summary = realTalk ? (a.summary || e.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+          e.answers = realTalk ? (a.structuredData || e.answers || null) : null;
         } catch (_) {}
       }
       await saveUser(cu);
@@ -225,12 +234,15 @@ export async function handleAdmin(p, m, ctx) {
           if (!r.ok) continue;
           const art = d.artifact || {}; const rec = art.recording || {};
           if (d.status === 'ended') { e.status = 'done'; e.endedAt = d.endedAt || e.endedAt; }
+          if (d.endedReason) e.endedReason = d.endedReason;
           e.transcript = d.transcript || art.transcript || e.transcript || '';
           e.recordingUrl = art.presignedStereoUrl || art.presignedMonoUrl || d.recordingUrl || art.recordingUrl || (rec.mono && rec.mono.combinedUrl) || rec.stereoUrl || art.stereoRecordingUrl || e.recordingUrl || null;
           const a = d.analysis || {};
-          e.summary = a.summary || e.summary || '';
-          e.answers = a.structuredData || e.answers || null;
           if (d.startedAt && d.endedAt) e.durationSec = Math.max(0, Math.round((new Date(d.endedAt) - new Date(d.startedAt)) / 1000));
+          // Гард от галлюцинаций Vapi: пустой/мгновенный звонок → не берём выдуманную сводку и не применяем данные.
+          const realTalk = salesAgent.hadRealConversation({ transcript: e.transcript, durationSec: e.durationSec });
+          e.summary = realTalk ? (a.summary || e.summary || '') : 'Разговор не состоялся: звонок слишком короткий (собеседник сразу завершил или автоответчик).';
+          e.answers = realTalk ? (a.structuredData || e.answers || null) : null;
           if (e.status === 'done') salesApplyCallResult(l, { summary: e.summary, sd: e.answers, transcript: e.transcript });
         } catch (_) {}
       }
@@ -606,7 +618,7 @@ export async function handleAdmin(p, m, ctx) {
           eyebrow: 'Проверка интеграции', headline: 'Resend подключён',
           bodyHtml: 'Интеграция Resend работает корректно. Это тестовое письмо от портала HR PRO AI.' });
         const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from: env.RESEND_FROM || 'onboarding@resend.dev', to: [to || me.email], subject, html }) });
+          body: JSON.stringify({ from: env.RESEND_FROM || 'HR PRO AI <info@hr-pro.ai>', to: [to || me.email], subject, html }) });
         if (!r.ok) return j({ error: 'Resend: ' + r.status }, 502);
         return j({ ok: true, result: await r.json() });
       }
