@@ -85,6 +85,36 @@ async function assemble(env, ctx) {
   return { formula };
 }
 
+// Проверка формулировки «Ожидаемого продукта» в заявке на подбор (/new-req и портал).
+// В отличие от гайда (/guide), здесь подсказываем ГОТОВЫЙ исправленный вариант (suggestion).
+export async function productCheck(env, body) {
+  const ans = String((body && body.answer) || '').trim().slice(0, 2000);
+  const position = String((body && body.position) || '').trim().slice(0, 200);
+  const lang = ['ru', 'pl', 'en'].includes(body && body.lang) ? body.lang : 'ru';
+  const LNG = { ru: 'русском', pl: 'польском (polski)', en: 'английском (English)' }[lang];
+  if (ans.length < 3) {
+    const M = { ru: { verdict: 'Пусто', hint: 'Впишите формулировку продукта — проверю и подскажу, как её улучшить.' },
+      pl: { verdict: 'Pusto', hint: 'Wpisz sformułowanie produktu — sprawdzę i podpowiem, jak je poprawić.' },
+      en: { verdict: 'Empty', hint: 'Enter the product wording — I will check it and suggest improvements.' } }[lang];
+    return { ok: false, verdict: M.verdict, hint: M.hint, suggestion: '' };
+  }
+  const system = [
+    'Ты — наставник по методике «продукт должности» (типология Виннер/Дуер/Вейтер).',
+    'Руководитель заполняет заявку на подбор персонала и вписал «Ожидаемый продукт (результат работы)» должности.',
+    `Критерий правильности: ${FIELDS[2].crit} Дополнительно хорошо, если результат измерим (цифры, сроки) и назван получатель.`,
+    'Оцени формулировку. ЗДЕСЬ подсказывать МОЖНО и НУЖНО: если формулировка слабая или неверная — объясни, что именно не так, и предложи готовый исправленный вариант на основе данных пользователя.',
+    'Отвечай СТРОГО одним JSON-объектом без текста вокруг: {"ok": true|false, "verdict": "1-4 слова оценки", "hint": "1-3 предложения — что верно или что не так", "suggestion": "готовый исправленный вариант формулировки продукта; если формулировка и так отличная — пустая строка"}.',
+    `Язык ответа — ${LNG}, обращение на «вы».`,
+  ].join(' ');
+  const user = `${position ? 'Должность: «' + position + '».\n' : ''}Формулировка ожидаемого продукта: «${ans}»\n\nОцени по критерию и верни JSON.`;
+  const res = await anthropic(env, { system, user, maxTokens: 500 });
+  if (res.error) return { error: res.error };
+  const parsed = parseJson(res.text);
+  if (!parsed || typeof parsed.ok !== 'boolean') return { ok: false, verdict: 'Не удалось проверить', hint: 'Попробуйте ещё раз через пару секунд.', suggestion: '' };
+  return { ok: parsed.ok, verdict: String(parsed.verdict || '').slice(0, 80),
+    hint: String(parsed.hint || '').slice(0, 600), suggestion: String(parsed.suggestion || '').slice(0, 600) };
+}
+
 export async function guideCheck(env, body) {
   const field = Number(body && body.field);
   const ctx = (body && body.context) || {};

@@ -214,8 +214,10 @@ async function load(){
   if(!r.ok){$('#root').innerHTML=`<div class="tk-card"><h2>${tl('not_found')}</h2><p class="muted">${tl('check_link')}</p></div>`;return;}
   T=await r.json();
   LG=['ru','pl','en'].includes(T.lang)?T.lang:'ru';document.documentElement.lang=LG;
-  if(T.brand&&T.brand.company){$('#t-title').textContent=T.brand.company;$('#t-sub').textContent=tl('test_word')+' «'+T.title+'»';}
-  else{$('#t-title').textContent='Тест «'+T.title+'»';$('#t-sub').textContent=tl('testing')+' · HR PRO AI';}
+  // Анкета — не «тест»: показываем название без обёртки Test «…»
+  const isAnketa=/ankiet|анкет|questionnaire|survey/i.test(String(T.title||''));
+  if(T.brand&&T.brand.company){$('#t-title').textContent=T.brand.company;$('#t-sub').textContent=isAnketa?T.title:tl('test_word')+' «'+T.title+'»';}
+  else{$('#t-title').textContent=isAnketa?T.title:'Тест «'+T.title+'»';$('#t-sub').textContent=tl('testing')+' · HR PRO AI';}
   if(T.brand&&T.brand.logo){const bm=$('#t-logo');if(bm)bm.innerHTML='<img src="'+esc(T.brand.logo)+'" style="width:100%;height:100%;object-fit:cover">';}
   if(T.status==='done'){$('#root').innerHTML=`<div class="tk-card"><div class="mark" style="width:80px;height:80px;margin:0 auto 18px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(135deg,#8b6cff,#6f97ff)"><span style="color:#fff;width:40px;height:40px">${CHECK_SVG}</span></div><h2>${tl('already_done')}</h2><p class="muted">${tl('thanks_recv')}</p></div>`;return;}
   buildSteps();renderStep();
@@ -227,7 +229,7 @@ function buildSteps(){
     {key:'name',title:tl('q_name'),ph:tl('name')},
     {key:'surname',title:tl('q_surname'),ph:tl('surname')},
     {key:'sex',type:'choice',title:tl('q_sex'),note:tl('q_sex_note'),opts:[[tl('male'),'Мужской'],[tl('female'),'Женский']]},
-    {key:'age',title:tl('q_age'),note:tl('q_age_note'),ph:tl('age'),numeric:true},
+    {key:'age',title:tl('q_age'),ph:tl('age'),numeric:true},
     {key:'tel',title:tl('q_tel'),note:tl('q_tel_note'),ph:tl('phone'),lock:!!T.lockTel},
     {key:'city',title:tl('q_city'),ph:tl('city')},
     {key:'email',title:tl('q_email'),note:tl('q_email_note'),ph:tl('email'),lock:!!T.lockEmail},

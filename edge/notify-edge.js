@@ -13,6 +13,23 @@ const DEFAULT_SMS = {
   pl: 'Zapraszamy do testu „{test}”: {link}',
   en: 'Please take the "{test}" test: {link}',
 };
+// Дефолтный текст SMS: «Резалт» подаём как короткую вступительную АНКЕТУ, остальное — как тест.
+// Упоминание «отправили на Email» — только если у кандидата есть почта.
+function smsDefaultFor(type, lang, hasEmail) {
+  const anketa = type === 'result';
+  const M = {
+    ru: anketa
+      ? 'Компания "{company}" приглашает вас пройти короткую вступительную анкету на должность "{vacancy}". ' + (hasEmail ? 'Ссылку на анкету отправили вам на Email и тут: {link}' : 'Ссылка на анкету: {link}')
+      : 'Компания "{company}" приглашает вас пройти тест на должность "{vacancy}". ' + (hasEmail ? 'Ссылку на тест отправили вам на Email и тут: {link}' : 'Ссылка на тест: {link}'),
+    pl: anketa
+      ? 'Firma "{company}" zaprasza do wypełnienia krótkiej ankiety wstępnej na stanowisko "{vacancy}". ' + (hasEmail ? 'Link do ankiety wysłaliśmy na Email oraz tutaj: {link}' : 'Link do ankiety: {link}')
+      : 'Firma "{company}" zaprasza do wykonania testu na stanowisko "{vacancy}". ' + (hasEmail ? 'Link do testu wysłaliśmy na Email oraz tutaj: {link}' : 'Link do testu: {link}'),
+    en: anketa
+      ? 'Company "{company}" invites you to complete a short introductory questionnaire for the "{vacancy}" position. ' + (hasEmail ? 'The link was also sent to your Email: {link}' : 'Questionnaire link: {link}')
+      : 'Company "{company}" invites you to take a test for the "{vacancy}" position. ' + (hasEmail ? 'The link was also sent to your Email: {link}' : 'Test link: {link}'),
+  };
+  return M[lang] || M.ru;
+}
 
 // ---------- Дизайн-обёртка письма (единый шаблон HR PRO AI) ----------
 const EMAIL_I18N = {
@@ -226,8 +243,11 @@ export async function notifyCandidate(env, user, p, test, vac, link, title) {
 
   const smsToken = env.SMSAPI_TOKEN;
   if (p.tel && smsToken) {
-    const tpls = s.smsTemplates && Object.keys(s.smsTemplates).length ? s.smsTemplates : DEFAULT_SMS;
-    const tpl = tpls[lang] || tpls.ru || DEFAULT_SMS.ru;
+    // Кастомные шаблоны клиента приоритетнее; дефолт зависит от типа: «Резалт» = вступительная анкета, остальное = тест.
+    // Без названия вакансии формулировка «на должность ""» бессмысленна — тогда старый короткий дефолт.
+    const custom = s.smsTemplates && Object.keys(s.smsTemplates).length ? s.smsTemplates : null;
+    const tpl = custom ? (custom[lang] || custom.ru || DEFAULT_SMS.ru)
+      : (vac && vac.name ? smsDefaultFor(test.type, lang, !!p.email) : (DEFAULT_SMS[lang] || DEFAULT_SMS.ru));
     const base = (env.SMSAPI_ENDPOINT || 'https://api.smsapi.pl').replace(/\/+$/, '');
     const company = user.company || '';
     let smsMsg = fill(tpl) || (candTitle + ': ' + link);

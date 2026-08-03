@@ -64,7 +64,11 @@ function exportCsv(name, headers, rows) {
   a.download = name + '.csv'; a.click();
 }
 const TEST_LABEL = { tools: 'Тулс', result: 'Резалт', logic: 'Логис', sales: 'Сэйлс', knowledge: 'Знания' };
-const KIND_LABEL = { purchase: 'Покупка', admin_add: 'Начисление', admin_sub: 'Списание', test_spend: 'Тест', refund: 'Возврат', signup_bonus: 'Бонус' };
+const KIND_LABEL = { purchase: 'Покупка', admin_add: 'Начисление', admin_sub: 'Списание', test_spend: 'Тест', refund: 'Возврат', signup_bonus: 'Бонус',
+  ai_feature: 'ИИ-функция', ai_call: 'Звонок ИИ', learning: 'Обучение', balance_expired: 'Сгорание' };
+// Человеческие названия платных ИИ-функций (в журнале вместо технических кодов «full»/«chat»…)
+const FEATURE_HUMAN = { full: 'Полная расшифровка', manual: 'Инструкция по эксплуатации кандидата', presentation: 'Повышение эффективности кандидата', chat: 'Чат «Узнать о кандидате»', productivity: 'Расшифровка «Резалт»' };
+const humanComment = c => String(c || '').replace(/AI-функция «([a-z]+)»/i, (m, f) => 'ИИ-функция: ' + (FEATURE_HUMAN[f] || f));
 
 const state = { me: null, view: 'dashboard', clientsQ: { q: '', status: 'all', sort: 'created_desc', page: 1 }, leadsQ: { q: '', status: 'all', page: 1 }, payQ: { q: '', method: 'all', from: '', to: '', page: 1, tab: 'purchases' }, currency: 'eur' };
 
@@ -563,7 +567,7 @@ async function openClient(uid, tab) {
       <td><span class="blk ${l.kind}">${KIND_LABEL[l.kind] || l.kind}</span></td>
       <td class="mono" style="color:${l.delta >= 0 ? 'var(--good)' : 'var(--bad)'}">${l.delta >= 0 ? '+' : '−'}${Math.abs(l.delta)}</td>
       <td class="mono">${l.balanceAfter != null ? l.balanceAfter : '—'}</td>
-      <td>${esc(l.comment || '')}</td><td class="muted">${l.adminEmail ? esc(l.adminEmail) : (l.kind === 'purchase' ? 'Stripe/демо' : 'система')}</td></tr>`).join('');
+      <td>${esc(humanComment(l.comment))}</td><td class="muted">${l.adminEmail ? esc(l.adminEmail) : (l.kind === 'purchase' ? 'Stripe/демо' : 'система')}</td></tr>`).join('');
     const purchRows = bd.purchases.map(p => `<tr><td class="muted mono">${fmtDate(p.createdAt)}</td><td>${esc(p.planId)} · ${p.qty}</td>
       <td>${money(p.amount, state.currency)}</td><td><span class="blk m-${p.method}">${p.method}</span></td><td>${p.status}</td></tr>`).join('');
     body.innerHTML = `<div class="card"><h3 style="margin:0 0 10px">Журнал баланса</h3>
@@ -625,7 +629,7 @@ async function renderAdmPayments() {
         <td><span class="blk ${l.kind}">${KIND_LABEL[l.kind] || l.kind}</span></td>
         <td class="mono" style="color:${l.delta >= 0 ? 'var(--good)' : 'var(--bad)'}">${l.delta >= 0 ? '+' : '−'}${Math.abs(l.delta)}</td>
         <td class="mono">${l.balanceAfter != null ? l.balanceAfter : '—'}</td>
-        <td>${esc(l.comment || '')}</td><td class="muted">${l.adminEmail ? esc(l.adminEmail) : 'система'}</td></tr>`).join('')
+        <td>${esc(humanComment(l.comment))}</td><td class="muted">${l.adminEmail ? esc(l.adminEmail) : 'система'}</td></tr>`).join('')
         || '<tr><td colspan="7" class="muted" style="text-align:center;padding:26px">Записей нет</td></tr>'}
       </tbody></table></div>
       ${pager(d.page, d.total, d.perPage, p => { q.page = p; renderAdmPayments(); })}`;

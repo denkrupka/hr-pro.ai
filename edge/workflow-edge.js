@@ -71,6 +71,43 @@ export function kanbanColTitle(key, lang) {
   return recruit.stageTitle(key, lang);
 }
 
+// ИИ-звонки как шаги процесса. Эффективное состояние = тумблер вакансии + пер-кандидатный оверрайд
+// (p.workflow.aiCallsOff), статус — из журнала звонков (aiCallLog) и очереди планировщика (callQueue).
+export const AI_CALL_KINDS = ['first', 'afterResult', 'references', 'afterTools', 'motivation'];
+export function aiCallEnabled(p, proc, kind) {
+  const wf = (p && p.workflow) || {};
+  return !!(proc && proc.aiCalls && proc.aiCalls[kind]) && !(wf.aiCallsOff && wf.aiCallsOff[kind]);
+}
+function aiStepState(p, proc, kind) {
+  const wf = (p && p.workflow) || {};
+  const entries = (wf.aiCallLog || []).filter(e => e.kind === kind);
+  const last = entries[entries.length - 1];
+  const answered = e => (e.attempts || []).some(a => String(a.transcript || '').trim().length >= 20);
+  const qActive = (wf.callQueue || []).some(it => it.kind === kind && !['done', 'failed', 'stopped'].includes(it.status));
+  let status = 'none';
+  if (last) {
+    if (last.status === 'done' || last.status === 'failed') status = entries.some(answered) ? 'done' : 'missed';
+    else status = 'calling';
+  }
+  if (status === 'none' && qActive) status = 'scheduled';
+  if (status === 'missed' && qActive) status = 'scheduled'; // перезвон уже назначен планировщиком
+  return { kind, on: aiCallEnabled(p, proc, kind), status,
+    summary: (last && last.summary) || '', at: (last && (last.doneAt || last.createdAt)) || null };
+}
+// Карта ИИ-шагов для карточки кандидата: только звонки, включённые в вакансии (и чей родительский шаг активен).
+export function aiStepsOf(p, proc) {
+  if (!proc) return {};
+  const st = proc.stages || {};
+  const parentOn = { first: true, afterResult: st.result !== false, references: st.references !== false,
+    afterTools: st.tools !== false, motivation: st.motivation !== false };
+  const out = {};
+  for (const kind of AI_CALL_KINDS) {
+    if (!proc.aiCalls || !proc.aiCalls[kind] || !parentOn[kind]) continue;
+    out[kind] = aiStepState(p, proc, kind);
+  }
+  return out;
+}
+
 // Построить состояние workflow кандидата. vac — вакансия кандидата (или null), tests — его тесты.
 export function buildWorkflow(p, lang, vac, tests) {
   const proc = vac ? processOf(vac) : null;
@@ -102,6 +139,7 @@ export function buildWorkflow(p, lang, vac, tests) {
     if (key === 'result' || key === 'tools' || key === 'knowledge') {
       const t = myTests.filter(x => x.type === key).sort((a, b) => (b.sentAt || '').localeCompare(a.sentAt || ''))[0];
       st.testId = t ? t.id : null; st.testCode = t ? t.code : null; st.status = t ? t.status : 'none';
+      st.startedAt = t ? t.startedAt : null; // для живого «Проходит · время» в карточке
       if (t && t.status === 'done') {
         if (key === 'knowledge') {
           const gr = gradeKnowledge(t);
@@ -132,7 +170,7 @@ export function buildWorkflow(p, lang, vac, tests) {
       st.passed = gates[key] !== undefined ? gates[key] : (st.done ? st.suggested : null);
     } else if (key === 'references') {
       const rf = wf.references || {};
-      st.aiCall = !!(proc && proc.aiCalls && proc.aiCalls.references);   // тумблер ИИ-референсов (Vapi проверяется на сервере при звонке)
+      st.aiCall = aiCallEnabled(p, proc, 'references');   // тумблер ИИ-референсов + оверрайд кандидата (Vapi проверяется на сервере при звонке)
       const doneResult = myTests.filter(x => x.type === 'result' && x.status === 'done').sort((a, b) => (b.sentAt || '').localeCompare(a.sentAt || ''))[0];
       let contacts = [];
       const raw = doneResult && doneResult.answers && (doneResult.answers['13'] != null ? doneResult.answers['13'] : doneResult.answers[13]);
@@ -197,7 +235,7 @@ export function buildWorkflow(p, lang, vac, tests) {
   const resolved = s => s.skipped || s.passed === true || s.passed === false || s.done || s.status === 'done';
   const finalReady = stages.length > 0 && stages.every(resolved) && stages.some(s => !s.skipped && s.analysis);
   const finalAnalysis = (wf && wf.finalAnalysis) || null;
-  return { stages, decision, autoDecision: auto, column, optional, finalReady, finalAnalysis };
+  return { stages, decision, autoDecision: auto, column, optional, finalReady, finalAnalysis, aiSteps: aiStepsOf(p, proc) };
 }
 
 // Сборка канбан-доски вакансии.

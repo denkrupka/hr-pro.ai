@@ -5,10 +5,10 @@ import { hashPassword, verifyPassword } from './auth-edge.js';
 import { computeResult, testQuestionsFor, resultHintFor, localizeResult } from './tests-edge.js';
 import { notifyCandidate, wrapEmailEdge, unsubToken, resetToken, verifyResetToken, emailVerifyToken } from './notify-edge.js';
 import { MAIL_DEF_STATUS } from './mail-defaults-edge.js';
-import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air } from './workflow-edge.js';
+import { buildWorkflow, buildBoard, vacFull, processOf, knowledgeTestsOf, kanbanColTitle, KANBAN_COLS, recruit, ai, air, aiCallEnabled, AI_CALL_KINDS } from './workflow-edge.js';
 import makeStripe from './stripe-edge.js';
 import { handleAdmin } from './admin-edge.js';
-import { guideCheck } from './guide-check.js';
+import { guideCheck, productCheck } from './guide-check.js';
 import { parseCV, cvSummary } from './cv-parse.js';
 import { enrichWorkflowAI, aiHintForTest } from './ai-analysis.js';
 import { generateAd as genAdAI, sanitizeAdHtml as sanitizeAdHtmlEdge } from './ai-ad-edge.js';
@@ -148,7 +148,13 @@ function balanceExpiresAt(u) { if (!Array.isArray(u.balanceLots)) return null; c
 async function aiCallForEdge(env, S, owner, part, vac, kind) {
   try {
     const proc = processOf(vac);
-    if (!proc.aiCalls || !proc.aiCalls[kind] || !part.tel || !vapiConfigured(env)) return false;
+    if (!aiCallEnabled(part, proc, kind) || !part.tel || !vapiConfigured(env)) return false;
+    // «Первый контакт» не дублируем: если звонок уже назначен/идёт — считаем поставленным; если уже был — не повторяем.
+    if (kind === 'first') {
+      const wfp = part.workflow || {};
+      if ((wfp.callQueue || []).some(it => it.kind === 'first' && !['done', 'failed', 'stopped'].includes(it.status))) return true;
+      if ((wfp.aiCallLog || []).some(e => e.kind === 'first')) return false;
+    }
     const lang = vac.lang || 'ru';
     const nm = ((part.name || '') + ' ' + (part.surname || '')).trim() || 'кандидат';
     const allV = (await S.select('vacancies', `user_id=eq.${owner.id}&select=data`)).map(r => r.data);
@@ -453,6 +459,30 @@ async function api(req, env, url, exec) {
         return;
       }
       if (wf.decision) return; // решение уже принято (вручную) — воронка стоит
+      // 2.5) ПЕРВЫЙ КОНТАКТ (звонок ИИ) — первый шаг воронки: пока звонок не состоялся или не пропущен,
+      // первый тест не отправляем. Недозвон НЕ ретраим — это ЕДИНСТВЕННЫЙ пропускаемый шаг:
+      // не взял трубку → шаг skip, тест уходит сразу, воронка идёт дальше.
+      if (!allTests.length && part.tel && aiCallEnabled(part, proc, 'first') && vapiConfigured(env)
+          && !part.workflow.aiFirstDone && !part.workflow.aiFirstSkipped) {
+        const fq = (part.workflow.callQueue || []).filter(it => it.kind === 'first');
+        const fe = (part.workflow.aiCallLog || []).filter(e => e.kind === 'first');
+        const fLast = fe[fe.length - 1];
+        const qActive = fq.some(it => !['done', 'failed', 'stopped'].includes(it.status));
+        if (!fe.length && !fq.length) {
+          const called = await aiCallForEdge(env, S, owner, part, vac, 'first');
+          if (called) { await S.upsert('participants', { id: part.id, data: part }); return; } // ждём исхода звонка
+          part.workflow.aiFirstSkipped = true; // поставить звонок не удалось — воронку не блокируем
+          await S.upsert('participants', { id: part.id, data: part });
+        } else if (qActive || (fLast && !['done', 'failed'].includes(fLast.status))) {
+          return; // звонок назначен или идёт — следующий шаг после его завершения
+        } else if (fe.some(e => callLog.entryAnswered(e))) {
+          part.workflow.aiFirstDone = true;
+          await S.upsert('participants', { id: part.id, data: part });
+        } else {
+          part.workflow.aiFirstSkipped = true; // недозвон/сбой — пропускаем шаг и продолжаем
+          await S.upsert('participants', { id: part.id, data: part });
+        }
+      }
       // 3) РЕФЕРЕНС-ЗВОНКИ: этап активен, есть контакты руководителей, ИИ настроен, ещё не запускали
       const refStage = (wf.stages || []).find(s => s.key === 'references');
       const resultDone = allTests.some(t => t.type === 'result' && t.status === 'done');
@@ -999,6 +1029,14 @@ async function api(req, env, url, exec) {
     catch (e) { return j({ error: 'server' }, 500); }
   }
 
+  // Проверка формулировки «Ожидаемого продукта» в заявке на подбор (публичная форма /new-req и портал).
+  // В отличие от гайда — с подсказкой готового варианта.
+  if (p === '/api/req-product-check' && m === 'POST') {
+    if (!ipAllow('reqprod:' + clientIp(req), 30, 3600000)) return j({ error: 'rate_limit' }, 429);
+    try { return j(await productCheck(env, body)); }
+    catch (e) { return j({ error: 'server' }, 500); }
+  }
+
   // Лид-магнит с лендинга: письмо со ссылкой на гайд (без авторизации) — IP-лимит от email-бомбинга.
   if (p === '/api/lead' && m === 'POST') {
     if (!ipAllow('lead:' + clientIp(req), 5, 3600000)) return j({ error: 'rate_limit' }, 429);
@@ -1480,7 +1518,9 @@ async function api(req, env, url, exec) {
       code: t.code, sentAt: t.sentAt, startedAt: t.startedAt, finishedAt: t.finishedAt, durationSec: t.durationSec,
       link: `${BASE}/t/${t.code}`, rate: t.overallRate || null }));
     const vac = x.vacancyId ? await S.one('vacancies', x.vacancyId) : null;
-    return { ...x, vacancyName: vac ? vac.name : '', tests };
+    // Старые импортированные кандидаты: cv записан строкой-URL — нормализуем в {name,url}, иначе скачивание ломается
+    const cv = x.cv ? (typeof x.cv === 'string' ? { name: 'CV', url: x.cv } : x.cv) : null;
+    return { ...x, cv, vacancyName: vac ? vac.name : '', tests };
   }
 
   // ── SECTIONS CRUD ──
@@ -1849,12 +1889,13 @@ async function api(req, env, url, exec) {
       const res = await parseCV(env, block);
       if (res.error) { failed.push({ name: f.name, error: res.error }); continue; }
       const d = res.data || {};
-      let cvUrl = null; try { cvUrl = await storeMedia(f.dataUrl, f.name, 15); } catch (e) {}
+      // cv храним объектом {name,url} — клиент качает по p.cv.url (строка ломала скачивание: href=undefined → HTML)
+      let cvObj = null; try { const u = await storeMedia(f.dataUrl, f.name, 15); if (u) cvObj = { name: String(f.name || 'CV').slice(0, 120), url: u }; } catch (e) {}
       const x = { id: uid(12), userId: me.id, vacancyId: await ownVacId(body.vacancyId),
         name: String(d.name || '').slice(0, 60), surname: String(d.surname || '').slice(0, 60),
         email: String(d.email || '').slice(0, 120), sex: '', age: d.age ? (Number(d.age) || null) : null,
         tel: String(d.phone || '').slice(0, 40), city: String(d.city || '').slice(0, 60), stage: 'Без этапа',
-        comment: cvSummary(d, lang), color: '#FFFFFF', starred: false, cv: cvUrl, cvData: d, source: 'cv_import',
+        comment: cvSummary(d, lang), color: '#FFFFFF', starred: false, cv: cvObj, cvData: d, source: 'cv_import',
         createdAt: new Date().toISOString() };
       await S.upsert('participants', { id: x.id, data: x });
       created.push(await participantView(x));
@@ -1875,19 +1916,54 @@ async function api(req, env, url, exec) {
     if (!cur || cur.userId !== me.id) return j({ error: 'Не найдено' }, 404);
     if (m === 'GET') return j({ participant: await participantView(cur) });
     if (m === 'PUT') { ['name', 'surname', 'email', 'sex', 'age', 'tel', 'city', 'stage', 'comment', 'color', 'starred'].forEach(f => { if (body[f] !== undefined) cur[f] = body[f]; });
-      const vacChanged = body.vacancyId !== undefined;
+      // Смена вакансии = реальное изменение значения (клиент шлёт vacancyId при каждом сохранении карточки)
+      const vacChanged = body.vacancyId !== undefined && String(body.vacancyId || '') !== String(cur.vacancyId || '');
       if (vacChanged) cur.vacancyId = await ownVacId(body.vacancyId); // только своя вакансия
+      // Смена вакансии: преднастройки шагов подтягиваются из НОВОЙ вакансии — пер-кандидатные
+      // оверрайды (пропуски шагов, тумблеры ИИ-звонков, флаги первого контакта) сбрасываем.
+      if (vacChanged && cur.workflow) { cur.workflow.skipped = {}; cur.workflow.aiCallsOff = {}; delete cur.workflow.aiFirstDone; delete cur.workflow.aiFirstSkipped; }
       await S.upsert('participants', { id: cur.id, data: cur });
-      // Автоворонка: назначение на вакансию с автоворонкой → intro-звонок + продвижение
-      if (vacChanged && cur.vacancyId) { try {
+      // Автоворонка: прогоняем при КАЖДОМ сохранении с вакансией (ручной кандидат создаётся пустым —
+      // контакты появляются на первом «Сохранить»); первый звонок дедуплицируется в aiCallForEdge.
+      if (cur.vacancyId) { try {
         const avac = await S.one('vacancies', cur.vacancyId);
-        if (avac && processOf(avac).auto && (cur.email || cur.tel)) {
-          try { if (cur.tel) { const called = await aiCallForEdge(env, S, me, cur, avac, 'first'); if (called) await S.upsert('participants', { id: cur.id, data: cur }); } } catch (_) {}
-          await runFunnelEdge(cur, avac, me);
-        }
+        // первый звонок ставит сам runFunnelEdge (только пока у кандидата нет ни одного теста)
+        if (avac && processOf(avac).auto && (cur.email || cur.tel)) await runFunnelEdge(cur, avac, me);
       } catch (_) {} }
       return j({ participant: await participantView(cur) }); }
     if (m === 'DELETE') { await S.del('tests', `participant_id=eq.${cur.id}`); await S.del('participants', `id=eq.${cur.id}`); return j({ ok: true }); }
+  }
+  // Импорт CV в СУЩЕСТВУЮЩУЮ карточку: один файл → Claude vision → подстановка данных в форму кандидата
+  let mPcv = p.match(/^\/api\/participants\/([\w-]+)\/import-cv$/);
+  if (mPcv && m === 'POST') {
+    if (!me) return needAuth();
+    const cur = await S.one('participants', mPcv[1]);
+    if (!cur || cur.userId !== me.id) return j({ error: 'Не найдено' }, 404);
+    if (!env.ANTHROPIC_API_KEY) return j({ error: 'no_ai' }, 400);
+    const f = body.file || (Array.isArray(body.files) ? body.files[0] : null);
+    const mm2 = /^data:([^;]+);base64,(.+)$/.exec(String((f && f.dataUrl) || ''));
+    if (!mm2) return j({ error: 'bad_file' }, 400);
+    const mime = mm2[1].toLowerCase(), b64 = mm2[2];
+    if (b64.length > 16 * 1024 * 1024) return j({ error: 'too_big' }, 400);
+    let block;
+    if (mime === 'application/pdf') block = { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } };
+    else if (/^image\/(png|jpe?g|webp|gif)$/.test(mime)) block = { type: 'image', source: { type: 'base64', media_type: mime === 'image/jpg' ? 'image/jpeg' : mime, data: b64 } };
+    else return j({ error: 'unsupported' }, 400);
+    const res = await parseCV(env, block);
+    if (res.error) return j({ error: res.error }, 400);
+    const d = res.data || {};
+    // Распознанные непустые поля подставляем в форму; CV прикрепляем к карточке
+    if (d.name) cur.name = String(d.name).slice(0, 60);
+    if (d.surname) cur.surname = String(d.surname).slice(0, 60);
+    if (d.email) cur.email = String(d.email).slice(0, 120);
+    if (d.phone) cur.tel = String(d.phone).slice(0, 40);
+    if (d.city) cur.city = String(d.city).slice(0, 60);
+    if (d.age && Number(d.age)) cur.age = Number(d.age);
+    if (!String(cur.comment || '').trim()) cur.comment = cvSummary(d, lang);
+    cur.cvData = d;
+    try { const u2 = await storeMedia(f.dataUrl, f.name, 15); if (u2) cur.cv = { name: String(f.name || 'CV').slice(0, 120), url: u2 }; } catch (e) {}
+    await S.upsert('participants', { id: cur.id, data: cur });
+    return j({ participant: await participantView(cur) });
   }
 
   // ── АНКЕТЫ (мини-сайт отклика) ──
@@ -2237,7 +2313,7 @@ async function api(req, env, url, exec) {
     } catch (e) { /* ИИ не критичен — остаётся эвристика */ }
     return j({ participant: await participantView(part), stages: wf.stages, decision: wf.decision,
       autoDecision: wf.autoDecision, column: wf.column, columnTitle: kanbanColTitle(wf.column, lang), optional: wf.optional,
-      finalReady: wf.finalReady, finalAnalysis: wf.finalAnalysis,
+      finalReady: wf.finalReady, finalAnalysis: wf.finalAnalysis, aiSteps: wf.aiSteps || {},
       interviews: (part.workflow && part.workflow.interviews) || [] });
   }
   // Финальный ИИ-анализ кандидата (по всем этапам + заявка + объявление)
@@ -2364,7 +2440,10 @@ async function api(req, env, url, exec) {
       me.balanceTotal = Math.max(0, (me.balanceTotal || 0) - price);
       spendLots(me, price);
       await saveUser(me);
-      try { await logBalance(me, -price, 'ai_feature', { testId: test.id, feature, comment: `AI-функция «${feature}»` }); } catch (_) {}
+      try {
+        const FEAT_HUMAN = { full: 'Полная расшифровка', manual: 'Инструкция по эксплуатации кандидата', presentation: 'Повышение эффективности кандидата', chat: 'Чат «Узнать о кандидате»', productivity: 'Расшифровка «Резалт»' };
+        await logBalance(me, -price, 'ai_feature', { testId: test.id, feature, comment: `ИИ-функция: ${FEAT_HUMAN[feature] || feature}` });
+      } catch (_) {}
       test.purchases[feature] = true;
       await S.upsert('tests', { id: test.id, data: test });
       return j({ ok: true, purchases: test.purchases, balance: publicUser(me) });
@@ -2543,6 +2622,15 @@ async function api(req, env, url, exec) {
       }
     }
     if (decision !== undefined) part.workflow.decision = ['hired', 'rejected'].includes(decision) ? decision : null;
+    // Пер-кандидатный тумблер ИИ-звонка шага: {aiCall: kind, on: true|false} — оверрайд настроек вакансии
+    if (body.aiCall && AI_CALL_KINDS.includes(body.aiCall)) {
+      part.workflow.aiCallsOff = part.workflow.aiCallsOff || {};
+      if (body.on === false) {
+        part.workflow.aiCallsOff[body.aiCall] = true;
+        // назначенные, но ещё не начатые звонки этого шага — останавливаем
+        (part.workflow.callQueue || []).forEach(it => { if (it.kind === body.aiCall && it.status === 'pending') { it.status = 'stopped'; it.lastReason = 'шаг выключен в карточке'; } });
+      } else delete part.workflow.aiCallsOff[body.aiCall];
+    }
     await S.upsert('participants', { id: part.id, data: part });
     try { const fvac = part.vacancyId ? await S.one('vacancies', part.vacancyId) : null; if (fvac && processOf(fvac).auto) await runFunnelEdge(part, fvac, me); } catch (_) {}
     return j({ ok: true, workflow: part.workflow });

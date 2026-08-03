@@ -83,7 +83,11 @@ export async function tickParticipant(env, part) {
         const answered = String(last.transcript || '').trim().length >= 20;
         const reason = String(last.endedReason || '');
         const noAnswer = !answered && (NO_ANSWER.some(x => reason.includes(x)) || !last.transcript);
-        if (noAnswer && item.attempts < item.cfg.retryCount) {
+        if (noAnswer && item.kind === 'first') {
+          // «Первый контакт» не ретраим: недозвон = шаг пропущен, автоворонка сразу шлёт первый тест
+          // (единственный пропускаемый шаг; если кандидат перезвонит — inbound-ассистент знает контекст).
+          item.status = 'stopped'; item.lastReason = 'недозвон — первый контакт пропущен';
+        } else if (noAnswer && item.attempts < item.cfg.retryCount) {
           item.status = 'pending'; item.nextAt = new Date(now.getTime() + item.cfg.retryAfterMin * 60000).toISOString(); item.lastReason = 'неответ, перезвон';
         } else if (noAnswer) {
           item.status = 'stopped'; item.lastReason = 'нет ответа после ' + item.attempts + ' попыток';

@@ -463,6 +463,8 @@ const RI18N = {
     vp_ref_hint: 'Проводит рекрутёр по контактам руководителей из «Резалта»',
     vp_ai_first: 'Звонок ИИ: первый контакт', vp_ai_afterResult: 'Звонок ИИ после «Резалта»', vp_ai_afterTools: 'Звонок ИИ после «Тулса»', vp_ai_motivation: 'Оценка мотивации в звонке с ИИ',
     vp_ai_references: 'Получение референсов с помощью ИИ', vp_ai_references_hint: 'ИИ сам звонит руководителям из «Резалта» и собирает справку',
+    wfai_off: 'Выключен', wfai_calling: 'Звонит…', wfai_sched: 'Звонок запланирован', wfai_done: 'Разговор состоялся', wfai_missed: 'Не дозвонились', wf_sent_st: 'Отправлен',
+    req_prod_what: 'Что это?', req_prod_check: 'Проверить формулировку', req_prod_checking: 'ИИ проверяет формулировку…', req_prod_sugg: 'Как можно сформулировать',
     refai_btn: 'Звонок ИИ', refai_calling: 'ИИ звонит…', refai_hint: 'ИИ позвонит руководителю и соберёт референс', refai_started: 'ИИ звонит руководителю — справка появится после разговора', refai_done: 'Референс собран ИИ', refai_err: 'Не удалось запустить ИИ-звонок',
     aicalls_btn: 'Звонки ИИ', aicalls_title: 'Звонки ИИ', aicalls_refresh: 'Обновить', aicalls_tab_active: 'Звонки', aicalls_tab_history: 'История',
     aicalls_no_active: 'Активных звонков нет', aicalls_no_history: 'Завершённых звонков пока нет', aicalls_transcript: 'Транскрипция', aicalls_no_tr: 'Транскрипт пока недоступен',
@@ -583,6 +585,8 @@ const RI18N = {
     vp_ref_hint: 'Przeprowadza rekruter na podstawie kontaktów z „Result”',
     vp_ai_first: 'Telefon AI: pierwszy kontakt', vp_ai_afterResult: 'Telefon AI po „Result”', vp_ai_afterTools: 'Telefon AI po „Tools”', vp_ai_motivation: 'Ocena motywacji w rozmowie z AI',
     vp_ai_references: 'Zbieranie referencji przez AI', vp_ai_references_hint: 'AI samo dzwoni do przełożonych z „Result” i zbiera referencję',
+    wfai_off: 'Wyłączony', wfai_calling: 'Dzwoni…', wfai_sched: 'Telefon zaplanowany', wfai_done: 'Rozmowa odbyta', wfai_missed: 'Nie dodzwoniono się', wf_sent_st: 'Wysłany',
+    req_prod_what: 'Co to jest?', req_prod_check: 'Sprawdź sformułowanie', req_prod_checking: 'AI sprawdza sformułowanie…', req_prod_sugg: 'Jak można sformułować',
     refai_btn: 'Telefon AI', refai_calling: 'AI dzwoni…', refai_hint: 'AI zadzwoni do przełożonego i zbierze referencję', refai_started: 'AI dzwoni do przełożonego — referencja pojawi się po rozmowie', refai_done: 'Referencja zebrana przez AI', refai_err: 'Nie udało się uruchomić telefonu AI',
     aicalls_btn: 'Rozmowy AI', aicalls_title: 'Rozmowy AI', aicalls_refresh: 'Odśwież', aicalls_tab_active: 'Rozmowy', aicalls_tab_history: 'Historia',
     aicalls_no_active: 'Brak aktywnych rozmów', aicalls_no_history: 'Brak zakończonych rozmów', aicalls_transcript: 'Transkrypcja', aicalls_no_tr: 'Transkrypcja niedostępna',
@@ -703,6 +707,8 @@ const RI18N = {
     vp_ref_hint: 'Done by the recruiter using manager contacts from “Result”',
     vp_ai_first: 'AI call: first contact', vp_ai_afterResult: 'AI call after “Result”', vp_ai_afterTools: 'AI call after “Tools”', vp_ai_motivation: 'Motivation assessed in an AI call',
     vp_ai_references: 'Collect references with AI', vp_ai_references_hint: 'AI calls the managers from “Result” itself and gathers the reference',
+    wfai_off: 'Off', wfai_calling: 'Calling…', wfai_sched: 'Call scheduled', wfai_done: 'Call completed', wfai_missed: 'No answer', wf_sent_st: 'Sent',
+    req_prod_what: 'What is this?', req_prod_check: 'Check the wording', req_prod_checking: 'AI is checking the wording…', req_prod_sugg: 'Suggested wording',
     refai_btn: 'AI call', refai_calling: 'AI is calling…', refai_hint: 'AI will call the manager and collect the reference', refai_started: 'AI is calling the manager — the reference will appear after the call', refai_done: 'Reference collected by AI', refai_err: 'Could not start the AI call',
     aicalls_btn: 'AI calls', aicalls_title: 'AI calls', aicalls_refresh: 'Refresh', aicalls_tab_active: 'Calls', aicalls_tab_history: 'History',
     aicalls_no_active: 'No active calls', aicalls_no_history: 'No completed calls yet', aicalls_transcript: 'Transcript', aicalls_no_tr: 'Transcript not available yet',
@@ -798,20 +804,20 @@ async function renderCandidates() {
 }
 // Импорт CV: файлы → dataURL → edge (Claude vision) → карточки кандидатов
 function fileToDataUrl(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); }); }
-async function importCV(fileList, vacancyId) {
+async function importCV(fileList, vacancyId, after) {
   const files = [...(fileList || [])].slice(0, 20);
   if (!files.length) return;
-  const lbl = $('#cand-cv-lbl'); if (lbl) lbl.classList.add('is-busy');
+  const lbl = $('#cand-cv-lbl') || $('#vcand-cv-lbl'); if (lbl) lbl.classList.add('is-busy');
   toast(rt('cand_cv_parsing'));
   try {
     const payload = [];
     for (const f of files) { try { payload.push({ name: f.name, dataUrl: await fileToDataUrl(f) }); } catch (e) {} }
     const r = await api('/api/candidates/import-cv', { method: 'POST', body: JSON.stringify({ files: payload, vacancyId }) });
     const nOk = (r.created || []).length, nBad = (r.failed || []).length;
-    if (nOk) { toast(rt('cand_cv_done').replace('{n}', nOk) + (nBad ? ' · ' + rt('cand_cv_fail').replace('{n}', nBad) : '')); invalidateParts && invalidateParts(); renderCandidates(); }
+    if (nOk) { toast(rt('cand_cv_done').replace('{n}', nOk) + (nBad ? ' · ' + rt('cand_cv_fail').replace('{n}', nBad) : '')); invalidateParts && invalidateParts(); if (after) after(); else renderCandidates(); }
     else toast(rt('cand_cv_none'));
   } catch (e) { toast((e && e.message) || rt('cand_cv_none')); }
-  finally { if (lbl) lbl.classList.remove('is-busy'); const inp = $('#cand-cv-inp'); if (inp) inp.value = ''; }
+  finally { if (lbl) lbl.classList.remove('is-busy'); $$('#cand-cv-inp, #vcand-cv-inp').forEach(inp => inp.value = ''); }
 }
 let recTab = 'applications';
 let recMeta = null;
@@ -885,8 +891,13 @@ function reqFieldHtml(f, val) {
   const lab = reqLabel(f.label, LANG);
   const desc = (f.desc || f.hint) ? `<span class="req-hint">${esc(reqLabel(f.desc || f.hint, LANG))}</span>` : '';
   const id = 'rq-' + f.key;
-  if (f.type === 'textarea')
-    return `<div class="full"><label class="lbl">${esc(lab)}${f.req ? ' *' : ''}</label>${desc}<textarea class="field" id="${id}" rows="2">${esc(val || '')}</textarea></div>`;
+  if (f.type === 'textarea') {
+    // Поле «Ожидаемый продукт»: «Что это?» → гайд методики; «Проверить формулировку» → ИИ-проверка с подсказкой
+    const extra = f.key === 'product' ? `<div class="rq-prod-tools" style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">
+        <button type="button" class="btn ghost xs" id="rq-prod-what">${rt('req_prod_what')}</button>
+        <button type="button" class="btn soft xs" id="rq-prod-check">${AI_IC} ${rt('req_prod_check')}</button></div><div id="rq-prod-res"></div>` : '';
+    return `<div class="full"><label class="lbl">${esc(lab)}${f.req ? ' *' : ''}</label>${desc}<textarea class="field" id="${id}" rows="2">${esc(val || '')}</textarea>${extra}</div>`;
+  }
   if (f.type === 'number')
     return `<div><label class="lbl">${esc(lab)}</label>${desc}<input class="field" id="${id}" type="number" value="${esc(val || '')}"></div>`;
   if (f.type === 'select') {
@@ -910,6 +921,28 @@ function reqFieldHtml(f, val) {
   if (f.key === 'position')
     return `<div class="full"><label class="lbl">${esc(lab)}${f.req ? ' *' : ''}</label>${desc}<input class="field" id="${id}" value="${esc(val || '')}"><div class="pos-hint" id="pos-hint"></div></div>`;
   return `<div class="full"><label class="lbl">${esc(lab)}${f.req ? ' *' : ''}</label>${desc}<input class="field" id="${id}" value="${esc(val || '')}"></div>`;
+}
+// Кнопки поля «Ожидаемый продукт»: гайд-страница методики + ИИ-проверка формулировки (с подсказкой готового варианта)
+function wireReqProductCheck() {
+  const what = document.getElementById('rq-prod-what');
+  if (what) what.onclick = () => window.open('/storage/guide/hiring-by-data', '_blank');
+  const chk = document.getElementById('rq-prod-check');
+  if (chk) chk.onclick = async () => {
+    const ta = document.getElementById('rq-product'), res = document.getElementById('rq-prod-res');
+    if (!ta || !res) return;
+    chk.disabled = true;
+    res.innerHTML = `<div class="ai-note tone-mid" style="margin-top:8px"><div class="ai-h">${AI_IC} ${rt('req_prod_checking')}</div></div>`;
+    try {
+      const pos = (document.getElementById('rq-position') || {}).value || '';
+      const d = await api('/api/req-product-check', { method: 'POST', body: JSON.stringify({ answer: ta.value, position: pos, lang: LANG }) });
+      if (d.error) throw new Error(d.error);
+      res.innerHTML = `<div class="ai-note ${d.ok ? 'tone-good' : 'tone-low'}" style="margin-top:8px">
+        <div class="ai-h">${AI_IC} ${esc(d.verdict || '')}</div>
+        ${d.hint ? `<p style="margin:6px 0 0">${esc(d.hint)}</p>` : ''}
+        ${d.suggestion ? `<p style="margin:8px 0 0"><b>${rt('req_prod_sugg')}:</b> ${esc(d.suggestion)}</p>` : ''}</div>`;
+    } catch (e) { res.innerHTML = ''; toast((e && e.message) || 'Ошибка'); }
+    chk.disabled = false;
+  };
 }
 function reqFormSections(form) {
   return REQ_SCHEMA.sections.map(sec => {
@@ -1021,6 +1054,7 @@ async function openReqForm(id, unlock) {
   });
   analyzeReqPosition._applied = null; // новая форма — сбросить состояние автоотметки качеств
   analyzeReqPosition();
+  wireReqProductCheck();
   // Наполнить список разделов для комбобокса «Раздел (направление)»
   api('/api/sections').then(d => {
     const dl = document.getElementById('req-sec-list');
@@ -1137,6 +1171,7 @@ async function renderVacReq(body, id) {
       <button class="btn soft sm" id="vreq-open">${rt('req_open')}</button></div>
     <div class="req-form-wrap">${reqFormSections(form)}</div></div>`;
   $$('.req-form-wrap .field, .req-form-wrap [data-trait]', body).forEach(el => { el.disabled = true; });
+  $$('.rq-prod-tools', body).forEach(el => el.remove()); // read-only копия — без кнопок проверки продукта
   // Снять id с read-only копии формы: иначе модалка «Открыть» с теми же id читает
   // при сохранении фоновые поля вкладки, и правки не сохраняются
   $$('.req-form-wrap [id]', body).forEach(el => el.removeAttribute('id'));
@@ -1390,6 +1425,7 @@ async function renderVacCandidates(body, id) {
   body.innerHTML = `<div class="card">
     <div class="row" style="gap:10px;margin-bottom:14px;flex-wrap:wrap">
       <div class="search-wrap grow" style="flex:1;min-width:220px"><span class="search-ic">${ICON_SEARCH}</span><input class="field" id="vcand-q" placeholder="${rt('cand_search')}"></div>
+      <label class="btn ghost ic-btn" id="vcand-cv-lbl" title="${rt('cand_cv_hint')}">${_svg('<path d="M14 3v5h5M9 13h6M9 17h6M8 3h6l5 5v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-linecap="round" stroke-linejoin="round"/>')}${rt('cand_import_cv')}<input type="file" id="vcand-cv-inp" accept="application/pdf,image/*" multiple hidden></label>
       <button class="btn ic-btn" id="vcand-add">${_svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>')}${rt('cand_add')}</button></div>
     <div class="table-wrap" style="box-shadow:none"><table><thead><tr><th>${rt('cand_col_name')}</th><th>${rt('cand_col_stage')}</th><th>${rt('cand_col_ai')}</th><th style="text-align:center">${rt('cand_col_tests')}</th><th>${rt('cand_col_date')}</th></tr></thead><tbody id="vcand-rows"></tbody></table></div></div>`;
   const draw = q => {
@@ -1402,6 +1438,8 @@ async function renderVacCandidates(body, id) {
   };
   $('#vcand-q').oninput = e => draw(e.target.value.toLowerCase().trim());
   $('#vcand-add').onclick = () => createCandidate(id, () => openVacancyPage(id, 'candidates'));
+  // Массовый импорт CV — кандидаты создаются сразу в этой вакансии (и попадают в автоворонку, если включена)
+  $('#vcand-cv-inp').onchange = e => importCV(e.target.files, id, () => openVacancyPage(id, 'candidates'));
   draw('');
 }
 // Дашборд вакансии — KPI + воронка
@@ -2859,13 +2897,15 @@ function renderCandidatePage() {
   const cvBtn = p.cv
     ? `<a class="btn ghost sm ic-btn cv-btn" href="${esc(p.cv.url)}" target="_blank" download="${esc(p.cv.name)}">${_svg('<path d="M14 3v5h5M8 13h8M8 17h5M9 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-5-5H9z"/>')}<span>${t('pm_cv')}</span></a>`
     : `<span class="cv-none">${t('pm_cv')}: —</span>`;
+  // Импорт CV в карточку: ОДИН файл → ИИ распознаёт и подставляет данные в форму этого кандидата
+  const cvImp = `<label class="btn ghost sm ic-btn no-print" id="cand-cv-one" title="${rt('cand_cv_hint')}">${_svg('<path d="M14 3v5h5M9 13h6M9 17h6M8 3h6l5 5v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke-linecap="round" stroke-linejoin="round"/>')}<span>${rt('cand_import_cv')}</span><input type="file" id="cand-cv-one-inp" accept="application/pdf,image/*" hidden></label>`;
   $('#main').innerHTML = `
     <button class="btn ghost sm reveal" id="cand-back" style="margin-bottom:12px">← ${rt('cand_title')}</button>
     <div class="card cand-head reveal d1">
       <span class="avatar" style="width:52px;height:52px;border-radius:15px;font-size:19px;background:${avColor(nm)}">${esc(initials(nm, p.email))}</span>
       <div style="flex:1;min-width:0"><h1 style="margin:0;font-size:25px">${esc(nm)}</h1>
         <div class="muted" style="font-size:13.5px">${esc(p.email || p.tel || '')}${p.vacancyName ? ' · ' + (p.vacancyId ? `<a href="#" class="rep-vac-link" onclick="openVacancyPage('${esc(p.vacancyId)}');return false"><b>${esc(p.vacancyName)}</b></a>` : esc(p.vacancyName)) : ''}</div></div>
-      ${stageSel}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button><button class="btn ghost sm ic-btn no-print" id="cand-schedule" title="Назначить собеседование">${_svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>')}<span>Собеседование</span></button>${cvBtn}</div>
+      ${stageSel}<button class="btn ghost sm ic-btn no-print" id="cand-aicalls" title="${rt('aicalls_btn')}">${ICON_PHONE}<span>${rt('aicalls_btn')}</span></button><button class="btn ghost sm ic-btn no-print" id="cand-schedule" title="Назначить собеседование">${_svg('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/>')}<span>Собеседование</span></button>${cvImp}${cvBtn}</div>
     ${wf ? `<div class="card cand-pipe-card reveal d1" style="margin-top:14px">${candidatePipeline(wf)}</div>` : ''}
     <div class="cand-grid reveal d2" style="margin-top:14px">
       <div class="card"><div class="cfg-h">${rt('cand_info')}</div>
@@ -2894,6 +2934,20 @@ function renderCandidatePage() {
     setTimeout(() => openCalModal(null, iso, { participantId: p.id, candidate: nm, role: p.vacancyName || '', stage: 'intv' }), 160);
   };
   $('#save-part').onclick = saveParticipant; $('#del-part').onclick = deleteParticipant;
+  // Импорт CV в существующую карточку (один файл): распознать и подставить данные в форму
+  const cvi = $('#cand-cv-one-inp'); if (cvi) cvi.onchange = async e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const lbl = $('#cand-cv-one'); if (lbl) lbl.classList.add('is-busy');
+    toast(rt('cand_cv_parsing'));
+    try {
+      const dataUrl = await fileToDataUrl(f);
+      const d = await api('/api/participants/' + p.id + '/import-cv', { method: 'POST', body: JSON.stringify({ file: { name: f.name, dataUrl } }) });
+      modalPart = d.participant;
+      invalidateParts && invalidateParts();
+      toast(rt('cand_cv_done').replace('{n}', 1));
+      await refreshCandidateCard();
+    } catch (err) { toast((err && err.message) || rt('cand_cv_none')); if (lbl) lbl.classList.remove('is-busy'); e.target.value = ''; }
+  };
   wirePhoneAgeMasks('#f-tel', '#f-age');
   wireCandidateSteps(); wireSendMore();
 }
@@ -2959,8 +3013,27 @@ function candidateStepsPanel(wf) {
     if (s.passed === true) return `<span class="cstep-st ok">${rt('wf_pass')}</span>`;
     if (s.passed === false) return `<span class="cstep-st no">${rt('wf_fail')}</span>`;
     if (s.status === 'done' || s.done) return `<span class="cstep-st done">${rt('wf_pass')}</span>`;
-    if (s.status === 'sent' || s.status === 'in_progress') return `<span class="cstep-st sent">${t('tst_prog')}</span>`;
+    // Реальные статусы теста: отправлен → «Отправлен»; начал сам тест → «Проходит» + живое время с начала
+    if (s.status === 'in_progress') return `<span class="cstep-st sent">${t('tst_prog')}${s.startedAt ? ' · <b data-tstart="' + esc(s.startedAt) + '"></b>' : ''}</span>`;
+    if (s.status === 'sent') return `<span class="cstep-st">${rt('wf_sent_st')}</span>`;
     return `<span class="cstep-st">${rt('wf_pending')}</span>`;
+  };
+  // ИИ-звонки как шаги процесса (из настроек вакансии) с пер-кандидатным тумблером вкл/выкл
+  const A = wf.aiSteps || {};
+  const aiRowCard = (kind) => {
+    const a = A[kind]; if (!a) return '';
+    const st = !a.on ? `<span class="cstep-st">${rt('wfai_off')}</span>`
+      : a.status === 'done' ? `<span class="cstep-st done">${rt('wfai_done')}</span>`
+      : a.status === 'calling' ? `<span class="cstep-st sent"><span class="db-spin"></span> ${rt('wfai_calling')}</span>`
+      : a.status === 'scheduled' ? `<span class="cstep-st sent">${rt('wfai_sched')}</span>`
+      : a.status === 'missed' ? `<span class="cstep-st no">${rt('wfai_missed')}</span>`
+      : `<span class="cstep-st">${rt('wf_pending')}</span>`;
+    const seeBtn = (a.status === 'done' || a.status === 'missed' || a.status === 'calling')
+      ? `<button class="btn ghost xs" data-caicalls="1" title="${rt('aicalls_btn')}">${ICON_PHONE}</button>` : '';
+    return `<div class="cstep ${a.on ? '' : 'skip'} ${a.status === 'done' ? 'ok' : ''}"><div class="cstep-row">
+      <span class="cstep-ic" style="background:#eef2ff;color:#4e5ed3">${ICON_PHONE}</span>
+      <div class="cstep-main"><b>${AI_IC} ${rt('vp_ai_' + kind)}</b>${a.summary ? `<span class="cstep-ai">${esc(a.summary)}</span>` : ''}</div>
+      ${st}<div class="cstep-act" style="display:flex;gap:5px;align-items:center">${seeBtn}<span class="switch ${a.on ? 'on' : ''}" data-caitog="${kind}" role="switch" tabindex="0" aria-checked="${a.on}"><i></i></span></div></div></div>`;
   };
   const mkRow = (s) => {
     const isTest = s.kind === 'test' || s.kind === 'knowledge' || !s.kind; // optional-оценки приходят без kind
@@ -3021,6 +3094,7 @@ function candidateStepsPanel(wf) {
   };
   window.__cstepAI = []; window.__aicRes = [];
   const rows = [];
+  if (A.first) rows.push(aiRowCard('first')); // «Первый контакт» — первый шаг воронки, до всех тестов
   let insertIdx = -1; // позиция вставки собеседований — перед первым НЕзавершённым этапом (текущая позиция кандидата)
   const stageDone = (s) => s.skipped || s.passed === true || s.status === 'done' || !!s.done
     || (s.items && s.items.length && s.items.every(it => it.status === 'done'))
@@ -3046,6 +3120,11 @@ function candidateStepsPanel(wf) {
           aiCall: s.aiCall, phone: r.phone, aiStatus: r.aiStatus }));
       });
     } else rows.push(mkRow(Object.assign({ skipKey: s.key }, s)));
+    // ИИ-звонки, привязанные к шагу — сразу под ним (как в настройках процесса вакансии)
+    if (s.key === 'result' && A.afterResult) rows.push(aiRowCard('afterResult'));
+    if (s.key === 'references' && A.references) rows.push(aiRowCard('references'));
+    if (s.key === 'motivation' && A.motivation) rows.push(aiRowCard('motivation'));
+    if (s.key === 'tools' && A.afterTools) rows.push(aiRowCard('afterTools'));
     if (s.key === 'tools' && wf.optional) wf.optional.forEach(o => { if (insertIdx === -1 && !(o.skipped || o.status === 'done')) insertIdx = rows.length; rows.push(mkRow(Object.assign({ skipKey: 'opt:' + o.key }, o))); });
   });
   if (insertIdx === -1) insertIdx = rows.length; // все этапы завершены — собеседование в конце (перед решением)
@@ -3087,6 +3166,29 @@ function candidateStepsPanel(wf) {
 }
 function wireCandidateSteps() {
   $$('[data-cres]').forEach(b => b.onclick = () => openReport(b.dataset.cres));
+  // Тумблер ИИ-звонка шага — пер-кандидатный оверрайд настроек вакансии
+  $$('[data-caitog]').forEach(el => {
+    const tog = async () => {
+      const on = !el.classList.contains('on');
+      try { await api('/api/participants/' + modalPart.id + '/gate', { method: 'POST', body: JSON.stringify({ aiCall: el.dataset.caitog, on }) }); }
+      catch (e) { toast(e.message); }
+      refreshCandidateCard();
+    };
+    el.onclick = tog;
+    el.onkeydown = e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); tog(); } };
+  });
+  $$('[data-caicalls]').forEach(b => b.onclick = () => openAiCallsModal(modalPart.id));
+  // Живой таймер «Проходит · время с начала теста»
+  if (window.__tstartInt) { clearInterval(window.__tstartInt); window.__tstartInt = null; }
+  const ticks = $$('[data-tstart]');
+  if (ticks.length) {
+    const upd = () => $$('[data-tstart]').forEach(el => {
+      const ms = Date.now() - new Date(el.dataset.tstart).getTime(); if (!(ms >= 0)) return;
+      const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), mn = Math.floor((s % 3600) / 60), sc = s % 60;
+      el.textContent = (h ? h + ':' + String(mn).padStart(2, '0') : mn) + ':' + String(sc).padStart(2, '0');
+    });
+    upd(); window.__tstartInt = setInterval(upd, 1000);
+  }
   // Пропустить / вернуть этап процесса найма
   $$('[data-cskip]').forEach(b => b.onclick = async () => {
     await api('/api/participants/' + modalPart.id + '/gate', { method: 'POST', body: JSON.stringify({ stage: b.dataset.cskip, skip: true }) });

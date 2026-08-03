@@ -253,9 +253,14 @@ export async function handleAdmin(p, m, ctx) {
 
   // ── Дашборд ──
   if (p === '/api/admin/stats' && m === 'GET') {
-    const [users, tests, purchases] = await Promise.all([allUsers(),
+    const [allU, allT, allP] = await Promise.all([allUsers(),
       S.select('tests', 'select=data').then(r => r.map(x => x.data)),
       S.select('purchases', 'select=data').then(r => r.map(x => x.data))]);
+    // Демо-аккаунты портала (@hraipro.io) — тестовые данные, в статистику не считаем.
+    const demoIds = new Set(allU.filter(u => /@hraipro\.io$/i.test(u.email || '')).map(u => u.id));
+    const users = allU.filter(u => !demoIds.has(u.id));
+    const tests = allT.filter(t => !demoIds.has(t.userId));
+    const purchases = allP.filter(x => !demoIds.has(x.userId));
     const done = tests.filter(t => t.status === 'done');
     const paid = purchases.filter(x => x.status !== 'refunded');
     const byType = { tools: 0, result: 0, logic: 0, sales: 0, knowledge: 0 };
