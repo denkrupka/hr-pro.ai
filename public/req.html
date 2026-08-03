@@ -6,11 +6,72 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
+<script>document.documentElement.setAttribute('data-theme','dark');</script>
+<style>
+/* Публичная заявка на подбор — премиум-дизайн как у анкеты отклика / публичного результата */
+html{color-scheme:dark}
+html,body{height:auto!important;overflow:visible!important}
+body{position:relative;background:linear-gradient(180deg,#0c0f22,#0a0c1a 52%,#0b0e20)!important;color:#eef1fb}
+.rq-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(124,142,222,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(124,142,222,.05) 1px,transparent 1px);background-size:56px 56px}
+.rq-glow{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(130px)}
+.rq-glow.g1{top:-180px;left:50%;transform:translateX(-50%);width:1100px;height:560px;background:radial-gradient(closest-side,rgba(123,108,255,.20),transparent)}
+.rq-glow.g2{top:820px;right:-240px;width:620px;height:620px;background:radial-gradient(closest-side,rgba(79,120,230,.13),transparent)}
+/* фикс обрезанного окна: убираем flex-центровку с overflow — обычный поток и прокрутка страницы */
+.take-shell{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 22px 70px;height:auto!important;min-height:100vh;display:block!important;overflow:visible!important;background:none!important;border:none!important;box-shadow:none!important}
+.take-top{display:flex;align-items:center;gap:12px;padding:24px 0 6px;border:none!important;background:none!important}
+.take-top .brand-mark{box-shadow:0 8px 22px rgba(79,120,230,.35)}
+.take-top #r-company{font-family:'Manrope',sans-serif;font-weight:800;font-size:15.5px;color:#fff;line-height:1.15}
+.take-top .muted{color:#8b93ad!important}
+.take-body{display:block!important;flex:none!important;height:auto!important;min-height:0!important;max-width:none;overflow:visible!important;padding:0!important;justify-content:flex-start!important}
+/* герой */
+.rq-hero{padding:30px 0 24px}
+.rq-eyebrow{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#b3a4ff;margin-bottom:14px}
+.rq-title{font-family:'Manrope',sans-serif;font-weight:800;letter-spacing:-.02em;font-size:clamp(27px,4.6vw,40px);line-height:1.08;margin:0 0 14px;color:#fff}
+.rq-intro{color:#b3bad0;font-size:14.5px;line-height:1.6;margin:0;max-width:600px}
+/* секции формы — стеклянные панели */
+.req-sec{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018))!important;border:1px solid rgba(139,108,255,.2)!important;border-radius:20px!important;padding:22px 24px!important;margin-bottom:16px!important;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.req-sec-h{color:#b3a4ff!important}
+.lbl{color:#c3cbe4}
+.req-hint{color:#8b93ad!important}
+.field,input.field,select.field,textarea.field{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.13)!important;color:#eef1fb!important}
+.field:focus{border-color:rgba(139,108,255,.7)!important;box-shadow:0 0 0 3px rgba(123,108,255,.15)!important}
+/* таблица качеств */
+.form-grid>div{min-width:0}
+.trait-table{table-layout:fixed;background:rgba(255,255,255,.02)!important;border-color:rgba(255,255,255,.1)!important;border-radius:14px}
+.trait-check{width:36px}
+.trait-name{width:168px;white-space:normal}
+.trait-table td{border-color:rgba(255,255,255,.07)!important}
+.trait-row:hover{background:rgba(139,108,255,.07)!important}
+.trait-row.on{background:rgba(139,108,255,.15)!important}
+.trait-name{font-weight:700;color:#eef1fb}
+.trait-desc{color:#9aa3bf;line-height:1.5}
+.tr-rec{background:rgba(139,108,255,.1)!important;border-color:rgba(139,108,255,.3)!important}
+.tr-rec-txt{color:#c3cbe4!important}
+.pos-hint{color:#b3a4ff!important}
+/* переключатель уровня */
+.seg-toggle{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.12)}
+.seg-opt{color:#9aa3bf}
+.seg-opt.on{background:rgba(139,108,255,.22);color:#e6defd;box-shadow:none}
+/* кнопка отправки */
+.rq-submit{display:block;width:100%;box-sizing:border-box;margin-top:6px;border:none;background:linear-gradient(135deg,#7b5cff,#4f78e6);color:#fff;font-family:'Manrope',sans-serif;font-weight:800;font-size:16px;padding:16px;border-radius:14px;box-shadow:0 12px 30px rgba(123,108,255,.4);cursor:pointer;transition:transform .16s}
+.rq-submit:active{transform:scale(.985)}
+.rq-submit:disabled{opacity:.6;cursor:default}
+/* финальные экраны (отправлено / утверждено / не найдено) */
+.rq-done{max-width:520px;margin:80px auto 0;text-align:center}
+.rq-done .mk{width:96px;height:96px;margin:0 auto;border-radius:28px;display:grid;place-items:center;background:linear-gradient(135deg,#43e0a0,#2f9e6b);box-shadow:0 20px 50px rgba(67,224,160,.4)}
+.rq-done .mk.pop{animation:rq-pop .5s cubic-bezier(.2,.8,.3,1)}
+.rq-done .mk svg{width:48px;height:48px;color:#fff}
+.rq-done h1{font-family:'Manrope',sans-serif;font-weight:800;font-size:28px;color:#fff;margin:26px 0 0}
+.rq-done p{font-size:15px;line-height:1.6;color:#9aa3bf;margin:12px 0 0}
+@keyframes rq-pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@media(max-width:640px){.take-shell{padding:0 16px 50px}.req-sec{padding:18px 16px!important}.trait-name{width:110px}}
+</style>
 </head><body>
+<div class="rq-grid"></div><div class="rq-glow g1"></div><div class="rq-glow g2"></div>
 <div class="take-shell" id="shell">
   <div class="take-top">
-    <span class="brand-mark" id="brand" style="width:40px;height:40px;border-radius:12px"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
-    <div><div style="font-weight:800" id="r-company">HR PRO AI</div><div class="muted" style="font-size:12.5px" id="r-sub">Заявка на подбор персонала</div></div>
+    <span class="brand-mark" id="brand" style="width:42px;height:42px;border-radius:12px"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
+    <div><div id="r-company">HR PRO AI</div><div class="muted" style="font-size:12px" id="r-sub">Заявка на подбор персонала</div></div>
   </div>
   <div class="take-body" id="root"><p class="muted">Загрузка…</p></div>
 </div>
@@ -22,7 +83,6 @@ const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);};
-if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
 const T={
   ru:{sub:'Заявка на подбор персонала',intro:'Заполните форму подбора — на её основе HR создаст вакансию и объявление.',lang:'Язык вакансии',submit:'Отправить заявку в HR',sent:'Заявка отправлена в HR. Спасибо!',err:'Ошибка отправки',notfound:'Заявка не найдена',check:'Проверьте ссылку.',max:'Можно выбрать не более ',level:'Уровень должности',staff:'Рядовой сотрудник',lead:'Руководитель',recog:'Распознана должность',rec_for:'Для должности',rec_lead:'Для руководителя направления',rec_advise:'методика рекомендует обратить внимание на качества',apply:'Отметить в списке',locked:'Заявка утверждена',locked_hint:'Изменения в утверждённую заявку вносит HR-менеджер.'},
   pl:{sub:'Wniosek o dobór personelu',intro:'Wypełnij formularz doboru — na jego podstawie HR utworzy wakat i ogłoszenie.',lang:'Język wakatu',submit:'Wyślij wniosek do HR',sent:'Wniosek wysłany do HR. Dziękujemy!',err:'Błąd wysyłania',notfound:'Nie znaleziono wniosku',check:'Sprawdź link.',max:'Można wybrać maksymalnie ',level:'Poziom stanowiska',staff:'Szeregowy pracownik',lead:'Kierownik',recog:'Rozpoznane stanowisko',rec_for:'Dla stanowiska',rec_lead:'Dla kierownika działu',rec_advise:'metodyka zaleca zwrócić uwagę na cechy',apply:'Zaznacz na liście',locked:'Wniosek zatwierdzony',locked_hint:'Zmiany w zatwierdzonym wniosku wprowadza menedżer HR.'},
@@ -33,6 +93,7 @@ const parts=location.pathname.split('/').filter(Boolean);
 const isNew=parts[0]==='new-req';           // универсальная ссылка компании
 const code=parts[parts.length-1];
 let R={form:{},lang:'ru'};
+let CO='HR PRO AI';
 async function load(){
   let meta;
   if(isNew){
@@ -48,11 +109,11 @@ async function load(){
   }
   LG=['ru','pl','en'].includes(R.lang)?R.lang:'ru';document.documentElement.lang=LG;
   $('#r-sub').textContent=tl('sub');
-  if(meta.company)$('#r-company').textContent=meta.company;
+  if(meta.company){CO=meta.company;$('#r-company').textContent=meta.company;}
   if(meta.logo)$('#brand').innerHTML='<img src="'+esc(meta.logo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">';
   render();
 }
-function notFound(){$('#root').innerHTML='<div class="card"><h2>'+tl('notfound')+'</h2><p class="muted">'+tl('check')+'</p></div>';}
+function notFound(){$('#root').innerHTML='<div class="rq-done"><h1>'+tl('notfound')+'</h1><p>'+tl('check')+'</p></div>';}
 function fieldHtml(f,val){
   const lab=reqLabel(f.label,LG);
   const desc=(f.desc||f.hint)?'<span class="req-hint">'+esc(reqLabel(f.desc||f.hint,LG))+'</span>':'';
@@ -88,9 +149,9 @@ function analyzePos(){
 function render(){
   // Утверждённая заявка закрыта для руководителя — менять может только HR в портале
   if(R.status==='approved'){
-    $('#root').innerHTML='<div class="card" style="text-align:center;max-width:520px;margin:0 auto">'
-      +'<div class="done-mark" style="color:var(--good);margin:0 auto 8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg></div>'
-      +'<h1 style="margin:6px 0">'+tl('locked')+'</h1><p class="muted">'+tl('locked_hint')+'</p></div>';
+    $('#root').innerHTML='<div class="rq-done">'
+      +'<div class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg></div>'
+      +'<h1>'+tl('locked')+'</h1><p>'+tl('locked_hint')+'</p></div>';
     return;
   }
   const form=R.form||{};
@@ -105,11 +166,11 @@ function render(){
     +'<button type="button" class="seg-opt '+(lv!=='lead'?'on':'')+'" data-lvl="staff">'+tl('staff')+'</button>'
     +'<button type="button" class="seg-opt '+(lv==='lead'?'on':'')+'" data-lvl="lead">'+tl('lead')+'</button></div></div>'
     +'</div></div>';
-  $('#root').innerHTML='<div class="card" style="max-width:760px;margin:0 auto">'
-    +'<h1 style="font-size:24px;margin-bottom:6px">'+tl('sub')+'</h1>'
-    +'<p class="muted" style="margin-bottom:16px">'+tl('intro')+'</p>'
-    +topSec+secs
-    +'<button class="btn lg" id="submit" style="width:100%;margin-top:12px">'+tl('submit')+'</button></div>';
+  const hero='<div class="rq-hero"><div class="rq-eyebrow">'+esc(CO)+'</div>'
+    +'<h1 class="rq-title">'+tl('sub')+'</h1>'
+    +'<p class="rq-intro">'+tl('intro')+'</p></div>';
+  $('#root').innerHTML=hero+topSec+secs
+    +'<button class="rq-submit" id="submit">'+tl('submit')+'</button>';
   const tw=$('#rq-traits');
   if(tw)tw.addEventListener('change',e=>{const max=+tw.dataset.max||3;const checked=$$('[data-trait]:checked',tw);
     if(checked.length>max){e.target.checked=false;toast(tl('max')+max);}
@@ -135,9 +196,10 @@ async function submit(){
     const url=isNew?'/api/company/'+encodeURIComponent(code)+'/requisition':'/api/req/'+encodeURIComponent(code);
     const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({form:collect(),lang:R.lang||LG})});
     if(!resp.ok)throw new Error('send');
-    $('#root').innerHTML='<div class="card" style="text-align:center;max-width:520px;margin:0 auto">'
-      +'<div class="done-mark pop" style="color:var(--good);margin:0 auto 8px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg></div>'
-      +'<h1 style="margin:6px 0">'+tl('sent')+'</h1></div>';
+    window.scrollTo(0,0);
+    $('#root').innerHTML='<div class="rq-done">'
+      +'<div class="mk pop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg></div>'
+      +'<h1>'+tl('sent')+'</h1></div>';
   }catch(e){toast(tl('err'));b.disabled=false;}
 }
 load();
