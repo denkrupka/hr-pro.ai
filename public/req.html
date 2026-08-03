@@ -19,7 +19,11 @@ body{position:relative;background:linear-gradient(180deg,#0c0f22,#0a0c1a 52%,#0b
 /* фикс обрезанного окна: убираем flex-центровку с overflow — обычный поток и прокрутка страницы */
 .take-shell{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 22px 70px;height:auto!important;min-height:100vh;display:block!important;overflow:visible!important;background:none!important;border:none!important;box-shadow:none!important}
 .take-top{display:flex;align-items:center;gap:12px;padding:24px 0 6px;border:none!important;background:none!important}
-.take-top .brand-mark{box-shadow:0 8px 22px rgba(79,120,230,.35)}
+/* логотип как на лендинге: иконка-молекула без подложки */
+.take-top .brand-mark{width:44px;height:44px;background:none!important;box-shadow:none!important;border-radius:0;margin:0;cursor:default}
+.take-top .brand-mark::after{display:none}
+.take-top .brand-mark svg{width:44px;height:44px}
+.take-top .brand-mark img{width:44px;height:44px;object-fit:cover;border-radius:12px}
 .take-top #r-company{font-family:'Manrope',sans-serif;font-weight:800;font-size:15.5px;color:#fff;line-height:1.15}
 .take-top .muted{color:#8b93ad!important}
 .take-body{display:block!important;flex:none!important;height:auto!important;min-height:0!important;max-width:none;overflow:visible!important;padding:0!important;justify-content:flex-start!important}
@@ -70,8 +74,8 @@ body{position:relative;background:linear-gradient(180deg,#0c0f22,#0a0c1a 52%,#0b
 <div class="rq-grid"></div><div class="rq-glow g1"></div><div class="rq-glow g2"></div>
 <div class="take-shell" id="shell">
   <div class="take-top">
-    <span class="brand-mark" id="brand" style="width:42px;height:42px;border-radius:12px"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
-    <div><div id="r-company">HR PRO AI</div><div class="muted" style="font-size:12px" id="r-sub">Заявка на подбор персонала</div></div>
+    <span class="brand-mark" id="brand"><svg viewBox="0 0 64 64" fill="none"><path d="M32 4 56 18 56 46 32 60 8 46 8 18Z" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/><line x1="33" y1="31" x2="22" y2="25" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="41" y2="21" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="46" y2="35" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><line x1="33" y1="31" x2="29" y2="45" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="25" r="3.4" stroke="#fff" stroke-width="2"/><circle cx="41" cy="21" r="3.6" stroke="#fff" stroke-width="2"/><circle cx="46" cy="35" r="3.2" stroke="#fff" stroke-width="2"/><circle cx="29" cy="45" r="3" stroke="#fff" stroke-width="2"/><circle cx="33" cy="31" r="4.2" fill="#FF7A5C"/></svg></span>
+    <div><div id="r-company">HR PRO AI</div><div class="muted" style="font-size:12px;max-width:170px;line-height:1.25" id="r-sub">Технология, которая чувствует людей</div></div>
   </div>
   <div class="take-body" id="root"><p class="muted">Загрузка…</p></div>
 </div>
@@ -84,9 +88,9 @@ const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);};
 const T={
-  ru:{sub:'Заявка на подбор персонала',intro:'Заполните форму подбора — на её основе HR создаст вакансию и объявление.',lang:'Язык вакансии',submit:'Отправить заявку в HR',sent:'Заявка отправлена в HR. Спасибо!',err:'Ошибка отправки',notfound:'Заявка не найдена',check:'Проверьте ссылку.',max:'Можно выбрать не более ',level:'Уровень должности',staff:'Рядовой сотрудник',lead:'Руководитель',recog:'Распознана должность',rec_for:'Для должности',rec_lead:'Для руководителя направления',rec_advise:'методика рекомендует обратить внимание на качества',apply:'Отметить в списке',locked:'Заявка утверждена',locked_hint:'Изменения в утверждённую заявку вносит HR-менеджер.'},
-  pl:{sub:'Wniosek o dobór personelu',intro:'Wypełnij formularz doboru — na jego podstawie HR utworzy wakat i ogłoszenie.',lang:'Język wakatu',submit:'Wyślij wniosek do HR',sent:'Wniosek wysłany do HR. Dziękujemy!',err:'Błąd wysyłania',notfound:'Nie znaleziono wniosku',check:'Sprawdź link.',max:'Można wybrać maksymalnie ',level:'Poziom stanowiska',staff:'Szeregowy pracownik',lead:'Kierownik',recog:'Rozpoznane stanowisko',rec_for:'Dla stanowiska',rec_lead:'Dla kierownika działu',rec_advise:'metodyka zaleca zwrócić uwagę na cechy',apply:'Zaznacz na liście',locked:'Wniosek zatwierdzony',locked_hint:'Zmiany w zatwierdzonym wniosku wprowadza menedżer HR.'},
-  en:{sub:'Personnel selection requisition',intro:'Fill in the selection form — HR will create the vacancy and job ad based on it.',lang:'Vacancy language',submit:'Send requisition to HR',sent:'Requisition sent to HR. Thank you!',err:'Sending error',notfound:'Requisition not found',check:'Check the link.',max:'You can select at most ',level:'Position level',staff:'Regular employee',lead:'Manager',recog:'Recognized position',rec_for:'For the position',rec_lead:'For a department head',rec_advise:'the methodology recommends focusing on the qualities',apply:'Select in the list',locked:'Requisition approved',locked_hint:'Changes to an approved requisition are made by the HR manager.'},
+  ru:{slogan:'Технология, которая чувствует людей',sub:'Заявка на подбор персонала',intro:'Заполните форму подбора — на её основе HR создаст вакансию и объявление.',lang:'Язык вакансии',submit:'Отправить заявку в HR',sent:'Заявка отправлена в HR. Спасибо!',err:'Ошибка отправки',notfound:'Заявка не найдена',check:'Проверьте ссылку.',max:'Можно выбрать не более ',level:'Уровень должности',staff:'Рядовой сотрудник',lead:'Руководитель',recog:'Распознана должность',rec_for:'Для должности',rec_lead:'Для руководителя направления',rec_advise:'методика рекомендует обратить внимание на качества',apply:'Отметить в списке',locked:'Заявка утверждена',locked_hint:'Изменения в утверждённую заявку вносит HR-менеджер.'},
+  pl:{slogan:'Technologia, która czuje ludzi',sub:'Wniosek o dobór personelu',intro:'Wypełnij formularz doboru — na jego podstawie HR utworzy wakat i ogłoszenie.',lang:'Język wakatu',submit:'Wyślij wniosek do HR',sent:'Wniosek wysłany do HR. Dziękujemy!',err:'Błąd wysyłania',notfound:'Nie znaleziono wniosku',check:'Sprawdź link.',max:'Można wybrać maksymalnie ',level:'Poziom stanowiska',staff:'Szeregowy pracownik',lead:'Kierownik',recog:'Rozpoznane stanowisko',rec_for:'Dla stanowiska',rec_lead:'Dla kierownika działu',rec_advise:'metodyka zaleca zwrócić uwagę na cechy',apply:'Zaznacz na liście',locked:'Wniosek zatwierdzony',locked_hint:'Zmiany w zatwierdzonym wniosku wprowadza menedżer HR.'},
+  en:{slogan:'Technology that feels people',sub:'Personnel selection requisition',intro:'Fill in the selection form — HR will create the vacancy and job ad based on it.',lang:'Vacancy language',submit:'Send requisition to HR',sent:'Requisition sent to HR. Thank you!',err:'Sending error',notfound:'Requisition not found',check:'Check the link.',max:'You can select at most ',level:'Position level',staff:'Regular employee',lead:'Manager',recog:'Recognized position',rec_for:'For the position',rec_lead:'For a department head',rec_advise:'the methodology recommends focusing on the qualities',apply:'Select in the list',locked:'Requisition approved',locked_hint:'Changes to an approved requisition are made by the HR manager.'},
 };
 let LG='ru'; const tl=k=>(T[LG]&&T[LG][k]!=null?T[LG][k]:T.ru[k]);
 const parts=location.pathname.split('/').filter(Boolean);
@@ -94,6 +98,8 @@ const isNew=parts[0]==='new-req';           // универсальная ссы
 const code=parts[parts.length-1];
 let R={form:{},lang:'ru'};
 let CO='HR PRO AI';
+// под брендом HR PRO AI — слоган как на лендинге; для компании со своим именем — назначение формы
+function updSub(){$('#r-sub').textContent=(CO==='HR PRO AI')?tl('slogan'):tl('sub');}
 async function load(){
   let meta;
   if(isNew){
@@ -108,9 +114,9 @@ async function load(){
     meta={company:R.company,logo:R.logo};
   }
   LG=['ru','pl','en'].includes(R.lang)?R.lang:'ru';document.documentElement.lang=LG;
-  $('#r-sub').textContent=tl('sub');
   if(meta.company){CO=meta.company;$('#r-company').textContent=meta.company;}
-  if(meta.logo)$('#brand').innerHTML='<img src="'+esc(meta.logo)+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">';
+  if(meta.logo)$('#brand').innerHTML='<img src="'+esc(meta.logo)+'">';
+  updSub();
   render();
 }
 function notFound(){$('#root').innerHTML='<div class="rq-done"><h1>'+tl('notfound')+'</h1><p>'+tl('check')+'</p></div>';}
@@ -175,7 +181,7 @@ function render(){
   if(tw)tw.addEventListener('change',e=>{const max=+tw.dataset.max||3;const checked=$$('[data-trait]:checked',tw);
     if(checked.length>max){e.target.checked=false;toast(tl('max')+max);}
     $$('.trait-row',tw).forEach(r=>r.classList.toggle('on',r.querySelector('input').checked));});
-  const ls=$('#rq-lang');if(ls)ls.onchange=()=>{LG=ls.value;R.lang=ls.value;document.documentElement.lang=LG;$('#r-sub').textContent=tl('sub');render();};
+  const ls=$('#rq-lang');if(ls)ls.onchange=()=>{LG=ls.value;R.lang=ls.value;document.documentElement.lang=LG;updSub();render();};
   const posEl=$('#rq-position');if(posEl){let td;posEl.addEventListener('input',()=>{clearTimeout(td);td=setTimeout(analyzePos,350);});}
   const seg=$('#rq-level');if(seg)$$('[data-lvl]',seg).forEach(b=>b.onclick=()=>{seg.dataset.level=b.dataset.lvl;$$('[data-lvl]',seg).forEach(x=>x.classList.toggle('on',x===b));analyzePos();});
   analyzePos();
