@@ -2632,7 +2632,7 @@ function openTestPicker() {
   openModal(`<h2 style="margin:0 0 4px">${t('pick_title')}</h2>
     <p class="muted" style="margin:0 0 16px">${t('pick_sub')}</p>
     <div class="tcards">${['result', 'tools', 'logic', 'sales'].map(card).join('')}</div>
-    <button class="btn" style="width:100%;margin-top:18px" id="tp-done">${t('done')}</button>`, true);
+    <button class="btn m-cta" style="width:100%;margin-top:18px" id="tp-done">${t('done')}</button>`, true);
   const refresh = () => { $$('.tcard').forEach(c => { const on = sendTypes.includes(c.dataset.tc); c.classList.toggle('on', on); c.querySelector('.tc-btn').textContent = on ? t('test_selected') : t('select_test'); }); };
   $$('.tcard').forEach(c => c.onclick = () => { const ty = c.dataset.tc; if (sendTypes.includes(ty)) sendTypes = sendTypes.filter(x => x !== ty); else sendTypes.push(ty); refresh(); });
   $('#tp-done').onclick = () => { if (!sendTypes.length) return toast(t('pick_one')); closeModal(); const el = $('#type-field-txt'); if (el) el.textContent = sendTypesText(); };
